@@ -1,5 +1,5 @@
 {
-  "name": "@ronas-it/nx-generators",
+  "name": "@ronas-it/nx-generators-workspace",
   "version": "0.1.0",
   "description": "NX generators for Ronas IT projects",
   "license": "MIT",
@@ -19,5 +19,41 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/RonasIT/nx-generators.git"
-  }
+  },
+  "scripts": {
+    "build": "nx build",
+    "test": "nx test"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@nx/eslint": "18.1.2",
+    "@nx/eslint-plugin": "18.1.2",
+    "@nx/js": "18.1.2",
+    "@nx/vite": "18.1.2",
+    "@nx/web": "18.1.2",
+    "@nx/workspace": "18.1.2",
+    "@swc-node/register": "~1.8.0",
+    "@swc/core": "~1.3.85",
+    "@swc/helpers": "~0.5.2",
+    "@types/node": "18.16.9",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "@vitest/coverage-v8": "^1.0.4",
+    "@vitest/ui": "^1.3.1",
+    "eslint": "~8.48.0",
+    "eslint-config-prettier": "^9.0.0",
+    "nx": "18.1.2",
+    "prettier": "^2.6.2",
+    "typescript": "~5.3.2",
+    "vite": "~5.0.0",
+    "vitest": "^1.3.1"
+  },
+  "nx": {
+    "includedScripts": []
+  },
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts"
 }

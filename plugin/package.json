@@ -1,0 +1,34 @@
+{
+  "name": "@ronas-it/nx-generators",
+  "version": "0.1.1",
+  "description": "NX generators for Ronas IT projects",
+  "license": "MIT",
+  "author": "Ronas IT",
+  "bugs": {
+    "url": "https://github.com/RonasIT/nx-generators/issues"
+  },
+  "homepage": "https://github.com/RonasIT/nx-generators",
+  "keywords": [
+    "nx",
+    "generator",
+    "monorepo",
+    "expo",
+    "react-native",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RonasIT/nx-generators.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@nx/devkit": "18.1.2",
+    "tslib": "^2.3.0"
+  },
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "generators": "./generators.json"
+}

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "CodeChecks",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "name": "CodeChecks"
+  }
+}

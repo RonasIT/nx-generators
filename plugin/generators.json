@@ -1,0 +1,19 @@
+{
+  "generators": {
+    "code-checks": {
+      "factory": "./src/generators/code-checks/generator",
+      "schema": "./src/generators/code-checks/schema.json",
+      "description": "code-checks generator"
+    },
+    "expo-app": {
+      "factory": "./src/generators/expo-app/generator",
+      "schema": "./src/generators/expo-app/schema.json",
+      "description": "expo-app generator"
+    },
+    "repo-config": {
+      "factory": "./src/generators/repo-config/generator",
+      "schema": "./src/generators/repo-config/schema.json",
+      "description": "repo-config generator"
+    }
+  }
+}

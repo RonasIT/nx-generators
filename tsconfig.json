@@ -14,7 +14,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@nx-generators/source": ["src/index.ts"]
+      "@nx-generators/source": ["src/index.ts"],
+      "@ronas-it/nx-generators": ["plugin/src/index.ts"]
     }
   },
   "files": [],

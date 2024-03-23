@@ -1,28 +1,43 @@
 # NX Generators
 
-NX generators for Ronas IT projects
+NX generators for Ronas IT projects.
 
-This library contains 3 generators:
-1. repo-config
-2. code-checks
-3. expo-app
+At the moment this library contains the following generators:
 
-## Running
+1. `repo-config` - setups the monorepo structure for React Native development.
+2. `code-checks` - configures code checks and formatting with pre-commit hook.
+3. `expo-app` - generates and configures Expo React Native app.
 
-1. Create monorepo with expo app:  
-`npx create-nx-workspace@latest my-project --preset=expo --appName=my-app --e2eTestRunner=none --ci=skip`  
+## Usage
 
-2. Install this pakage:  
-`npm i @ronas-it/nx-generators`  
+1. Create monorepo with Expo app using [NX preset](https://nx.dev/nx-api/expo):
 
-3. Start generators:  
-`npx nx generate repo-config`  
-`npx nx generate code-checks`  
-`npx nx generate expo-app`  
+```sh
+npx create-nx-workspace@latest my-project --preset=expo --appName=my-app --e2eTestRunner=none --ci=skip
+```
 
-Or install all generators:  
-`npx nx generate repo-config && npx nx generate code-checks && npx nx generate expo-app`  
+2. Install this package:
 
-4. Start app:  
-`cd apps/my-app`  
-`npm run start`  
+```sh
+npm i @ronas-it/nx-generators --save-dev
+```
+
+3. Run generators:
+
+```sh
+npx nx g repo-config
+npx nx g code-checks
+npx nx g expo-app
+```
+
+Or run all generators at once:
+
+```sh
+npx nx g repo-config && npx nx g code-checks && npx nx g expo-app
+```
+
+4. Start the app:
+
+```sh
+npx nx start my-app
+```

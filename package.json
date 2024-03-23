@@ -25,6 +25,7 @@
     "test": "nx test"
   },
   "dependencies": {
+    "@nx/plugin": "^18.1.2",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

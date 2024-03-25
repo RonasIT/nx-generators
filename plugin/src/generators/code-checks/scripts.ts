@@ -1,5 +1,4 @@
 export default {
-  'lint': 'eslint ./',
+  'lint': 'npx tsc && npx eslint ./',
   'format': 'npx prettier --write . && npm run lint -- --fix',
-  'verify': 'npx tsc',
 }

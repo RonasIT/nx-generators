@@ -14,6 +14,11 @@
       "factory": "./src/generators/repo-config/generator",
       "schema": "./src/generators/repo-config/schema.json",
       "description": "repo-config generator"
+    },
+    "lib-creation": {
+      "factory": "./src/generators/lib-creation/generator",
+      "schema": "./src/generators/lib-creation/schema.json",
+      "description": "lib-creation generator"
     }
   }
 }

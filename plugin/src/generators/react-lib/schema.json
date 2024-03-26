@@ -7,7 +7,10 @@
     "directory": {
       "type": "string",
       "description": "Directory for the library",
-      "default": ""
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      }
     },
     "app": {
       "type": "string",
@@ -32,6 +35,11 @@
     "withComponent": {
       "type": "boolean",
       "description": "Generate the library with 'lib/component.tsx' file",
+      "default": false
+    },
+    "dryRun": {
+      "type": "boolean",
+      "description": "Generate the library without creating files",
       "default": false
     }
   },

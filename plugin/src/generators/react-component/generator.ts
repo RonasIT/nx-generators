@@ -20,15 +20,10 @@ export async function reactComponentGenerator(
 
   const libRootPath = `${libPath}/src/lib`;
   const componentPath = options.subcomponent
-    ? libRootPath
-    : `${libRootPath}/${convertToKebabCase(options.name)}`;
+    ? `${libRootPath}/components/${convertToKebabCase(options.name)}`
+    : libRootPath;
 
-  generateFiles(
-    tree,
-    path.join(__dirname, `files/${options.subcomponent ? 'subcomponent' : 'component'}`),
-    componentPath,
-    { ...options, formatName }
-  );
+  generateFiles(tree, path.join(__dirname, `files`), componentPath, { ...options, formatName });
 
   await formatFiles(tree);
 }

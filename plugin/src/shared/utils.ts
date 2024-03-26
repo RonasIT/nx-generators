@@ -27,3 +27,9 @@ export const askQuestion = (question: string): Promise<string> => {
     })
   );
 }
+
+export const convertToKebabCase = (value: string) =>
+  value
+    .trim()
+    .replace(/(.)([A-Z])/g, (_, p1, p2) => p1 + '-' + p2)
+    .toLowerCase();

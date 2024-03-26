@@ -4,15 +4,29 @@
   "title": "",
   "type": "object",
   "properties": {
-    "name": {
+    "directory": {
       "type": "string",
-      "description": "",
+      "description": "Directory of the library",
+      "default": "",
       "$default": {
         "$source": "argv",
         "index": 0
-      },
-      "x-prompt": "What name would you like to use?"
+      }
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the component",
+      "default": "",
+      "$default": {
+        "$source": "argv",
+        "index": 1
+      }
+    },
+    "subcomponent": {
+      "type": "boolean",
+      "description": "Generate a folder for components",
+      "default": false
     }
   },
-  "required": ["name"]
+  "required": []
 }

@@ -1,3 +1,6 @@
 export interface ReactComponentGeneratorSchema {
-  name: string;
+  directory?: string;
+  name?: string;
+  subcomponent?: boolean;
+  formatName?: (value: string, withoutSpaces?: boolean) => string;
 }

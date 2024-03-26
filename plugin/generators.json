@@ -15,10 +15,10 @@
       "schema": "./src/generators/repo-config/schema.json",
       "description": "repo-config generator"
     },
-    "lib-creation": {
-      "factory": "./src/generators/lib-creation/generator",
-      "schema": "./src/generators/lib-creation/schema.json",
-      "description": "lib-creation generator"
+    "react-lib": {
+      "factory": "./src/generators/react-lib/generator",
+      "schema": "./src/generators/react-lib/schema.json",
+      "description": "react-lib generator"
     }
   }
 }

@@ -1,4 +1,4 @@
-export interface LibCreationGeneratorSchema {
+export interface ReactLibGeneratorSchema {
   directory?: string;
   app?: string;
   scope?: string;

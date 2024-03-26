@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/schema",
-  "$id": "LibCreation",
+  "$id": "ReactLib",
   "title": "",
   "type": "object",
   "properties": {

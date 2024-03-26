@@ -1,11 +1,11 @@
 import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 import * as path from 'path';
-import { LibCreationGeneratorSchema } from './schema';
+import { ReactLibGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
 
-export async function libCreationGenerator(
+export async function reactLibGenerator(
   tree: Tree,
-  options: LibCreationGeneratorSchema
+  options: ReactLibGeneratorSchema
 ) {
   const libPath = options.directory
     ? `libs/${options.directory}`
@@ -26,4 +26,4 @@ export async function libCreationGenerator(
   await formatFiles(tree);
 }
 
-export default libCreationGenerator;
+export default reactLibGenerator;

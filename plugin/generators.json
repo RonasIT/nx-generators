@@ -19,6 +19,11 @@
       "factory": "./src/generators/react-lib/generator",
       "schema": "./src/generators/react-lib/schema.json",
       "description": "react-lib generator"
+    },
+    "react-component": {
+      "factory": "./src/generators/react-component/generator",
+      "schema": "./src/generators/react-component/schema.json",
+      "description": "react-component generator"
     }
   }
 }

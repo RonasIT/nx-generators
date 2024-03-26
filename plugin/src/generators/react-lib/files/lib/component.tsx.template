@@ -4,7 +4,7 @@ interface <%= formatName(name, true) %>Props {
   // TODO: Describe props
 }
 
-export function <%= formatName(name, true) %>Component(props: <%= formatName(name, true) %>Props): ReactElement {
+export function <%= formatName(name, true) %>(props: <%= formatName(name, true) %>Props): ReactElement {
   // TODO: Implement component
   return <Fragment />;
 }

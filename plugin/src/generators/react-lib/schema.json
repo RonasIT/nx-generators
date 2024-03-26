@@ -12,26 +12,6 @@
         "index": 0
       }
     },
-    "app": {
-      "type": "string",
-      "description": "",
-      "x-prompt": "Enter the name of the app (e.g: mobile) or 'shared'"
-    },
-    "scope": {
-      "type": "string",
-      "description": "",
-      "x-prompt": "Enter the scope (e.g: profile) or 'shared'"
-    },
-    "type": {
-      "type": "string",
-      "description": "",
-      "x-prompt": "Enter the type (utils, ui, data-access or features)"
-    },
-    "name": {
-      "type": "string",
-      "description": "",
-      "x-prompt": "Enter the name of the library (e.g: profile-settings)"
-    },
     "withComponent": {
       "type": "boolean",
       "description": "Generate the library with 'lib/component.tsx' file",

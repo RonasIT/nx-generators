@@ -9,10 +9,10 @@ export async function reactLibGenerator(
   options: ReactLibGeneratorSchema
 ) {
   if (!options.directory) {
-    options.app = await askQuestion("Enter the name of the app (e.g: mobile) or 'shared': ")
-    options.scope = await askQuestion("Enter the scope (e.g: profile) or 'shared': ")
-    options.type = await askQuestion("Enter the type (utils, ui, data-access or features): ")
-    options.name = await askQuestion("Enter the name of the library (e.g: profile-settings): ")
+    options.app = options.app || await askQuestion("Enter the name of the app (e.g: mobile) or 'shared': ")
+    options.scope = options.scope || await askQuestion("Enter the scope (e.g: profile) or 'shared': ")
+    options.type = options.type || await askQuestion("Enter the type (utils, ui, data-access or features): ")
+    options.name = options.name || await askQuestion("Enter the name of the library (e.g: profile-settings): ")
   }
 
   const libPath = options.directory

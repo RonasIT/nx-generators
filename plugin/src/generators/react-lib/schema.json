@@ -12,6 +12,26 @@
         "index": 0
       }
     },
+    "app": {
+      "type": "string",
+      "description": "Name of the app",
+      "default": ""
+    },
+    "scope": {
+      "type": "string",
+      "description": "Name of the scope",
+      "default": ""
+    },
+    "type": {
+      "type": "string",
+      "description": "Type of the library",
+      "default": ""
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the library",
+      "default": ""
+    },
     "withComponent": {
       "type": "boolean",
       "description": "Generate the library with 'lib/component.tsx' file",

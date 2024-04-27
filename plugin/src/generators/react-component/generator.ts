@@ -1,8 +1,9 @@
 import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 import * as path from 'path';
-import { ReactComponentGeneratorSchema } from './schema';
-import { askQuestion, convertToKebabCase, formatName } from '../../shared/utils';
 import * as fs from 'fs';
+import { kebabCase } from 'lodash';
+import { ReactComponentGeneratorSchema } from './schema';
+import { askQuestion, formatName } from '../../shared';
 
 export async function reactComponentGenerator(
   tree: Tree,
@@ -20,7 +21,7 @@ export async function reactComponentGenerator(
 
   const libRootPath = `${libPath}/src/lib`;
   const componentPath = options.subcomponent
-    ? `${libRootPath}/components/${convertToKebabCase(options.name)}`
+    ? `${libRootPath}/components/${kebabCase(options.name)}`
     : libRootPath;
 
   generateFiles(tree, path.join(__dirname, `files`), componentPath, { ...options, formatName });

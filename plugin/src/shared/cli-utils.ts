@@ -1,4 +1,5 @@
 import * as readline from 'readline';
+import * as fs from 'fs';
 
 export const askQuestion = (question: string): Promise<string> => {
   const rl = readline.createInterface({
@@ -13,3 +14,11 @@ export const askQuestion = (question: string): Promise<string> => {
     })
   );
 };
+
+export const getNxLibsPaths = () => {
+  const tsconfig = JSON.parse(fs.readFileSync('tsconfig.json', 'utf8'));
+  const libs = tsconfig.compilerOptions.paths;
+  return Object.values(libs)
+    .map((value) => value[0].replace('/index.ts', ''))
+    .filter((value) => value.includes('features') || value.includes('ui'))
+}

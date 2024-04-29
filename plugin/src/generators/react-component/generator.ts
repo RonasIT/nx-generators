@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as inquirer from 'inquirer';
 import { kebabCase } from 'lodash';
 import { ReactComponentGeneratorSchema } from './schema';
-import { askQuestion, formatName, getNxLibsPaths } from '../../shared';
+import { askQuestion, formatName, getNxLibsPaths, LibraryType } from '../../shared/utils';
 
 export async function reactComponentGenerator(
   tree: Tree,
@@ -13,8 +13,8 @@ export async function reactComponentGenerator(
     {
       type: 'list',
       name: 'libPath',
-      message: 'Choose the lib path:',
-      choices: getNxLibsPaths(),
+      message: 'Choose the library path:',
+      choices: getNxLibsPaths([LibraryType.FEATURES, LibraryType.UI]),
     },
   ]);
 

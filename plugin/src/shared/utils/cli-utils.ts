@@ -15,10 +15,17 @@ export const askQuestion = (question: string): Promise<string> => {
   );
 };
 
-export const getNxLibsPaths = () => {
+export enum LibraryType {
+  UI = 'ui',
+  DATA_ACCESS = 'data-access',
+  FEATURES = 'features',
+  UTILS = 'utils',
+}
+
+export const getNxLibsPaths = (types: Array<LibraryType>) => {
   const tsconfig = JSON.parse(fs.readFileSync('tsconfig.base.json', 'utf8'));
   const libs = tsconfig.compilerOptions.paths;
   return Object.values(libs)
     .map((value) => value[0].replace('/index.ts', ''))
-    .filter((value) => value.includes('features') || value.includes('ui'))
+    .filter((value) => types.some((type) => value.includes(type)));
 }

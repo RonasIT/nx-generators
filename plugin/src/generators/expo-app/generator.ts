@@ -12,7 +12,7 @@ import {
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 import { existsSync } from 'fs';
-import { formatName } from '../../shared';
+import { formatName } from '../../shared/utils';
 
 const dependencies = {
   'expo-constants': '^15.4.5',

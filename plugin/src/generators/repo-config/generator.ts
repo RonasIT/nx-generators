@@ -10,7 +10,7 @@ import {
   writeJson,
 } from '@nx/devkit';
 import scripts from './scripts';
-import { formatName, getProjectName } from '../../shared';
+import { formatName, getProjectName } from '../../shared/utils';
 
 export async function repoConfigGenerator(tree: Tree) {
   const projectRoot = '.';

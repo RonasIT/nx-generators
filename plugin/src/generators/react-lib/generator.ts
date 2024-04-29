@@ -2,7 +2,7 @@ import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 import * as path from 'path';
 import { ReactLibGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
-import { formatName, getLibName, askQuestion } from '../../shared';
+import { formatName, getLibName, askQuestion } from '../../shared/utils';
 
 export async function reactLibGenerator(
   tree: Tree,

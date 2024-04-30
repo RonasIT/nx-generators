@@ -9,7 +9,10 @@
   },
   "dependencies": {
     "@nx/devkit": "18.1.2",
+    "@nx/expo": "^18.1.2",
     "@nx/plugin": "^18.1.2",
+    "inquirer": "^8.2.6",
+    "lodash": "^4.17.21",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

@@ -5,8 +5,10 @@ NX generators for Ronas IT projects.
 At the moment this library contains the following generators:
 
 1. `repo-config` - setups the monorepo structure for React Native development.
-2. `code-checks` - configures code checks and formatting with pre-commit hook.
-3. `expo-app` - generates and configures Expo React Native app.
+1. `code-checks` - configures code checks and formatting with pre-commit hook.
+1. `expo-app` - generates and configures Expo React Native app.
+1. `react-lib` - generates a library according to [NX notation](https://nx.dev/concepts/more-concepts/applications-and-libraries).
+1. `react-component` - creates a React component in particular library.
 
 ## Usage
 
@@ -40,4 +42,17 @@ npx nx g repo-config && npx nx g code-checks && npx nx g expo-app
 
 ```sh
 npx nx start my-app
+```
+
+5. Continue developing your app by generating libraries and components:
+
+```sh
+npx nx g react-lib mobile/account/features/profile-settings --withComponent
+npx nx g react-component
+```
+
+Each generator accepts the `--help` argument to see generator instructions.
+
+```sh
+npx nx g react-lib --help
 ```

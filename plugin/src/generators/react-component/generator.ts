@@ -9,6 +9,7 @@ export async function reactComponentGenerator(
   tree: Tree,
   options: ReactComponentGeneratorSchema
 ) {
+  // @ts-expect-error :wrong type definition for inquirer
   const { libPath } = await inquirer.prompt([
     {
       type: 'list',

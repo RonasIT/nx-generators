@@ -29,6 +29,9 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & { extra: { eas: EASConfig }
       bundleIdentifier: appId,
       supportsTablet: false,
       buildNumber: '1',
+      config: {
+        usesNonExemptEncryption: false,
+      },
     },
     android: {
       package: appId,

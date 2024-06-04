@@ -26,7 +26,7 @@ export async function reactLibGenerator(
   if (options.withComponent) {
     const srcPath = `${libPath}/src`
     generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, name: getLibName(libPath), formatName });
-    tree.write(`${srcPath}/index.ts`, "export * from './lib/component';");
+    tree.write(`${srcPath}/index.ts`, "export * from './lib';");
   }
 
   await formatFiles(tree);

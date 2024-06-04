@@ -10,7 +10,7 @@
       "default": "",
       "$default": {
         "$source": "argv",
-        "index": 1
+        "index": 0
       }
     },
     "subcomponent": {

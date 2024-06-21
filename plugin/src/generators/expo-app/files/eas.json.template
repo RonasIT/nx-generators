@@ -7,7 +7,7 @@
         "distribution": "store"
       },
       "env": {
-        "APP_ENV": "development"
+        "EXPO_PUBLIC_APP_ENV": "development"
       }
     },
     "debug": {
@@ -21,14 +21,14 @@
       "channel": "staging",
       "distribution": "store",
       "env": {
-        "APP_ENV": "staging"
+        "EXPO_PUBLIC_APP_ENV": "staging"
       }
     },
     "production": {
       "channel": "production",
       "distribution": "store",
       "env": {
-        "APP_ENV": "production"
+        "EXPO_PUBLIC_APP_ENV": "production"
       }
     }
   },

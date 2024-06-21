@@ -32,7 +32,7 @@ export async function repoConfigGenerator(tree: Tree) {
   });
 
   // Add dependencies
-  addDependenciesToPackageJson(tree, {}, { syncpack: '^12.3.0' });
+  addDependenciesToPackageJson(tree, {}, { syncpack: '^12.3.2' });
 
   await formatFiles(tree);
 

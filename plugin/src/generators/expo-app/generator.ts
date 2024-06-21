@@ -22,6 +22,7 @@ const dependencies = {
   'expo-linking': '^6.3.1',
   'expo-status-bar': '^1.12.1',
   'expo-updates': '^0.25.17',
+  'expo-insights': '~0.7.0',
 };
 
 export async function expoAppGenerator(

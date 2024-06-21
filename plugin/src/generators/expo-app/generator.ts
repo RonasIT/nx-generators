@@ -15,13 +15,13 @@ import { existsSync } from 'fs';
 import { formatName } from '../../shared/utils';
 
 const dependencies = {
-  'expo-constants': '^15.4.5',
-  'expo-router': '^3.4.8',
-  'react-native-safe-area-context': '^4.8.2',
-  'react-native-screens': '^3.29.0',
-  'expo-linking': '^6.2.2',
-  'expo-status-bar': '^1.11.1',
-  'expo-updates': '^0.24.11',
+  'expo-constants': '~16.0.2',
+  'expo-router': '~3.5.16',
+  'react-native-safe-area-context': '^4.10.5',
+  'react-native-screens': '^3.32.0',
+  'expo-linking': '^6.3.1',
+  'expo-status-bar': '^1.12.1',
+  'expo-updates': '^0.25.17',
 };
 
 export async function expoAppGenerator(
@@ -69,7 +69,7 @@ export async function expoAppGenerator(
       ...dependencies,
       // Need new version to fix this error:
       // https://github.com/kristerkari/react-native-svg-transformer/issues/329
-      'react-native-svg-transformer': '^1.3.0',
+      'react-native-svg-transformer': '^1.4.0',
     },
     { 'cross-env': '^7.0.3' }
   );

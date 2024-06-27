@@ -1,4 +1,3 @@
-import { execSync } from 'child_process';
 import * as path from 'path';
 import {
   addDependenciesToPackageJson,
@@ -38,7 +37,6 @@ export async function repoConfigGenerator(tree: Tree) {
 
   return () => {
     installPackagesTask(tree);
-    execSync('npx expo install --fix', { stdio: 'inherit' });
   };
 }
 

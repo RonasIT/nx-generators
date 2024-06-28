@@ -31,6 +31,9 @@ export async function expoAppGenerator(
 ) {
   const appRoot = `apps/${options.directory}`;
 
+  // Install @nx/expo plugin
+  execSync('npx nx add @nx/expo', { stdio: 'inherit' })
+
   if (!existsSync(appRoot)) {
     execSync(
       `npx nx g app ${options.name} --directory=apps/${options.directory} --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`

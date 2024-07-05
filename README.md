@@ -115,6 +115,7 @@ or
 npx nx g react-component AppButton --subcomponent
 ```
 
+
 Each generator accepts the `--help` argument to see generator instructions.
 
 ```sh

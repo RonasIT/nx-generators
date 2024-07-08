@@ -59,9 +59,9 @@ Generates and configures Expo React Native app.
 
 ### Options
 
-1. `name` (not required) - name of the app for app.config.ts (e.g: my-app)
+1. `name` (optional) - name of the app for `app.config.ts` (e.g: my-app)
 
-2. `directory` (not required) - name of the directory in the 'apps/' folder (e.g: mobile)
+2. `directory` (optional) - name of the directory in the `apps/` folder (e.g: mobile)
 
 ### Example
 
@@ -79,11 +79,11 @@ Generates a library according to [NX notation](https://nx.dev/concepts/more-conc
 
 ### Options
 
-1. `directory` (not required) - directory for the library (e.g. mobile/account/features/profile-settings)
+1. `directory` (optional) - directory for the library (e.g. mobile/account/features/profile-settings)
 
-2. `withComponent` (not required) - generate the library with 'lib/component.tsx' file
+2. `withComponent` (optional) - generate the library with `lib/component.tsx` file
 
-3. `dryRun` (not required) - generate the library without creating files
+3. `dryRun` (optional) - generate the library without creating files
 
 ### Example
 
@@ -101,9 +101,9 @@ Creates a React component in particular library.
 
 ### Options
 
-1. `name` (not required) - name of the component (e.g. AppButton)
+1. `name` (optional) - name of the component (e.g. AppButton)
 
-2. `subcomponent` (not required) - generate a folder for components
+2. `subcomponent` (optional) - generate a folder for components
 
 ### Example
 

@@ -1,9 +1,7 @@
 # <%= formatName(name) %>
 
 This workspace contains source code for <%= formatName(name) %> project.
-There are the following apps (will be added later):
-
-Each app has own `README` where you can find more details about them.
+Each app in the `apps` directory has own `README` where you can find more details about it.
 
 ## Getting started
 

@@ -36,7 +36,8 @@ export async function expoAppGenerator(
 
   if (!existsSync(appRoot)) {
     execSync(
-      `npx nx g app ${options.name} --directory=apps/${options.directory} --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`
+      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`,
+      { stdio: 'inherit' }
     );
   }
 

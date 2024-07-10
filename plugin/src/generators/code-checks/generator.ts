@@ -38,7 +38,7 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   tree.write('.gitignore', gitignoreContent);
 
   // Update .eslintignore
-  const eslintignoreContent = tree.read('.eslintignore')?.toString() + '\n**/*.js\n';
+  const eslintignoreContent = tree.read('.eslintignore')?.toString() + '\n**/*.js\napps/*/app.config.ts\n';
   tree.write('.eslintignore', eslintignoreContent);
 
   // Add files

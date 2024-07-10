@@ -67,10 +67,6 @@ export async function expoAppGenerator(
   };
   writeJson(tree, appPackagePath, appPackageJson);
 
-  // Update the root .eslintignore file
-  const eslintignoreContent = tree.read('.eslintignore')?.toString() + `\n${appRoot}/app.config.ts\n`;
-  tree.write('.eslintignore', eslintignoreContent);
-
   // Add app files
   generateFiles(tree, path.join(__dirname, 'files'), appRoot, {
     ...options,

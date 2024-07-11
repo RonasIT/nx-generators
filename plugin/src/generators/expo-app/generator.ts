@@ -11,7 +11,7 @@ import {
 } from '@nx/devkit';
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
-import { existsSync } from 'fs';
+import { existsSync, rmSync } from 'fs';
 import { formatName } from '../../shared/utils';
 
 const dependencies = {
@@ -30,6 +30,7 @@ export async function expoAppGenerator(
   options: ExpoAppGeneratorSchema
 ) {
   const appRoot = `apps/${options.directory}`;
+  const appTestFolder = `apps/${options.directory}-e2e`;
 
   // Install @nx/expo plugin
   execSync('npx nx add @nx/expo', { stdio: 'inherit' })
@@ -39,6 +40,11 @@ export async function expoAppGenerator(
       `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`,
       { stdio: 'inherit' }
     );
+  }
+
+  // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
+  if (existsSync(appTestFolder)) {
+    rmSync(appTestFolder, { recursive: true, force: true });
   }
 
   const appPackagePath = `${appRoot}/package.json`;

@@ -4,7 +4,7 @@ import { EASConfig } from 'expo-constants/build/Constants.types';
 const createConfig = (): Omit<ExpoConfig, 'extra'> & { extra: { eas: EASConfig } & typeof extra } => {
   const projectId = '';
 
-  const appId = 'com.<%= name %>.dev';
+  const appId = 'com.<%= formatAppIdentifier(name) %>.dev';
 
   const extra = {
     eas: { projectId } as EASConfig,

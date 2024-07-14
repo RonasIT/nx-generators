@@ -12,7 +12,7 @@ import {
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 import { existsSync, rmSync } from 'fs';
-import { formatName } from '../../shared/utils';
+import { formatName, formatAppIdentifier } from '../../shared/utils';
 
 const dependencies = {
   'expo-constants': '~16.0.2',
@@ -71,6 +71,7 @@ export async function expoAppGenerator(
   generateFiles(tree, path.join(__dirname, 'files'), appRoot, {
     ...options,
     formatName,
+    formatAppIdentifier,
   });
 
   // Add dependencies

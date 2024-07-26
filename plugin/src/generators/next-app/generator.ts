@@ -45,8 +45,12 @@ export async function nextAppGenerator(
   // Update app tsconfig.json to skip automatic reconfiguration during the first application run
   const appTsconfigPath = `${appRoot}/tsconfig.json`;
   const appTsconfigJson = readJson(tree, appTsconfigPath);
-  appTsconfigJson.include.push('.next/types/**/*.ts');
-  writeJson(tree, appTsconfigPath, appTsconfigJson);
+  const nextTypesInclude = '.next/types/**/*.ts';
+
+  if (!appTsconfigJson.include.includes(nextTypesInclude)) {
+    appTsconfigJson.include.push(nextTypesInclude);
+    writeJson(tree, appTsconfigPath, appTsconfigJson);
+  }
 
   // Add app files
   generateFiles(tree, path.join(__dirname, 'files'), appRoot, {

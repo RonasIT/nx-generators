@@ -4,6 +4,9 @@ export const formatName = (value: string, withoutSpaces = false) =>
     .map((word) => `${word.charAt(0).toUpperCase()}${word.substring(1)}`)
     .join(withoutSpaces ? '' : ' ');
 
+export const formatAppIdentifier = (value: string) =>
+  value.toLowerCase().replace(/-/g, '.');
+
 export const getProjectName = (str: string) => {
   const parts = str.split('@');
 

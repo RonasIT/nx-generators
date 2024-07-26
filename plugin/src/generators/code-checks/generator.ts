@@ -37,6 +37,10 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   const gitignoreContent = tree.read('.gitignore')?.toString() + '\n.eslintcache\n';
   tree.write('.gitignore', gitignoreContent);
 
+  // Update .eslintignore
+  const eslintignoreContent = tree.read('.eslintignore')?.toString() + '\n**/*.js\napps/*/app.config.ts\n';
+  tree.write('.eslintignore', eslintignoreContent);
+
   // Add files
   generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
 
@@ -54,7 +58,7 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
       'eslint-plugin-react': '^7.34.3',
       'eslint-plugin-react-hooks': '^4.6.2',
       'eslint-plugin-react-native': '^4.1.0',
-      'eslint-plugin-unused-imports': '^4.0.0',
+      'eslint-plugin-unused-imports': '^3.0.0',
       '@typescript-eslint/eslint-plugin': '^7.13.1',
       '@typescript-eslint/parser': '^7.13.1',
       'tsc-files': '^1.1.4',

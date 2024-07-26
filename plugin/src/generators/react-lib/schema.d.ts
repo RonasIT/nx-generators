@@ -6,5 +6,4 @@ export interface ReactLibGeneratorSchema {
   name?: string;
   withComponent?: boolean;
   dryRun?: boolean;
-  formatName?: (value: string, withoutSpaces?: boolean) => string;
 }

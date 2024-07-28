@@ -68,7 +68,7 @@ Configures code checks and formatting with pre-commit hook.
 
 ### 3. `expo-app`
 
-Generates and configures Expo React Native app.
+Generates and configures an Expo React Native app.
 
 #### Options
 
@@ -88,7 +88,7 @@ npx nx g expo-app my-app mobile
 
 ### 4. `next-app`
 
-Generates and configures the Next.js app.
+Generates and configures a Next.js app.
 
 #### Options
 
@@ -106,11 +106,11 @@ or
 npx nx g next-app my-app web
 ```
 
-### 4. `react-lib`
+### 5. `react-lib`
 
 Generates a library according to [NX notation](https://nx.dev/concepts/more-concepts/applications-and-libraries).
 
-### Options
+#### Options
 
 1. `directory` (optional) - directory for the library (e.g. mobile/account/features/profile-settings)
 
@@ -118,7 +118,7 @@ Generates a library according to [NX notation](https://nx.dev/concepts/more-conc
 
 3. `dryRun` (optional) - generate the library without creating files
 
-### Example
+#### Example
 
 ```sh
 npx nx g react-lib --directory=mobile/account/features/profile-settings --withComponent --dryRun
@@ -128,17 +128,17 @@ or
 npx nx g react-lib mobile/account/features/profile-settings --withComponent --dryRun
 ```
 
-### 5. `react-component`
+### 6. `react-component`
 
 Creates a React component in particular library.
 
-### Options
+#### Options
 
 1. `name` (optional) - name of the component (e.g. AppButton)
 
 2. `subcomponent` (optional) - generate a folder for components
 
-### Example
+#### Example
 
 ```sh
 npx nx g react-component --name=AppButton --subcomponent

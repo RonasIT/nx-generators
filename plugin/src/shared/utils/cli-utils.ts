@@ -29,3 +29,7 @@ export const getNxLibsPaths = (types: Array<LibraryType>) => {
     .map((value) => value[0].replace('/index.ts', ''))
     .filter((value) => types.some((type) => value.includes(type)));
 }
+
+export const searchNxLibsPaths = (paths: Array<string>, input: string) => {
+  return paths.filter((path) => path.includes(input));
+}

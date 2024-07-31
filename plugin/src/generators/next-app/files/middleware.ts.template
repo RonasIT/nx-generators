@@ -1,0 +1,12 @@
+import { constants } from './constants';
+import createMiddleware from 'next-intl/middleware';
+
+export default createMiddleware({
+  locales: constants.locales,
+  defaultLocale: constants.defaultLocale,
+  localePrefix: 'never',
+});
+
+export const config = {
+  matcher: ['/((?!api|_next|.*\\..*).*)'],
+};

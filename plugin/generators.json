@@ -10,6 +10,11 @@
       "schema": "./src/generators/expo-app/schema.json",
       "description": "expo-app generator"
     },
+    "next-app": {
+      "factory": "./src/generators/next-app/generator",
+      "schema": "./src/generators/next-app/schema.json",
+      "description": "next-app generator"
+    },
     "repo-config": {
       "factory": "./src/generators/repo-config/generator",
       "schema": "./src/generators/repo-config/schema.json",

@@ -11,7 +11,7 @@ NX generators for Ronas IT projects.
 npx create-nx-workspace@latest my-project --preset=expo --appName=my-app --e2eTestRunner=none --ci=skip
 
 # For Next.js app:
-npx create-nx-workspace@latest my-project --preset=next --appName=my-app --e2eTestRunner=none --ci=skip
+npx create-nx-workspace@latest my-project --preset=next --appName=my-app --nextAppDir=true --nextSrcDir=false --style=scss --e2eTestRunner=none --ci=skip
 ```
 
 2. Install this package:

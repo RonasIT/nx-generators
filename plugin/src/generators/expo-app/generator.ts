@@ -47,8 +47,9 @@ export async function expoAppGenerator(
     );
   }
 
-  // Generate Redux store library
+  // Generate shared libs
   execSync(`npx nx g @nx/expo:lib store --directory=libs/${options.directory}/shared/data-access --skipPackageJson --unitTestRunner=none --projectNameAndRootFormat=derived`, { stdio: 'inherit' });
+  execSync(`npx nx g @nx/expo:lib app-env --directory=libs/${options.directory}/shared/utils --skipPackageJson --unitTestRunner=none --projectNameAndRootFormat=derived`, { stdio: 'inherit' });
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
   if (existsSync(appTestFolder)) {
@@ -66,6 +67,7 @@ export async function expoAppGenerator(
   tree.delete(`${appRoot}/eas.json`);
   tree.delete(`${appRoot}/metro.config.js`);
   tree.delete(`${libRoot}/shared/data-access/store/src/index.ts`);
+  tree.delete(`${libRoot}/shared/utils/app-env/src/index.ts`);
 
   // Update app package.json
   const appPackageJson = readJson(tree, appPackagePath);

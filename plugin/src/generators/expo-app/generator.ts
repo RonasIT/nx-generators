@@ -7,7 +7,7 @@ import {
   installPackagesTask,
   readJson,
   Tree,
-  writeJson,
+  writeJson
 } from '@nx/devkit';
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
@@ -15,6 +15,7 @@ import { existsSync, rmSync } from 'fs';
 import { formatName, formatAppIdentifier } from '../../shared/utils';
 
 const dependencies = {
+  "@ronas-it/axios-api-client": "^0.1.0",
   "@ronas-it/react-native-common-modules": "^0.1.1",
   "@ronas-it/rtkq-entity-api": "^0.3.1",
   'expo-constants': '~16.0.2',
@@ -50,6 +51,7 @@ export async function expoAppGenerator(
   // Generate shared libs
   execSync(`npx nx g @nx/expo:lib store --directory=libs/${options.directory}/shared/data-access --skipPackageJson --unitTestRunner=none --projectNameAndRootFormat=derived`, { stdio: 'inherit' });
   execSync(`npx nx g @nx/expo:lib app-env --directory=libs/${options.directory}/shared/utils --skipPackageJson --unitTestRunner=none --projectNameAndRootFormat=derived`, { stdio: 'inherit' });
+  execSync(`npx nx g @nx/expo:lib api-client --directory=libs/${options.directory}/shared/data-access --skipPackageJson --unitTestRunner=none --projectNameAndRootFormat=derived`, { stdio: 'inherit' });
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
   if (existsSync(appTestFolder)) {
@@ -68,6 +70,7 @@ export async function expoAppGenerator(
   tree.delete(`${appRoot}/metro.config.js`);
   tree.delete(`${libRoot}/shared/data-access/store/src/index.ts`);
   tree.delete(`${libRoot}/shared/utils/app-env/src/index.ts`);
+  tree.delete(`${libRoot}/shared/data-access/api-client/src/index.ts`);
 
   // Update app package.json
   const appPackageJson = readJson(tree, appPackagePath);
@@ -113,6 +116,7 @@ export async function expoAppGenerator(
   return () => {
     installPackagesTask(tree);
     execSync('npx expo install --fix', { stdio: 'inherit' });
+    console.warn(`\nPlease set api endpoint in ${libPath}/shared/data-access/api-client/src/configuration.ts`);
   };
 }
 

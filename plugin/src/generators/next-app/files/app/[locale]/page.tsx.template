@@ -1,7 +1,7 @@
+import { useTranslations } from 'next-intl';
+import { unstable_setRequestLocale } from 'next-intl/server';
 import { ReactElement } from 'react';
 import { Locale } from '../../constants';
-import { unstable_setRequestLocale } from 'next-intl/server';
-import { useTranslations } from 'next-intl';
 
 export interface IndexPageProps {
   params: { locale: Locale };

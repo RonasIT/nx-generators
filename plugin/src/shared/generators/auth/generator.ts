@@ -10,7 +10,11 @@ import { formatName, formatAppIdentifier } from '../../utils';
 import { existsSync } from 'fs';
 
 const dependencies = {
-  "luxon": "^3.4.4",
+  "luxon": "^3.4.4"
+};
+
+const devDependencies = {
+  "@types/luxon": "^3.4.2"
 };
 
 export async function runAuthGenerator(
@@ -40,10 +44,10 @@ export async function runAuthGenerator(
   });
 
     // Add dependencies
-    addDependenciesToPackageJson(tree, { ...dependencies }, {});
+    addDependenciesToPackageJson(tree, { ...dependencies }, devDependencies);
 
     if (existsSync(appPackagePath)) {
-      addDependenciesToPackageJson(tree, dependencies, {}, appPackagePath);
+      addDependenciesToPackageJson(tree, dependencies, devDependencies, appPackagePath);
     }
 
   await formatFiles(tree);

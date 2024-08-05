@@ -48,7 +48,7 @@ export async function expoAppGenerator(
   }
 
   // Generate Redux store library
-  execSync(`npx nx g @nx/expo:lib store --directory=libs/${options.directory}/shared/data-access --skipPackageJson --unitTestRunner=none --projectNameAndRootFormat=derived`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/store --dryRun`, { stdio: 'inherit' });
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
   if (existsSync(appTestFolder)) {

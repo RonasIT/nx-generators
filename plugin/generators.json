@@ -29,6 +29,11 @@
       "factory": "./src/generators/react-component/generator",
       "schema": "./src/generators/react-component/schema.json",
       "description": "react-component generator"
+    },
+    "sentry": {
+      "factory": "./src/generators/sentry/generator",
+      "schema": "./src/generators/sentry/schema.json",
+      "description": "sentry generator"
     }
   }
 }

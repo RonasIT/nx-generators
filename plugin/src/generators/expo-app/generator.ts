@@ -13,7 +13,7 @@ import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 import { existsSync, rmSync } from 'fs';
 import { BaseGeneratorType } from '../../shared/enums';
-import { runStoreGenerator, runAppEnvGenerator, runApiClientGenerator } from '../../shared/generators';
+import { runStoreGenerator, runAppEnvGenerator, runApiClientGenerator, runAuthGenerator, runStorageGenerator } from '../../shared/generators';
 import { formatName, formatAppIdentifier } from '../../shared/utils';
 
 const dependencies = {
@@ -49,7 +49,8 @@ export async function expoAppGenerator(
   runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
   runAppEnvGenerator(tree, options);
   runApiClientGenerator(tree, options);
-  
+  runStorageGenerator(tree, options);
+  runAuthGenerator(tree, options);
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
   if (existsSync(appTestFolder)) {

@@ -48,8 +48,8 @@ export async function expoAppGenerator(
   }
 
   // Generate shared libs
-  execSync(`npx nx g @nx/expo:lib store --directory=libs/${options.directory}/shared/data-access --skipPackageJson --unitTestRunner=none --projectNameAndRootFormat=derived`, { stdio: 'inherit' });
-  execSync(`npx nx g @nx/expo:lib app-env --directory=libs/${options.directory}/shared/utils --skipPackageJson --unitTestRunner=none --projectNameAndRootFormat=derived`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/store`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib ${options.directory}/shared/utils/app-env`, { stdio: 'inherit' });
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
   if (existsSync(appTestFolder)) {

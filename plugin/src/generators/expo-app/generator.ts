@@ -12,17 +12,15 @@ import {
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 import { existsSync, rmSync } from 'fs';
+import { BaseGeneratorType } from '../../shared/enums';
+import { runStoreGenerator, runAppEnvGenerator, runApiClientGenerator } from '../../shared/generators';
 import { formatName, formatAppIdentifier } from '../../shared/utils';
 
 const dependencies = {
-  "@ronas-it/axios-api-client": "^0.1.0",
-  "@ronas-it/react-native-common-modules": "^0.1.1",
-  "@ronas-it/rtkq-entity-api": "^0.3.1",
   'expo-constants': '~16.0.2',
   'expo-router': '~3.5.16',
   'react-native-safe-area-context': '^4.10.5',
   'react-native-screens': '^3.32.0',
-  "react-redux": "^9.1.2",
   'expo-linking': '^6.3.1',
   'expo-status-bar': '^1.12.1',
   'expo-updates': '^0.25.17',
@@ -35,7 +33,6 @@ export async function expoAppGenerator(
 ) {
   const appRoot = `apps/${options.directory}`;
   const appTestFolder = `apps/${options.directory}-e2e`;
-  const libRoot = `libs/${options.directory}`;
   const libPath = `@${options.name}/${options.directory}`;
 
   // Install @nx/expo plugin
@@ -49,9 +46,9 @@ export async function expoAppGenerator(
   }
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/store`, { stdio: 'inherit' });
-  execSync(`npx nx g react-lib ${options.directory}/shared/utils/app-env`, { stdio: 'inherit' });
-  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/api-client`, { stdio: 'inherit' });
+  runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
+  runAppEnvGenerator(tree, options);
+  runApiClientGenerator(tree, options);
   
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
@@ -69,9 +66,6 @@ export async function expoAppGenerator(
   tree.delete(`${appRoot}/app.json`);
   tree.delete(`${appRoot}/eas.json`);
   tree.delete(`${appRoot}/metro.config.js`);
-  tree.delete(`${libRoot}/shared/data-access/store/src/index.ts`);
-  tree.delete(`${libRoot}/shared/utils/app-env/src/index.ts`);
-  tree.delete(`${libRoot}/shared/data-access/api-client/src/index.ts`);
 
   // Update app package.json
   const appPackageJson = readJson(tree, appPackagePath);
@@ -84,14 +78,6 @@ export async function expoAppGenerator(
 
   // Add app files
   generateFiles(tree, path.join(__dirname, 'app-files'), appRoot, {
-    ...options,
-    formatName,
-    formatAppIdentifier,
-    formatDirectory: () => libPath
-  });
-
-  // Add lib files
-  generateFiles(tree, path.join(__dirname, 'lib-files'), libRoot, {
     ...options,
     formatName,
     formatAppIdentifier,
@@ -117,7 +103,6 @@ export async function expoAppGenerator(
   return () => {
     installPackagesTask(tree);
     execSync('npx expo install --fix', { stdio: 'inherit' });
-    console.warn(`\nPlease set api endpoint in ${libPath}/shared/data-access/api-client/src/configuration.ts`);
   };
 }
 

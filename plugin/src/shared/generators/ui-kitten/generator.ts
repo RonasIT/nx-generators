@@ -23,7 +23,7 @@ export async function runUIKittenGenerator(
   const libRoot = `libs/${options.directory}`;
   const libPath = `@${options.name}/${options.directory}`;
 
-  if (!['yes', 'y'].includes(options.confirmation)) {
+  if (!options.confirmation) {
     return;
   }
 

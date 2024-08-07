@@ -1,6 +1,5 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
-import * as readline from 'readline';
 import {
   addDependenciesToPackageJson,
   formatFiles,
@@ -84,19 +83,9 @@ export async function expoAppGenerator(
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath
+    formatDirectory: () => libPath,
+    isUIKittenEnabled: false
   });
-
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-  rl.question('Do you want to install @ui-kitten? (y/n)', (output) => {
-    const isAccepted = ['y', 'yes'].includes(output.toLowerCase());
-
-    if (isAccepted) {
-      console.log('Installing @ui-kitten...');
-    }
-  });
-
-  rl.close();
 
   // Add dependencies
   addDependenciesToPackageJson(
@@ -117,6 +106,7 @@ export async function expoAppGenerator(
   return () => {
     installPackagesTask(tree);
     execSync('npx expo install --fix', { stdio: 'inherit' });
+    execSync(`npx nx g ui-kitten ${options.name} ${options.directory}`, { stdio: 'inherit' });
   };
 }
 

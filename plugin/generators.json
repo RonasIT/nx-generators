@@ -29,6 +29,11 @@
       "factory": "./src/generators/react-component/generator",
       "schema": "./src/generators/react-component/schema.json",
       "description": "react-component generator"
+    },
+    "ui-kitten": {
+      "factory": "./src/shared/generators/ui-kitten/generator",
+      "schema": "./src/shared/generators/ui-kitten/schema.json",
+      "description": "UI-Kitten generator for Expo projects"
     }
   }
 }

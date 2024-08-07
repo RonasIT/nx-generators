@@ -1,5 +1,6 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
+import * as readline from 'readline';
 import {
   addDependenciesToPackageJson,
   formatFiles,
@@ -13,7 +14,7 @@ import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 import { existsSync, rmSync } from 'fs';
 import { BaseGeneratorType } from '../../shared/enums';
-import { runStoreGenerator, runAppEnvGenerator, runApiClientGenerator, runAuthGenerator, runStorageGenerator } from '../../shared/generators';
+import { runStoreGenerator, runAppEnvGenerator, runApiClientGenerator, runAuthGenerator, runStorageGenerator, runStylesGenerator } from '../../shared/generators';
 import { formatName, formatAppIdentifier } from '../../shared/utils';
 
 const dependencies = {
@@ -51,6 +52,7 @@ export async function expoAppGenerator(
   runApiClientGenerator(tree, options);
   runStorageGenerator(tree, options);
   runAuthGenerator(tree, options);
+  runStylesGenerator(tree, options);
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
   if (existsSync(appTestFolder)) {
@@ -84,6 +86,17 @@ export async function expoAppGenerator(
     formatAppIdentifier,
     formatDirectory: () => libPath
   });
+
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  rl.question('Do you want to install @ui-kitten? (y/n)', (output) => {
+    const isAccepted = ['y', 'yes'].includes(output.toLowerCase());
+
+    if (isAccepted) {
+      console.log('Installing @ui-kitten...');
+    }
+  });
+
+  rl.close();
 
   // Add dependencies
   addDependenciesToPackageJson(

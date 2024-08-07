@@ -16,7 +16,7 @@ const dependencies = {
 };
 
 const expoAppDependencies = {
-  "@ronas-it/react-native-common-modules": "^0.1.1"
+  "@ronas-it/react-native-common-modules": "^0.2.0"
 };
 
 export async function runStoreGenerator(

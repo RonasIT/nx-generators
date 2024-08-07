@@ -1,5 +1,8 @@
+import { store } from '<%= formatDirectory() %>/shared/data-access/store';
+import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { Stack } from 'expo-router';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
+import { Provider, useDispatch } from 'react-redux';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -9,6 +12,12 @@ export const unstable_settings = {
 };
 
 function App(): ReactElement {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(storeActions.init());
+  }, []);
+
   return (
     <Stack>
       <Stack.Screen name='index' />
@@ -18,6 +27,8 @@ function App(): ReactElement {
 
 export default function RootLayout(): ReactElement | null {
   return (
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   );
 }

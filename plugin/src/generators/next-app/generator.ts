@@ -40,6 +40,7 @@ export async function nextAppGenerator(
   tree.delete(`${appRoot}/app/page.module.scss`);
   tree.delete(`${appRoot}/app/global.css`);
   tree.delete(`${appRoot}/app/layout.tsx`);
+  tree.delete(`${appRoot}/specs`);
   tree.delete(`${appRoot}/.eslintrc.json`);
 
   // Update app tsconfig.json to skip automatic reconfiguration during the first application run

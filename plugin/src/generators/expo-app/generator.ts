@@ -13,6 +13,7 @@ import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 import { existsSync, rmSync } from 'fs';
 import { formatName, formatAppIdentifier } from '../../shared/utils';
+import sentryGenerator from '../sentry/generator';
 
 const dependencies = {
   'expo-constants': '~16.0.2',
@@ -27,18 +28,18 @@ const dependencies = {
 
 export async function expoAppGenerator(
   tree: Tree,
-  options: ExpoAppGeneratorSchema
+  options: ExpoAppGeneratorSchema,
 ) {
   const appRoot = `apps/${options.directory}`;
   const appTestFolder = `apps/${options.directory}-e2e`;
 
   // Install @nx/expo plugin
-  execSync('npx nx add @nx/expo', { stdio: 'inherit' })
+  execSync('npx nx add @nx/expo', { stdio: 'inherit' });
 
   if (!existsSync(appRoot)) {
     execSync(
       `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`,
-      { stdio: 'inherit' }
+      { stdio: 'inherit' },
     );
   }
 
@@ -83,12 +84,16 @@ export async function expoAppGenerator(
       // https://github.com/kristerkari/react-native-svg-transformer/issues/329
       'react-native-svg-transformer': '^1.4.0',
     },
-    { 'cross-env': '^7.0.3' }
+    { 'cross-env': '^7.0.3' },
   );
 
   addDependenciesToPackageJson(tree, dependencies, {}, appPackagePath);
 
   await formatFiles(tree);
+
+  if (options.withSentry) {
+    await sentryGenerator(tree, options);
+  }
 
   return () => {
     installPackagesTask(tree);

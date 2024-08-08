@@ -6,7 +6,6 @@ import {
 } from '@nx/devkit';
 import * as path from 'path';
 import { SentryGeneratorSchema } from './schema';
-import { Technology } from './enums';
 
 const webDependencies = {
   '@sentry/nextjs': '^8.21.0',
@@ -22,11 +21,11 @@ export async function sentryGenerator(
 ) {
   const projectRoot = `apps/${options.directory}`;
 
-  if (options.technology === Technology.NEXT_JS) {
+  if (tree.exists(`${projectRoot}/next.config.js`)) {
     addDependenciesToPackageJson(tree, webDependencies, {});
 
     const nextConfigContent = tree
-      .read(`apps/${options.directory}/next.config.js`)
+      .read(`${projectRoot}/next.config.js`)
       .toString()
       .replace(
         /^const { withNx } = require\('@nrwl\/next\/plugins\/with-nx'\);$/gm,
@@ -60,7 +59,7 @@ export async function sentryGenerator(
       );
 
     tree.write(
-      `apps/${options.directory}/next.config.js`,
+      `${projectRoot}/next.config.js`,
       nextConfigContent +
         `
            /**
@@ -79,21 +78,16 @@ export async function sentryGenerator(
 
     const envFiles = ['.env', '.env.development', '.env.production'];
     envFiles.forEach((file) => {
-      const envContent = tree
-        .read(`apps/${options.directory}/${file}`)
-        .toString();
-      tree.write(
-        `apps/${options.directory}/${file}`,
-        envContent + 'SENTRY_AUTH_TOKEN=',
-      );
+      const envContent = tree.read(`${projectRoot}/${file}`).toString();
+      tree.write(`${projectRoot}/${file}`, envContent + 'SENTRY_AUTH_TOKEN=');
     });
 
     generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
-  } else if (options.technology === Technology.REACT_NATIVE) {
+  } else if (tree.exists(`${projectRoot}/metro.config.js`)) {
     addDependenciesToPackageJson(tree, mobileDependencies, {});
 
     const layoutContent = tree
-      .read(`apps/${options.directory}/app/_layout.tsx`)
+      .read(`${projectRoot}/app/_layout.tsx`)
       .toString()
       .replace(
         /^import { Stack } from 'expo-router';$/gm,
@@ -102,7 +96,7 @@ export async function sentryGenerator(
       .replace(/^export default function RootLayout/gm, `function RootLayout`);
 
     tree.write(
-      `apps/${options.directory}/app/_layout.tsx`,
+      `${projectRoot}/app/_layout.tsx`,
       layoutContent +
         `
       const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
@@ -119,7 +113,7 @@ export async function sentryGenerator(
     );
 
     const appConfigContent = tree
-      .read(`apps/${options.directory}/app.config.ts`)
+      .read(`${projectRoot}/app.config.ts`)
       .toString()
       .replace(
         /plugins: \[/g,
@@ -133,7 +127,7 @@ export async function sentryGenerator(
       ],`,
       );
 
-    tree.write(`apps/${options.directory}/app.config.ts`, appConfigContent);
+    tree.write(`${projectRoot}/app.config.ts`, appConfigContent);
   }
 
   await formatFiles(tree);

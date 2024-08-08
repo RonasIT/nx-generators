@@ -12,6 +12,7 @@ import { NextAppGeneratorSchema } from './schema';
 import { existsSync } from 'fs';
 import { formatName } from '../../shared/utils';
 import * as path from 'path';
+import sentryGenerator from '../sentry/generator';
 
 const dependencies = {
   'next-intl': '^3.17.2',
@@ -62,6 +63,10 @@ export async function nextAppGenerator(
   addDependenciesToPackageJson(tree, dependencies, {});
 
   await formatFiles(tree);
+
+  if (options.withSentry) {
+    await sentryGenerator(tree, options);
+  }
 
   return () => {
     installPackagesTask(tree);

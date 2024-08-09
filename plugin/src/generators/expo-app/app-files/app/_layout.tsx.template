@@ -1,4 +1,7 @@
 import { store } from '<%= formatDirectory() %>/shared/data-access/store';
+<% if(isUIKittenEnabled) { %>
+import { UserThemeProvider } from '<%= formatDirectory() %>/shared/features/user-theme-provider';
+<% } %>
 import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { Stack } from 'expo-router';
 import { ReactElement, useEffect } from 'react';
@@ -28,7 +31,13 @@ function App(): ReactElement {
 export default function RootLayout(): ReactElement | null {
   return (
     <Provider store={store}>
+    <% if(isUIKittenEnabled) { %>
+    <UserThemeProvider>
+    <% } %>
       <App />
+    <% if(isUIKittenEnabled) { %>
+    </UserThemeProvider>
+    <% } %>
     </Provider>
   );
 }

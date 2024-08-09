@@ -1,15 +1,28 @@
-import { Middleware, Reducer } from '@reduxjs/toolkit';
+import { Reducer } from '@reduxjs/toolkit';
 import { setupReactotron } from '@ronas-it/react-native-common-modules';
 import {
   AppStateFromRootReducer,
   createStoreInitializer,
 } from '@ronas-it/rtkq-entity-api';
+import { authApi } from '<%= formatDirectory() %>/shared/data-access/api';
+import {
+  authListenerMiddleware,
+  authReducer,
+  authReducerPath,
+} from '<%= formatDirectory() %>/shared/data-access/auth';
+
 
 export type AppState = AppStateFromRootReducer<typeof rootReducer>;
 
-const rootReducer = {};
+const rootReducer = {
+  [authApi.reducerPath]: authApi.reducer,
+  [authReducerPath]: authReducer
+};
 
-const middlewares = [] as Array<Middleware>;
+const middlewares = [
+  authApi.middleware,
+  authListenerMiddleware.middleware
+];
 
 const reactotron = setupReactotron('my-app');
 const enhancers = reactotron ? [reactotron.createEnhancer()] : [];

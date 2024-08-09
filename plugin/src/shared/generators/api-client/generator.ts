@@ -7,11 +7,8 @@ import {
   generateFiles,
   Tree
 } from '@nx/devkit';
+import { dependencies } from '../../../dependencies';
 import { formatName, formatAppIdentifier } from '../../utils';
-
-const dependencies = {
-  "@ronas-it/axios-api-client": "^0.1.0",
-};
 
 export async function runApiClientGenerator(
   tree: Tree,
@@ -38,10 +35,10 @@ export async function runApiClientGenerator(
   });
 
   // Add dependencies
-  addDependenciesToPackageJson(tree, { ...dependencies }, {});
+  addDependenciesToPackageJson(tree, dependencies['api-client'], {});
 
   if (existsSync(appPackagePath)) {
-    addDependenciesToPackageJson(tree, dependencies, {}, appPackagePath);
+    addDependenciesToPackageJson(tree, dependencies['api-client'], {}, appPackagePath);
   }
 
   await formatFiles(tree);

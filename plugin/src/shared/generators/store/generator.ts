@@ -7,17 +7,9 @@ import {
   generateFiles,
   Tree
 } from '@nx/devkit';
+import { dependencies } from '../../../dependencies';
 import { BaseGeneratorType } from '../../enums';
 import { formatName, formatAppIdentifier } from '../../utils';
-
-const dependencies = {
-  "@ronas-it/rtkq-entity-api": "^0.3.1",
-  "react-redux": "^9.1.2"
-};
-
-const expoAppDependencies = {
-  "@ronas-it/react-native-common-modules": "^0.2.0"
-};
 
 export async function runStoreGenerator(
   tree: Tree,
@@ -26,8 +18,6 @@ export async function runStoreGenerator(
   const appRoot = `apps/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
   const libPath = `@${options.name}/${options.directory}`;
-  const isExpoApp = options.baseGeneratorType === BaseGeneratorType.EXPO_APP;
-  const appDependencies = isExpoApp ? { ...expoAppDependencies, ...dependencies } : dependencies;
 
   // Generate shared libs
   execSync(`npx nx g react-lib ${options.directory}/shared/data-access/store`, { stdio: 'inherit' });
@@ -46,10 +36,10 @@ export async function runStoreGenerator(
   });
 
   // Add dependencies
-  addDependenciesToPackageJson(tree, { ...appDependencies }, {});
+  addDependenciesToPackageJson(tree, dependencies['store'], {});
 
   if (existsSync(appPackagePath)) {
-    addDependenciesToPackageJson(tree, appDependencies, {}, appPackagePath);
+    addDependenciesToPackageJson(tree, dependencies['store'], {}, appPackagePath);
   }
 
   await formatFiles(tree);

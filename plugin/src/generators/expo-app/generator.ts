@@ -12,20 +12,10 @@ import {
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 import { existsSync, rmSync } from 'fs';
+import { dependencies, devDependencies } from '../../dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
-import { runStoreGenerator, runAppEnvGenerator, runApiClientGenerator, runAuthGenerator, runStorageGenerator, runStylesGenerator } from '../../shared/generators';
+import { runStoreGenerator, runAppEnvGenerator, runApiClientGenerator, runAuthGenerator, runStorageGenerator, runRNStylesGenerator } from '../../shared/generators';
 import { formatName, formatAppIdentifier } from '../../shared/utils';
-
-const dependencies = {
-  'expo-constants': '~16.0.2',
-  'expo-router': '~3.5.16',
-  'react-native-safe-area-context': '^4.10.5',
-  'react-native-screens': '^3.32.0',
-  'expo-linking': '^6.3.1',
-  'expo-status-bar': '^1.12.1',
-  'expo-updates': '^0.25.17',
-  'expo-insights': '~0.7.0',
-};
 
 export async function expoAppGenerator(
   tree: Tree,
@@ -51,7 +41,7 @@ export async function expoAppGenerator(
   runApiClientGenerator(tree, options);
   runStorageGenerator(tree, options);
   runAuthGenerator(tree, options);
-  runStylesGenerator(tree, options);
+  runRNStylesGenerator(tree, options);
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
   if (existsSync(appTestFolder)) {
@@ -91,15 +81,13 @@ export async function expoAppGenerator(
   addDependenciesToPackageJson(
     tree,
     {
-      ...dependencies,
-      // Need new version to fix this error:
-      // https://github.com/kristerkari/react-native-svg-transformer/issues/329
-      'react-native-svg-transformer': '^1.4.0',
+      ...dependencies['expo-app'],
+      ...dependencies['expo-app-root']
     },
-    { 'cross-env': '^7.0.3' }
+    devDependencies['expo-app-root']
   );
 
-  addDependenciesToPackageJson(tree, dependencies, {}, appPackagePath);
+  addDependenciesToPackageJson(tree, dependencies['expo-app'], {}, appPackagePath);
 
   await formatFiles(tree);
 

@@ -7,13 +7,10 @@ import {
   generateFiles,
   Tree,
 } from '@nx/devkit';
+import { dependencies } from '../../../dependencies';
 import { formatName, formatAppIdentifier } from '../../utils';
 
-const dependencies = {
-  "react-native-extended-stylesheet": "^0.12.0"
-};
-
-export async function runStylesGenerator(
+export async function runRNStylesGenerator(
   tree: Tree,
   options: { name: string; directory: string },
 ) {
@@ -40,13 +37,13 @@ export async function runStylesGenerator(
   });
 
   // Add dependencies
-  addDependenciesToPackageJson(tree, { ...dependencies }, {});
+  addDependenciesToPackageJson(tree, dependencies['rn-styles'], {});
 
   if (existsSync(appPackagePath)) {
-    addDependenciesToPackageJson(tree, dependencies, {}, appPackagePath);
+    addDependenciesToPackageJson(tree, dependencies['rn-styles'], {}, appPackagePath);
   }
 
   await formatFiles(tree);
 }
 
-export default runStylesGenerator;
+export default runRNStylesGenerator;

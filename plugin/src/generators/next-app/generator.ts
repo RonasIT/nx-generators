@@ -10,14 +10,11 @@ import {
 } from '@nx/devkit';
 import { NextAppGeneratorSchema } from './schema';
 import { existsSync } from 'fs';
+import { dependencies } from '../../dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import { runApiClientGenerator, runAppEnvGenerator, runStoreGenerator } from '../../shared/generators';
 import { formatName } from '../../shared/utils';
 import * as path from 'path';
-
-const dependencies = {
-  'next-intl': '^3.17.2',
-};
 
 export async function nextAppGenerator(
   tree: Tree,
@@ -65,7 +62,7 @@ export async function nextAppGenerator(
   });
 
   // Add dependencies
-  addDependenciesToPackageJson(tree, dependencies, {});
+  addDependenciesToPackageJson(tree, dependencies['next-app'], {});
 
   await formatFiles(tree);
 

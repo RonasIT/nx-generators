@@ -8,12 +8,8 @@ import {
   installPackagesTask,
   Tree,
 } from '@nx/devkit';
+import { dependencies } from '../../../dependencies';
 import { formatName, formatAppIdentifier } from '../../utils';
-
-const dependencies = {
-  "@eva-design/eva": "^2.2.0",
-  "@ui-kitten/components": "^5.3.1"
-};
 
 export async function runUIKittenGenerator(
   tree: Tree,
@@ -60,10 +56,10 @@ export async function runUIKittenGenerator(
   tree.write(`${libRoot}/shared/ui/styles/src/lib/index.ts`, newStylesLibIndexData);
 
   // Add dependencies
-  addDependenciesToPackageJson(tree, { ...dependencies }, {});
+  addDependenciesToPackageJson(tree, dependencies['ui-kitten'], {});
 
   if (existsSync(appPackagePath)) {
-    addDependenciesToPackageJson(tree, dependencies, {}, appPackagePath);
+    addDependenciesToPackageJson(tree, dependencies['ui-kitten'], {}, appPackagePath);
   }
 
   await formatFiles(tree);

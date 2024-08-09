@@ -6,16 +6,9 @@ import {
   generateFiles,
   Tree
 } from '@nx/devkit';
+import { dependencies, devDependencies } from '../../../dependencies';
 import { formatName, formatAppIdentifier } from '../../utils';
 import { existsSync } from 'fs';
-
-const dependencies = {
-  "luxon": "^3.4.4"
-};
-
-const devDependencies = {
-  "@types/luxon": "^3.4.2"
-};
 
 export async function runAuthGenerator(
   tree: Tree,
@@ -44,10 +37,10 @@ export async function runAuthGenerator(
   });
 
     // Add dependencies
-    addDependenciesToPackageJson(tree, { ...dependencies }, devDependencies);
+    addDependenciesToPackageJson(tree, dependencies['auth'], devDependencies['auth']);
 
     if (existsSync(appPackagePath)) {
-      addDependenciesToPackageJson(tree, dependencies, devDependencies, appPackagePath);
+      addDependenciesToPackageJson(tree, dependencies['auth'], devDependencies['auth'], appPackagePath);
     }
 
   await formatFiles(tree);

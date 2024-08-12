@@ -6,7 +6,7 @@ import {
   generateFiles,
   Tree
 } from '@nx/devkit';
-import { dependencies, devDependencies } from '../../../dependencies';
+import { dependencies, devDependencies } from '../../dependencies';
 import { formatName, formatAppIdentifier } from '../../utils';
 import { existsSync } from 'fs';
 

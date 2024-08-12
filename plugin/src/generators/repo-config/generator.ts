@@ -8,7 +8,7 @@ import {
   Tree,
   writeJson,
 } from '@nx/devkit';
-import { devDependencies } from '../../dependencies';
+import { devDependencies } from '../../shared/dependencies';
 import scripts from './scripts';
 import { formatName, getProjectName } from '../../shared/utils';
 

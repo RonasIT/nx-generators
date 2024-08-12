@@ -7,7 +7,7 @@ import {
   generateFiles,
   Tree
 } from '@nx/devkit';
-import { dependencies } from '../../../dependencies';
+import { dependencies } from '../../dependencies';
 import { BaseGeneratorType } from '../../enums';
 import { formatName, formatAppIdentifier } from '../../utils';
 

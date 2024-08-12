@@ -10,7 +10,7 @@ import {
 } from '@nx/devkit';
 import { NextAppGeneratorSchema } from './schema';
 import { existsSync } from 'fs';
-import { dependencies } from '../../dependencies';
+import { dependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import { runApiClientGenerator, runAppEnvGenerator, runStoreGenerator } from '../../shared/generators';
 import { formatName } from '../../shared/utils';

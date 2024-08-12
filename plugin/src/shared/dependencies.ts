@@ -1,19 +1,4 @@
 export const dependencies = {
-  'code-checks': {
-    'eslint': '^8.56.0',
-    'prettier': '^3.3.2',
-    'eslint-config-prettier': '^9.1.0',
-    'eslint-import-resolver-typescript': '^3.6.1',
-    'eslint-plugin-import': '^2.29.1',
-    'eslint-plugin-jsx-a11y': '^6.9.0',
-    'eslint-plugin-react': '^7.34.3',
-    'eslint-plugin-react-hooks': '^4.6.2',
-    'eslint-plugin-react-native': '^4.1.0',
-    'eslint-plugin-unused-imports': '^3.0.0',
-    '@typescript-eslint/eslint-plugin': '^7.13.1',
-    '@typescript-eslint/parser': '^7.13.1',
-    'tsc-files': '^1.1.4',
-  },
   'expo-app': {
     "@ronas-it/react-native-common-modules": "^0.2.0",
     'expo-constants': '~16.0.2',
@@ -53,6 +38,21 @@ export const dependencies = {
 };
 
 export const devDependencies = {
+  'code-checks': {
+    'eslint': '^8.56.0',
+    'prettier': '^3.3.2',
+    'eslint-config-prettier': '^9.1.0',
+    'eslint-import-resolver-typescript': '^3.6.1',
+    'eslint-plugin-import': '^2.29.1',
+    'eslint-plugin-jsx-a11y': '^6.9.0',
+    'eslint-plugin-react': '^7.34.3',
+    'eslint-plugin-react-hooks': '^4.6.2',
+    'eslint-plugin-react-native': '^4.1.0',
+    'eslint-plugin-unused-imports': '^3.0.0',
+    '@typescript-eslint/eslint-plugin': '^7.13.1',
+    '@typescript-eslint/parser': '^7.13.1',
+    'tsc-files': '^1.1.4',
+  },
   'expo-app-root': {
     'cross-env': '^7.0.3'
   },

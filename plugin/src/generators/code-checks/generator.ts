@@ -9,7 +9,7 @@ import {
   Tree,
   writeJson,
 } from '@nx/devkit';
-import { dependencies } from '../../dependencies';
+import { devDependencies } from '../../shared/dependencies';
 import config from './config';
 import { CodeChecksGeneratorSchema } from './schema';
 import scripts from './scripts';
@@ -49,7 +49,7 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   addDependenciesToPackageJson(
     tree,
     {},
-    dependencies['code-checks']
+    devDependencies['code-checks']
   );
 
   await formatFiles(tree);

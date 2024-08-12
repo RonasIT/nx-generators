@@ -12,7 +12,7 @@ import {
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 import { existsSync, rmSync } from 'fs';
-import { dependencies, devDependencies } from '../../dependencies';
+import { dependencies, devDependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import { runStoreGenerator, runAppEnvGenerator, runApiClientGenerator, runAuthGenerator, runStorageGenerator, runRNStylesGenerator } from '../../shared/generators';
 import { formatName, formatAppIdentifier } from '../../shared/utils';

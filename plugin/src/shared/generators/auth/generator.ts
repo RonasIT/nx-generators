@@ -1,5 +1,4 @@
 import { execSync } from 'child_process';
-import { existsSync } from 'fs';
 import * as path from 'path';
 import {
   addDependenciesToPackageJson,
@@ -7,10 +6,11 @@ import {
   generateFiles,
   Tree
 } from '@nx/devkit';
-import { dependencies } from '../../dependencies';
+import { dependencies, devDependencies } from '../../dependencies';
 import { formatName, formatAppIdentifier } from '../../utils';
+import { existsSync } from 'fs';
 
-export async function runApiClientGenerator(
+export async function runAuthGenerator(
   tree: Tree,
   options: { name: string; directory: string }
 ) {
@@ -19,12 +19,14 @@ export async function runApiClientGenerator(
   const libPath = `@${options.name}/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/api-client`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/api`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/auth`, { stdio: 'inherit' });
 
   const appPackagePath = `${appRoot}/package.json`;
 
   // Remove unnecessary files and files that will be replaced
-  tree.delete(`${libRoot}/shared/data-access/api-client/src/index.ts`);
+  tree.delete(`${libRoot}/shared/data-access/api/src/index.ts`);
+  tree.delete(`${libRoot}/shared/data-access/auth/src/index.ts`);
 
   // Add lib files
   generateFiles(tree, path.join(__dirname, '/lib-files'), libRoot, {
@@ -34,16 +36,14 @@ export async function runApiClientGenerator(
     formatDirectory: () => libPath
   });
 
-  // Add dependencies
-  addDependenciesToPackageJson(tree, dependencies['api-client'], {});
+    // Add dependencies
+    addDependenciesToPackageJson(tree, dependencies['auth'], devDependencies['auth']);
 
-  if (existsSync(appPackagePath)) {
-    addDependenciesToPackageJson(tree, dependencies['api-client'], {}, appPackagePath);
-  }
+    if (existsSync(appPackagePath)) {
+      addDependenciesToPackageJson(tree, dependencies['auth'], devDependencies['auth'], appPackagePath);
+    }
 
   await formatFiles(tree);
-
-  console.warn(`\nPlease set api endpoint in ${libPath}/shared/data-access/api-client/src/configuration.ts`);
 }
 
-export default runApiClientGenerator;
+export default runAuthGenerator;

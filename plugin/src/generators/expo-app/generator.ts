@@ -58,6 +58,7 @@ export async function expoAppGenerator(
   tree.delete(`${appRoot}/app.json`);
   tree.delete(`${appRoot}/eas.json`);
   tree.delete(`${appRoot}/metro.config.js`);
+  tree.delete(`${appRoot}/jest.config.ts`);
 
   // Update app package.json
   const appPackageJson = readJson(tree, appPackagePath);
@@ -74,7 +75,8 @@ export async function expoAppGenerator(
     formatName,
     formatAppIdentifier,
     formatDirectory: () => libPath,
-    isUIKittenEnabled: false
+    isUIKittenEnabled: false,
+    appDirectory: options.directory
   });
 
   // Add dependencies

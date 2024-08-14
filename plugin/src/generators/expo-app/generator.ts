@@ -59,6 +59,7 @@ export async function expoAppGenerator(
   tree.delete(`${appRoot}/eas.json`);
   tree.delete(`${appRoot}/metro.config.js`);
   tree.delete(`${appRoot}/jest.config.ts`);
+  tree.delete(`${appRoot}/tsconfig.app.json`);
 
   // Update app package.json
   const appPackageJson = readJson(tree, appPackagePath);

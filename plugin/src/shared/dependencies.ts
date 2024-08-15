@@ -9,6 +9,7 @@ export const dependencies = {
     'expo-status-bar': '^1.12.1',
     'expo-updates': '^0.25.17',
     'expo-insights': '~0.7.0',
+    "lodash-es": "^4.17.21"
   },
   'expo-app-root': {
     // Need new version to fix this error:

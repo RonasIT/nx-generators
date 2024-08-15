@@ -54,6 +54,9 @@ export const devDependencies = {
     '@typescript-eslint/parser': '^7.13.1',
     'tsc-files': '^1.1.4',
   },
+  'expo-app': {
+    '@types/lodash': '^4.14.194',
+  },
   'expo-app-root': {
     'cross-env': '^7.0.3'
   },

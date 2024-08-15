@@ -87,10 +87,13 @@ export async function expoAppGenerator(
       ...dependencies['expo-app'],
       ...dependencies['expo-app-root']
     },
-    devDependencies['expo-app-root']
+    {
+      ...devDependencies['expo-app'],
+      ...devDependencies['expo-app-root']
+    }
   );
 
-  addDependenciesToPackageJson(tree, dependencies['expo-app'], {}, appPackagePath);
+  addDependenciesToPackageJson(tree, dependencies['expo-app'], devDependencies['expo-app'], appPackagePath);
 
   await formatFiles(tree);
 

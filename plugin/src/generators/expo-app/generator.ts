@@ -58,6 +58,8 @@ export async function expoAppGenerator(
   tree.delete(`${appRoot}/app.json`);
   tree.delete(`${appRoot}/eas.json`);
   tree.delete(`${appRoot}/metro.config.js`);
+  tree.delete(`${appRoot}/jest.config.ts`);
+  tree.delete(`${appRoot}/tsconfig.app.json`);
 
   // Update app package.json
   const appPackageJson = readJson(tree, appPackagePath);
@@ -74,7 +76,8 @@ export async function expoAppGenerator(
     formatName,
     formatAppIdentifier,
     formatDirectory: () => libPath,
-    isUIKittenEnabled: false
+    isUIKittenEnabled: false,
+    appDirectory: options.directory
   });
 
   // Add dependencies
@@ -84,10 +87,13 @@ export async function expoAppGenerator(
       ...dependencies['expo-app'],
       ...dependencies['expo-app-root']
     },
-    devDependencies['expo-app-root']
+    {
+      ...devDependencies['expo-app'],
+      ...devDependencies['expo-app-root']
+    }
   );
 
-  addDependenciesToPackageJson(tree, dependencies['expo-app'], {}, appPackagePath);
+  addDependenciesToPackageJson(tree, dependencies['expo-app'], devDependencies['expo-app'], appPackagePath);
 
   await formatFiles(tree);
 

@@ -9,6 +9,7 @@ export const dependencies = {
     'expo-status-bar': '^1.12.1',
     'expo-updates': '^0.25.17',
     'expo-insights': '~0.7.0',
+    "lodash-es": "^4.17.21"
   },
   'expo-app-root': {
     // Need new version to fix this error:
@@ -52,6 +53,9 @@ export const devDependencies = {
     '@typescript-eslint/eslint-plugin': '^7.13.1',
     '@typescript-eslint/parser': '^7.13.1',
     'tsc-files': '^1.1.4',
+  },
+  'expo-app': {
+    '@types/lodash': '^4.14.194',
   },
   'expo-app-root': {
     'cross-env': '^7.0.3'

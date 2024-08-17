@@ -4,7 +4,7 @@ import {
   AppStateFromRootReducer,
   createStoreInitializer,
 } from '@ronas-it/rtkq-entity-api';
-import { authApi } from '<%= formatDirectory() %>/shared/data-access/api';
+import { authApi, profileApi } from '<%= formatDirectory() %>/shared/data-access/api';
 import {
   authListenerMiddleware,
   authReducer,
@@ -16,12 +16,14 @@ export type AppState = AppStateFromRootReducer<typeof rootReducer>;
 
 const rootReducer = {
   [authApi.reducerPath]: authApi.reducer,
-  [authReducerPath]: authReducer
+  [authReducerPath]: authReducer,
+  [profileApi.reducerPath]: profileApi.reducer,
 };
 
 const middlewares = [
   authApi.middleware,
-  authListenerMiddleware.middleware
+  authListenerMiddleware.middleware,
+  profileApi.middleware
 ];
 
 const reactotron = setupReactotron('my-app');

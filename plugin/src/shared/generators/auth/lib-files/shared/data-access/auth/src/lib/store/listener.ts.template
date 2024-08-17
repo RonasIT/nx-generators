@@ -7,7 +7,7 @@ import {
 } from '@ronas-it/axios-api-client';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { DateTime } from 'luxon';
-import { authApi, LogInResponse } from '<%= formatDirectory() %>/shared/data-access/api';
+import { authApi, profileApi, LogInResponse } from '<%= formatDirectory() %>/shared/data-access/api';
 import { apiService, configuration } from '<%= formatDirectory() %>/shared/data-access/api-client';
 import { appStorageService } from '<%= formatDirectory() %>/shared/data-access/storage';
 import { authActions, authReducerPath, authSelectors, AuthState } from './slice';
@@ -30,6 +30,7 @@ authListenerMiddleware.startListening({
     });
 
     dispatch(authActions.setIsAppReady(true));
+    isAuthenticated && dispatch(profileApi.endpoints.getProfile.initiate());
   },
 });
 
@@ -76,6 +77,8 @@ authListenerMiddleware.startListening({
     dispatch(authActions.setIsAuthenticated(false));
     dispatch(authActions.setTokenExpiresAt(null));
     dispatch(authActions.setToken(null));
+
+    dispatch(profileApi.util.resetApiState());
   },
 });
 

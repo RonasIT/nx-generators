@@ -8,8 +8,13 @@ import {
   Tree
 } from '@nx/devkit';
 import { dependencies } from '../../dependencies';
-import { BaseGeneratorType } from '../../enums';
+import { BaseGeneratorType, LibraryPresetType } from '../../enums';
 import { formatName, formatAppIdentifier } from '../../utils';
+
+const presets = {
+  [BaseGeneratorType.EXPO_APP]: LibraryPresetType.EXPO,
+  [BaseGeneratorType.NEXT_APP]: LibraryPresetType.NEXT
+};
 
 export async function runStoreGenerator(
   tree: Tree,
@@ -20,7 +25,7 @@ export async function runStoreGenerator(
   const libPath = `@${options.name}/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/store`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/store --preset=${presets[options.baseGeneratorType]}`, { stdio: 'inherit' });
 
   const appPackagePath = `${appRoot}/package.json`;
 

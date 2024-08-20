@@ -41,6 +41,24 @@
       "type": "boolean",
       "description": "Generate the library without creating files",
       "default": false
+    },
+    "preset": {
+      "type": "string",
+      "description": "Name of the library preset",
+      "x-prompt": {
+        "message": "Select the library preset",
+        "type": "list",
+        "items": [
+          {
+            "value": "@nx/expo:lib",
+            "label": "Expo"
+          },
+          {
+            "value": "next-lib",
+            "label": "Next.js"
+          }
+        ]
+      }
     }
   },
   "required": []

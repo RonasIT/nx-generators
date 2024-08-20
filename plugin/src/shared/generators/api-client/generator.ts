@@ -8,18 +8,19 @@ import {
   Tree
 } from '@nx/devkit';
 import { dependencies } from '../../dependencies';
+import { LibraryPresetType } from '../../enums';
 import { formatName, formatAppIdentifier } from '../../utils';
 
 export async function runApiClientGenerator(
   tree: Tree,
-  options: { name: string; directory: string }
+  options: { name: string; directory: string; preset: LibraryPresetType }
 ) {
   const appRoot = `apps/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
   const libPath = `@${options.name}/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/api-client`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/api-client --preset=${options.preset}`, { stdio: 'inherit' });
 
   const appPackagePath = `${appRoot}/package.json`;
 

@@ -34,6 +34,11 @@
       "factory": "./src/shared/generators/ui-kitten/generator",
       "schema": "./src/shared/generators/ui-kitten/schema.json",
       "description": "UI-Kitten generator for Expo projects"
+    },
+    "next-lib": {
+      "factory": "./src/generators/next-lib/generator",
+      "schema": "./src/generators/next-lib/schema.json",
+      "description": "next-lib generator"
     }
   }
 }

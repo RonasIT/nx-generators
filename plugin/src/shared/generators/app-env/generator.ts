@@ -5,17 +5,18 @@ import {
   generateFiles,
   Tree
 } from '@nx/devkit';
+import { LibraryPresetType } from '../../enums';
 import { formatName, formatAppIdentifier } from '../../utils';
 
 export async function runAppEnvGenerator(
   tree: Tree,
-  options: { name: string; directory: string }
+  options: { name: string; directory: string; preset: LibraryPresetType }
 ) {
   const libRoot = `libs/${options.directory}`;
   const libPath = `@${options.name}/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/utils/app-env`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib ${options.directory}/shared/utils/app-env --preset=${options.preset}`, { stdio: 'inherit' });
 
   // Remove unnecessary files and files that will be replaced
   tree.delete(`${libRoot}/shared/utils/app-env/src/index.ts`);

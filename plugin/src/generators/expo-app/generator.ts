@@ -13,7 +13,7 @@ import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 import { existsSync, rmSync } from 'fs';
 import { dependencies, devDependencies } from '../../shared/dependencies';
-import { BaseGeneratorType } from '../../shared/enums';
+import { BaseGeneratorType, LibraryPresetType } from '../../shared/enums';
 import { runStoreGenerator, runAppEnvGenerator, runApiClientGenerator, runAuthGenerator, runStorageGenerator, runRNStylesGenerator } from '../../shared/generators';
 import { formatName, formatAppIdentifier } from '../../shared/utils';
 
@@ -37,10 +37,10 @@ export async function expoAppGenerator(
 
   // Generate shared libs
   runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
-  runAppEnvGenerator(tree, options);
-  runApiClientGenerator(tree, options);
-  runStorageGenerator(tree, options);
-  runAuthGenerator(tree, options);
+  runAppEnvGenerator(tree, { ...options, preset: LibraryPresetType.EXPO });
+  runApiClientGenerator(tree, { ...options, preset: LibraryPresetType.EXPO });
+  runStorageGenerator(tree, { ...options, preset: LibraryPresetType.EXPO });
+  runAuthGenerator(tree, { ...options, preset: LibraryPresetType.EXPO });
   runRNStylesGenerator(tree, options);
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.

@@ -9,6 +9,7 @@ import {
   Tree,
 } from '@nx/devkit';
 import { dependencies } from '../../dependencies';
+import { LibraryPresetType } from '../../enums';
 import { formatName, formatAppIdentifier } from '../../utils';
 
 export async function runUIKittenGenerator(
@@ -24,7 +25,7 @@ export async function runUIKittenGenerator(
   }
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/features/user-theme-provider`, {
+  execSync(`npx nx g react-lib ${options.directory}/shared/features/user-theme-provider --preset=${LibraryPresetType.EXPO}`, {
     stdio: 'inherit',
   });
 

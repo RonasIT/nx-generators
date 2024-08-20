@@ -9,10 +9,11 @@ export async function reactLibGenerator(
   options: ReactLibGeneratorSchema
 ) {
   if (!options.directory) {
-    options.app = options.app || await askQuestion("Enter the name of the app (e.g: mobile) or 'shared': ")
-    options.scope = options.scope || await askQuestion("Enter the scope (e.g: profile) or 'shared': ")
-    options.type = options.type || await askQuestion("Enter the type (utils, ui, data-access or features): ")
-    options.name = options.name || await askQuestion("Enter the name of the library (e.g: profile-settings): ")
+    options.app = options.app || await askQuestion('Enter the name of the app (e.g: mobile) or \'shared\': ');
+    options.scope = options.scope || await askQuestion('Enter the scope (e.g: profile) or \'shared\': ');
+    options.type = options.type || await askQuestion('Enter the type (utils, ui, data-access or features): ');
+    options.name = options.name || await askQuestion('Enter the name of the library (e.g: profile-settings): ');
+    options.withComponent = options.withComponent || await askQuestion('Generate component inside lib folder? (y/n): ') === 'y';
   }
 
   const libPath = options.directory
@@ -26,7 +27,7 @@ export async function reactLibGenerator(
   if (options.withComponent) {
     const srcPath = `${libPath}/src`
     generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, name: getLibName(libPath), formatName });
-    tree.write(`${srcPath}/index.ts`, "export * from './lib';");
+    tree.write(`${srcPath}/index.ts`, 'export * from \'./lib\';');
   }
 
   await formatFiles(tree);

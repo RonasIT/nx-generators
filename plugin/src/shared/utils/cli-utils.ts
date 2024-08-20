@@ -23,7 +23,14 @@ export enum LibraryType {
 }
 
 export const getNxLibsPaths = (types: Array<LibraryType>) => {
-  const tsconfig = JSON.parse(fs.readFileSync('tsconfig.base.json', 'utf8'));
+  let tsconfig;
+
+  if (fs.existsSync('tsconfig.base.json')) {
+    tsconfig = JSON.parse(fs.readFileSync('tsconfig.base.json', 'utf8'));
+  }
+
+  tsconfig = JSON.parse(fs.readFileSync('tsconfig.json', 'utf8'));
+
   const libs = tsconfig.compilerOptions.paths;
   return Object.values(libs)
     .map((value) => value[0].replace('/index.ts', ''))

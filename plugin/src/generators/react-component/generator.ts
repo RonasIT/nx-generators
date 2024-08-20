@@ -31,31 +31,37 @@ export async function reactComponentGenerator(
   options.subcomponent = options.subcomponent || await askQuestion('Generate component inside components folder? (y/n): ') === 'y';
 
   const libRootPath = `${libPath}/lib`;
+  const componentsPath = `${libRootPath}/components`;
   const componentPath = options.subcomponent
     ? `${libRootPath}/components/${kebabCase(options.name)}`
     : libRootPath;
-  const shouldUpdateLibIndexes = !existsSync(libRootPath);
+  const shouldUpdateSrcIndex = !existsSync(libRootPath);
+  const shouldUpdateLibIndex = !existsSync(componentsPath) && options.subcomponent;
 
   generateFiles(tree, path.join(__dirname, `files`), componentPath, { ...options, formatName });
+
+  const appendFileContent = (path: string, endContent: string): void => {
+    const content = tree.read(path, 'utf-8');
+    const contentUpdate = content + endContent;
+
+    tree.write(path, contentUpdate);
+  };
 
   const updateIndexes = (): void => {
     const componentsIndexFilePath = `${libRootPath}/components/index.ts`;
 
-    if (shouldUpdateLibIndexes) {
-      const libIndexFilePath = `${libPath}/index.ts`;
-      const libIndexFileContent = tree.read(libIndexFilePath, 'utf-8');
-      const contentUpdate = libIndexFileContent + `export * from './lib';\n`;
+    if (shouldUpdateSrcIndex) {
+      appendFileContent(`${libPath}/index.ts`, `export * from './lib';\n`);
+    }
 
-      tree.write(libIndexFilePath, contentUpdate);
+    if (shouldUpdateLibIndex) {
+      appendFileContent(`${libRootPath}/index.ts`, `export * from './components';\n`);
     }
 
     if (!existsSync(componentsIndexFilePath)) {
       tree.write(componentsIndexFilePath, `export * from './${kebabCase(options.name)}';\n`);
     } else {
-      const componentsIndexFileContent = tree.read(componentsIndexFilePath, 'utf-8');
-      const contentUpdate = componentsIndexFileContent + `export * from './${kebabCase(options.name)}';\n`;
-
-      tree.write(componentsIndexFilePath, contentUpdate);
+      appendFileContent(componentsIndexFilePath, `export * from './${kebabCase(options.name)}';\n`);
     }
   }
 

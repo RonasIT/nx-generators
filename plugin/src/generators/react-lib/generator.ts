@@ -1,4 +1,5 @@
 import { formatFiles, generateFiles, Tree } from '@nx/devkit';
+import { findInstalledPlugins } from 'nx/src/utils/plugins/installed-plugins';
 import * as path from 'path';
 import { ReactLibGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
@@ -14,7 +15,17 @@ export async function reactLibGenerator(
   tree: Tree,
   options: ReactLibGeneratorSchema
 ) {
-  options.preset = options.preset || await askQuestion('Select the preset: ') as LibraryPresetType;
+  const installedModules = findInstalledPlugins().map((module) => module.name);
+  const isExpoModuleAvailable = installedModules.includes('@nx/expo');
+  const isNextModuleAvailable = installedModules.includes('@nx/next');
+
+  if (!isExpoModuleAvailable && !isNextModuleAvailable) {
+    throw new Error(
+      `You need to have either @nx/expo or @nx/next installed in order to use this generator.`
+    );
+  }
+
+  options.preset = options.preset || isExpoModuleAvailable ? LibraryPresetType.EXPO : LibraryPresetType.NEXT;
 
   if (!options.directory) {
     options.app = options.app || await askQuestion('Enter the name of the app (e.g: mobile) or \'shared\': ');

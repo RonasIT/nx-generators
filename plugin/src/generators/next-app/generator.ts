@@ -11,7 +11,7 @@ import {
 import { NextAppGeneratorSchema } from './schema';
 import { existsSync } from 'fs';
 import { dependencies } from '../../shared/dependencies';
-import { BaseGeneratorType, LibraryPresetType } from '../../shared/enums';
+import { BaseGeneratorType } from '../../shared/enums';
 import { runApiClientGenerator, runAppEnvGenerator, runStoreGenerator } from '../../shared/generators';
 import { formatName } from '../../shared/utils';
 import * as path from 'path';
@@ -33,8 +33,8 @@ export async function nextAppGenerator(
   }
 
   runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });
-  runAppEnvGenerator(tree, { ...options, preset: LibraryPresetType.NEXT });
-  runApiClientGenerator(tree, { ...options, preset: LibraryPresetType.NEXT });
+  runAppEnvGenerator(tree, options);
+  runApiClientGenerator(tree, options);
 
   // Remove unnecessary files and files that will be replaced
   tree.delete(`${appRoot}/public/.gitkeep`);

@@ -8,5 +8,4 @@ export interface ReactLibGeneratorSchema {
   name?: string;
   withComponent?: boolean;
   dryRun?: boolean;
-  preset?: LibraryPresetType;
 }

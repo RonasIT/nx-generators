@@ -8,7 +8,6 @@ import {
   Tree,
 } from '@nx/devkit';
 import { dependencies } from '../../dependencies';
-import { LibraryPresetType } from '../../enums';
 import { formatName, formatAppIdentifier } from '../../utils';
 
 export async function runRNStylesGenerator(
@@ -20,7 +19,7 @@ export async function runRNStylesGenerator(
   const libPath = `@${options.name}/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/ui/styles --preset=${LibraryPresetType.EXPO}`, {
+  execSync(`npx nx g react-lib ${options.directory}/shared/ui/styles`, {
     stdio: 'inherit',
   });
 

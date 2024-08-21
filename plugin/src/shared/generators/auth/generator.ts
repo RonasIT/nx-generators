@@ -7,21 +7,20 @@ import {
   Tree
 } from '@nx/devkit';
 import { dependencies, devDependencies } from '../../dependencies';
-import { LibraryPresetType } from '../../enums';
 import { formatName, formatAppIdentifier } from '../../utils';
 import { existsSync } from 'fs';
 
 export async function runAuthGenerator(
   tree: Tree,
-  options: { name: string; directory: string; preset: LibraryPresetType }
+  options: { name: string; directory: string }
 ) {
   const appRoot = `apps/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
   const libPath = `@${options.name}/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/api --preset=${options.preset}`, { stdio: 'inherit' });
-  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/auth --preset=${options.preset}`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/api`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/auth`, { stdio: 'inherit' });
 
   const appPackagePath = `${appRoot}/package.json`;
 

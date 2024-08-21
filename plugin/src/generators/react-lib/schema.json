@@ -41,11 +41,6 @@
       "type": "boolean",
       "description": "Generate the library without creating files",
       "default": false
-    },
-    "preset": {
-      "type": "string",
-      "description": "Name of the library preset",
-      "default": ""
     }
   },
   "required": []

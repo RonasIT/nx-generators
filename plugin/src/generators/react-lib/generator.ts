@@ -25,7 +25,7 @@ export async function reactLibGenerator(
     );
   }
 
-  options.preset = options.preset || isExpoModuleAvailable ? LibraryPresetType.EXPO : LibraryPresetType.NEXT;
+  const preset = isExpoModuleAvailable ? LibraryPresetType.EXPO : LibraryPresetType.NEXT;
 
   if (!options.directory) {
     options.app = options.app || await askQuestion('Enter the name of the app (e.g: mobile) or \'shared\': ');
@@ -38,7 +38,7 @@ export async function reactLibGenerator(
   const libPath = options.directory
     ? `libs/${options.directory}`
     : `libs/${options.app}/${options.scope}/${options.type}/${options.name}`;
-  const command = `npx nx g ${options.preset} --skipPackageJson --unitTestRunner=none --projectNameAndRootFormat=derived ${libPath} ${presetParams[options.preset]}`
+  const command = `npx nx g ${preset} --skipPackageJson --unitTestRunner=none --projectNameAndRootFormat=derived ${libPath} ${presetParams[preset]}`
   const commandWithOptions = options.dryRun ? command + ' --dry-run' : command
 
   execSync(commandWithOptions, { stdio: 'inherit' });

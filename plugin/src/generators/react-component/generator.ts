@@ -25,7 +25,7 @@ export async function reactComponentGenerator(
 
       return filteredNxLibsPaths.map((path) => ({ value: path }))
     }
-  })
+  });
 
   options.name = options.name || await askQuestion('Enter the name of the component (e.g: AppButton): ');
   options.subcomponent = options.subcomponent || await askQuestion('Generate component inside components folder? (y/n): ') === 'y';

@@ -1,0 +1,9 @@
+{
+  "name": "mobile-shared-data-access-auth",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/mobile/shared/data-access/auth/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project mobile-shared-data-access-auth --web",
+  "targets": {}
+}

@@ -42,7 +42,7 @@ export async function reactComponentGenerator(
 
   const appendFileContent = (path: string, endContent: string): void => {
     const content = tree.read(path, 'utf-8');
-    const contentUpdate = content + endContent;
+    const contentUpdate = content ? content + endContent : endContent;
 
     tree.write(path, contentUpdate);
   };

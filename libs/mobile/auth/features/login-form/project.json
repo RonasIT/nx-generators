@@ -1,0 +1,9 @@
+{
+  "name": "mobile-auth-features-login-form",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/mobile/auth/features/login-form/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project mobile-auth-features-login-form --web",
+  "targets": {}
+}

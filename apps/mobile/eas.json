@@ -1,0 +1,38 @@
+{
+  "build": {
+    "development": {
+      "channel": "development",
+      "distribution": "internal",
+      "ios": {
+        "distribution": "store"
+      },
+      "env": {
+        "EXPO_PUBLIC_APP_ENV": "development"
+      }
+    },
+    "debug": {
+      "extends": "development",
+      "developmentClient": true,
+      "ios": {
+        "distribution": "internal"
+      }
+    },
+    "staging": {
+      "channel": "staging",
+      "distribution": "store",
+      "env": {
+        "EXPO_PUBLIC_APP_ENV": "staging"
+      }
+    },
+    "production": {
+      "channel": "production",
+      "distribution": "store",
+      "env": {
+        "EXPO_PUBLIC_APP_ENV": "production"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

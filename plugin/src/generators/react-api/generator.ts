@@ -2,12 +2,7 @@ import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 import * as path from 'path';
 import { camelCase, kebabCase, startCase } from 'lodash';
 import { ReactApiGeneratorSchema } from './schema';
-import { askQuestion, getNxLibsPaths, LibraryType, searchAliasPath, searchNxLibsPaths } from '../../shared/utils';
-
-const dynamicImport = new Function(
-  'specifier',
-  'return import(specifier)'
-) as <T = never>(specifier: string) => Promise<T>;
+import { askQuestion, dynamicImport, getNxLibsPaths, LibraryType, searchAliasPath, searchNxLibsPaths } from '../../shared/utils';
 
 export async function reactComponentGenerator(
   tree: Tree,

@@ -12,7 +12,16 @@
         "index": 0
       },
       "x-prompt": "Enter the name of the directory in the 'apps/' folder (e.g: web)"
+    },
+    "DSN": {
+      "type": "string",
+      "description": "",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "Enter the DSN"
     }
   },
-  "required": ["directory"]
+  "required": ["directory", "DSN"]
 }

@@ -26,6 +26,11 @@
       "type": "boolean",
       "default": false,
       "x-prompt": "Do you want to use sentry in your app?"
+    },
+    "DSN": {
+      "type": "string",
+      "description": "",
+      "x-prompt": "Enter the DSN (skip if you do not use Sentry)"
     }
   },
   "required": ["name", "directory", "withSentry"]

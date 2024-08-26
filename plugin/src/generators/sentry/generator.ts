@@ -6,12 +6,13 @@ import {
 } from '@nx/devkit';
 import * as path from 'path';
 import { SentryGeneratorSchema } from './schema';
+import { isExpoApp, isNextApp } from '../../shared/utils';
 
-const webDependencies = {
+const nextAppDependencies = {
   '@sentry/nextjs': '^8.21.0',
 };
 
-const mobileDependencies = {
+const expoAppDependencies = {
   '@sentry/react-native': '~5.22.0',
 };
 
@@ -21,8 +22,8 @@ export async function sentryGenerator(
 ) {
   const projectRoot = `apps/${options.directory}`;
 
-  if (tree.exists(`${projectRoot}/next.config.js`)) {
-    addDependenciesToPackageJson(tree, webDependencies, {});
+  if (isNextApp(tree, projectRoot)) {
+    addDependenciesToPackageJson(tree, nextAppDependencies, {});
 
     const nextConfigContent = tree
       .read(`${projectRoot}/next.config.js`)
@@ -83,8 +84,8 @@ export async function sentryGenerator(
     });
 
     generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
-  } else if (tree.exists(`${projectRoot}/metro.config.js`)) {
-    addDependenciesToPackageJson(tree, mobileDependencies, {});
+  } else if (isExpoApp(tree, projectRoot)) {
+    addDependenciesToPackageJson(tree, expoAppDependencies, {});
 
     const layoutContent = tree
       .read(`${projectRoot}/app/_layout.tsx`)

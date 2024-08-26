@@ -3,7 +3,7 @@ import { Stack } from 'expo-router/stack';
 import React, { ReactElement } from 'react';
 
 export default function AuthLayout(): ReactElement {
-  const translate = useTranslation('EXAMPLE.AUTH_LAYOUT');
+  const translate = useTranslation('APP.AUTH_LAYOUT');
 
   return (
     <Stack>

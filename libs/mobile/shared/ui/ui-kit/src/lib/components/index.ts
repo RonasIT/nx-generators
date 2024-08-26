@@ -8,3 +8,4 @@ export * from './pressable';
 export * from './pressable-icon';
 export * from './icon';
 export * from './splash-screen';
+export * from './spinner';

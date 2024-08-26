@@ -8,7 +8,7 @@ export default function LoginScreen(): JSX.Element {
   const router = useRouter();
 
   const handleLoginSuccess = (): void => {
-    router.replace('profile');
+    router.replace('/(main)');
   };
 
   return (

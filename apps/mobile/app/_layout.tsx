@@ -15,8 +15,7 @@ const useLanguage = setLanguage(
       ...require('i18n/mobile/app/en.json'),
       ...require('i18n/mobile/auth/en.json'),
       ...require('i18n/mobile/profile/en.json'),
-      ...require('i18n/mobile/shared/en.json'),
-      ...require('i18n/mobile/users/en.json')
+      ...require('i18n/mobile/shared/en.json')
     }
   },
   'en'

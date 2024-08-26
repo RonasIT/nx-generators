@@ -1,12 +1,13 @@
+import { Image } from 'expo-image';
 import React, { ReactElement } from 'react';
+import { Images } from '@example/mobile/shared/ui/assets';
 import { createStyles } from '@example/mobile/shared/ui/styles';
-import { Icon } from '../icon';
 import { AppScreen } from '../screen';
 
 export function AppSplashScreen(): ReactElement {
   return (
     <AppScreen scrollDisabled style={styles.screen} withBackgroundImage>
-      <Icon name='splashScreenLogo' />
+      <Image source={{ uri: Images.background }} />
     </AppScreen>
   );
 }

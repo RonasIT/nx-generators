@@ -18,6 +18,9 @@
       "@example/mobile/auth/features/login-form": [
         "libs/mobile/auth/features/login-form/src/index.ts"
       ],
+      "@example/mobile/profile/features/details": [
+        "libs/mobile/profile/features/details/src/index.ts"
+      ],
       "@example/mobile/shared/data-access/api": [
         "libs/mobile/shared/data-access/api/src/index.ts"
       ],
@@ -51,10 +54,10 @@
       "@example/mobile/shared/utils/app-env": [
         "libs/mobile/shared/utils/app-env/src/index.ts"
       ],
-      "@nx-generators/source": ["src/index.ts"],
       "@example/mobile/shared/utils/form": [
         "libs/mobile/shared/utils/form/src/index.ts"
       ],
+      "@nx-generators/source": ["src/index.ts"],
       "@ronas-it/nx-generators": ["plugin/src/index.ts"]
     }
   },

@@ -1,21 +1,22 @@
 import { appEnv } from '@example/mobile/shared/utils/app-env';
 
 export const configuration = {
-  // TODO: Add development, production url, when API will be ready
   apiURL: appEnv.select({
-    development: '',
-    production: '',
+    development: 'https://api.dev.bukeapp.com',
+    production: 'https://api.bukeapp.com'
   }),
   auth: {
     refreshTokenRoute: '/auth/refresh',
-    // TODO: Add routes, when confirmation functionality will be ready
     unauthorizedRoutes: [
       '/login',
       '/register',
       '/auth/forgot-password',
       '/auth/restore-password',
+      '/auth/restore-password-token',
       '/auth/token/check',
+      '/auth/send-confirm-email-code',
+      '/auth/confirm-email'
     ],
-    logoutRoute: '/auth/logout',
-  },
+    logoutRoute: '/auth/logout'
+  }
 };

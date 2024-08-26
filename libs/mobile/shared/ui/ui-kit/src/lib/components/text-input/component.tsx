@@ -33,7 +33,6 @@ export const AppTextInput = React.forwardRef(function Component(
   ref: React.ForwardedRef<Input>
 ): ReactElement {
   const theme = useAppTheme();
-  const [localValue, setLocalValue] = useState('');
   const [secured, setSecured] = useState(true);
 
   const renderAccessoryRight = useMemo(
@@ -68,14 +67,12 @@ export const AppTextInput = React.forwardRef(function Component(
 
   const onFocusHandler = (args: NativeSyntheticEvent<TextInputFocusEventData>): void => onFocus?.(args);
 
-  const onChangeTextHandler = (text: string): void => (onChangeText ? onChangeText(text) : setLocalValue(text));
-
   return (
     <View style={[commonStyle.fullWidth, isStretched && commonStyle.fullFlex, containerStyle]}>
       <Input
         ref={ref}
-        value={String(value || localValue)}
-        onChangeText={onChangeTextHandler}
+        value={value}
+        onChangeText={onChangeText}
         onFocus={onFocusHandler}
         selectionColor={theme['text-primary-color']}
         status={error ? 'danger' : status}

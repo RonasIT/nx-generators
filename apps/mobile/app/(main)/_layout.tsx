@@ -10,7 +10,7 @@ export default function MainNavigation(): ReactElement {
   return (
     <Tabs backBehavior='none'>
       <Tabs.Screen
-        name='profile'
+        name='index'
         options={{
           tabBarIcon: ({ focused }) => <Icon name='profile' color={focused ? colors.primary : colors.active} />,
           headerTitleAlign: 'left',

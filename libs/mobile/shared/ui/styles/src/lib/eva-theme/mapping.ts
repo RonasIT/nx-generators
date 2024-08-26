@@ -168,7 +168,7 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
                     backgroundColor: colors.backgroundTertiary,
                     borderColor: colors.backgroundTertiary,
                     borderWidth: 1,
-                    textColor: colors.backgroundTertiary,
+                    textColor: colors.textSecondary,
                   },
                 },
               },

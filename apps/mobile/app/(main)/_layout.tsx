@@ -1,4 +1,4 @@
-import { useTranslation } from '@ronas-it/react-native-common-modules';
+import { useTranslation } from '@ronas-it/react-native-common-modules/src/utils/i18n';
 import { Tabs } from 'expo-router';
 import React, { ReactElement } from 'react';
 import { colors } from '@example/mobile/shared/ui/styles';

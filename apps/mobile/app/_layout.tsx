@@ -1,12 +1,10 @@
-// import 'reflect-metadata';
-
 import { store } from '@example/mobile/shared/data-access/store';
 import { UserThemeProvider } from '@example/mobile/shared/features/user-theme-provider';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { Stack, useRouter } from 'expo-router';
 import { ReactElement, useEffect } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { setLanguage } from '@ronas-it/react-native-common-modules';
+import { setLanguage } from '@ronas-it/react-native-common-modules/src/utils/i18n';
 import { authSelectors } from '@example/mobile/shared/data-access/auth';
 
 export { ErrorBoundary } from 'expo-router';
@@ -26,7 +24,7 @@ const useLanguage = setLanguage(
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const unstable_settings = {
-  initialRouteName: 'index',
+  initialRouteName: 'index'
 };
 
 function App(): ReactElement {

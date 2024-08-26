@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useTranslation } from '@ronas-it/react-native-common-modules';
+import { useTranslation } from '@ronas-it/react-native-common-modules/src/utils/i18n';
 import Constants from 'expo-constants';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -65,9 +65,8 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps): JSX.Element {
           status='basic'
           isLoading={isLoading}
           disabled={!formState.isValid}
-          testID='submit-button'>
-          {translate('BUTTON_SUBMIT')}
-        </AppButton>
+          testID='submit-button'
+          title={translate('BUTTON_SUBMIT')} />
       </View>
       <AppVersion />
     </ScrollView>

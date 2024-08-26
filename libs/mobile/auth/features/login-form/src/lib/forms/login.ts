@@ -1,4 +1,4 @@
-import { useTranslation } from '@ronas-it/react-native-common-modules';
+import { useTranslation } from '@ronas-it/react-native-common-modules/src/utils/i18n';
 import * as Yup from 'yup';
 import { BaseFormSchema, FormValues } from '@example/mobile/shared/utils/form';
 

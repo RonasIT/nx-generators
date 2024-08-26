@@ -1,6 +1,4 @@
-import 'reflect-metadata';
-
-import { useTranslation } from '@ronas-it/react-native-common-modules';
+import { useTranslation } from '@ronas-it/react-native-common-modules/src/utils/i18n';
 import { Stack } from 'expo-router/stack';
 import React, { ReactElement } from 'react';
 

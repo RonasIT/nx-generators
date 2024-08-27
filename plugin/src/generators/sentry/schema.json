@@ -16,11 +16,7 @@
     "DSN": {
       "type": "string",
       "description": "",
-      "$default": {
-        "$source": "argv",
-        "index": 0
-      },
-      "x-prompt": "Enter the DSN"
+      "x-prompt": "What is your Sentry DSN?"
     }
   },
   "required": ["directory", "DSN"]

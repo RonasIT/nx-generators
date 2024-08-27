@@ -13,7 +13,6 @@ import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 import { existsSync, rmSync } from 'fs';
 import { formatName, formatAppIdentifier } from '../../shared/utils';
-import sentryGenerator from '../sentry/generator';
 
 const dependencies = {
   'expo-constants': '~16.0.2',
@@ -91,13 +90,14 @@ export async function expoAppGenerator(
 
   await formatFiles(tree);
 
-  if (options.withSentry) {
-    await sentryGenerator(tree, options);
-  }
-
   return () => {
     installPackagesTask(tree);
     execSync('npx expo install --fix', { stdio: 'inherit' });
+    if (options.withSentry) {
+      execSync(`npx nx g sentry --directory=${options.directory}`, {
+        stdio: 'inherit',
+      });
+    }
   };
 }
 

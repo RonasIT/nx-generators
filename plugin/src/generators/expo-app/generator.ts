@@ -7,23 +7,15 @@ import {
   installPackagesTask,
   readJson,
   Tree,
-  writeJson,
+  writeJson
 } from '@nx/devkit';
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 import { existsSync, rmSync } from 'fs';
+import { dependencies, devDependencies } from '../../shared/dependencies';
+import { BaseGeneratorType } from '../../shared/enums';
+import { runStoreGenerator, runAppEnvGenerator, runApiClientGenerator, runAuthGenerator, runStorageGenerator, runRNStylesGenerator } from '../../shared/generators';
 import { formatName, formatAppIdentifier } from '../../shared/utils';
-
-const dependencies = {
-  'expo-constants': '~16.0.2',
-  'expo-router': '~3.5.16',
-  'react-native-safe-area-context': '^4.10.5',
-  'react-native-screens': '^3.32.0',
-  'expo-linking': '^6.3.1',
-  'expo-status-bar': '^1.12.1',
-  'expo-updates': '^0.25.17',
-  'expo-insights': '~0.7.0',
-};
 
 export async function expoAppGenerator(
   tree: Tree,
@@ -31,6 +23,7 @@ export async function expoAppGenerator(
 ) {
   const appRoot = `apps/${options.directory}`;
   const appTestFolder = `apps/${options.directory}-e2e`;
+  const libPath = `@${options.name}/${options.directory}`;
 
   // Install @nx/expo plugin
   execSync('npx nx add @nx/expo', { stdio: 'inherit' });
@@ -41,6 +34,14 @@ export async function expoAppGenerator(
       { stdio: 'inherit' },
     );
   }
+
+  // Generate shared libs
+  runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
+  runAppEnvGenerator(tree, options);
+  runApiClientGenerator(tree, options);
+  runStorageGenerator(tree, options);
+  runAuthGenerator(tree, options);
+  runRNStylesGenerator(tree, options);
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
   if (existsSync(appTestFolder)) {
@@ -57,6 +58,8 @@ export async function expoAppGenerator(
   tree.delete(`${appRoot}/app.json`);
   tree.delete(`${appRoot}/eas.json`);
   tree.delete(`${appRoot}/metro.config.js`);
+  tree.delete(`${appRoot}/jest.config.ts`);
+  tree.delete(`${appRoot}/tsconfig.app.json`);
 
   // Update app package.json
   const appPackageJson = readJson(tree, appPackagePath);
@@ -68,31 +71,38 @@ export async function expoAppGenerator(
   writeJson(tree, appPackagePath, appPackageJson);
 
   // Add app files
-  generateFiles(tree, path.join(__dirname, 'files'), appRoot, {
+  generateFiles(tree, path.join(__dirname, 'app-files'), appRoot, {
     ...options,
     formatName,
     formatAppIdentifier,
+    formatDirectory: () => libPath,
+    isUIKittenEnabled: false,
+    appDirectory: options.directory
   });
 
   // Add dependencies
   addDependenciesToPackageJson(
     tree,
     {
-      ...dependencies,
-      // Need new version to fix this error:
-      // https://github.com/kristerkari/react-native-svg-transformer/issues/329
-      'react-native-svg-transformer': '^1.4.0',
+      ...dependencies['expo-app'],
+      ...dependencies['expo-app-root']
     },
-    { 'cross-env': '^7.0.3' },
+    {
+      ...devDependencies['expo-app'],
+      ...devDependencies['expo-app-root']
+    }
   );
 
-  addDependenciesToPackageJson(tree, dependencies, {}, appPackagePath);
+  addDependenciesToPackageJson(tree, dependencies['expo-app'], devDependencies['expo-app'], appPackagePath);
 
   await formatFiles(tree);
 
   return () => {
     installPackagesTask(tree);
     execSync('npx expo install --fix', { stdio: 'inherit' });
+    execSync(`npx nx g ui-kitten ${options.name} ${options.directory}`, {
+      stdio: 'inherit',
+    });
     if (options.withSentry) {
       execSync(`npx nx g sentry --directory=${options.directory}`, {
         stdio: 'inherit',

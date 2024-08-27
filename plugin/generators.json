@@ -34,6 +34,11 @@
       "factory": "./src/generators/sentry/generator",
       "schema": "./src/generators/sentry/schema.json",
       "description": "sentry generator"
+    },
+    "ui-kitten": {
+      "factory": "./src/shared/generators/ui-kitten/generator",
+      "schema": "./src/shared/generators/ui-kitten/schema.json",
+      "description": "UI-Kitten generator for Expo projects"
     }
   }
 }

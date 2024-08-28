@@ -24,7 +24,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@nx/devkit": "19.3.0",
+    "@nx/devkit": "^19.3.0",
+    "@nx/expo": "^19.3.0",
     "lodash": "^4.17.21",
     "tslib": "^2.6.3",
     "inquirer-autocomplete-standalone": "^0.8.1"

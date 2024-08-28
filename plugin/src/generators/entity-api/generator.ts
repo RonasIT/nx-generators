@@ -1,12 +1,12 @@
 import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 import * as path from 'path';
 import { camelCase, kebabCase, startCase } from 'lodash';
-import { ReactApiGeneratorSchema } from './schema';
+import { EntityApiGeneratorSchema } from './schema';
 import { askQuestion, dynamicImport, getNxLibsPaths, LibraryType, searchAliasPath, searchNxLibsPaths } from '../../shared/utils';
 
-export async function reactComponentGenerator(
+export async function entityApiGenerator(
   tree: Tree,
-  options: ReactApiGeneratorSchema
+  options: EntityApiGeneratorSchema
 ) {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
   const nxLibsPaths = getNxLibsPaths([LibraryType.DATA_ACCESS]);
@@ -42,10 +42,11 @@ export async function reactComponentGenerator(
   const libPath = apiLibsPaths[0];
   const libRootPath = `${libPath}/lib`;
 
-  options.name = options.name || await askQuestion('Enter the name of the API (e.g: Profile): ');
-  options.baseEndpoint = options.baseEndpoint || await askQuestion('Enter the base endpoint (e.g: profile): ');
+  options.name = options.name || await askQuestion('Enter the name of the entity (e.g: User): ');
 
   const apiName = kebabCase(options.name);
+
+  options.baseEndpoint = options.baseEndpoint || await askQuestion('Enter the base endpoint (e.g: /users): ', `/${apiName}`);
 
   const apiPath = `${libRootPath}/${apiName}`;
   const entityName = startCase(camelCase(apiName)).replace(/\s+/g, '');
@@ -75,4 +76,4 @@ export async function reactComponentGenerator(
   await formatFiles(tree);
 }
 
-export default reactComponentGenerator;
+export default entityApiGenerator;

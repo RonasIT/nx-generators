@@ -1,4 +1,4 @@
 export const <%= apiName %>ApiConfig = {
   entityName: '<%= apiName %>',
-  baseEndpoint: '/<%= baseEndpoint %>'
+  baseEndpoint: '<%= baseEndpoint %>'
 };

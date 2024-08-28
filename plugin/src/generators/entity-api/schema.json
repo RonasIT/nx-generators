@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/schema",
-  "$id": "ReactAPI",
+  "$id": "EntityAPI",
   "title": "",
   "type": "object",
   "properties": {
     "name": {
       "type": "string",
-      "description": "Name of the API",
+      "description": "Name of the entity",
       "default": "",
       "$default": {
         "$source": "argv",

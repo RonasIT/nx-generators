@@ -1,5 +1,3 @@
-import { LibraryPresetType } from '../../shared/enums/library-preset-type';
-
 export interface ReactLibGeneratorSchema {
   directory?: string;
   app?: string;

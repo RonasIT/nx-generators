@@ -7,12 +7,14 @@ export const askQuestion = (question: string, defaultAnswer?: string): Promise<s
     output: process.stdout,
   });
 
+  if (defaultAnswer) {
+    rl.write(defaultAnswer);
+    // Move cursor to end of the line
+    setTimeout(() => rl.write(null, { ctrl: true, name: 'e' }));
+  }
+
   return new Promise((resolve) =>
     rl.question(question, (answer) => {
-      if (defaultAnswer) {
-        answer = defaultAnswer;
-      }
-
       rl.close();
       resolve(answer.startsWith('/') ? answer : `/${answer}`);
     })

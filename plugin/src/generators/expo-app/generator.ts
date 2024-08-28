@@ -19,19 +19,19 @@ import { formatName, formatAppIdentifier } from '../../shared/utils';
 
 export async function expoAppGenerator(
   tree: Tree,
-  options: ExpoAppGeneratorSchema
+  options: ExpoAppGeneratorSchema,
 ) {
   const appRoot = `apps/${options.directory}`;
   const appTestFolder = `apps/${options.directory}-e2e`;
   const libPath = `@${options.name}/${options.directory}`;
 
   // Install @nx/expo plugin
-  execSync('npx nx add @nx/expo', { stdio: 'inherit' })
+  execSync('npx nx add @nx/expo', { stdio: 'inherit' });
 
   if (!existsSync(appRoot)) {
     execSync(
       `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`,
-      { stdio: 'inherit' }
+      { stdio: 'inherit' },
     );
   }
 
@@ -100,7 +100,14 @@ export async function expoAppGenerator(
   return () => {
     installPackagesTask(tree);
     execSync('npx expo install --fix', { stdio: 'inherit' });
-    execSync(`npx nx g ui-kitten ${options.name} ${options.directory}`, { stdio: 'inherit' });
+    execSync(`npx nx g ui-kitten ${options.name} ${options.directory}`, {
+      stdio: 'inherit',
+    });
+    if (options.withSentry) {
+      execSync(`npx nx g sentry --directory=${options.directory}`, {
+        stdio: 'inherit',
+      });
+    }
   };
 }
 

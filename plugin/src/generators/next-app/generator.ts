@@ -69,6 +69,11 @@ export async function nextAppGenerator(
 
   return () => {
     installPackagesTask(tree);
+    if (options.withSentry) {
+      execSync(`npx nx g sentry --directory=${options.directory}`, {
+        stdio: 'inherit',
+      });
+    }
   };
 }
 

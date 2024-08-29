@@ -148,6 +148,22 @@ or
 npx nx g react-component AppButton --subcomponent
 ```
 
+### 7. `entity-api`
+
+Creates an API with related entities in API library. It also updates redux store middlewares, reducers.
+
+#### Options
+
+1. `name` (optional) - name of the entity (e.g. User)
+
+2. `baseEndpoint` (optional) - name of used endpoint in your API (e.g. /users)
+
+#### Example
+
+```sh
+npx nx g entity-api --name=User --baseEndpoint=users
+```
+
 ### Note
 
 Each generator accepts the `--help` argument to see generator instructions.

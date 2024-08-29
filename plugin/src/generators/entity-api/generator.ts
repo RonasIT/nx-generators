@@ -1,4 +1,5 @@
 import { formatFiles, generateFiles, Tree } from '@nx/devkit';
+import { IndentationText, Project, QuoteKind, StructureKind, SyntaxKind } from 'ts-morph';
 import * as path from 'path';
 import { camelCase, kebabCase, startCase } from 'lodash';
 import { EntityApiGeneratorSchema } from './schema';
@@ -37,6 +38,7 @@ export async function entityApiGenerator(
     });
   }
 
+  const apiDirectory = searchAliasPath(apiLibsPaths[0]);
   const apiClientDirectory = searchAliasPath(apiClientLibsPaths[0]);
 
   const libPath = apiLibsPaths[0];
@@ -71,7 +73,51 @@ export async function entityApiGenerator(
 
   appendFileContent(`${libRootPath}/index.ts`, `export * from './${apiName}';\n`);
 
-  console.log(`\nDon't forget to add the new API to the redux store.`);
+  const storeLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/store/');
+
+  if (!storeLibsPaths.length) {
+    await formatFiles(tree);
+
+    throw new Error('Could not find redux store path.');
+  }
+
+  if (storeLibsPaths.length > 1) {
+    storeLibsPaths[0] = await autocomplete({
+      message: 'Select the store library path:',
+      suggestOnly: true,
+      source: async () => storeLibsPaths.map((path) => ({ value: path }))
+    });
+  }
+
+  // Update redux store
+  const apiNameDeclaration = camelCase(options.name + 'Api');
+  const project = new Project({
+    manipulationSettings: {
+      indentationText: IndentationText.TwoSpaces,
+      quoteKind: QuoteKind.Single
+    }
+  });
+  const store = project.addSourceFileAtPath(`${storeLibsPaths[0]}/store.ts`);
+  // TODO: create declaration if not exists
+  const apiImportsDeclaration = store.getImportDeclarationOrThrow((node) => node.getModuleSpecifierValue() === apiDirectory);
+  
+  apiImportsDeclaration.addNamedImport(apiNameDeclaration);
+
+  const rootReducer = store.getVariableDeclarationOrThrow('rootReducer');
+  
+  rootReducer.getInitializerIfKindOrThrow(SyntaxKind.ObjectLiteralExpression)
+    .addProperty({
+      name: `[${apiNameDeclaration}.reducerPath]`,
+      initializer: `${apiNameDeclaration}.reducer`,
+      kind: StructureKind.PropertyAssignment
+    });
+
+  const middlewares = store.getVariableDeclarationOrThrow('middlewares');
+
+  middlewares.getInitializerIfKindOrThrow(SyntaxKind.ArrayLiteralExpression)
+    .addElement(`${apiNameDeclaration}.middleware`);
+
+  project.saveSync();
 
   await formatFiles(tree);
 }

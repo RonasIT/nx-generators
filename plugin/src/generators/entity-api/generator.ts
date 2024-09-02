@@ -59,7 +59,7 @@ export async function entityApiGenerator(
     entityName,
     entityFileName: apiName,
     apiClientDirectory,
-    baseEndpoint: options.baseEndpoint
+    baseEndpoint: options.baseEndpoint.startsWith('/') ? options.baseEndpoint : `/${options.baseEndpoint}` 
   });
 
   tree.rename(`${apiPath}/models/entity.ts`, `${apiPath}/models/${apiName}.ts`);

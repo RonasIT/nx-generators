@@ -28,6 +28,7 @@
     "@nx/expo": "^19.3.0",
     "lodash": "^4.17.21",
     "tslib": "^2.6.3",
+    "ts-morph": "^23.0.0",
     "inquirer-autocomplete-standalone": "^0.8.1"
   },
   "type": "commonjs",

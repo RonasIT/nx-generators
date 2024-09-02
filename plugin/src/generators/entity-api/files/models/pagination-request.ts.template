@@ -1,0 +1,8 @@
+import { PaginationRequest } from '@ronas-it/rtkq-entity-api';
+
+export class <%= entityName %>PaginationRequest extends PaginationRequest {
+  constructor(model: Partial<<%= entityName %>PaginationRequest>) {
+    super(model);
+    Object.assign(this, model);
+  }
+}

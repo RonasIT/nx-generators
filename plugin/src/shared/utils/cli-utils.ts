@@ -1,16 +1,22 @@
 import * as readline from 'readline';
 import * as fs from 'fs';
 
-export const askQuestion = (question: string): Promise<string> => {
+export const askQuestion = (question: string, defaultAnswer?: string): Promise<string> => {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
+  if (defaultAnswer) {
+    rl.write(defaultAnswer);
+    // Move cursor to end of the line
+    setTimeout(() => rl.write(null, { ctrl: true, name: 'e' }));
+  }
+
   return new Promise((resolve) =>
     rl.question(question, (answer) => {
       rl.close();
-      resolve(answer);
+      resolve(answer.startsWith('/') ? answer : `/${answer}`);
     })
   );
 };
@@ -22,7 +28,7 @@ export enum LibraryType {
   UTILS = 'utils',
 }
 
-export const getNxLibsPaths = (types: Array<LibraryType>) => {
+const parseLibsPaths = () => {
   let tsconfig;
 
   if (fs.existsSync('tsconfig.base.json')) {
@@ -31,7 +37,11 @@ export const getNxLibsPaths = (types: Array<LibraryType>) => {
     tsconfig = JSON.parse(fs.readFileSync('tsconfig.json', 'utf8'));
   }
 
-  const libs = tsconfig.compilerOptions.paths;
+  return tsconfig.compilerOptions.paths;
+}
+
+export const getNxLibsPaths = (types: Array<LibraryType>) => {
+  const libs = parseLibsPaths();
 
   return Object.values(libs)
     .map((value) => value[0].replace('/index.ts', ''))
@@ -40,4 +50,11 @@ export const getNxLibsPaths = (types: Array<LibraryType>) => {
 
 export const searchNxLibsPaths = (paths: Array<string>, input: string) => {
   return paths.filter((path) => path.includes(input));
+}
+
+export const searchAliasPath = (input: string) => {
+  const libs = parseLibsPaths();
+  const path = Object.keys(libs).find((key) => libs[key][0].includes(input));
+
+  return path;
 }

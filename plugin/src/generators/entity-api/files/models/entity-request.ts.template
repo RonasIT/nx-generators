@@ -1,0 +1,8 @@
+import { EntityRequest } from '@ronas-it/rtkq-entity-api';
+
+export class <%= entityName %>EntityRequest extends EntityRequest {
+  constructor(model: <%= entityName %>EntityRequest) {
+    super(model);
+    Object.assign(this, model);
+  }
+}

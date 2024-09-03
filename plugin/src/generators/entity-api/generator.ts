@@ -3,7 +3,7 @@ import { IndentationText, Project, QuoteKind, StructureKind, SyntaxKind } from '
 import * as path from 'path';
 import { camelCase, kebabCase, startCase } from 'lodash';
 import { EntityApiGeneratorSchema } from './schema';
-import { askQuestion, dynamicImport, getNxLibsPaths, LibraryType, searchAliasPath, searchNxLibsPaths } from '../../shared/utils';
+import { askQuestion, dynamicImport, filterSource, getNxLibsPaths, LibraryType, searchAliasPath, searchNxLibsPaths } from '../../shared/utils';
 
 export async function entityApiGenerator(
   tree: Tree,
@@ -25,16 +25,14 @@ export async function entityApiGenerator(
   if (apiClientLibsPaths.length > 1) {
     apiClientLibsPaths[0] = await autocomplete({
       message: 'Select the api client library path:',
-      suggestOnly: true,
-      source: async () => apiClientLibsPaths.map((path) => ({ value: path }))
+      source: (input) => filterSource(input, apiClientLibsPaths)
     });
   }
 
   if (apiLibsPaths.length > 1) {
     apiLibsPaths[0] = await autocomplete({
       message: 'Select the api library path:',
-      suggestOnly: true,
-      source: async () => apiLibsPaths.map((path) => ({ value: path }))
+      source: (input) => filterSource(input, apiLibsPaths)
     });
   }
 
@@ -84,8 +82,7 @@ export async function entityApiGenerator(
   if (storeLibsPaths.length > 1) {
     storeLibsPaths[0] = await autocomplete({
       message: 'Select the store library path:',
-      suggestOnly: true,
-      source: async () => storeLibsPaths.map((path) => ({ value: path }))
+      source: (input) => filterSource(input, storeLibsPaths)
     });
   }
 

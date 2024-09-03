@@ -48,8 +48,8 @@ export const getNxLibsPaths = (types: Array<LibraryType>) => {
     .filter((value) => types.some((type) => value.includes(type)));
 }
 
-export const searchNxLibsPaths = (paths: Array<string>, input: string) => {
-  return paths.filter((path) => path.includes(input));
+export const searchNxLibsPaths = (paths: Array<string>, input: string, method: 'includes' | 'startsWith' | 'endsWith' = 'includes') => {
+  return paths.filter((path) => path[method](input));
 }
 
 export const searchAliasPath = (input: string) => {

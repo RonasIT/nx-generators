@@ -1,8 +1,7 @@
 import { createEntityApi } from '@ronas-it/rtkq-entity-api';
 import { axiosBaseQuery, createAppApi } from '<%= apiClientDirectory %>';
-import { <%= entityName %> } from '../<%= entityFileName %>';
 import { <%= apiName %>ApiConfig } from './config';
-import { <%= entityName %>EntityRequest, <%= entityName %>PaginationRequest } from './models';
+import { <%= entityName %>, <%= entityName %>EntityRequest, <%= entityName %>PaginationRequest } from './models';
 
 export const <%= apiName %>Api = createEntityApi({
   entityName: <%= apiName %>ApiConfig.entityName,

@@ -60,7 +60,7 @@ export const searchAliasPath = (input: string) => {
 }
 
 export const filterSource = async (input: string, source: Array<string>) => {
-  const filteredData = source.filter((pathname) => pathname.toLowerCase().includes(input.toLowerCase()));
+  const filteredData = input ? source.filter((pathname) => pathname.toLowerCase().includes(input.toLowerCase())) : source;
 
   return filteredData.map((path) => ({ value: path }));
 };

@@ -1,6 +1,6 @@
 export const dependencies = {
   'expo-app': {
-    "@ronas-it/react-native-common-modules": "^0.2.0",
+    "@ronas-it/react-native-common-modules": "^0.4.0",
     'expo-constants': '~16.0.2',
     'expo-router': '~3.5.16',
     'react-native-safe-area-context': '^4.10.5',

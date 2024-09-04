@@ -11,8 +11,8 @@ export async function entityApiGenerator(
 ) {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
   const nxLibsPaths = getNxLibsPaths([LibraryType.DATA_ACCESS]);
-  const apiLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/api/');
-  const apiClientLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/api-client/');
+  const apiLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/api/src', 'endsWith');
+  const apiClientLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/api-client/src', 'endsWith');
 
   if (!apiClientLibsPaths.length) {
     throw new Error('Could not find API Client path.');
@@ -71,7 +71,7 @@ export async function entityApiGenerator(
 
   appendFileContent(`${libRootPath}/index.ts`, `export * from './${apiName}';\n`);
 
-  const storeLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/store/');
+  const storeLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/store/src', 'endsWith');
 
   if (!storeLibsPaths.length) {
     await formatFiles(tree);

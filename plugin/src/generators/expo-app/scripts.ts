@@ -1,5 +1,5 @@
 export default {
-  'start': 'npx expo start',
+  'start': 'cross-env EXPO_PUBLIC_APP_ENV=development npx expo start',
   'start:prod': 'cross-env EXPO_PUBLIC_APP_ENV=production npx expo start',
   'build:dev': 'eas build --no-wait -p all --profile=development',
   'build:debug': 'npm run build:dev -- --profile=debug',

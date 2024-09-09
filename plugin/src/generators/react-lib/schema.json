@@ -34,8 +34,7 @@
     },
     "withComponent": {
       "type": "boolean",
-      "description": "Generate the library with 'lib/component.tsx' file",
-      "default": false
+      "description": "Generate the library with 'lib/component.tsx' file"
     },
     "dryRun": {
       "type": "boolean",

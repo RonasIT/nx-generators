@@ -19,7 +19,7 @@ export async function runRNStylesGenerator(
   const libPath = `@${options.name}/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/ui/styles`, {
+  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=ui --name=styles --withComponent=false`, {
     stdio: 'inherit',
   });
 

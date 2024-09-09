@@ -19,7 +19,7 @@ export async function runApiClientGenerator(
   const libPath = `@${options.name}/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/api-client`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=api-client`, { stdio: 'inherit' });
 
   const appPackagePath = `${appRoot}/package.json`;
 

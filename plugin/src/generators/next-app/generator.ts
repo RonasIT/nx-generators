@@ -13,7 +13,7 @@ import { existsSync } from 'fs';
 import { dependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import { runApiClientGenerator, runAppEnvGenerator, runStoreGenerator } from '../../shared/generators';
-import { formatName } from '../../shared/utils';
+import { addNxAppTag, formatName } from '../../shared/utils';
 import * as path from 'path';
 
 export async function nextAppGenerator(
@@ -61,6 +61,8 @@ export async function nextAppGenerator(
     ...options,
     formatName,
   });
+
+  addNxAppTag(tree, options.directory);
 
   // Add dependencies
   addDependenciesToPackageJson(tree, dependencies['next-app'], {});

@@ -49,8 +49,8 @@ export async function reactLibGenerator(
     options.withComponent = await askQuestion('Generate component inside lib folder? (y/n): ') === 'y';
   }
 
-  const scopeTag = `scope:${options.scope || 'shared'}`;
-  const tags = [`app:${options.app}`, `${scopeTag}`, `type:${options.type}`];
+  const scopeTag = options.scope || 'shared';
+  const tags = [`app:${options.app}`, `scope:${scopeTag}`, `type:${options.type}`];
 
   const libPath = path.normalize(`libs/${options.app}/${options.scope}/${options.type}/${options.name}`);
   const command = `npx nx g @nx/expo:lib --skipPackageJson --unitTestRunner=none --tags="${tags.join(', ')}" --projectNameAndRootFormat=derived ${libPath}`;

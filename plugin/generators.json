@@ -39,6 +39,11 @@
       "factory": "./src/generators/entity-api/generator",
       "schema": "./src/generators/entity-api/schema.json",
       "description": "entity-api generator"
+    },
+    "form": {
+      "factory": "./src/generators/form/generator",
+      "schema": "./src/generators/form/schema.json",
+      "description": "form generator"
     }
   }
 }

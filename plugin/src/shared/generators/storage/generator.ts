@@ -5,14 +5,14 @@ import {
   generateFiles,
   Tree
 } from '@nx/devkit';
-import { formatName, formatAppIdentifier } from '../../utils';
+import { formatName, formatAppIdentifier, getImportPathPrefix } from '../../utils';
 
 export async function runStorageGenerator(
   tree: Tree,
   options: { name: string; directory: string }
 ) {
   const libRoot = `libs/${options.directory}`;
-  const libPath = `@${options.name}/${options.directory}`;
+  const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
 
   // Generate shared libs
   execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=storage`, { stdio: 'inherit' });

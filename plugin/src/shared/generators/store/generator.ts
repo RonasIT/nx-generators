@@ -8,16 +8,16 @@ import {
   Tree
 } from '@nx/devkit';
 import { dependencies } from '../../dependencies';
-import { BaseGeneratorType } from '../../enums';
-import { formatName, formatAppIdentifier } from '../../utils';
+import { formatName, formatAppIdentifier, getImportPathPrefix } from '../../utils';
+import { StoreGeneratorSchema } from './schema';
 
 export async function runStoreGenerator(
   tree: Tree,
-  options: { name: string; directory: string, baseGeneratorType: BaseGeneratorType }
+  options: StoreGeneratorSchema
 ) {
   const appRoot = `apps/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
-  const libPath = `@${options.name}/${options.directory}`;
+  const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
 
   // Generate shared libs
   execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=store`, { stdio: 'inherit' });

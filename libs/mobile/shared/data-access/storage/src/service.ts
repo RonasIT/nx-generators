@@ -1,7 +1,4 @@
-import {
-  AsyncStorageItem,
-  SecureStorageItem,
-} from '@ronas-it/react-native-common-modules/src/data-access/storage';
+import { AsyncStorageItem, SecureStorageItem } from '@ronas-it/react-native-common-modules';
 
 class AppStorageService {
   public token = new SecureStorageItem('token');

@@ -1,7 +1,7 @@
+import { AppPressable } from '@ronas-it/react-native-common-modules';
 import React, { ReactElement } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { Icon, IconProps } from '../icon';
-import { AppPressable } from '../pressable/component';
 
 interface AppPressableIconProps extends IconProps {
   onPress: () => void;

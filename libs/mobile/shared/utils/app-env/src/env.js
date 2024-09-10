@@ -20,14 +20,10 @@ class AppEnv {
     const shouldUseDefault = !envKeys.includes(this.current);
 
     if (shouldUseDefault && !envKeys.includes(defaultOptionName)) {
-      throw new Error(
-        `Missing value for environment '${this.current}' and '${defaultOptionName}' option was not set.`,
-      );
+      throw new Error(`Missing value for environment '${this.current}' and '${defaultOptionName}' option was not set.`);
     }
 
-    return shouldUseDefault
-      ? options[defaultOptionName]
-      : options[this.current];
+    return shouldUseDefault ? options[defaultOptionName] : options[this.current];
   }
 }
 

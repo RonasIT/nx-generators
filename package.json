@@ -14,7 +14,7 @@
     "@nx/devkit": "19.3.0",
     "@nx/plugin": "^19.3.0",
     "@ronas-it/axios-api-client": "^0.1.0",
-    "@ronas-it/react-native-common-modules": "^0.3.0",
+    "@ronas-it/react-native-common-modules": "^0.4.2",
     "@ronas-it/rtkq-entity-api": "^0.3.1",
     "@ui-kitten/components": "^5.3.1",
     "expo": "~51.0.8",

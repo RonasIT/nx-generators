@@ -4,7 +4,6 @@ export * from './button';
 export * from './form-text-input';
 export * from './text-input';
 export * from './error-message';
-export * from './pressable';
 export * from './pressable-icon';
 export * from './icon';
 export * from './splash-screen';

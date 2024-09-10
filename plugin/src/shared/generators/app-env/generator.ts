@@ -6,13 +6,15 @@ import {
   Tree
 } from '@nx/devkit';
 import { formatName, formatAppIdentifier } from '../../utils';
+import { BaseGeneratorType } from '../../enums';
 
 export async function runAppEnvGenerator(
   tree: Tree,
-  options: { name: string; directory: string }
+  options: { name: string; directory: string, baseGeneratorType: BaseGeneratorType }
 ) {
   const libRoot = `libs/${options.directory}`;
   const libPath = `@${options.name}/${options.directory}`;
+  const appType = options.baseGeneratorType.split('-')[0].toUpperCase();
 
   // Generate shared libs
   execSync(`npx nx g react-lib ${options.directory}/shared/utils/app-env`, { stdio: 'inherit' });
@@ -25,7 +27,8 @@ export async function runAppEnvGenerator(
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath
+    formatDirectory: () => libPath,
+    appType
   });
 
   await formatFiles(tree);

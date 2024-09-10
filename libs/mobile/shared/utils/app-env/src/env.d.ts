@@ -5,7 +5,5 @@ export class AppEnv<TEnv extends string | number> {
 
   constructor(env: TEnv);
 
-  public select<TValue>(
-    options: Record<TEnv, TValue> | Record<'default', TValue>,
-  ): TValue;
+  public select<TValue>(options: Record<TEnv, TValue> | Record<'default', TValue>): TValue;
 }

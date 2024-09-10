@@ -32,7 +32,7 @@ export const spacings = {
 };
 
 export const fontFamily = {
-  regular: 'System',
-  bold: 'System',
-  semiBold: 'System',
+  regular: 'Gilroy Regular',
+  bold: 'Gilroy Bold',
+  semiBold: 'Gilroy SemiBold',
 };

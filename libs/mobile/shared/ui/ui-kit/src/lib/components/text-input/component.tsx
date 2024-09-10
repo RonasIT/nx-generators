@@ -33,20 +33,20 @@ export const AppTextInput = React.forwardRef(function Component(
   ref: React.ForwardedRef<Input>
 ): ReactElement {
   const theme = useAppTheme();
-  const [secured, setSecured] = useState(true);
+  const [isSecured, setIsSecured] = useState(true);
 
   const renderAccessoryRight = useMemo(
     () =>
       isPassword ? (
         <AppPressableIcon
-          name={secured ? 'eye' : 'eyeOff'}
+          name={isSecured ? 'eye' : 'eyeOff'}
           color={theme['text-primary-color']}
-          onPress={() => setSecured(!secured)}
+          onPress={() => setIsSecured(!isSecured)}
         />
       ) : (
         accessoryRight
       ),
-    [secured]
+    [isSecured]
   );
 
   const renderLabel = useMemo(
@@ -76,7 +76,7 @@ export const AppTextInput = React.forwardRef(function Component(
         onFocus={onFocusHandler}
         selectionColor={theme['text-primary-color']}
         status={error ? 'danger' : status}
-        secureTextEntry={secured && isPassword}
+        secureTextEntry={isSecured && isPassword}
         accessoryRight={renderAccessoryRight}
         label={renderLabel}
         caption={renderErrorCaption}

@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useTranslation } from '@ronas-it/react-native-common-modules/src/utils/i18n';
+import { useTranslation } from '@ronas-it/react-native-common-modules';
 import Constants from 'expo-constants';
 import { Image } from 'expo-image';
 import React, { useEffect } from 'react';

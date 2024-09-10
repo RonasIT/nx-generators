@@ -12,7 +12,7 @@ export class <%= className %> implements BaseFormSchema<<%= className %>> {
     };
   }
 
-  public static get validationSchema(): Yup.ObjectSchema<FormValues<<%= className %>> {
+  public static get validationSchema(): Yup.ObjectSchema<FormValues<<%= className %>>> {
     return Yup.object().shape({
       // Add validation rules here, for example,
       // email: Yup.string().required().email()

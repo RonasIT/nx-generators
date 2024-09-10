@@ -2,6 +2,7 @@ import { generateFiles, Tree } from '@nx/devkit';
 import * as path from 'path';
 import { FormGeneratorSchema } from './schema';
 import {
+  appendFileContent,
   askQuestion,
   dynamicImport,
   formatName,
@@ -9,6 +10,8 @@ import {
   LibraryType,
   searchNxLibsPaths
 } from '../../shared/utils';
+import { existsSync } from 'fs';
+import { kebabCase } from 'lodash';
 
 export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
@@ -23,11 +26,17 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
     }
   });
 
-  options.name = options.name || await askQuestion('Enter the name of the form (e.g: profile-settings):');
-
+  const fileName = options.name || await askQuestion('Enter the name of the form (e.g: profile-settings):');
   const formsPath = `${libPath}/lib/forms`;
-  generateFiles(tree, path.join(__dirname, `files`), formsPath, { className: `${formatName(options.name, true)}FormSchema` });
-  tree.rename(`${formsPath}/form.ts`, `${formsPath}/${options.name}.ts`);
+  generateFiles(tree, path.join(__dirname, `files`), formsPath, { className: `${formatName(fileName, true)}FormSchema` });
+  tree.rename(`${formsPath}/form.ts`, `${formsPath}/${fileName}.ts`);
+
+  const formsIndexFilePath = `${formsPath}/index.ts`;
+  if (!existsSync(formsIndexFilePath)) {
+    tree.write(formsIndexFilePath, `export * from './${kebabCase(fileName)}';\n`);
+  } else {
+    appendFileContent(formsIndexFilePath, `export * from './${kebabCase(fileName)}';\n`, tree);
+  }
 }
 
 export default formGenerator;

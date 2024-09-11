@@ -1,4 +1,4 @@
-import { generateFiles, Tree } from '@nx/devkit';
+import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 import * as path from 'path';
 import { FormGeneratorSchema } from './schema';
 import {
@@ -32,11 +32,14 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
   tree.rename(`${formsPath}/form.ts`, `${formsPath}/${fileName}.ts`);
 
   const formsIndexFilePath = `${formsPath}/index.ts`;
+  const newIndexContent = `export * from './${kebabCase(fileName)}';\n`;
   if (!existsSync(formsIndexFilePath)) {
-    tree.write(formsIndexFilePath, `export * from './${kebabCase(fileName)}';\n`);
+    tree.write(formsIndexFilePath, newIndexContent);
   } else {
-    appendFileContent(formsIndexFilePath, `export * from './${kebabCase(fileName)}';\n`, tree);
+    appendFileContent(formsIndexFilePath, newIndexContent, tree);
   }
+
+  await formatFiles(tree);
 }
 
 export default formGenerator;

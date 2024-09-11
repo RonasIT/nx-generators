@@ -22,6 +22,7 @@ export async function expoAppGenerator(
   options: ExpoAppGeneratorSchema
 ) {
   const appRoot = `apps/${options.directory}`;
+  const i18nRoot = `i18n/${options.directory}`;
   const appTestFolder = `apps/${options.directory}-e2e`;
   const libPath = `@${options.name}/${options.directory}`;
 
@@ -79,6 +80,8 @@ export async function expoAppGenerator(
     isUIKittenEnabled: false,
     appDirectory: options.directory
   });
+
+  generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {});
 
   // Add dependencies
   addDependenciesToPackageJson(

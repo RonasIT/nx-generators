@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { BaseFormSchema, FormValues } from '';
+import { BaseFormSchema, FormValues } from '<%= formUtilsDirectory %>';
 
 export class <%= className %> implements BaseFormSchema<<%= className %>> {
   // Add fields here, for example,

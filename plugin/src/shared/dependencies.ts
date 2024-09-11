@@ -50,6 +50,7 @@ export const devDependencies = {
     'eslint-plugin-react-hooks': '^4.6.2',
     'eslint-plugin-react-native': '^4.1.0',
     'eslint-plugin-unused-imports': '^3.0.0',
+    'husky': '^9.1.5',
     '@typescript-eslint/eslint-plugin': '^7.13.1',
     '@typescript-eslint/parser': '^7.13.1',
     'tsc-files': '^1.1.4',

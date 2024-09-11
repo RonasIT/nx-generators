@@ -25,8 +25,8 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
       return filteredNxLibsPaths.map((path) => ({ value: path }))
     }
   });
-
   const fileName = options.name || await askQuestion('Enter the name of the form (e.g: profile-settings):');
+
   const formsPath = `${libPath}/lib/forms`;
   generateFiles(tree, path.join(__dirname, `files`), formsPath, { className: `${formatName(fileName, true)}FormSchema` });
   tree.rename(`${formsPath}/form.ts`, `${formsPath}/${fileName}.ts`);

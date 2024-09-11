@@ -14,7 +14,15 @@ import scripts from './scripts';
 import { existsSync, rmSync } from 'fs';
 import { dependencies, devDependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
-import { runStoreGenerator, runAppEnvGenerator, runApiClientGenerator, runAuthGenerator, runStorageGenerator, runRNStylesGenerator } from '../../shared/generators';
+import {
+  runStoreGenerator,
+  runAppEnvGenerator,
+  runApiClientGenerator,
+  runAuthGenerator,
+  runStorageGenerator,
+  runRNStylesGenerator,
+  runFormUtilsGenerator
+} from '../../shared/generators';
 import { formatName, formatAppIdentifier } from '../../shared/utils';
 
 export async function expoAppGenerator(
@@ -42,6 +50,7 @@ export async function expoAppGenerator(
   runStorageGenerator(tree, options);
   runAuthGenerator(tree, options);
   runRNStylesGenerator(tree, options);
+  runFormUtilsGenerator(tree, options);
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
   if (existsSync(appTestFolder)) {

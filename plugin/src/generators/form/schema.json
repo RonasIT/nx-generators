@@ -4,7 +4,7 @@
   "title": "",
   "type": "object",
   "properties": {
-    "name": {
+    "formName": {
       "type": "string",
       "description": "Name of the form",
       "default": "",
@@ -12,6 +12,11 @@
         "$source": "argv",
         "index": 0
       }
+    },
+    "componentName": {
+      "type": "string",
+      "description": "Name of the component, where the form should be",
+      "default": ""
     }
   },
   "required": []

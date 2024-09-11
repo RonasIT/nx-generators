@@ -1,3 +1,4 @@
 export interface FormGeneratorSchema {
-  name: string;
+  formName?: string;
+  componentName?: string;
 }

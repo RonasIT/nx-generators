@@ -35,6 +35,11 @@ export const dependencies = {
   'ui-kitten': {
     '@eva-design/eva': '^2.2.0',
     '@ui-kitten/components': '^5.3.1'
+  },
+  'form': {
+    '@hookform/resolvers': '^3.9.0',
+    'react-hook-form': '^7.53.0',
+    'yup': '^1.4.0'
   }
 };
 

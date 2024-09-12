@@ -47,11 +47,11 @@ function updateIndex(formsPath: string, fileName: string, tree: Tree): void {
 }
 
 function getFormUsageCode(formClassName: string): string {
-  return `const formSchema = new ${formClassName}();\n
-    const form = useForm<${formClassName}>({\n
-      defaultValues: formSchema.formValues,\n
-      resolver: yupResolver<any>(${formClassName}.validationSchema)\n
-  });\n\n`
+  return `const formSchema = new ${formClassName}();
+const form = useForm<${formClassName}>({
+  defaultValues: formSchema.formValues,
+  resolver: yupResolver<any>(${formClassName}.validationSchema)
+});\n\n`
 }
 
 async function addFormUsage(libPath: string, placeOfUse: string, formClassName: string): Promise<void> {
@@ -61,7 +61,7 @@ async function addFormUsage(libPath: string, placeOfUse: string, formClassName: 
       quoteKind: QuoteKind.Single
     }
   });
-  const files = project.getSourceFiles([`${libPath}/lib/**/*.tsx`, `${libPath}/lib/**/*.ts`]);
+  const files = project.addSourceFilesAtPaths([`${libPath}/lib/**/*.tsx`, `${libPath}/lib/**/*.ts`]);
   const file = files.find((file) => file.getFunction(placeOfUse) || file.getVariableDeclaration(placeOfUse));
   if (!file) {
     throw new Error('Could not find the place where the form should be used.');
@@ -94,10 +94,8 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
       return filteredNxLibsPaths.map((path) => ({ value: path }))
     }
   });
-  const fileName = options.formName || await askQuestion('Enter the name of the form (e.g: profile-settings): ');
-  const placeOfUse = options.placeOfUse || await askQuestion(
-    'Enter the name of the place, where the form should be (e.g: component ProfileSettings or hook useProfileSettings). If it\'s not necessary, just press Enter: '
-  );
+  const fileName = options.formName;
+  const placeOfUse = options.placeOfUse;
 
   // Generate form class
   const formsPath = `${libPath}/lib/forms`;

@@ -15,6 +15,7 @@ import { existsSync } from 'fs';
 import { kebabCase } from 'lodash';
 import { dependencies } from '../../shared/dependencies';
 import { IndentationText, Project, QuoteKind, SyntaxKind } from 'ts-morph';
+import readline from 'readline';
 
 async function getFormUtilsDirectory(): Promise<string> {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
@@ -54,25 +55,29 @@ function getFormUsageCode(formClassName: string): string {
   });\n\n`
 }
 
-function addFormUsage(libPath: string, componentName: string, formClassName: string): void {
+async function addFormUsage(libPath: string, placeOfUse: string, formClassName: string): Promise<void> {
   const project = new Project({
     manipulationSettings: {
       indentationText: IndentationText.TwoSpaces,
       quoteKind: QuoteKind.Single
     }
   });
-  const componentsFiles = project.getSourceFiles([`${libPath}/lib/component.tsx`, `${libPath}/lib/components/**/component.tsx`]);
-  const componentFile = componentsFiles.find((file) => file.getFunction(componentName) || file.getVariableDeclaration(componentName));
-  if (!componentFile) {
-    throw new Error('Could not find the component where the form should be used.');
+  const files = project.getSourceFiles([`${libPath}/lib/**/*.tsx`, `${libPath}/lib/**/*.ts`]);
+  const file = files.find((file) => file.getFunction(placeOfUse) || file.getVariableDeclaration(placeOfUse));
+  if (!file) {
+    throw new Error('Could not find the place where the form should be used.');
   }
 
-  const pathToForm = componentFile.getFilePath().includes('components') ? '../../forms' : './forms';
-  addNamedImport(formClassName, pathToForm, componentFile);
-  addNamedImport('useForm', 'react-hook-form', componentFile);
-  addNamedImport('yupResolver', '@hookform/resolvers/yup', componentFile);
+  const pathToForm = file.getFilePath().includes('components')
+    ? '../../forms'
+    : file.getFilePath().includes('hooks')
+      ? '../forms'
+      : './forms';
+  addNamedImport(formClassName, pathToForm, file);
+  addNamedImport('useForm', 'react-hook-form', file);
+  addNamedImport('yupResolver', '@hookform/resolvers/yup', file);
 
-  const component = componentFile.getFunction(componentName) || componentFile.getVariableDeclaration(componentName).getInitializerIfKindOrThrow(SyntaxKind.FunctionExpression);
+  const component = file.getFunction(placeOfUse) || file.getVariableDeclaration(placeOfUse).getInitializerIfKindOrThrow(SyntaxKind.FunctionExpression);
   component.setBodyText(`${getFormUsageCode(formClassName)}${component.getBodyText()}`);
 
   project.saveSync();
@@ -91,8 +96,8 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
     }
   });
   const fileName = options.formName || await askQuestion('Enter the name of the form (e.g: profile-settings):');
-  const componentName = options.componentName || await askQuestion(
-    'Enter the name of the component, where the form should be (e.g: ProfileSettings). If it\'s not necessary, just press Enter.'
+  const placeOfUse = options.placeOfUse || await askQuestion(
+    'Enter the name of the place, where the form should be (e.g: component ProfileSettings or hook useProfileSettings). If it\'s not necessary, just press Enter.'
   );
 
   // Generate form class
@@ -104,8 +109,8 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
   updateIndex(formsPath, fileName, tree);
 
   // Add form usage
-  if (componentName) {
-    addFormUsage(libPath, componentName, formClassName);
+  if (placeOfUse) {
+    await addFormUsage(libPath, placeOfUse, formClassName);
   }
 
   await formatFiles(tree);

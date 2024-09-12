@@ -15,7 +15,6 @@ import { existsSync } from 'fs';
 import { kebabCase } from 'lodash';
 import { dependencies } from '../../shared/dependencies';
 import { IndentationText, Project, QuoteKind, SyntaxKind } from 'ts-morph';
-import readline from 'readline';
 
 async function getFormUtilsDirectory(): Promise<string> {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
@@ -29,7 +28,7 @@ async function getFormUtilsDirectory(): Promise<string> {
 
   if (formUtilsLibsPaths.length > 1) {
     formUtilsLibsPaths[0] = await autocomplete({
-      message: 'Select the path of the library with the form utilities:',
+      message: 'Select the path of the library with the form utilities: ',
       source: (input) => filterSource(input, formUtilsLibsPaths)
     });
   }
@@ -88,16 +87,16 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
   const availableLibsPaths = getNxLibsPaths([LibraryType.FEATURES, LibraryType.UI]);
   const libPath = await autocomplete({
-    message: 'Enter the library path:',
+    message: 'Enter the library path: ',
     source: async (input) => {
       const filteredNxLibsPaths = searchNxLibsPaths(availableLibsPaths, input)
 
       return filteredNxLibsPaths.map((path) => ({ value: path }))
     }
   });
-  const fileName = options.formName || await askQuestion('Enter the name of the form (e.g: profile-settings):');
+  const fileName = options.formName || await askQuestion('Enter the name of the form (e.g: profile-settings): ');
   const placeOfUse = options.placeOfUse || await askQuestion(
-    'Enter the name of the place, where the form should be (e.g: component ProfileSettings or hook useProfileSettings). If it\'s not necessary, just press Enter.'
+    'Enter the name of the place, where the form should be (e.g: component ProfileSettings or hook useProfileSettings). If it\'s not necessary, just press Enter: '
   );
 
   // Generate form class

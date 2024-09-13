@@ -1,4 +1,4 @@
 export interface FormGeneratorSchema {
-  formName?: string;
+  name?: string;
   placeOfUse?: string;
 }

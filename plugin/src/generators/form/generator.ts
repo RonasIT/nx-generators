@@ -4,7 +4,6 @@ import { FormGeneratorSchema } from './schema';
 import {
   addNamedImport,
   appendFileContent,
-  askQuestion,
   dynamicImport, filterSource,
   formatName,
   getNxLibsPaths,
@@ -94,7 +93,7 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
       return filteredNxLibsPaths.map((path) => ({ value: path }))
     }
   });
-  const fileName = options.formName;
+  const fileName = options.name;
   const placeOfUse = options.placeOfUse;
 
   // Generate form class

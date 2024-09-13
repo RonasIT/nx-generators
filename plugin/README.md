@@ -164,6 +164,27 @@ Creates an API with related entities in API library. It also updates redux store
 npx nx g entity-api --name=User --baseEndpoint=users
 ```
 
+### 8. `form`
+
+Generates a form schema class and adds its usage to a component or a hook.
+
+#### Options
+
+1. `name` (optional) - name of the form (e.g: `profile-settings`)
+
+2. `placeOfUse` (optional) - name of the component or hook, where the form should be
+   (e.g: `ProfileSettings` or `useProfileSettings`)
+
+#### Example
+
+```sh
+npx nx g form --name=profile-settings --placeOfUse=ProfileSettings
+```
+or
+```sh
+npx nx g expo-app profile-settings ProfileSettings
+```
+
 ### Note
 
 Each generator accepts the `--help` argument to see generator instructions.

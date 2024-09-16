@@ -60,9 +60,8 @@ export async function reactLibGenerator(
 
   if (options.withComponent) {
     const srcPath = `${libPath}/src`;
-    const componentName = options.scope ? `${options.scope}-${options.name}` : options.name;
 
-    generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, name: componentName, formatName });
+    generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, formatName });
     tree.write(`${srcPath}/index.ts`, 'export * from \'./lib\';');
   }
 

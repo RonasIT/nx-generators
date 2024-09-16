@@ -18,7 +18,7 @@
               },
               {
                 "sourceTag": "scope:shared",
-                "onlyDependOnLibsWithTags": ["scope:shared"]
+                "onlyDependOnLibsWithTags": ["scope:*"]
               },
               {
                 "sourceTag": "type:app",

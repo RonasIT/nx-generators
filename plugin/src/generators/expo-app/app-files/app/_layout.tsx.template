@@ -1,4 +1,5 @@
 <% if(isStoreEnabled) { %> import { store } from '<%= formatDirectory() %>/shared/data-access/store';<% } %>
+import { setLanguage } from '@ronas-it/react-native-common-modules';
 <% if(isUIKittenEnabled) { %>
 import { UserThemeProvider } from '<%= formatDirectory() %>/shared/features/user-theme-provider';
 <% } %>
@@ -9,6 +10,15 @@ import { ReactElement<% if(isStoreEnabled) { %>, useEffect<% } %> } from 'react'
 
 export { ErrorBoundary } from 'expo-router';
 
+const translations = {
+  en: {
+    ...require('i18n/<%= appDirectory %>/app/en.json'),
+    ...require('i18n/<%= appDirectory %>/shared/en.json')
+  }
+};
+
+const useLanguage = setLanguage(translations, 'en');
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -17,6 +27,7 @@ export const unstable_settings = {
 function App(): ReactElement {
   <% if(isStoreEnabled) { %>
   const dispatch = useDispatch();
+  useLanguage('en');
 
   useEffect(() => {
     dispatch(storeActions.init());

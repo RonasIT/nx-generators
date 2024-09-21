@@ -22,6 +22,7 @@ export async function expoAppGenerator(
   options: ExpoAppGeneratorSchema
 ) {
   const appRoot = `apps/${options.directory}`;
+  const i18nRoot = `i18n/${options.directory}`;
   const appTestFolder = `apps/${options.directory}-e2e`;
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
   const tags = [`app:${options.directory}`, 'type:app'];
@@ -99,6 +100,7 @@ export async function expoAppGenerator(
   });
 
   addNxAppTag(tree, options.directory);
+  generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {});
 
   // Add dependencies
   addDependenciesToPackageJson(

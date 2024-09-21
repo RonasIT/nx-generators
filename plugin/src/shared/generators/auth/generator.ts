@@ -7,8 +7,50 @@ import {
   Tree
 } from '@nx/devkit';
 import { dependencies, devDependencies } from '../../dependencies';
-import { formatName, formatAppIdentifier } from '../../utils';
+import { formatName, formatAppIdentifier, searchAliasPath, getImportPathPrefix } from '../../utils';
 import { existsSync } from 'fs';
+import { IndentationText, Project, QuoteKind, StructureKind, SyntaxKind } from 'ts-morph';
+
+const updateStore = (libRoot: string): void => {
+  const project = new Project({
+    manipulationSettings: {
+      indentationText: IndentationText.TwoSpaces,
+      quoteKind: QuoteKind.Single
+    }
+  });
+
+  const storePath = `${libRoot}/shared/data-access/store/src`;
+  const apiPath = `${libRoot}/shared/data-access/api/src`;
+  const authPath = `${libRoot}/shared/data-access/auth/src`;
+  const store = project.addSourceFileAtPath(`${storePath}/store.ts`);
+  const apiAlias = searchAliasPath(apiPath);
+  const authAlias = searchAliasPath(authPath);
+
+  store.addImportDeclarations([
+    { moduleSpecifier: apiAlias, namedImports: ['authApi', 'profileApi'] },
+    { moduleSpecifier: authAlias, namedImports: [ 'authListenerMiddleware', 'authReducer', 'authReducerPath'] }
+  ]);
+
+  const rootReducer = store.getVariableDeclarationOrThrow('rootReducer');
+
+  rootReducer.getInitializerIfKindOrThrow(SyntaxKind.ObjectLiteralExpression)
+    .addProperties([
+      { name: '[authApi.reducerPath]', initializer: 'authApi.reducer', kind: StructureKind.PropertyAssignment },
+      { name: '[authReducerPath]', initializer: 'authReducer', kind: StructureKind.PropertyAssignment },
+      { name: '[profileApi.reducerPath]', initializer: 'profileApi.reducer', kind: StructureKind.PropertyAssignment }
+    ]);
+
+  const middlewares = store.getVariableDeclarationOrThrow('middlewares');
+
+  middlewares.getInitializerIfKindOrThrow(SyntaxKind.ArrayLiteralExpression)
+    .addElements([
+      'authApi.middleware',
+      'authListenerMiddleware.middleware',
+      'profileApi.middleware'
+    ], { useNewLines: true });
+
+  project.saveSync();
+};
 
 export async function runAuthGenerator(
   tree: Tree,
@@ -16,7 +58,7 @@ export async function runAuthGenerator(
 ) {
   const appRoot = `apps/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
-  const libPath = `@${options.name}/${options.directory}`;
+  const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
 
   // Generate shared libs
   execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=api`, { stdio: 'inherit' });
@@ -36,12 +78,14 @@ export async function runAuthGenerator(
     formatDirectory: () => libPath
   });
 
-    // Add dependencies
-    addDependenciesToPackageJson(tree, dependencies['auth'], devDependencies['auth']);
+  updateStore(libRoot);
 
-    if (existsSync(appPackagePath)) {
-      addDependenciesToPackageJson(tree, dependencies['auth'], devDependencies['auth'], appPackagePath);
-    }
+  // Add dependencies
+  addDependenciesToPackageJson(tree, dependencies['auth'], devDependencies['auth']);
+
+  if (existsSync(appPackagePath)) {
+    addDependenciesToPackageJson(tree, dependencies['auth'], devDependencies['auth'], appPackagePath);
+  }
 
   await formatFiles(tree);
 }

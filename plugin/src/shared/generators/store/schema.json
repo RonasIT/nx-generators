@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Store",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the app",
+      "default": "",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      }
+    },
+    "directory": {
+      "type": "string",
+      "description": "Directory of the app (folder inside apps/)",
+      "default": "",
+      "$default": {
+        "$source": "argv",
+        "index": 1
+      }
+    },
+    "baseGeneratorType": {
+      "type": "string",
+      "description": "Base generator type (Expo or Next.js)",
+      "default": "",
+      "$default": {
+        "$source": "argv",
+        "index": 2
+      }
+    }
+  },
+  "required": []
+}

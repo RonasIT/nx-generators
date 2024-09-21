@@ -25,6 +25,14 @@ const readESLintConfig = (tree: Tree): Record<string, any> => {
   return tree.exists(esLintConfigPath) && readJson(tree, esLintConfigPath);
 };
 
+const getNpmScope = (tree: Tree): string | undefined => {
+  const { name } = tree.exists('package.json')
+    ? readJson<{ name?: string }>(tree, 'package.json')
+    : { name: null };
+
+  return name?.startsWith('@') ? name.split('/')[0].substring(1) : undefined;
+};
+
 export const addNxAppTag = (tree: Tree, appDirectory: string): void => {
   const config = readESLintConfig(tree);
   const constraints = getNxRules(config);
@@ -46,4 +54,10 @@ export const addNxScopeTag = (tree: Tree, scope: string): void => {
   constraints.push({ sourceTag: `scope:${scope}`, onlyDependOnLibsWithTags: [`scope:${scope}`, 'scope:shared'] });
 
   writeJson(tree, esLintConfigPath, config);
+};
+
+export const getImportPathPrefix = (tree: Tree): string => {
+  const npmScope = getNpmScope(tree);
+
+  return npmScope ? `${npmScope === '@' ? '' : '@'}${npmScope}` : '';
 };

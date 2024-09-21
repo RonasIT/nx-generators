@@ -12,8 +12,8 @@ import { NextAppGeneratorSchema } from './schema';
 import { existsSync } from 'fs';
 import { dependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
-import { runApiClientGenerator, runAppEnvGenerator, runStoreGenerator } from '../../shared/generators';
-import { addNxAppTag, formatName } from '../../shared/utils';
+import { runApiClientGenerator, runAppEnvGenerator } from '../../shared/generators';
+import { addNxAppTag, askQuestion, formatName } from '../../shared/utils';
 import * as path from 'path';
 
 export async function nextAppGenerator(
@@ -33,9 +33,19 @@ export async function nextAppGenerator(
     );
   }
 
-  runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });
-  runAppEnvGenerator(tree, options);
-  runApiClientGenerator(tree, options);
+  const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
+
+  if (shouldGenerateStoreLib) {
+    execSync(`npx nx g store ${options.name} ${options.directory} ${BaseGeneratorType.NEXT_APP}`, { stdio: 'inherit' });
+  }
+
+  await runAppEnvGenerator(tree, options);
+
+  const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
+
+  if (shouldGenerateApiClientLib) {
+    await runApiClientGenerator(tree, options);
+  }
 
   // Remove unnecessary files and files that will be replaced
   tree.delete(`${appRoot}/public/.gitkeep`);

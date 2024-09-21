@@ -9,7 +9,7 @@ import {
   Tree,
 } from '@nx/devkit';
 import { dependencies } from '../../dependencies';
-import { formatName, formatAppIdentifier } from '../../utils';
+import { formatName, formatAppIdentifier, getImportPathPrefix } from '../../utils';
 
 export async function runUIKittenGenerator(
   tree: Tree,
@@ -17,7 +17,7 @@ export async function runUIKittenGenerator(
 ) {
   const appRoot = `apps/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
-  const libPath = `@${options.name}/${options.directory}`;
+  const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
 
   if (!options.confirmation) {
     return;

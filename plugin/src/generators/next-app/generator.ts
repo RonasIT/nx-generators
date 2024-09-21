@@ -13,7 +13,7 @@ import { existsSync } from 'fs';
 import { dependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import { runApiClientGenerator, runAppEnvGenerator, runStoreGenerator } from '../../shared/generators';
-import { formatName } from '../../shared/utils';
+import { addNxAppTag, formatName } from '../../shared/utils';
 import * as path from 'path';
 
 export async function nextAppGenerator(
@@ -21,13 +21,14 @@ export async function nextAppGenerator(
   options: NextAppGeneratorSchema,
 ) {
   const appRoot = `apps/${options.directory}`;
+  const tags = [`app:${options.directory}`, 'type:app'];
 
   // Install @nx/next plugin
   execSync('npx nx add @nx/next', { stdio: 'inherit' });
 
   if (!existsSync(appRoot)) {
     execSync(
-      `npx nx g @nx/next:app ${options.name} --directory=apps/${options.directory} --projectNameAndRootFormat=as-provided --appDir=true --style=scss --src=false --unitTestRunner=none --e2eTestRunner=none`,
+      `npx nx g @nx/next:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --projectNameAndRootFormat=as-provided --appDir=true --style=scss --src=false --unitTestRunner=none --e2eTestRunner=none`,
       { stdio: 'inherit' },
     );
   }
@@ -61,6 +62,8 @@ export async function nextAppGenerator(
     ...options,
     formatName,
   });
+
+  addNxAppTag(tree, options.directory);
 
   // Add dependencies
   addDependenciesToPackageJson(tree, dependencies['next-app'], {});

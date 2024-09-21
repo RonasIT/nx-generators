@@ -15,7 +15,7 @@ import { existsSync, rmSync } from 'fs';
 import { dependencies, devDependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import { runStoreGenerator, runAppEnvGenerator, runApiClientGenerator, runAuthGenerator, runStorageGenerator, runRNStylesGenerator } from '../../shared/generators';
-import { formatName, formatAppIdentifier } from '../../shared/utils';
+import { formatName, formatAppIdentifier, addNxAppTag } from '../../shared/utils';
 
 export async function expoAppGenerator(
   tree: Tree,
@@ -25,13 +25,14 @@ export async function expoAppGenerator(
   const i18nRoot = `i18n/${options.directory}`;
   const appTestFolder = `apps/${options.directory}-e2e`;
   const libPath = `@${options.name}/${options.directory}`;
+  const tags = [`app:${options.directory}`, 'type:app'];
 
   // Install @nx/expo plugin
   execSync('npx nx add @nx/expo', { stdio: 'inherit' })
 
   if (!existsSync(appRoot)) {
     execSync(
-      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`,
+      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`,
       { stdio: 'inherit' }
     );
   }
@@ -81,6 +82,7 @@ export async function expoAppGenerator(
     appDirectory: options.directory
   });
 
+  addNxAppTag(tree, options.directory);
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {});
 
   // Add dependencies

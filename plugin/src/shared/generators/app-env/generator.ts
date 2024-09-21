@@ -15,7 +15,7 @@ export async function runAppEnvGenerator(
   const libPath = `@${options.name}/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/utils/app-env`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=utils --name=app-env`, { stdio: 'inherit' });
 
   // Remove unnecessary files and files that will be replaced
   tree.delete(`${libRoot}/shared/utils/app-env/src/index.ts`);

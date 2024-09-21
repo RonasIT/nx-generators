@@ -19,8 +19,8 @@ export async function runAuthGenerator(
   const libPath = `@${options.name}/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/api`, { stdio: 'inherit' });
-  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/auth`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=api`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=auth`, { stdio: 'inherit' });
 
   const appPackagePath = `${appRoot}/package.json`;
 

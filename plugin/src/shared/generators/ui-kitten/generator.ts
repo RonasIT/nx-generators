@@ -24,7 +24,7 @@ export async function runUIKittenGenerator(
   }
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/features/user-theme-provider`, {
+  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=feature --name=user-theme-provider --withComponent=false`, {
     stdio: 'inherit',
   });
 

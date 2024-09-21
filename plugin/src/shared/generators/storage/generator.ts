@@ -15,7 +15,7 @@ export async function runStorageGenerator(
   const libPath = `@${options.name}/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib ${options.directory}/shared/data-access/storage`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=storage`, { stdio: 'inherit' });
 
   // Remove unnecessary files and files that will be replaced
   tree.delete(`${libRoot}/shared/data-access/storage/src/index.ts`);

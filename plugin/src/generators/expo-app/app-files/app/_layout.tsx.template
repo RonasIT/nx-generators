@@ -1,12 +1,12 @@
+<% if(isStoreEnabled) { %> import { store } from '<%= formatDirectory() %>/shared/data-access/store';<% } %>
 import { setLanguage } from '@ronas-it/react-native-common-modules';
-import { store } from '<%= formatDirectory() %>/shared/data-access/store';
 <% if(isUIKittenEnabled) { %>
 import { UserThemeProvider } from '<%= formatDirectory() %>/shared/features/user-theme-provider';
 <% } %>
-import { storeActions } from '@ronas-it/rtkq-entity-api';
+<% if(isStoreEnabled) { %>import { storeActions } from '@ronas-it/rtkq-entity-api';<% } %>
 import { Stack } from 'expo-router';
-import { ReactElement, useEffect } from 'react';
-import { Provider, useDispatch } from 'react-redux';
+import { ReactElement<% if(isStoreEnabled) { %>, useEffect<% } %> } from 'react';
+<% if(isStoreEnabled) { %>import { Provider, useDispatch } from 'react-redux';<% } %>
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -25,13 +25,14 @@ export const unstable_settings = {
 };
 
 function App(): ReactElement {
+  <% if(isStoreEnabled) { %>
   const dispatch = useDispatch();
   useLanguage('en');
 
   useEffect(() => {
     dispatch(storeActions.init());
   }, []);
-
+  <% } %>
   return (
     <Stack>
       <Stack.Screen name='index' />
@@ -41,14 +42,10 @@ function App(): ReactElement {
 
 export default function RootLayout(): ReactElement | null {
   return (
-    <Provider store={store}>
-    <% if(isUIKittenEnabled) { %>
-    <UserThemeProvider>
-    <% } %>
+    <% if(isStoreEnabled) { %><Provider store={store}><% } %>
+    <% if(isUIKittenEnabled) { %><UserThemeProvider><% } %>
       <App />
-    <% if(isUIKittenEnabled) { %>
-    </UserThemeProvider>
-    <% } %>
-    </Provider>
+    <% if(isUIKittenEnabled) { %></UserThemeProvider><% } %>
+    <% if(isStoreEnabled) { %></Provider><% } %>
   );
 }

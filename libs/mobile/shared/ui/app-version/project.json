@@ -3,7 +3,11 @@
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/mobile/shared/ui/app-version/src",
   "projectType": "library",
-  "tags": [],
+  "tags": [
+    "app:mobile",
+    "type:ui",
+    "scope:shared"
+  ],
   "// targets": "to see all targets run: nx show project mobile-shared-ui-app-version --web",
   "targets": {}
 }

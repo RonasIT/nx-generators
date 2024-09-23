@@ -35,10 +35,10 @@
       "schema": "./src/shared/generators/ui-kitten/schema.json",
       "description": "UI-Kitten generator for Expo projects"
     },
-    "next-lib": {
-      "factory": "./src/generators/next-lib/generator",
-      "schema": "./src/generators/next-lib/schema.json",
-      "description": "next-lib generator"
+    "entity-api": {
+      "factory": "./src/generators/entity-api/generator",
+      "schema": "./src/generators/entity-api/schema.json",
+      "description": "entity-api generator"
     }
   }
 }

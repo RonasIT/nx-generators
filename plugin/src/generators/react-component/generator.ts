@@ -2,13 +2,8 @@ import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 import * as path from 'path';
 import { kebabCase } from 'lodash';
 import { ReactComponentGeneratorSchema } from './schema';
-import { askQuestion, formatName, getNxLibsPaths, LibraryType, searchNxLibsPaths } from '../../shared/utils';
+import { askQuestion, dynamicImport, formatName, getNxLibsPaths, LibraryType, searchNxLibsPaths } from '../../shared/utils';
 import { existsSync } from 'fs';
-
-const dynamicImport = new Function(
-  'specifier',
-  'return import(specifier)'
-) as <T = never>(specifier: string) => Promise<T>;
 
 export async function reactComponentGenerator(
   tree: Tree,
@@ -25,7 +20,7 @@ export async function reactComponentGenerator(
 
       return filteredNxLibsPaths.map((path) => ({ value: path }))
     }
-  })
+  });
 
   options.name = options.name || await askQuestion('Enter the name of the component (e.g: AppButton): ');
   options.subcomponent = options.subcomponent || await askQuestion('Generate component inside components folder? (y/n): ') === 'y';

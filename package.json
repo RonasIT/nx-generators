@@ -37,7 +37,8 @@
     "react-native-screens": "3.31.1",
     "react-native-web": "~0.19.11",
     "react-redux": "^9.1.2",
-    "tslib": "^2.6.3"
+    "tslib": "^2.6.3",
+    "ts-morph": "^23.0.0"
   },
   "devDependencies": {
     "@expo/cli": "~0.18.13",

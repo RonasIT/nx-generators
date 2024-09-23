@@ -1,0 +1,8 @@
+import { BaseEntity } from '@ronas-it/rtkq-entity-api';
+
+export class <%= entityName %> extends BaseEntity<number> {
+  constructor(model: Partial<<%= entityName %>>) {
+    super(model);
+    Object.assign(this, model);
+  }
+}

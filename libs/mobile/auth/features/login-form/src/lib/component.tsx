@@ -5,12 +5,12 @@ import { Image } from 'expo-image';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ScrollView, View } from 'react-native';
-import { authApi } from '@example/mobile/shared/data-access/api';
-import { createStyles } from '@example/mobile/shared/ui/styles';
-import { AppVersion } from '@example/mobile/shared/ui/app-version';
-import { AppButton, AppText, ErrorMessage, FormTextInput } from '@example/mobile/shared/ui/ui-kit';
-import { FormValues } from '@example/mobile/shared/utils/form';
-import { Images } from '@example/mobile/shared/ui/assets';
+import { authApi } from '@ronas-it/mobile/shared/data-access/api';
+import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
+import { AppVersion } from '@ronas-it/mobile/shared/ui/app-version';
+import { AppButton, AppText, ErrorMessage, FormTextInput } from '@ronas-it/mobile/shared/ui/ui-kit';
+import { FormValues } from '@ronas-it/mobile/shared/utils/form';
+import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { LoginFormSchema } from './forms';
 
 interface LoginFormProps {

@@ -5,7 +5,7 @@ import { ApplicationProvider } from '@ui-kitten/components';
 import { StatusBar } from 'expo-status-bar';
 import { noop } from 'lodash';
 import React, { ReactElement, createContext } from 'react';
-import { mapping, theme, UserTheme } from '@example/mobile/shared/ui/styles';
+import { mapping, theme, UserTheme } from '@ronas-it/mobile/shared/ui/styles';
 import { userThemeConfig } from './config';
 
 interface UserThemeProviderProps {

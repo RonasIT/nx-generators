@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import {
   axiosBaseQuery,
   createAppApi,
-} from '@example/mobile/shared/data-access/api-client';
+} from '@ronas-it/mobile/shared/data-access/api-client';
 import { User } from '../user';
 import { profileApiConfig } from './config';
 import { GetProfileRequest } from './models';

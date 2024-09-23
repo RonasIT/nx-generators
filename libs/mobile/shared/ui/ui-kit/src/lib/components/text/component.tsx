@@ -1,6 +1,6 @@
 import { Text, TextProps } from '@ui-kitten/components';
 import React, { ReactElement } from 'react';
-import { createStyles } from '@example/mobile/shared/ui/styles';
+import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
 
 export interface AppTextProps extends TextProps {
   isCentered?: boolean;

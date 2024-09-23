@@ -1,6 +1,6 @@
 import { Tree, readJson, writeJson } from '@nx/devkit';
 
-const esLintConfigPath = '.eslintrc.json';
+const defaultEsLintConfigPath = '.eslintrc.json';
 
 interface Constraint {
   sourceTag: string;
@@ -15,14 +15,34 @@ const getNxRules = (config: Record<string, any>): Array<Constraint> => {
   const entryWithRules = config.overrides?.find((entry) => !!entry.rules['@nx/enforce-module-boundaries']);
 
   if (!entryWithRules) {
-    throw new Error(`ESLint: can't find '@nx/enforce-module-boundaries' rule in ${esLintConfigPath}`);
+    throw new Error(`ESLint: can't find '@nx/enforce-module-boundaries' rule in ${defaultEsLintConfigPath}`);
   }
 
   return entryWithRules.rules['@nx/enforce-module-boundaries'][1].depConstraints;
 };
 
-const readESLintConfig = (tree: Tree): Record<string, any> => {
-  return tree.exists(esLintConfigPath) && readJson(tree, esLintConfigPath);
+const readESLintConfig = (tree: Tree): { config: Record<string, any>, path: string } => {
+  let path = defaultEsLintConfigPath;
+
+  const checkConfigExists = (path: string): void => {
+    if (!tree.exists(path)) {
+      throw new Error(`ESLint config not found: ${path}`);
+    }
+  };
+
+  checkConfigExists(path);
+
+  let config = readJson(tree, path);
+
+  if (config.extends?.length) {
+    path = config.extends[0];
+
+    checkConfigExists(path);
+
+    config = readJson(tree, config.extends[0]);
+  }
+
+  return { config, path };
 };
 
 const getNpmScope = (tree: Tree): string | undefined => {
@@ -34,16 +54,16 @@ const getNpmScope = (tree: Tree): string | undefined => {
 };
 
 export const addNxAppTag = (tree: Tree, appDirectory: string): void => {
-  const config = readESLintConfig(tree);
+  const { config, path } = readESLintConfig(tree);
   const constraints = getNxRules(config);
 
   constraints.push({ sourceTag: `app:${appDirectory}`, onlyDependOnLibsWithTags: [`app:${appDirectory}`, 'app:shared'] });
 
-  writeJson(tree, esLintConfigPath, config);
+  writeJson(tree, path, config);
 };
 
 export const addNxScopeTag = (tree: Tree, scope: string): void => {
-  const config = readESLintConfig(tree);
+  const { config, path } = readESLintConfig(tree);
   const constraints = getNxRules(config);
   const isTagExists = !!constraints.find((constraint) => constraint.sourceTag === `scope:${scope}`);
 
@@ -53,7 +73,7 @@ export const addNxScopeTag = (tree: Tree, scope: string): void => {
 
   constraints.push({ sourceTag: `scope:${scope}`, onlyDependOnLibsWithTags: [`scope:${scope}`, 'scope:shared'] });
 
-  writeJson(tree, esLintConfigPath, config);
+  writeJson(tree, path, config);
 };
 
 export const getImportPathPrefix = (tree: Tree): string => {

@@ -1,4 +1,4 @@
-import { appEnv } from '@example/mobile/shared/utils/app-env';
+import { appEnv } from '@ronas-it/mobile/shared/utils/app-env';
 
 export const configuration = {
   apiURL: appEnv.select({

@@ -1,7 +1,7 @@
-import { authSelectors } from '@example/mobile/shared/data-access/auth';
-import { store } from '@example/mobile/shared/data-access/store';
-import { UserThemeProvider } from '@example/mobile/shared/features/user-theme-provider';
-import { fonts } from '@example/mobile/shared/ui/styles';
+import { authSelectors } from '@ronas-it/mobile/shared/data-access/auth';
+import { store } from '@ronas-it/mobile/shared/data-access/store';
+import { UserThemeProvider } from '@ronas-it/mobile/shared/features/user-theme-provider';
+import { fonts } from '@ronas-it/mobile/shared/ui/styles';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter } from 'expo-router';

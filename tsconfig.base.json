@@ -15,49 +15,49 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
-      "@example/mobile/auth/features/login-form": [
+      "@nx-generators/source": ["src/index.ts"],
+      "@ronas-it/mobile/auth/features/login-form": [
         "libs/mobile/auth/features/login-form/src/index.ts"
       ],
-      "@example/mobile/profile/features/details": [
+      "@ronas-it/mobile/profile/features/details": [
         "libs/mobile/profile/features/details/src/index.ts"
       ],
-      "@example/mobile/shared/data-access/api": [
+      "@ronas-it/mobile/shared/data-access/api": [
         "libs/mobile/shared/data-access/api/src/index.ts"
       ],
-      "@example/mobile/shared/data-access/api-client": [
+      "@ronas-it/mobile/shared/data-access/api-client": [
         "libs/mobile/shared/data-access/api-client/src/index.ts"
       ],
-      "@example/mobile/shared/data-access/auth": [
+      "@ronas-it/mobile/shared/data-access/auth": [
         "libs/mobile/shared/data-access/auth/src/index.ts"
       ],
-      "@example/mobile/shared/data-access/storage": [
+      "@ronas-it/mobile/shared/data-access/storage": [
         "libs/mobile/shared/data-access/storage/src/index.ts"
       ],
-      "@example/mobile/shared/data-access/store": [
+      "@ronas-it/mobile/shared/data-access/store": [
         "libs/mobile/shared/data-access/store/src/index.ts"
       ],
-      "@example/mobile/shared/features/user-theme-provider": [
+      "@ronas-it/mobile/shared/features/user-theme-provider": [
         "libs/mobile/shared/features/user-theme-provider/src/index.ts"
       ],
-      "@example/mobile/shared/ui/app-version": [
+      "@ronas-it/mobile/shared/ui/app-version": [
         "libs/mobile/shared/ui/app-version/src/index.ts"
       ],
-      "@example/mobile/shared/ui/assets": [
+      "@ronas-it/mobile/shared/ui/assets": [
         "libs/mobile/shared/ui/assets/src/index.ts"
       ],
-      "@example/mobile/shared/ui/styles": [
+      "@ronas-it/mobile/shared/ui/styles": [
         "libs/mobile/shared/ui/styles/src/index.ts"
       ],
-      "@example/mobile/shared/ui/ui-kit": [
+      "@ronas-it/mobile/shared/ui/ui-kit": [
         "libs/mobile/shared/ui/ui-kit/src/index.ts"
       ],
-      "@example/mobile/shared/utils/app-env": [
+      "@ronas-it/mobile/shared/utils/app-env": [
         "libs/mobile/shared/utils/app-env/src/index.ts"
       ],
-      "@example/mobile/shared/utils/form": [
+      "@ronas-it/mobile/shared/utils/form": [
         "libs/mobile/shared/utils/form/src/index.ts"
       ],
-      "@nx-generators/source": ["src/index.ts"],
       "@ronas-it/nx-generators": ["plugin/src/index.ts"]
     }
   },

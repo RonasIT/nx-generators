@@ -1,6 +1,6 @@
 import { prepareRequestParams } from '@ronas-it/rtkq-entity-api';
 import { plainToInstance } from 'class-transformer';
-import { createAppApi } from '@example/mobile/shared/data-access/api-client';
+import { createAppApi } from '@ronas-it/mobile/shared/data-access/api-client';
 import {
   ForgotPasswordRequest,
   LoginRequest,

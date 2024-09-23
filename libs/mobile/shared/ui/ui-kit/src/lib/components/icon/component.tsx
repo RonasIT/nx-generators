@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { SvgProps } from 'react-native-svg';
-import { Icons } from '@example/mobile/shared/ui/assets';
-import { colors } from '@example/mobile/shared/ui/styles';
+import { Icons } from '@ronas-it/mobile/shared/ui/assets';
+import { colors } from '@ronas-it/mobile/shared/ui/styles';
 import { IconName } from './types';
 
 export interface IconProps extends SvgProps {

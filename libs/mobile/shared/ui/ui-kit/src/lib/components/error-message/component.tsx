@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { StyleProp, TextStyle, View, ViewStyle } from 'react-native';
-import { createStyles } from '@example/mobile/shared/ui/styles';
+import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
 import { AppText, AppTextProps } from '../text';
 
 interface ErrorMessageProps extends AppTextProps {

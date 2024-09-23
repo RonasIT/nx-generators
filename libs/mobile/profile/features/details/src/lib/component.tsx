@@ -2,14 +2,14 @@ import { useTranslation } from '@ronas-it/react-native-common-modules';
 import { Image } from 'expo-image';
 import React, { Fragment, ReactElement } from 'react';
 import { View } from 'react-native';
-import { authApi, profileApi } from '@example/mobile/shared/data-access/api';
-import { Images } from '@example/mobile/shared/ui/assets';
-import { commonStyle, createStyles } from '@example/mobile/shared/ui/styles';
+import { authApi, profileApi } from '@ronas-it/mobile/shared/data-access/api';
+import { Images } from '@ronas-it/mobile/shared/ui/assets';
+import { commonStyle, createStyles } from '@ronas-it/mobile/shared/ui/styles';
 import {
   AppText,
   AppButton,
   AppSpinner,
-} from '@example/mobile/shared/ui/ui-kit';
+} from '@ronas-it/mobile/shared/ui/ui-kit';
 
 export function ProfileDetails(): ReactElement {
   const translate = useTranslation('PROFILE.DETAILS');

@@ -49,6 +49,10 @@
               {
                 "sourceTag": "type:ui",
                 "onlyDependOnLibsWithTags": ["type:ui", "type:utils"]
+              },
+              {
+                "sourceTag": "app:mobile",
+                "onlyDependOnLibsWithTags": ["app:mobile", "app:shared"]
               }
             ]
           }

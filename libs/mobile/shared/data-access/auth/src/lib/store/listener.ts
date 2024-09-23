@@ -11,12 +11,12 @@ import {
   authApi,
   profileApi,
   LogInResponse,
-} from '@example/mobile/shared/data-access/api';
+} from '@ronas-it/mobile/shared/data-access/api';
 import {
   apiService,
   configuration,
-} from '@example/mobile/shared/data-access/api-client';
-import { appStorageService } from '@example/mobile/shared/data-access/storage';
+} from '@ronas-it/mobile/shared/data-access/api-client';
+import { appStorageService } from '@ronas-it/mobile/shared/data-access/storage';
 import {
   authActions,
   authReducerPath,

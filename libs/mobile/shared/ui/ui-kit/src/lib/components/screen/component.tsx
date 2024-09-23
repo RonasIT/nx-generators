@@ -2,8 +2,8 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { Layout } from '@ui-kitten/components';
 import React, { ReactElement, useMemo } from 'react';
 import { ImageBackground, ScrollView, ScrollViewProps, View, ViewProps } from 'react-native';
-import { Images } from '@example/mobile/shared/ui/assets';
-import { commonStyle, createStyles, spacings } from '@example/mobile/shared/ui/styles';
+import { Images } from '@ronas-it/mobile/shared/ui/assets';
+import { commonStyle, createStyles, spacings } from '@ronas-it/mobile/shared/ui/styles';
 
 export interface AppScreenProps {
   scrollDisabled?: boolean;

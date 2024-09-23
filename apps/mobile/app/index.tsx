@@ -1,5 +1,5 @@
-import { authSelectors } from '@example/mobile/shared/data-access/auth';
-import { AppSplashScreen } from '@example/mobile/shared/ui/ui-kit';
+import { authSelectors } from '@ronas-it/mobile/shared/data-access/auth';
+import { AppSplashScreen } from '@ronas-it/mobile/shared/ui/ui-kit';
 import { useRouter } from 'expo-router';
 import { ReactElement, useEffect } from 'react';
 import { useSelector } from 'react-redux';

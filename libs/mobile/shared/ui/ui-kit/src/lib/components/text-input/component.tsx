@@ -1,7 +1,7 @@
 import { Input, InputProps } from '@ui-kitten/components/ui';
 import React, { ReactElement, useMemo, useState } from 'react';
 import { NativeSyntheticEvent, StyleProp, TextInputFocusEventData, View, ViewStyle } from 'react-native';
-import { commonStyle, createStyles, useAppTheme } from '@example/mobile/shared/ui/styles';
+import { commonStyle, createStyles, useAppTheme } from '@ronas-it/mobile/shared/ui/styles';
 import { ErrorMessage } from '../error-message';
 import { AppPressableIcon } from '../pressable-icon';
 import { AppText } from '../text';

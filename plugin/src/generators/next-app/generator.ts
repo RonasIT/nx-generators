@@ -33,13 +33,13 @@ export async function nextAppGenerator(
     );
   }
 
+  await runAppEnvGenerator(tree, options);
+
   const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
 
   if (shouldGenerateStoreLib) {
     execSync(`npx nx g store ${options.name} ${options.directory} ${BaseGeneratorType.NEXT_APP}`, { stdio: 'inherit' });
   }
-
-  await runAppEnvGenerator(tree, options);
 
   const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
 

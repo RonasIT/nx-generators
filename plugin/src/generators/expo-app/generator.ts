@@ -45,6 +45,10 @@ export async function expoAppGenerator(
   }
 
   // Generate shared libs
+  await runAppEnvGenerator(tree, options);
+  await runStorageGenerator(tree, options);
+  await runRNStylesGenerator(tree, options);
+
   const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
 
   if (shouldGenerateStoreLib) {
@@ -57,16 +61,11 @@ export async function expoAppGenerator(
     await runApiClientGenerator(tree, options);
   }
 
-  await runAppEnvGenerator(tree, options);
-  await runStorageGenerator(tree, options);
-
   const shouldGenerateAuthLibs = shouldGenerateApiClientLib && await askQuestion('Do you want to create auth lib? (y/n): ') === 'y';
 
   if (shouldGenerateAuthLibs) {
     await runAuthGenerator(tree, options);
   }
-
-  await runRNStylesGenerator(tree, options);
 
   const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
   if (shouldGenerateFormUtilsLib) {

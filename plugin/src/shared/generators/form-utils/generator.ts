@@ -9,7 +9,7 @@ export async function runFormUtilsGenerator(
   const libRoot = `libs/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib app=${options.directory} scope=shared type=utils name=form`, { stdio: 'inherit' });
+  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=utils --name=form`, { stdio: 'inherit' });
 
   // Remove unnecessary files and files that will be replaced
   tree.delete(`${libRoot}/shared/utils/form/src/index.ts`);

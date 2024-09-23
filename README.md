@@ -182,7 +182,7 @@ npx nx g form --name=profile-settings --placeOfUse=ProfileSettings
 ```
 or
 ```sh
-npx nx g expo-app profile-settings ProfileSettings
+npx nx g form profile-settings ProfileSettings
 ```
 
 ### Note

@@ -47,7 +47,7 @@ export async function nextAppGenerator(
     await runApiClientGenerator(tree, options);
   }
 
-  const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form  utils? (y/n): ') === 'y';
+  const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
 
   if (shouldGenerateFormUtilsLib) {
     await runFormUtilsGenerator(tree, options);

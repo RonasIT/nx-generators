@@ -15,7 +15,6 @@ import { existsSync, rmSync } from 'fs';
 import { dependencies, devDependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import {
-  runStoreGenerator,
   runAppEnvGenerator,
   runApiClientGenerator,
   runAuthGenerator,
@@ -23,34 +22,56 @@ import {
   runRNStylesGenerator,
   runFormUtilsGenerator
 } from '../../shared/generators';
-import { formatName, formatAppIdentifier } from '../../shared/utils';
+import { formatName, formatAppIdentifier, addNxAppTag, askQuestion, getImportPathPrefix } from '../../shared/utils';
 
 export async function expoAppGenerator(
   tree: Tree,
   options: ExpoAppGeneratorSchema
 ) {
   const appRoot = `apps/${options.directory}`;
+  const i18nRoot = `i18n/${options.directory}`;
   const appTestFolder = `apps/${options.directory}-e2e`;
-  const libPath = `@${options.name}/${options.directory}`;
+  const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
+  const tags = [`app:${options.directory}`, 'type:app'];
 
   // Install @nx/expo plugin
   execSync('npx nx add @nx/expo', { stdio: 'inherit' })
 
   if (!existsSync(appRoot)) {
     execSync(
-      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`,
+      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`,
       { stdio: 'inherit' }
     );
   }
 
   // Generate shared libs
-  runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
-  runAppEnvGenerator(tree, options);
-  runApiClientGenerator(tree, options);
-  runStorageGenerator(tree, options);
-  runAuthGenerator(tree, options);
-  runRNStylesGenerator(tree, options);
-  runFormUtilsGenerator(tree, options);
+  const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
+
+  if (shouldGenerateStoreLib) {
+    execSync(`npx nx g store ${options.name} ${options.directory} ${BaseGeneratorType.EXPO_APP}`, { stdio: 'inherit' });
+  }
+
+  const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
+
+  if (shouldGenerateApiClientLib) {
+    await runApiClientGenerator(tree, options);
+  }
+
+  await runAppEnvGenerator(tree, options);
+  await runStorageGenerator(tree, options);
+
+  const shouldGenerateAuthLibs = shouldGenerateApiClientLib && await askQuestion('Do you want to create auth lib? (y/n): ') === 'y';
+
+  if (shouldGenerateAuthLibs) {
+    await runAuthGenerator(tree, options);
+  }
+
+  await runRNStylesGenerator(tree, options);
+
+  const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
+  if (shouldGenerateFormUtilsLib) {
+    runFormUtilsGenerator(tree, options);
+  }
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
   if (existsSync(appTestFolder)) {
@@ -86,8 +107,12 @@ export async function expoAppGenerator(
     formatAppIdentifier,
     formatDirectory: () => libPath,
     isUIKittenEnabled: false,
+    isStoreEnabled: shouldGenerateStoreLib,
     appDirectory: options.directory
   });
+
+  addNxAppTag(tree, options.directory);
+  generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {});
 
   // Add dependencies
   addDependenciesToPackageJson(

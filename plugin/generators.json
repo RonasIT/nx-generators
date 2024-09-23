@@ -40,6 +40,11 @@
       "schema": "./src/generators/entity-api/schema.json",
       "description": "entity-api generator"
     },
+    "store": {
+      "factory": "./src/shared/generators/store/generator",
+      "schema": "./src/shared/generators/store/schema.json",
+      "description": "redux store generator"
+    },
     "form": {
       "factory": "./src/generators/form/generator",
       "schema": "./src/generators/form/schema.json",

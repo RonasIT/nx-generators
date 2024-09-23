@@ -112,20 +112,29 @@ Generates a library according to [NX notation](https://nx.dev/concepts/more-conc
 
 #### Options
 
-1. `directory` (optional) - directory for the library (e.g. mobile/account/features/profile-settings)
+1. `app` (optional) - name of an app or `shared`.
 
-2. `withComponent` (optional) - generate the library with `lib/component.tsx` file
+1. `scope` (optional) - name of a scope or `shared`.
+   This option is for a library, related to an app.
 
-3. `dryRun` (optional) - generate the library without creating files
+1. `type` (optional) - type of library.
+   Possible values are `features`, `data-access`, `ui` and `utils`.
+
+1. `name` (optional) - name of a library.
+
+1. `withComponent` (optional) - generate the library with `lib/component.tsx` file.
+   This option is for `features` or `ui` library.
+
+1. `dryRun` (optional) - generate the library without creating files
 
 #### Example
 
 ```sh
-npx nx g react-lib --directory=mobile/account/features/profile-settings --withComponent --dryRun
+npx nx g react-lib --app=mobile --scope=account --type=features --name=profile-settings --withComponent --dryRun
 ```
 or
 ```sh
-npx nx g react-lib mobile/account/features/profile-settings --withComponent --dryRun
+npx nx g react-lib --dryRun
 ```
 
 ### 6. `react-component`

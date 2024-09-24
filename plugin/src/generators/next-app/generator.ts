@@ -12,7 +12,7 @@ import { NextAppGeneratorSchema } from './schema';
 import { existsSync } from 'fs';
 import { dependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
-import { runApiClientGenerator, runAppEnvGenerator } from '../../shared/generators';
+import { runApiClientGenerator, runAppEnvGenerator, runFormUtilsGenerator } from '../../shared/generators';
 import { addNxAppTag, askQuestion, formatName } from '../../shared/utils';
 import * as path from 'path';
 
@@ -33,18 +33,24 @@ export async function nextAppGenerator(
     );
   }
 
+  await runAppEnvGenerator(tree, options);
+
   const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
 
   if (shouldGenerateStoreLib) {
     execSync(`npx nx g store ${options.name} ${options.directory} ${BaseGeneratorType.NEXT_APP}`, { stdio: 'inherit' });
   }
 
-  await runAppEnvGenerator(tree, options);
-
   const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
 
   if (shouldGenerateApiClientLib) {
     await runApiClientGenerator(tree, options);
+  }
+
+  const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
+
+  if (shouldGenerateFormUtilsLib) {
+    await runFormUtilsGenerator(tree, options);
   }
 
   // Remove unnecessary files and files that will be replaced

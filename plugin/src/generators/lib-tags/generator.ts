@@ -60,6 +60,73 @@ export async function libTagsGenerator(
   const libraries: Array<ProjectConfiguration> = [];
   const rules = getNxRules(config);
 
+  const verifyAppTag = (project: ProjectConfiguration, appTag: string): void => {
+    if (appTag) {
+      const appTagRule = rules.find((rule) => rule.sourceTag === appTag);
+
+      if (!appTagRule) {
+        throw new Error(`Missing app tag rule for ${appTag}. Please add it to the ESLint config file.`);
+      }
+    } else {
+      console.log(`Missing app tag for ${project.name}. Adding...`);
+
+      const projectAppTag = project.root.split('/')[1];
+      const projectJson = readJson(tree, `${project.root}/project.json`);
+
+      projectJson.tags.push(`app:${projectAppTag}`);
+
+      writeJson(tree, `${project.root}/project.json`, projectJson);
+    }
+  };
+
+  const verifyScopeTag = (project: ProjectConfiguration, scopeTag: string): void => {
+    if (scopeTag) {
+      const scopeTagRule = rules.find((rule) => rule.sourceTag === scopeTag);
+
+      if (!scopeTagRule) {
+        console.log(`Missing scope tag rule for ${scopeTag}. Adding...`);
+        addNxScopeTag(tree, scopeTag.replace('scope:', ''));
+      }
+    } else {
+      console.log(`Missing scope tag for ${project.name}. Adding...`);
+
+      const projectAppTag = project.root.split('/')[1];
+      const projectScopeTag = projectAppTag === 'shared' ? 'shared' : project.root.split('/')[2];
+      const projectJson = readJson(tree, `${project.root}/project.json`);
+
+      projectJson.tags.push(`scope:${projectScopeTag}`);
+
+      writeJson(tree, `${project.root}/project.json`, projectJson);
+      addNxScopeTag(tree,  projectScopeTag);
+    }
+  };
+
+  const verifyTypeTag = (project: ProjectConfiguration, typeTag: string): void => {
+    if (typeTag) {
+      const typeTagRule = rules.find((rule) => rule.sourceTag === typeTag);
+
+      if (!typeTagRule) {
+        throw new Error(`Missing type tag rule for ${typeTag}. Please add it to the ESLint config file.`);
+      }
+    } else {
+      console.log(`Missing type tag for ${project.name}. Adding...`);
+
+      const projectAppTag = project.root.split('/')[1];
+      const projectLibTypeTag = projectAppTag === 'shared' ? project.root.split('/')[2] : project.root.split('/')[3];
+      const typeTagRule = rules.find((rule) => rule.sourceTag === `type:${projectLibTypeTag}`);
+
+      if (!typeTagRule) {
+        throw new Error(`Missing type tag rule for ${projectLibTypeTag}. Please add it to the ESLint config file.`);
+      }
+
+      const projectJson = readJson(tree, `${project.root}/project.json`);
+
+      projectJson.tags.push(`type:${projectLibTypeTag}`);
+
+      writeJson(tree, `${project.root}/project.json`, projectJson);
+    }
+  };
+
   const checkApplicationTags = (project: ProjectConfiguration): void => {
     const { tags } = project;
     const appTag = tags.find((tag) => tag.startsWith('app:'));
@@ -101,66 +168,9 @@ export async function libTagsGenerator(
     const scopeTag = tags.find((tag) => tag.startsWith('scope:'));
     const typeTag = tags.find((tag) => tag.startsWith('type:'));
 
-    if (appTag) {
-      const appTagRule = rules.find((rule) => rule.sourceTag === appTag);
-
-      if (!appTagRule) {
-        throw new Error(`Missing app tag rule for ${appTag}. Please add it to the ESLint config file.`);
-      }
-    } else {
-      console.log(`Missing app tag for ${project.name}. Adding...`);
-
-      const projectAppTag = project.root.split('/')[1];
-      const projectJson = readJson(tree, `${project.root}/project.json`);
-
-      projectJson.tags.push(`app:${projectAppTag}`);
-
-      writeJson(tree, `${project.root}/project.json`, projectJson);
-    }
-
-    if (scopeTag) {
-      const scopeTagRule = rules.find((rule) => rule.sourceTag === scopeTag);
-
-      if (!scopeTagRule) {
-        console.log(`Missing scope tag rule for ${scopeTag}. Adding...`);
-        addNxScopeTag(tree, scopeTag.replace('scope:', ''));
-      }
-    } else {
-      console.log(`Missing scope tag for ${project.name}. Adding...`);
-
-      const projectAppTag = project.root.split('/')[1];
-      const projectScopeTag = projectAppTag === 'shared' ? 'shared' : project.root.split('/')[2];
-      const projectJson = readJson(tree, `${project.root}/project.json`);
-
-      projectJson.tags.push(`scope:${projectScopeTag}`);
-
-      writeJson(tree, `${project.root}/project.json`, projectJson);
-      addNxScopeTag(tree,  projectScopeTag);
-    }
-
-    if (typeTag) {
-      const typeTagRule = rules.find((rule) => rule.sourceTag === typeTag);
-
-      if (!typeTagRule) {
-        throw new Error(`Missing type tag rule for ${typeTag}. Please add it to the ESLint config file.`);
-      }
-    } else {
-      console.log(`Missing type tag for ${project.name}. Adding...`);
-
-      const projectAppTag = project.root.split('/')[1];
-      const projectLibTypeTag = projectAppTag === 'shared' ? project.root.split('/')[2] : project.root.split('/')[3];
-      const typeTagRule = rules.find((rule) => rule.sourceTag === `type:${projectLibTypeTag}`);
-
-      if (!typeTagRule) {
-        throw new Error(`Missing type tag rule for ${projectLibTypeTag}. Please add it to the ESLint config file.`);
-      }
-
-      const projectJson = readJson(tree, `${project.root}/project.json`);
-
-      projectJson.tags.push(`type:${projectLibTypeTag}`);
-
-      writeJson(tree, `${project.root}/project.json`, projectJson);
-    }
+    verifyAppTag(project, appTag);
+    verifyScopeTag(project, scopeTag);
+    verifyTypeTag(project, typeTag);
   };
 
   projects.forEach((project) => {

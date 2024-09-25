@@ -18,8 +18,14 @@ export async function libTagsGenerator(
     }
   }
 
+  const log = (message: string): void => {
+    if (!options.silent) {
+      console.log(message);
+    }
+  };
+
   // #1 Check eslint config nx-boundaries rule
-  console.log('1. Checking eslint config nx-boundaries rule...\n');
+  log('1. Checking eslint config nx-boundaries rule...\n');
   const { config, path } = readESLintConfig(tree);
 
   if (!config || isEmpty(config)) {
@@ -43,7 +49,7 @@ export async function libTagsGenerator(
     }
     // TODO: use custom errors
   } catch {
-    console.log('ESLint config has no @nx/enforce-module-boundaries rule. Updating rules...\n');
+    log('ESLint config has no @nx/enforce-module-boundaries rule. Updating rules...\n');
 
     const esLintConfigTemplate = readJson(tree, 'plugin/src/generators/code-checks/files/.eslintrc.json.template');
     const templateRules = getNxRulesEntry(esLintConfigTemplate);
@@ -54,7 +60,7 @@ export async function libTagsGenerator(
   }
 
   // #2 Check projects tags
-  console.log('2. Checking projects tags...\n');
+  log('2. Checking projects tags...\n');
   const projects = getProjects(tree);
   const applications: Array<ProjectConfiguration> = [];
   const libraries: Array<ProjectConfiguration> = [];
@@ -68,7 +74,7 @@ export async function libTagsGenerator(
         throw new Error(`Missing app tag rule for ${appTag}. Please add it to the ESLint config file.`);
       }
     } else {
-      console.log(`Missing app tag for ${project.name}. Adding...`);
+      log(`Missing app tag for ${project.name}. Adding...`);
 
       const projectAppTag = project.root.split('/')[1];
       const projectJson = readJson(tree, `${project.root}/project.json`);
@@ -84,11 +90,11 @@ export async function libTagsGenerator(
       const scopeTagRule = rules.find((rule) => rule.sourceTag === scopeTag);
 
       if (!scopeTagRule) {
-        console.log(`Missing scope tag rule for ${scopeTag}. Adding...`);
+        log(`Missing scope tag rule for ${scopeTag}. Adding...`);
         addNxScopeTag(tree, scopeTag.replace('scope:', ''));
       }
     } else {
-      console.log(`Missing scope tag for ${project.name}. Adding...`);
+      log(`Missing scope tag for ${project.name}. Adding...`);
 
       const projectAppTag = project.root.split('/')[1];
       const projectScopeTag = projectAppTag === 'shared' ? 'shared' : project.root.split('/')[2];
@@ -109,7 +115,7 @@ export async function libTagsGenerator(
         throw new Error(`Missing type tag rule for ${typeTag}. Please add it to the ESLint config file.`);
       }
     } else {
-      console.log(`Missing type tag for ${project.name}. Adding...`);
+      log(`Missing type tag for ${project.name}. Adding...`);
 
       const projectAppTag = project.root.split('/')[1];
       const projectLibTypeTag = projectAppTag === 'shared' ? project.root.split('/')[2] : project.root.split('/')[3];
@@ -136,11 +142,11 @@ export async function libTagsGenerator(
       const appTagRule = rules.find((rule) => rule.sourceTag === appTag);
 
       if (!appTagRule) {
-        console.log(`Missing app tag rule for ${appTag}. Adding...\n`);
+        log(`Missing app tag rule for ${appTag}. Adding...\n`);
         addNxAppTag(tree, appTag.replace('app:', ''));
       }
     } else {
-      console.log(`Missing app tag for ${project.name}. Adding...`);
+      log(`Missing app tag for ${project.name}. Adding...`);
 
       const projectAppTag = project.root.split('/').pop();
       const projectJson = readJson(tree, `${project.root}/project.json`);
@@ -152,7 +158,7 @@ export async function libTagsGenerator(
     }
 
     if (!hasTypeTag) {
-      console.log(`Missing type tag for ${project.name}. Adding...`);
+      log(`Missing type tag for ${project.name}. Adding...`);
 
       const projectJson = readJson(tree, `${project.root}/project.json`);
 

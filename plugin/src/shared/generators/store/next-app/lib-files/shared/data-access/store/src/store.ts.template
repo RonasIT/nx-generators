@@ -8,7 +8,7 @@ export type AppState = AppStateFromRootReducer<typeof rootReducer>;
 
 const rootReducer = {};
 
-const middlewares = [] as Array<Middleware>;
+const middlewares: Array<Middleware> = [];
 
 const initStore = createStoreInitializer({
   rootReducer: rootReducer as unknown as Reducer<AppState>,

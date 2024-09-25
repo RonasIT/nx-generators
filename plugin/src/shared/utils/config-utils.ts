@@ -1,13 +1,13 @@
 import { Tree, readJson, writeJson } from '@nx/devkit';
 
-const defaultEsLintConfigPath = '.eslintrc.base.json';
+const defaultEsLintConfigPath = '.eslintrc.json';
 
 interface Constraint {
   sourceTag: string;
   onlyDependOnLibsWithTags: Array<string>;
 }
 
-const getNxRules = (config: Record<string, any>): Array<Constraint> => {
+export const getNxRulesEntry = (config: Record<string, any>): { files: Array<string>, rules: Record<string, any> } => {
   if (!config) {
     throw new Error('ESLint config not found');
   }
@@ -15,13 +15,21 @@ const getNxRules = (config: Record<string, any>): Array<Constraint> => {
   const entryWithRules = config.overrides?.find((entry) => !!entry.rules['@nx/enforce-module-boundaries']);
 
   if (!entryWithRules) {
-    throw new Error(`ESLint: can't find '@nx/enforce-module-boundaries' rule in ${defaultEsLintConfigPath}`);
+    throw new Error(`ESLint: can't find '@nx/enforce-module-boundaries' rule`);
   }
 
-  return entryWithRules.rules['@nx/enforce-module-boundaries'][1].depConstraints;
+  return entryWithRules;
+}
+
+export const getNxRulesStatus = (config: Record<string, any>): string => {
+  return getNxRulesEntry(config).rules['@nx/enforce-module-boundaries'][0];
+}
+
+export const getNxRules = (config: Record<string, any>): Array<Constraint> => {
+  return getNxRulesEntry(config).rules['@nx/enforce-module-boundaries'][1].depConstraints;
 };
 
-const readESLintConfig = (tree: Tree): { config: Record<string, any>, path: string } => {
+export const readESLintConfig = (tree: Tree): { config: Record<string, any>, path: string } => {
   let path = defaultEsLintConfigPath;
 
   const checkConfigExists = (path: string): void => {
@@ -56,6 +64,11 @@ const getNpmScope = (tree: Tree): string | undefined => {
 export const addNxAppTag = (tree: Tree, appDirectory: string): void => {
   const { config, path } = readESLintConfig(tree);
   const constraints = getNxRules(config);
+  const isTagExists = !!constraints.find((constraint) => constraint.sourceTag === `app:${appDirectory}`);
+
+  if (isTagExists) {
+    return;
+  }
 
   constraints.push({ sourceTag: `app:${appDirectory}`, onlyDependOnLibsWithTags: [`app:${appDirectory}`, 'app:shared'] });
 

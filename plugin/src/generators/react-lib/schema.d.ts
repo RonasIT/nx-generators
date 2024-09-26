@@ -1,5 +1,4 @@
 export interface ReactLibGeneratorSchema {
-  directory?: string;
   app?: string;
   scope?: string;
   type?: string;

@@ -3,7 +3,16 @@ import { IndentationText, Project, QuoteKind, StructureKind, SyntaxKind } from '
 import * as path from 'path';
 import { camelCase, kebabCase, startCase } from 'lodash';
 import { EntityApiGeneratorSchema } from './schema';
-import { askQuestion, dynamicImport, filterSource, getNxLibsPaths, LibraryType, searchAliasPath, searchNxLibsPaths } from '../../shared/utils';
+import {
+  appendFileContent,
+  askQuestion,
+  dynamicImport,
+  filterSource,
+  getNxLibsPaths,
+  LibraryType,
+  searchAliasPath,
+  searchNxLibsPaths
+} from '../../shared/utils';
 
 export async function entityApiGenerator(
   tree: Tree,
@@ -62,14 +71,7 @@ export async function entityApiGenerator(
 
   tree.rename(`${apiPath}/models/entity.ts`, `${apiPath}/models/${apiName}.ts`);
 
-  const appendFileContent = (path: string, endContent: string): void => {
-    const content = tree.read(path, 'utf-8');
-    const contentUpdate = content + endContent;
-
-    tree.write(path, contentUpdate);
-  };
-
-  appendFileContent(`${libRootPath}/index.ts`, `export * from './${apiName}';\n`);
+  appendFileContent(`${libRootPath}/index.ts`, `export * from './${apiName}';\n`, tree);
 
   const storeLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/store/src', 'endsWith');
 

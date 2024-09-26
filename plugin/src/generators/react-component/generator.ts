@@ -2,7 +2,15 @@ import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 import * as path from 'path';
 import { kebabCase } from 'lodash';
 import { ReactComponentGeneratorSchema } from './schema';
-import { askQuestion, dynamicImport, formatName, getNxLibsPaths, LibraryType, searchNxLibsPaths } from '../../shared/utils';
+import {
+  appendFileContent,
+  askQuestion,
+  dynamicImport,
+  formatName,
+  getNxLibsPaths,
+  LibraryType,
+  searchNxLibsPaths
+} from '../../shared/utils';
 import { existsSync } from 'fs';
 
 export async function reactComponentGenerator(
@@ -35,28 +43,21 @@ export async function reactComponentGenerator(
 
   generateFiles(tree, path.join(__dirname, `files`), componentPath, { ...options, formatName });
 
-  const appendFileContent = (path: string, endContent: string): void => {
-    const content = tree.read(path, 'utf-8');
-    const contentUpdate = content ? content + endContent : endContent;
-
-    tree.write(path, contentUpdate);
-  };
-
   const updateIndexes = (): void => {
     const componentsIndexFilePath = `${libRootPath}/components/index.ts`;
 
     if (shouldUpdateSrcIndex) {
-      appendFileContent(`${libPath}/index.ts`, `export * from './lib';\n`);
+      appendFileContent(`${libPath}/index.ts`, `export * from './lib';\n`, tree);
     }
 
     if (shouldUpdateLibIndex) {
-      appendFileContent(`${libRootPath}/index.ts`, `export * from './components';\n`);
+      appendFileContent(`${libRootPath}/index.ts`, `export * from './components';\n`, tree);
     }
 
     if (!existsSync(componentsIndexFilePath)) {
       tree.write(componentsIndexFilePath, `export * from './${kebabCase(options.name)}';\n`);
     } else {
-      appendFileContent(componentsIndexFilePath, `export * from './${kebabCase(options.name)}';\n`);
+      appendFileContent(componentsIndexFilePath, `export * from './${kebabCase(options.name)}';\n`, tree);
     }
   }
 

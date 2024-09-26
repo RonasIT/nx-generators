@@ -65,9 +65,9 @@ const getNpmScope = (tree: Tree): string | undefined => {
 export const addNxAppTag = (tree: Tree, appDirectory: string): void => {
   const { config, path } = readESLintConfig(tree);
   const constraints = getNxRules(config);
-  const isTagExists = !!constraints.find((constraint) => constraint.sourceTag === `app:${appDirectory}`);
+  const doesTagExist = !!constraints.find((constraint) => constraint.sourceTag === `app:${appDirectory}`);
 
-  if (isTagExists) {
+  if (doesTagExist) {
     return;
   }
 
@@ -79,9 +79,9 @@ export const addNxAppTag = (tree: Tree, appDirectory: string): void => {
 export const addNxScopeTag = (tree: Tree, scope: string): void => {
   const { config, path } = readESLintConfig(tree);
   const constraints = getNxRules(config);
-  const isTagExists = !!constraints.find((constraint) => constraint.sourceTag === `scope:${scope}`);
+  const doesTagExist = !!constraints.find((constraint) => constraint.sourceTag === `scope:${scope}`);
 
-  if (isTagExists) {
+  if (doesTagExist) {
     return;
   }
 

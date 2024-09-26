@@ -1,0 +1,10 @@
+{
+  "PROFILE": {
+    "DETAILS": {
+      "TEXT_GREETING": "Hey, {{name}}!",
+      "TEXT_EMAIL": "Email: {{email}}",
+      "TEXT_NAME": "Name: {{name}}",
+      "BUTTON_LOGOUT": "Log out"
+    }
+  }
+}

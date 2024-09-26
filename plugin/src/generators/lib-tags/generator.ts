@@ -1,7 +1,7 @@
 import { readJson, Tree, writeJson, getProjects, ProjectConfiguration, formatFiles } from '@nx/devkit';
 import { LibTagsGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
-import { addNxAppTag, addNxScopeTag, askQuestion, getNxRules, verifyEsLintConfig } from '../../shared/utils';
+import { addNxAppTag, addNxScopeTag, askQuestion, getNxRules, readESLintConfig, verifyEsLintConfig } from '../../shared/utils';
 
 type TagType = 'app' | 'scope' | 'type';
 
@@ -27,14 +27,14 @@ export async function libTagsGenerator(
 
   // #1 Check eslint config nx-boundaries rule
   log('1. Checking eslint config nx-boundaries rule...\n');
-  const config = verifyEsLintConfig(tree);
+  let config = verifyEsLintConfig(tree);
 
   // #2 Check projects tags
   log('2. Checking projects tags...\n');
   const projects = getProjects(tree);
   const applications: Array<ProjectConfiguration> = [];
   const libraries: Array<ProjectConfiguration> = [];
-  const rules = getNxRules(config);
+  let rules = getNxRules(config);
 
   const getTagFromLibPath = (libPath: string, type: TagType): string => {
     const projectAppTag = libPath.split('/')[1];
@@ -147,6 +147,10 @@ export async function libTagsGenerator(
   });
 
   applications.forEach(checkApplicationTags);
+
+  config = readESLintConfig(tree).config;
+  rules = getNxRules(config);
+
   libraries.forEach(checkLibraryTags);
 
   await formatFiles(tree);

@@ -98,6 +98,7 @@ export const getImportPathPrefix = (tree: Tree): string => {
 
 export const verifyEsLintConfig = (tree: Tree): Record<string, any> => {
   const { config, path } = readESLintConfig(tree);
+  const importantTags = ['app:shared', 'scope:shared', 'type:app', 'type:data-access', 'type:features', 'type:ui', 'type:utils'];
 
   if (!config || isEmpty(config)) {
     throw new Error(`Failed to load ESLint config: ${path}`);
@@ -105,13 +106,15 @@ export const verifyEsLintConfig = (tree: Tree): Record<string, any> => {
 
   try {
     const rulesEntry = getNxRulesEntry(config).rules['@nx/enforce-module-boundaries'];
+    const tags = rulesEntry[1].depConstraints.map((rule) => rule.sourceTag);
     const areRulesDisabled = rulesEntry[1].depConstraints.find((rule) => rule.sourceTag === '*' && rule.onlyDependOnLibsWithTags.includes('*'));
+    const areRulesBroken = !importantTags.every((tag) => tags.includes(tag));
 
     if (rulesEntry[0] !== 'error') {
       rulesEntry[0] = 'error';
     }
 
-    if (areRulesDisabled) {
+    if (areRulesDisabled || areRulesBroken) {
       const esLintConfigTemplate = readJson(tree, 'plugin/src/generators/code-checks/files/.eslintrc.json.template');
       const templateRules = getNxRulesEntry(esLintConfigTemplate);
   

@@ -1,8 +1,9 @@
 import { readJson, Tree, writeJson, getProjects, ProjectConfiguration, formatFiles } from '@nx/devkit';
 import { LibTagsGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
-import { addNxAppTag, addNxScopeTag, askQuestion, getNxRules, getNxRulesEntry, readESLintConfig } from '../../shared/utils';
-import { isEmpty } from 'lodash';
+import { addNxAppTag, addNxScopeTag, askQuestion, getNxRules, verifyEsLintConfig } from '../../shared/utils';
+
+type TagType = 'app' | 'scope' | 'type';
 
 export async function libTagsGenerator(
   tree: Tree,
@@ -26,38 +27,7 @@ export async function libTagsGenerator(
 
   // #1 Check eslint config nx-boundaries rule
   log('1. Checking eslint config nx-boundaries rule...\n');
-  const { config, path } = readESLintConfig(tree);
-
-  if (!config || isEmpty(config)) {
-    throw new Error(`Failed to load ESLint config: ${path}`);
-  }
-
-  try {
-    const rulesEntry = getNxRulesEntry(config).rules['@nx/enforce-module-boundaries'];
-
-    if (rulesEntry[0] !== 'error') {
-      rulesEntry[0] = 'error';
-    }
-
-    if (rulesEntry[1].depConstraints.find((rule) => rule.sourceTag === '*' && rule.onlyDependOnLibsWithTags.includes('*'))) {
-      const esLintConfigTemplate = readJson(tree, 'plugin/src/generators/code-checks/files/.eslintrc.json.template');
-      const templateRules = getNxRulesEntry(esLintConfigTemplate);
-  
-      rulesEntry[1] = templateRules.rules['@nx/enforce-module-boundaries'][1];
-
-      writeJson(tree, path, config);
-    }
-    // TODO: use custom errors
-  } catch {
-    log('ESLint config has no @nx/enforce-module-boundaries rule. Updating rules...\n');
-
-    const esLintConfigTemplate = readJson(tree, 'plugin/src/generators/code-checks/files/.eslintrc.json.template');
-    const templateRules = getNxRulesEntry(esLintConfigTemplate);
-
-    config.overrides.push(templateRules);
-
-    writeJson(tree, path, config);
-  }
+  const config = verifyEsLintConfig(tree);
 
   // #2 Check projects tags
   log('2. Checking projects tags...\n');
@@ -66,70 +36,54 @@ export async function libTagsGenerator(
   const libraries: Array<ProjectConfiguration> = [];
   const rules = getNxRules(config);
 
-  const verifyAppTag = (project: ProjectConfiguration, appTag: string): void => {
-    if (appTag) {
-      const appTagRule = rules.find((rule) => rule.sourceTag === appTag);
+  const getTagFromLibPath = (libPath: string, type: TagType): string => {
+    const projectAppTag = libPath.split('/')[1];
 
-      if (!appTagRule) {
-        throw new Error(`Missing app tag rule for ${appTag}. Please add it to the ESLint config file.`);
-      }
-    } else {
-      log(`Missing app tag for ${project.name}. Adding...`);
-
-      const projectAppTag = project.root.split('/')[1];
-      const projectJson = readJson(tree, `${project.root}/project.json`);
-
-      projectJson.tags.push(`app:${projectAppTag}`);
-
-      writeJson(tree, `${project.root}/project.json`, projectJson);
+    switch (type) {
+      case 'app':
+        return projectAppTag;
+      case 'scope':
+        return projectAppTag === 'shared' ? 'shared' : libPath.split('/')[2];
+      case 'type':
+        return projectAppTag === 'shared' ? libPath.split('/')[2] : libPath.split('/')[3];
     }
   };
 
-  const verifyScopeTag = (project: ProjectConfiguration, scopeTag: string): void => {
-    if (scopeTag) {
-      const scopeTagRule = rules.find((rule) => rule.sourceTag === scopeTag);
+  const verifyLibraryTag = (project: ProjectConfiguration, tag: string, type: TagType, ruleNotFoundCallback?: () => void): void => {
+    const defaultRuleNotFoundCallback = (): void => {
+      throw new Error(`Missing ${type} tag rule for ${tag}. Please add it to the ESLint config file.`);
+    };
 
-      if (!scopeTagRule) {
-        log(`Missing scope tag rule for ${scopeTag}. Adding...`);
-        addNxScopeTag(tree, scopeTag.replace('scope:', ''));
+    if (tag) {
+      const tagRule = rules.find((rule) => rule.sourceTag === tag);
+
+      if (!tagRule) {
+        const callback = ruleNotFoundCallback || defaultRuleNotFoundCallback;
+
+        callback();
       }
     } else {
-      log(`Missing scope tag for ${project.name}. Adding...`);
+      log(`Missing ${type} tag for ${project.name}. Adding...`);
 
-      const projectAppTag = project.root.split('/')[1];
-      const projectScopeTag = projectAppTag === 'shared' ? 'shared' : project.root.split('/')[2];
-      const projectJson = readJson(tree, `${project.root}/project.json`);
+      const tag = getTagFromLibPath(project.root, type);
 
-      projectJson.tags.push(`scope:${projectScopeTag}`);
+      if (type === 'type') {
+        const typeTagRule = rules.find((rule) => rule.sourceTag === `type:${tag}`);
 
-      writeJson(tree, `${project.root}/project.json`, projectJson);
-      addNxScopeTag(tree,  projectScopeTag);
-    }
-  };
-
-  const verifyTypeTag = (project: ProjectConfiguration, typeTag: string): void => {
-    if (typeTag) {
-      const typeTagRule = rules.find((rule) => rule.sourceTag === typeTag);
-
-      if (!typeTagRule) {
-        throw new Error(`Missing type tag rule for ${typeTag}. Please add it to the ESLint config file.`);
-      }
-    } else {
-      log(`Missing type tag for ${project.name}. Adding...`);
-
-      const projectAppTag = project.root.split('/')[1];
-      const projectLibTypeTag = projectAppTag === 'shared' ? project.root.split('/')[2] : project.root.split('/')[3];
-      const typeTagRule = rules.find((rule) => rule.sourceTag === `type:${projectLibTypeTag}`);
-
-      if (!typeTagRule) {
-        throw new Error(`Missing type tag rule for ${projectLibTypeTag}. Please add it to the ESLint config file.`);
+        if (!typeTagRule) {
+          throw new Error(`Missing type tag rule for ${tag}. Please add it to the ESLint config file.`);
+        }
       }
 
       const projectJson = readJson(tree, `${project.root}/project.json`);
 
-      projectJson.tags.push(`type:${projectLibTypeTag}`);
+      projectJson.tags.push(`${type}:${tag}`);
 
       writeJson(tree, `${project.root}/project.json`, projectJson);
+
+      if (type === 'scope') {
+        addNxScopeTag(tree,  tag);
+      }
     }
   };
 
@@ -174,9 +128,12 @@ export async function libTagsGenerator(
     const scopeTag = tags.find((tag) => tag.startsWith('scope:'));
     const typeTag = tags.find((tag) => tag.startsWith('type:'));
 
-    verifyAppTag(project, appTag);
-    verifyScopeTag(project, scopeTag);
-    verifyTypeTag(project, typeTag);
+    verifyLibraryTag(project, appTag, 'app');
+    verifyLibraryTag(project, scopeTag, 'scope', () => {
+      log(`Missing scope tag rule for ${scopeTag}. Adding...`);
+      addNxScopeTag(tree, scopeTag.replace('scope:', ''));
+    });
+    verifyLibraryTag(project, typeTag, 'type');
   };
 
   projects.forEach((project) => {

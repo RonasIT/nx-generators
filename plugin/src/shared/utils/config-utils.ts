@@ -1,4 +1,5 @@
 import { Tree, readJson, writeJson } from '@nx/devkit';
+import { isEmpty } from 'lodash';
 
 const defaultEsLintConfigPath = '.eslintrc.json';
 
@@ -93,4 +94,42 @@ export const getImportPathPrefix = (tree: Tree): string => {
   const npmScope = getNpmScope(tree);
 
   return npmScope ? `${npmScope === '@' ? '' : '@'}${npmScope}` : '';
+};
+
+export const verifyEsLintConfig = (tree: Tree): Record<string, any> => {
+  const { config, path } = readESLintConfig(tree);
+
+  if (!config || isEmpty(config)) {
+    throw new Error(`Failed to load ESLint config: ${path}`);
+  }
+
+  try {
+    const rulesEntry = getNxRulesEntry(config).rules['@nx/enforce-module-boundaries'];
+    const areRulesDisabled = rulesEntry[1].depConstraints.find((rule) => rule.sourceTag === '*' && rule.onlyDependOnLibsWithTags.includes('*'));
+
+    if (rulesEntry[0] !== 'error') {
+      rulesEntry[0] = 'error';
+    }
+
+    if (areRulesDisabled) {
+      const esLintConfigTemplate = readJson(tree, 'plugin/src/generators/code-checks/files/.eslintrc.json.template');
+      const templateRules = getNxRulesEntry(esLintConfigTemplate);
+  
+      rulesEntry[1] = templateRules.rules['@nx/enforce-module-boundaries'][1];
+
+      writeJson(tree, path, config);
+    }
+    // TODO: use custom errors
+  } catch {
+    console.log('ESLint config has no @nx/enforce-module-boundaries rule. Updating rules...\n');
+
+    const esLintConfigTemplate = readJson(tree, 'plugin/src/generators/code-checks/files/.eslintrc.json.template');
+    const templateRules = getNxRulesEntry(esLintConfigTemplate);
+
+    config.overrides.push(templateRules);
+
+    writeJson(tree, path, config);
+  }
+
+  return config;
 };

@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 
 const defaultEsLintConfigPath = '.eslintrc.json';
 
-interface Constraint {
+export interface Constraint {
   sourceTag: string;
   onlyDependOnLibsWithTags: Array<string>;
 }

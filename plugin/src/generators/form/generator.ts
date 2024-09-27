@@ -98,10 +98,15 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
 
   // Generate form class
   const formsPath = `${libPath}/lib/forms`;
+  const formFilePath = `${formsPath}/${fileName}.ts`;
+  if (tree.exists(formFilePath)) {
+    throw new Error('The form already exists');
+  }
+
   const formUtilsDirectory = await getFormUtilsDirectory();
   const formClassName = `${formatName(fileName, true)}FormSchema`;
   generateFiles(tree, path.join(__dirname, `files`), formsPath, { className: formClassName, formUtilsDirectory });
-  tree.rename(`${formsPath}/form.ts`, `${formsPath}/${fileName}.ts`);
+  tree.rename(`${formsPath}/form.ts`, formFilePath);
   updateIndex(formsPath, fileName, tree);
 
   // Add form usage

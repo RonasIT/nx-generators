@@ -13,9 +13,9 @@ import { addNamedImport } from '../../../shared/utils';
 
 function getFormUsageCode(formClassName: string): string {
   return `const formSchema = new ${formClassName}();
-const form = useForm<${formClassName}>({
+const form = useForm({
   defaultValues: formSchema.formValues,
-  resolver: yupResolver<any>(${formClassName}.validationSchema)
+  resolver: yupResolver(${formClassName}.validationSchema)
 });\n\n`
 }
 

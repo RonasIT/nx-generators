@@ -4,16 +4,29 @@ import { FormGeneratorSchema } from './schema';
 import {
   addNamedImport,
   appendFileContent,
-  dynamicImport, filterSource,
+  dynamicImport,
+  filterSource,
   formatName,
   getNxLibsPaths,
-  LibraryType, searchAliasPath,
+  LibraryType,
+  searchAliasPath,
   searchNxLibsPaths
 } from '../../shared/utils';
 import { existsSync } from 'fs';
 import { kebabCase } from 'lodash';
 import { dependencies } from '../../shared/dependencies';
-import { IndentationText, Project, QuoteKind, SyntaxKind } from 'ts-morph';
+import {
+  ArrowFunction,
+  FunctionDeclaration,
+  FunctionExpression,
+  IndentationText,
+  Project,
+  QuoteKind,
+  SourceFile,
+  ts
+} from 'ts-morph';
+import SyntaxKind = ts.SyntaxKind;
+import { getPlaceOfUse } from './utils';
 
 async function getFormUtilsDirectory(): Promise<string> {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
@@ -53,7 +66,7 @@ const form = useForm<${formClassName}>({
 });\n\n`
 }
 
-async function addFormUsage(libPath: string, placeOfUse: string, formClassName: string): Promise<void> {
+async function addFormUsage(libPath: string, placeOfUseName: string, formClassName: string): Promise<void> {
   const project = new Project({
     manipulationSettings: {
       indentationText: IndentationText.TwoSpaces,
@@ -61,7 +74,7 @@ async function addFormUsage(libPath: string, placeOfUse: string, formClassName: 
     }
   });
   const files = project.addSourceFilesAtPaths([`${libPath}/lib/**/*.tsx`, `${libPath}/lib/**/*.ts`]);
-  const file = files.find((file) => file.getFunction(placeOfUse) || file.getVariableDeclaration(placeOfUse));
+  const file = files.find((file) => file.getFunction(placeOfUseName) || file.getVariableDeclaration(placeOfUseName));
   if (!file) {
     throw new Error('Could not find the place where the form should be used.');
   }
@@ -75,8 +88,8 @@ async function addFormUsage(libPath: string, placeOfUse: string, formClassName: 
   addNamedImport('useForm', 'react-hook-form', file);
   addNamedImport('yupResolver', '@hookform/resolvers/yup', file);
 
-  const component = file.getFunction(placeOfUse) || file.getVariableDeclaration(placeOfUse).getInitializerIfKindOrThrow(SyntaxKind.FunctionExpression);
-  component.setBodyText(`${getFormUsageCode(formClassName)}${component.getBodyText()}`);
+  const placeOfUse = getPlaceOfUse(file, placeOfUseName);
+  placeOfUse.setBodyText(`${getFormUsageCode(formClassName)}${placeOfUse.getBodyText()}`);
 
   project.saveSync();
 }

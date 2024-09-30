@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/schema",
-  "$id": "NextApp",
+  "$id": "LibTags",
   "title": "",
   "type": "object",
   "properties": {

@@ -4,6 +4,7 @@ import { ReactLibGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
 import { formatName, askQuestion, dynamicImport, filterSource, LibraryType, addNxScopeTag } from '../../shared/utils';
 import { isBoolean } from 'lodash';
+import { formatLibName } from './utils';
 
 const getProjectsDetails = (tree: Tree) => Array.from(getProjects(tree))
   .filter(([_, project]) => project.projectType === 'application')
@@ -43,7 +44,7 @@ export async function reactLibGenerator(
     message: 'Select the library type: ',
     source: (input) => filterSource(input, Object.values(LibraryType))
   });
-  options.name = options.name || await askQuestion('Enter the name of the library (e.g: settings): ');
+  options.name = formatLibName(options.name || await askQuestion('Enter the name of the library (e.g: settings): '), options.scope);
 
   if ([LibraryType.FEATURES, LibraryType.UI].includes(options.type as LibraryType) && !isBoolean(options.withComponent)) {
     options.withComponent = await askQuestion('Generate component inside lib folder? (y/n): ') === 'y';

@@ -1,4 +1,4 @@
-import { ProjectConfiguration, Tree, readJson, writeJson } from '@nx/devkit';
+import { ProjectConfiguration, Tree, readProjectConfiguration, updateProjectConfiguration } from '@nx/devkit';
 import { addNxAppTag, addNxScopeTag, constants } from '../../../shared/utils';
 import { LibTagsContext } from '../interfaces';
 
@@ -40,6 +40,8 @@ const verifyLibraryTag = (
   } else {
     context.log(`Missing ${tagType} tag for ${project.name}. Adding...`);
 
+    project = readProjectConfiguration(tree, project.name);
+
     const tag = getTagFromLibPath(project.root, tagType);
 
     if (tagType === 'type') {
@@ -50,11 +52,7 @@ const verifyLibraryTag = (
       }
     }
 
-    const projectJson = readJson(tree, `${project.root}/project.json`);
-
-    projectJson.tags.push(`${tagType}:${tag}`);
-
-    writeJson(tree, `${project.root}/project.json`, projectJson);
+    updateProjectConfiguration(tree, project.name, { ...project, tags: [...project.tags, `${tagType}:${tag}`] });
 
     if (tagType === 'scope') {
       addNxScopeTag(tree,  tag);
@@ -78,22 +76,17 @@ export const checkApplicationTags = (project: ProjectConfiguration, tree: Tree, 
     context.log(`Missing app tag for ${project.name}. Adding...`);
 
     const projectAppTag = project.root.split('/').pop();
-    const projectJson = readJson(tree, `${project.root}/project.json`);
 
-    projectJson.tags.push(`app:${projectAppTag}`);
-
-    writeJson(tree, `${project.root}/project.json`, projectJson);
+    updateProjectConfiguration(tree, project.name, { ...project, tags: [...project.tags, `app:${projectAppTag}`] });
     addNxAppTag(tree,  projectAppTag);
   }
 
   if (!hasTypeTag) {
     context.log(`Missing type tag for ${project.name}. Adding...`);
 
-    const projectJson = readJson(tree, `${project.root}/project.json`);
+    project = readProjectConfiguration(tree, project.name);
 
-    projectJson.tags.push('type:app');
-
-    writeJson(tree, `${project.root}/project.json`, projectJson);
+    updateProjectConfiguration(tree, project.name, { ...project, tags: [...project.tags, 'type:app'] });
   }
 };
 

@@ -1,1 +1,1 @@
-export * from './format-lib-name';
+export * from './get-lib-directory-name';

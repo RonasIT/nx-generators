@@ -21,12 +21,14 @@ const form = useForm({
 
 function getForwardRefFunction(variable: VariableDeclaration): FunctionExpression | ArrowFunction {
   const callExpressionInitializer = variable.getInitializerIfKind(SyntaxKind.CallExpression);
-  if (!callExpressionInitializer || callExpressionInitializer.getExpression().getText() !== 'forwardRef') {
+  const hasForwardRef = callExpressionInitializer?.getExpression().getText() === 'forwardRef'
+  if (!hasForwardRef) {
     throw new Error('Could not find forwardRef');
   }
 
   const argument = callExpressionInitializer.getArguments()[0];
-  if (!argument || ![SyntaxKind.FunctionExpression, SyntaxKind.ArrowFunction].includes(argument.getKind())) {
+  const hasComponentFunction = argument && [SyntaxKind.FunctionExpression, SyntaxKind.ArrowFunction].includes(argument.getKind())
+  if (!hasComponentFunction) {
     throw new Error('Could not find a component function in forwardRef');
   }
 

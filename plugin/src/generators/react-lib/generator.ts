@@ -50,7 +50,8 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   const scopeTag = options.scope || 'shared';
   const tags = [`app:${options.app}`, `scope:${scopeTag}`, `type:${options.type}`];
 
-  const libPath = path.normalize(`libs/${options.app}/${options.scope}/${options.type}/${getLibDirectoryName(options.name, options.scope)}`);
+  const libDirectoryName = getLibDirectoryName(options.name, options.scope);
+  const libPath = path.normalize(`libs/${options.app}/${options.scope}/${options.type}/${libDirectoryName}`);
   const command = `npx nx g @nx/expo:lib --skipPackageJson --unitTestRunner=none --tags="${tags.join(', ')}" --projectNameAndRootFormat=derived ${libPath}`;
   const commandWithOptions = options.dryRun ? command + ' --dry-run' : command;
 
@@ -66,6 +67,10 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   addNxScopeTag(tree, scopeTag);
 
   await formatFiles(tree);
+
+  if (libDirectoryName !== options.name) {
+    console.log(`The name of the library was changed to ${libDirectoryName} so that it does not contain words from the scope`);
+  }
 }
 
 export default reactLibGenerator;

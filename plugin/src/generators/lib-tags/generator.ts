@@ -1,4 +1,4 @@
-import { Tree, getProjects, ProjectConfiguration, formatFiles } from '@nx/devkit';
+import { Tree, getProjects, ProjectConfiguration, formatFiles, output } from '@nx/devkit';
 import { LibTagsGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
 import { askQuestion, getNxRules, readESLintConfig, verifyEsLintConfig } from '../../shared/utils';
@@ -31,11 +31,11 @@ export async function libTagsGenerator(
   }
 
   // #1 Check eslint config nx-boundaries rule
-  context.log('1. Checking eslint config nx-boundaries rule...\n');
+  output.log({ title: output.bold('1. Checking eslint config nx-boundaries rule...') });
   context.config = verifyEsLintConfig(tree);
 
   // #2 Check projects tags
-  context.log('2. Checking projects tags...\n');
+  output.log({ title: output.bold('2. Checking projects tags...') });
   const projects = getProjects(tree);
   const applications: Array<ProjectConfiguration> = [];
   const libraries: Array<ProjectConfiguration> = [];

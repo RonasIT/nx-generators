@@ -1,4 +1,4 @@
-import { Tree, readJson, writeJson } from '@nx/devkit';
+import { Tree, output, readJson, writeJson } from '@nx/devkit';
 import { isEmpty } from 'lodash';
 
 const defaultEsLintConfigPath = '.eslintrc.json';
@@ -124,7 +124,7 @@ export const verifyEsLintConfig = (tree: Tree): Record<string, any> => {
     }
     // TODO: use custom errors
   } catch {
-    console.log('ESLint config has no @nx/enforce-module-boundaries rule. Updating rules...\n');
+    output.warn({ title: output.bold('ESLint config has no @nx/enforce-module-boundaries rule. Updating rules...') });
 
     const esLintConfigTemplate = readJson(tree, 'plugin/src/generators/code-checks/files/.eslintrc.json.template');
     const templateRules = getNxRulesEntry(esLintConfigTemplate);

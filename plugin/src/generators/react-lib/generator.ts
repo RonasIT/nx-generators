@@ -1,4 +1,4 @@
-import { formatFiles, generateFiles, getProjects, Tree } from '@nx/devkit';
+import { formatFiles, generateFiles, getProjects, Tree, output } from '@nx/devkit';
 import * as path from 'path';
 import { ReactLibGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
@@ -69,7 +69,7 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   await formatFiles(tree);
 
   if (libDirectoryName !== options.name) {
-    console.log(`The name of the library was changed to ${libDirectoryName} so that it does not contain words from the scope`);
+    output.warn({ title: `The library directory was changed to ${output.bold(libDirectoryName)} so that it does not contain words from the scope name.`});
   }
 }
 

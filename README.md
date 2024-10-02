@@ -147,14 +147,16 @@ Creates a React component in particular library.
 
 2. `subcomponent` (optional) - generate a folder for components
 
+3. `withForwardRef` (optional) - generate a component with forwardRef
+
 #### Example
 
 ```sh
-npx nx g react-component --name=AppButton --subcomponent
+npx nx g react-component --name=AppButton --subcomponent --withForwardRef
 ```
 or
 ```sh
-npx nx g react-component AppButton --subcomponent
+npx nx g react-component AppButton --subcomponent --withForwardRef
 ```
 
 ### 7. `entity-api`

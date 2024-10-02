@@ -32,6 +32,7 @@ export async function reactComponentGenerator(
 
   options.name = options.name || await askQuestion('Enter the name of the component (e.g: AppButton): ');
   options.subcomponent = options.subcomponent || await askQuestion('Generate component inside components folder? (y/n): ') === 'y';
+  options.withForwardRef = options.withForwardRef || await askQuestion('Generate component with forwardRef? (y/n): ') === 'y';
 
   const libRootPath = `${libPath}/lib`;
   const componentsPath = `${libRootPath}/components`;
@@ -41,7 +42,7 @@ export async function reactComponentGenerator(
   const shouldUpdateSrcIndex = !existsSync(libRootPath);
   const shouldUpdateLibIndex = !existsSync(componentsPath) && options.subcomponent;
 
-  generateFiles(tree, path.join(__dirname, `files`), componentPath, { ...options, formatName });
+  generateFiles(tree, path.join(__dirname, `files`), componentPath, { ...options, name: formatName(options.name, true)  });
 
   const updateIndexes = (): void => {
     const componentsIndexFilePath = `${libRootPath}/components/index.ts`;

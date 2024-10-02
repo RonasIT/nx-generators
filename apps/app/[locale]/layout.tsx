@@ -1,0 +1,48 @@
+import { notFound } from 'next/navigation';
+import { unstable_setRequestLocale } from 'next-intl/server';
+import { ReactElement, ReactNode } from 'react';
+import { constants, Locale } from '../../constants';
+import { Providers } from './providers';
+
+export const metadata = {
+  title: '',
+};
+
+export interface RootLayoutProps {
+  children: ReactNode;
+  params: { locale: Locale };
+}
+
+const locales = constants.locales;
+
+export const generateStaticParams = (): Array<{ locale: Locale }> =>
+  locales.map((locale) => ({ locale }));
+
+export default function RootLayout({
+  children,
+  params: { locale },
+}: RootLayoutProps): ReactElement {
+  if (!locales.includes(locale)) {
+    notFound();
+  }
+
+  unstable_setRequestLocale(locale);
+
+  return (
+    <html lang={locale}>
+      <head>
+        <meta
+          name="robots"
+          content={
+            process.env.NEXT_PUBLIC_APP_ENV === 'production'
+              ? 'index'
+              : 'noindex'
+          }
+        />
+      </head>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}

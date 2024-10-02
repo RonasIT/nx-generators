@@ -7,6 +7,13 @@ import {
 import * as path from 'path';
 import { SentryGeneratorSchema } from './schema';
 import { isExpoApp, isNextApp } from '../../shared/utils';
+import { tsquery } from '@phenomnomnominal/tsquery';
+import {
+  createPrinter,
+  factory,
+  ObjectLiteralExpression,
+  PropertyAssignment,
+} from 'typescript';
 
 const nextAppDependencies = {
   '@sentry/nextjs': '^8.21.0',
@@ -25,65 +32,96 @@ export async function sentryGenerator(
   if (isNextApp(tree, projectRoot)) {
     addDependenciesToPackageJson(tree, nextAppDependencies, {});
 
-    const nextConfigContent = tree
+    const nextConfigContent2 = tree
       .read(`${projectRoot}/next.config.js`)
-      .toString()
-      .replace(
-        /^const { withNx } = require\('@nrwl\/next\/plugins\/with-nx'\);$/gm,
-        `const { withSentryConfig } = require("@sentry/nextjs");
-         const { withNx } = require('@nrwl/next/plugins/with-nx');`,
-      )
-      .replace(
-        /^const nextConfig = {/gm,
-        `const nextConfig = {
-          sentry: {
-            // Upload a larger set of source maps for prettier stack traces (increases build time)
-            widenClientFileUpload: true,
+      .toString();
 
-            // Transpiles SDK to be compatible with IE11 (increases bundle size)
-            transpileClientSDK: true,
+    const ast = tsquery.ast(nextConfigContent2);
 
-            // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
-            tunnelRoute: '/monitoring',
-
-            // Hides source maps from generated client bundles
-            hideSourceMaps: true,
-
-            // Automatically tree-shake Sentry logger statements to reduce bundle size
-            disableLogger: true
-          },
-        `,
-      )
-      .replace(
-        /\(nextConfig\)/gm,
-        `(withSentryConfig(nextConfig, sentryWebpackPluginOptions))`,
-      );
-
-    tree.write(
-      `${projectRoot}/next.config.js`,
-      nextConfigContent +
-        `
-           /**
-       * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
-       **/
-      
-      const sentryWebpackPluginOptions = {
-        silent: true,
-        org: '',
-        project: 'web-next-js-client',
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-      };
-      
-      `,
+    const updatedNextConfig = tsquery.map(
+      ast,
+      'Identifier[name="nextConfig"] ~ ObjectLiteralExpression',
+      (node: ObjectLiteralExpression) => {
+        return factory.updateObjectLiteralExpression(node, [
+          factory.createPropertyAssignment(
+            factory.createIdentifier('sentry'),
+            factory.createObjectLiteralExpression([
+              factory.createPropertyAssignment(
+                factory.createIdentifier('firstKey'),
+                factory.createStringLiteral('string expression'),
+              ),
+            ]),
+          ),
+          ...node.properties,
+        ]);
+      },
+      {
+        visitAllChildren: true,
+      },
     );
 
-    const envFiles = ['.env', '.env.development', '.env.production'];
-    envFiles.forEach((file) => {
-      const envContent = tree.read(`${projectRoot}/${file}`).toString();
-      tree.write(`${projectRoot}/${file}`, envContent + 'SENTRY_AUTH_TOKEN=');
-    });
+    const newFile = createPrinter().printFile(updatedNextConfig);
+    tree.write(`${projectRoot}/next.config.js`, newFile);
 
-    generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
+    // const nextConfigContent = tree
+    //   .read(`${projectRoot}/next.config.js`)
+    //   .toString()
+    //   .replace(
+    //     /^const { withNx } = require\('@nrwl\/next\/plugins\/with-nx'\);$/gm,
+    //     `const { withSentryConfig } = require("@sentry/nextjs");
+    //      const { withNx } = require('@nrwl/next/plugins/with-nx');`,
+    //   )
+    //   .replace(
+    //     /^const nextConfig = {/gm,
+    //     `const nextConfig = {
+    //       sentry: {
+    //         // Upload a larger set of source maps for prettier stack traces (increases build time)
+    //         widenClientFileUpload: true,
+
+    //         // Transpiles SDK to be compatible with IE11 (increases bundle size)
+    //         transpileClientSDK: true,
+
+    //         // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
+    //         tunnelRoute: '/monitoring',
+
+    //         // Hides source maps from generated client bundles
+    //         hideSourceMaps: true,
+
+    //         // Automatically tree-shake Sentry logger statements to reduce bundle size
+    //         disableLogger: true
+    //       },
+    //     `,
+    //   )
+    //   .replace(
+    //     /\(nextConfig\)/gm,
+    //     `(withSentryConfig(nextConfig, sentryWebpackPluginOptions))`,
+    //   );
+
+    // tree.write(
+    //   `${projectRoot}/next.config.js`,
+    //   nextConfigContent +
+    //     `
+    //        /**
+    //    * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
+    //    **/
+
+    //   const sentryWebpackPluginOptions = {
+    //     silent: true,
+    //     org: '',
+    //     project: 'web-next-js-client',
+    //     authToken: process.env.SENTRY_AUTH_TOKEN,
+    //   };
+
+    //   `,
+    // );
+
+    // const envFiles = ['.env', '.env.development', '.env.production'];
+    // envFiles.forEach((file) => {
+    //   const envContent = tree.read(`${projectRoot}/${file}`).toString();
+    //   tree.write(`${projectRoot}/${file}`, envContent + 'SENTRY_AUTH_TOKEN=');
+    // });
+
+    // generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
   } else if (isExpoApp(tree, projectRoot)) {
     addDependenciesToPackageJson(tree, expoAppDependencies, {});
 

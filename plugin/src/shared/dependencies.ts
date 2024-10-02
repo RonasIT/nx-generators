@@ -1,6 +1,6 @@
 export const dependencies = {
   'expo-app': {
-    "@ronas-it/react-native-common-modules": "^0.2.0",
+    "@ronas-it/react-native-common-modules": "^0.4.0",
     'expo-constants': '~16.0.2',
     'expo-router': '~3.5.16',
     'react-native-safe-area-context': '^4.10.5',
@@ -35,6 +35,11 @@ export const dependencies = {
   'ui-kitten': {
     '@eva-design/eva': '^2.2.0',
     '@ui-kitten/components': '^5.3.1'
+  },
+  'form': {
+    '@hookform/resolvers': '^3.9.0',
+    'react-hook-form': '^7.53.0',
+    'yup': '^1.4.0'
   }
 };
 
@@ -50,6 +55,7 @@ export const devDependencies = {
     'eslint-plugin-react-hooks': '^4.6.2',
     'eslint-plugin-react-native': '^4.1.0',
     'eslint-plugin-unused-imports': '^3.0.0',
+    'husky': '^9.1.5',
     '@typescript-eslint/eslint-plugin': '^7.13.1',
     '@typescript-eslint/parser': '^7.13.1',
     'tsc-files': '^1.1.4',

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Form",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the form",
+      "default": "",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "Enter the name of the form (e.g: profile-settings)"
+    },
+    "placeOfUse": {
+      "type": "string",
+      "description": "Name of the component or hook, where the form should be",
+      "default": "",
+      "$default": {
+        "$source": "argv",
+        "index": 1
+      },
+      "x-prompt": "Enter the name of the place, where the form should be (e.g: component ProfileSettings or hook useProfileSettings). If it's not necessary, just press Enter"
+    }
+  },
+  "required": []
+}

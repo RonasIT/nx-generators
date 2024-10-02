@@ -12,8 +12,8 @@ import { NextAppGeneratorSchema } from './schema';
 import { existsSync } from 'fs';
 import { dependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
-import { runApiClientGenerator, runAppEnvGenerator, runStoreGenerator } from '../../shared/generators';
-import { formatName } from '../../shared/utils';
+import { runApiClientGenerator, runAppEnvGenerator, runFormUtilsGenerator } from '../../shared/generators';
+import { addNxAppTag, askQuestion, formatName } from '../../shared/utils';
 import * as path from 'path';
 
 export async function nextAppGenerator(
@@ -21,20 +21,37 @@ export async function nextAppGenerator(
   options: NextAppGeneratorSchema,
 ) {
   const appRoot = `apps/${options.directory}`;
+  const tags = [`app:${options.directory}`, 'type:app'];
 
   // Install @nx/next plugin
   execSync('npx nx add @nx/next', { stdio: 'inherit' });
 
   if (!existsSync(appRoot)) {
     execSync(
-      `npx nx g @nx/next:app ${options.name} --directory=apps/${options.directory} --projectNameAndRootFormat=as-provided --appDir=true --style=scss --src=false --unitTestRunner=none --e2eTestRunner=none`,
+      `npx nx g @nx/next:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --projectNameAndRootFormat=as-provided --appDir=true --style=scss --src=false --unitTestRunner=none --e2eTestRunner=none`,
       { stdio: 'inherit' },
     );
   }
 
-  runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });
-  runAppEnvGenerator(tree, options);
-  runApiClientGenerator(tree, options);
+  await runAppEnvGenerator(tree, options);
+
+  const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
+
+  if (shouldGenerateStoreLib) {
+    execSync(`npx nx g store ${options.name} ${options.directory} ${BaseGeneratorType.NEXT_APP}`, { stdio: 'inherit' });
+  }
+
+  const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
+
+  if (shouldGenerateApiClientLib) {
+    await runApiClientGenerator(tree, options);
+  }
+
+  const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
+
+  if (shouldGenerateFormUtilsLib) {
+    await runFormUtilsGenerator(tree, options);
+  }
 
   // Remove unnecessary files and files that will be replaced
   tree.delete(`${appRoot}/public/.gitkeep`);
@@ -61,6 +78,8 @@ export async function nextAppGenerator(
     ...options,
     formatName,
   });
+
+  addNxAppTag(tree, options.directory);
 
   // Add dependencies
   addDependenciesToPackageJson(tree, dependencies['next-app'], {});

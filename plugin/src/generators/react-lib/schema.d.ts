@@ -4,5 +4,6 @@ export interface ReactLibGeneratorSchema {
   type?: string;
   name?: string;
   withComponent?: boolean;
+  isComponentWithForwardRef?: boolean;
   dryRun?: boolean;
 }

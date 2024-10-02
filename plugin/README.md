@@ -125,12 +125,15 @@ Generates a library according to [NX notation](https://nx.dev/concepts/more-conc
 1. `withComponent` (optional) - generate the library with `lib/component.tsx` file.
    This option is for `features` or `ui` library.
 
+1. `isComponentWithForwardRef` (optional) - generate a component with `forwardRef` in `lib/component.tsx` file.
+   This option works if `withComponent` is `true`.
+
 1. `dryRun` (optional) - generate the library without creating files
 
 #### Example
 
 ```sh
-npx nx g react-lib --app=mobile --scope=account --type=features --name=profile-settings --withComponent --dryRun
+npx nx g react-lib --app=mobile --scope=account --type=features --name=profile-settings --withComponent --isComponentWithForwardRef --dryRun
 ```
 or
 ```sh

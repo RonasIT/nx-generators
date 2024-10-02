@@ -45,6 +45,10 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
 
   if ([LibraryType.FEATURES, LibraryType.UI].includes(options.type as LibraryType) && !isBoolean(options.withComponent)) {
     options.withComponent = (await askQuestion('Generate component inside lib folder? (y/n): ')) === 'y';
+
+    if (!isBoolean(options.isComponentWithForwardRef)) {
+      options.isComponentWithForwardRef = await askQuestion('Generate component with forwardRef? (y/n): ') === 'y';
+    }
   }
 
   const scopeTag = options.scope || 'shared';
@@ -60,7 +64,7 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   if (options.withComponent) {
     const srcPath = `${libPath}/src`;
 
-    generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, formatName });
+    generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, name: formatName(options.name, true) });
     tree.write(`${srcPath}/index.ts`, 'export * from \'./lib\';');
   }
 

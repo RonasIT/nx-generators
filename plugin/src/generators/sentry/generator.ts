@@ -11,9 +11,57 @@ import { tsquery } from '@phenomnomnominal/tsquery';
 import {
   createPrinter,
   factory,
+  transform,
+  NodeFlags,
   ObjectLiteralExpression,
   PropertyAssignment,
+  SyntaxKind,
+  addSyntheticLeadingComment,
+  Expression,
+  NodeArray,
+  ObjectLiteralElementLike,
 } from 'typescript';
+
+type PropertyAssignmentData = {
+  key: string;
+  initializer: Expression;
+  comment?: string;
+};
+
+/*
+  Разобраться, что происходит с форматированием
+*/
+
+const generatePropertyAssignment = ({
+  key,
+  initializer,
+  comment,
+}: PropertyAssignmentData): PropertyAssignment => {
+  const property = factory.createPropertyAssignment(
+    factory.createIdentifier(key),
+    initializer,
+  );
+
+  if (comment) {
+    addSyntheticLeadingComment(
+      property,
+      SyntaxKind.SingleLineCommentTrivia,
+      ` ${comment}`,
+    );
+  }
+
+  return property;
+};
+
+const generateObjectLiteralExpression = (
+  objectData: Array<PropertyAssignmentData>,
+  restProperties: NodeArray<ObjectLiteralElementLike>,
+): ObjectLiteralExpression => {
+  return factory.createObjectLiteralExpression([
+    ...objectData.map(generatePropertyAssignment),
+    ...restProperties,
+  ]);
+};
 
 const nextAppDependencies = {
   '@sentry/nextjs': '^8.21.0',
@@ -32,36 +80,98 @@ export async function sentryGenerator(
   if (isNextApp(tree, projectRoot)) {
     addDependenciesToPackageJson(tree, nextAppDependencies, {});
 
-    const nextConfigContent2 = tree
+    const nextConfigContent = tree
       .read(`${projectRoot}/next.config.js`)
       .toString();
 
-    const ast = tsquery.ast(nextConfigContent2);
+    const nextWithImports = tsquery.replace(
+      nextConfigContent,
+      'VariableStatement:has(Identifier[name="withNx"]):has(CallExpression:has(Identifier[name="require"]))',
+      (node) => `${node.getText()}
+        const { withSentryConfig } = require('@sentry/nextjs');
+        
+        `,
+      {},
+    );
 
     const updatedNextConfig = tsquery.map(
-      ast,
+      tsquery.ast(nextWithImports),
       'Identifier[name="nextConfig"] ~ ObjectLiteralExpression',
       (node: ObjectLiteralExpression) => {
-        return factory.updateObjectLiteralExpression(node, [
-          factory.createPropertyAssignment(
-            factory.createIdentifier('sentry'),
-            factory.createObjectLiteralExpression([
-              factory.createPropertyAssignment(
-                factory.createIdentifier('firstKey'),
-                factory.createStringLiteral('string expression'),
-              ),
-            ]),
-          ),
-          ...node.properties,
-        ]);
+        return generateObjectLiteralExpression(
+          [
+            {
+              key: 'widenClientFileUpload',
+              initializer: factory.createTrue(),
+              comment:
+                'Upload a larger set of source maps for prettier stack traces (increases build time)',
+            },
+            {
+              key: 'transpileClientSDK',
+              initializer: factory.createTrue(),
+              comment:
+                'Transpiles SDK to be compatible with IE11 (increases bundle size)',
+            },
+            {
+              key: 'tunnelRoute',
+              initializer: factory.createStringLiteral('/monitoring'),
+              comment:
+                'Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)',
+            },
+            {
+              key: 'hideSourceMaps',
+              initializer: factory.createTrue(),
+              comment: 'Hides source maps from generated client bundles',
+            },
+            {
+              key: 'disableLogger',
+              initializer: factory.createTrue(),
+              comment:
+                'Automatically tree-shake Sentry logger statements to reduce bundle size',
+            },
+          ],
+          node.properties,
+        );
       },
       {
         visitAllChildren: true,
       },
     );
 
-    const newFile = createPrinter().printFile(updatedNextConfig);
-    tree.write(`${projectRoot}/next.config.js`, newFile);
+    const withSentryWebpackPluginOptions = tsquery.replace(
+      createPrinter().printFile(updatedNextConfig),
+      'ExpressionStatement:has(CallExpression > Identifier[name="composePlugins"])',
+      (node) => {
+        return `
+        /**
+        * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
+        **/
+
+        const sentryWebpackPluginOptions = {
+          silent: true,
+          org: '',
+          project: 'web-next-js-client',
+          authToken: process.env.SENTRY_AUTH_TOKEN,
+        };
+
+        ${node.getText()}`;
+      },
+      {
+        visitAllChildren: true,
+      },
+    );
+
+    const withSentryConfig = tsquery.replace(
+      withSentryWebpackPluginOptions,
+      'CallExpression > CallExpression:has(Identifier[name="composePlugins"]) > Identifier[name="nextConfig"]',
+      (node) =>
+        `withSentryConfig(${node.getText()}, sentryWebpackPluginOptions)`,
+      {
+        visitAllChildren: true,
+      },
+    );
+
+    tree.write(`${projectRoot}/next.config.js`, withSentryConfig);
 
     // const nextConfigContent = tree
     //   .read(`${projectRoot}/next.config.js`)

@@ -15,16 +15,10 @@
     "baseUrl": ".",
     "paths": {
       "@nx-generators/source": ["src/index.ts"],
-      "@ronas-it//shared/data-access/api-client": [
-        "libs/shared/data-access/api-client/src/index.ts"
-      ],
-      "@ronas-it//shared/data-access/store": [
-        "libs/shared/data-access/store/src/index.ts"
-      ],
-      "@ronas-it//shared/utils/app-env": [
-        "libs/shared/utils/app-env/src/index.ts"
-      ],
-      "@ronas-it/nx-generators": ["plugin/src/index.ts"]
+      "@ronas-it/nx-generators": ["plugin/src/index.ts"],
+      "@ronas-it/test/shared/utils/app-env": [
+        "libs/test/shared/utils/app-env/src/index.ts"
+      ]
     }
   },
   "files": [],

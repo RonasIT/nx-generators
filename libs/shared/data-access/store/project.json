@@ -1,9 +1,0 @@
-{
-  "name": "-shared-data-access-store",
-  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/shared/data-access/store/src",
-  "projectType": "library",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project -shared-data-access-store --web",
-  "targets": {}
-}

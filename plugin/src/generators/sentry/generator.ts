@@ -29,7 +29,9 @@ type PropertyAssignmentData = {
 };
 
 /*
-  Разобраться, что происходит с форматированием
+  TODO:
+  - Figure out how to keep whitespaces after mapping
+  - Find a better way to apply multiple mapping/replacing without variables propagation
 */
 
 const generatePropertyAssignment = ({

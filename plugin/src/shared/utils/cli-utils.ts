@@ -18,7 +18,7 @@ export const askQuestion = (question: string, defaultAnswer?: string): Promise<s
     rl.question(question, (answer) => {
       rl.close();
       resolve(answer);
-    })
+    }),
   );
 };
 
@@ -39,7 +39,7 @@ const parseLibsPaths = () => {
   }
 
   return tsconfig.compilerOptions.paths;
-}
+};
 
 export const getNxLibsPaths = (types: Array<LibraryType>) => {
   const libs = parseLibsPaths();
@@ -47,28 +47,34 @@ export const getNxLibsPaths = (types: Array<LibraryType>) => {
   return Object.values(libs)
     .map((value) => value[0].replace('/index.ts', ''))
     .filter((value) => types.some((type) => value.includes(type)));
-}
+};
 
-export const searchNxLibsPaths = (paths: Array<string>, input: string, method: 'includes' | 'startsWith' | 'endsWith' = 'includes') => {
+export const searchNxLibsPaths = (
+  paths: Array<string>,
+  input: string,
+  method: 'includes' | 'startsWith' | 'endsWith' = 'includes',
+) => {
   return paths.filter((path) => path[method](input));
-}
+};
 
 export const searchAliasPath = (input: string) => {
   const libs = parseLibsPaths();
   const path = Object.keys(libs).find((key) => libs[key][0].includes(input));
 
   return path;
-}
+};
 
 export const filterSource = async (input: string, source: Array<string>) => {
-  const filteredData = input ? source.filter((pathname) => pathname.toLowerCase().includes(input.toLowerCase())) : source;
+  const filteredData = input
+    ? source.filter((pathname) => pathname.toLowerCase().includes(input.toLowerCase()))
+    : source;
 
   return filteredData.map((path) => ({ value: path }));
 };
 
 export const appendFileContent = (path: string, endContent: string, tree: Tree) => {
   const content = tree.read(path, 'utf-8');
-  const contentUpdate = content + endContent;
+  const contentUpdate = (content || '') + endContent;
 
   tree.write(path, contentUpdate);
 };

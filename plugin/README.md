@@ -194,6 +194,20 @@ or
 npx nx g form profile-settings ProfileSettings
 ```
 
+### 9. `lib-tags`
+
+Checks and configures [NX library tags](https://nx.dev/features/enforce-module-boundaries). If your project does not already use library tags, you can add them using this generator.
+
+#### Options
+
+1. `silent` (optional) - disables all logs
+
+#### Example
+
+```sh
+npx nx g lib-tags
+```
+
 ### Note
 
 Each generator accepts the `--help` argument to see generator instructions.

@@ -49,6 +49,11 @@
       "factory": "./src/generators/form/generator",
       "schema": "./src/generators/form/schema.json",
       "description": "form generator"
+    },
+    "lib-tags": {
+      "factory": "./src/generators/lib-tags/generator",
+      "schema": "./src/generators/lib-tags/schema.json",
+      "description": "lib-tags generator"
     }
   }
 }

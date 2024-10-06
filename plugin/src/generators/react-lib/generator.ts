@@ -2,7 +2,7 @@ import { formatFiles, generateFiles, getProjects, Tree } from '@nx/devkit';
 import * as path from 'path';
 import { ReactLibGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
-import { formatName, askQuestion, dynamicImport, filterSource, LibraryType, addNxScopeTag } from '../../shared/utils';
+import { formatName, askQuestion, dynamicImport, filterSource, LibraryType, addNxScopeTag, constants } from '../../shared/utils';
 import { isBoolean } from 'lodash';
 
 const getProjectsDetails = (tree: Tree) => Array.from(getProjects(tree))
@@ -23,7 +23,7 @@ export async function reactLibGenerator(
   options.app = options.app || await autocomplete({
     message: 'Select the application: ',
     source: async (input) => {
-      const entries = [...projects, { name: 'shared', path: 'shared' }].map((project) => ({
+      const entries = [...projects, { name: constants.sharedValue, path: constants.sharedValue }].map((project) => ({
         name: `${project.name} (${project.path})`,
         value: project.path.replace('apps/', '')
       }));
@@ -36,9 +36,9 @@ export async function reactLibGenerator(
     }
   });
 
-  const isSharedLib = options.app === 'shared';
+  const isSharedLib = options.app === constants.sharedValue;
 
-  options.scope = options.scope || (isSharedLib ? '' : await askQuestion('Enter the scope (e.g: profile) or \'shared\': '));
+  options.scope = options.scope || (isSharedLib ? '' : await askQuestion(`Enter the scope (e.g: profile) or '${constants.sharedValue}': `));
   options.type = options.type || await autocomplete({
     message: 'Select the library type: ',
     source: (input) => filterSource(input, Object.values(LibraryType))
@@ -49,7 +49,7 @@ export async function reactLibGenerator(
     options.withComponent = await askQuestion('Generate component inside lib folder? (y/n): ') === 'y';
   }
 
-  const scopeTag = options.scope || 'shared';
+  const scopeTag = options.scope || constants.sharedValue;
   const tags = [`app:${options.app}`, `scope:${scopeTag}`, `type:${options.type}`];
 
   const libPath = path.normalize(`libs/${options.app}/${options.scope}/${options.type}/${options.name}`);

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "LibTags",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "silent": {
+      "type": "boolean",
+      "description": "",
+      "$default": false
+    }
+  },
+  "required": []
+}

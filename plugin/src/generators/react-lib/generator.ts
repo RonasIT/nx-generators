@@ -69,7 +69,7 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   await formatFiles(tree);
 
   if (libDirectoryName !== options.name) {
-    output.warn({ title: `The library directory was changed to ${output.bold(libDirectoryName)} so that it does not contain words from the scope name.`});
+    output.warn({ title: `The library directory was changed to ${output.bold(libDirectoryName)} so that it does not start with the scope name.`});
   }
 }
 

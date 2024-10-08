@@ -4,17 +4,26 @@ import {
   getNxLibsPaths,
   LibraryType,
   searchAliasPath,
-  searchNxLibsPaths
+  searchNxLibsPaths, selectApplication
 } from '../../../shared/utils';
+import { runFormUtilsGenerator } from '../../../shared/generators';
+import { Tree } from '@nx/devkit';
 
-export async function getFormUtilsDirectory(): Promise<string> {
+function getFormUtilsPaths(): Array<string> {
+  const utilsLibsPaths = getNxLibsPaths([LibraryType.UTILS]);
+  return searchNxLibsPaths(utilsLibsPaths, 'utils/form/src', 'endsWith');
+}
+
+export async function getFormUtilsDirectory(tree: Tree): Promise<string> {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
 
-  const utilsLibsPaths = getNxLibsPaths([LibraryType.UTILS]);
-  const formUtilsLibsPaths = searchNxLibsPaths(utilsLibsPaths, 'utils/form/src', 'endsWith');
+  const formUtilsLibsPaths = getFormUtilsPaths();
 
   if (!formUtilsLibsPaths.length) {
-    throw new Error('Could not find a library with the form utilities.');
+    const appDirectory = await selectApplication(tree, 'It\'s necessary to generate form utilities. What application should they be in?')
+    await runFormUtilsGenerator(tree, { directory: appDirectory });
+
+    return searchAliasPath(getFormUtilsPaths()[0]);
   }
 
   if (formUtilsLibsPaths.length > 1) {

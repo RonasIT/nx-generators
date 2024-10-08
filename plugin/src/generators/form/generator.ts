@@ -27,7 +27,7 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
     throw new Error('The form already exists');
   }
 
-  const formUtilsDirectory = await getFormUtilsDirectory();
+  const formUtilsDirectory = await getFormUtilsDirectory(tree);
   const formClassName = `${formatName(fileName, true)}FormSchema`;
   generateFiles(tree, path.join(__dirname, `files`), formsPath, { className: formClassName, fileName, formUtilsDirectory });
   updateIndex(formsPath, fileName, tree);

@@ -69,7 +69,7 @@ export async function expoAppGenerator(
 
   const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
   if (shouldGenerateFormUtilsLib) {
-    runFormUtilsGenerator(tree, options);
+    await runFormUtilsGenerator(tree, options);
   }
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.

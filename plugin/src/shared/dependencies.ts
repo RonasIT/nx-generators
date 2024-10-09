@@ -61,6 +61,7 @@ export const devDependencies = {
     'tsc-files': '^1.1.4',
   },
   'expo-app': {
+    'expo-dev-client': '^4.0.20',
     '@types/lodash': '^4.14.194',
   },
   'expo-app-root': {

@@ -54,6 +54,11 @@
       "factory": "./src/generators/lib-tags/generator",
       "schema": "./src/generators/lib-tags/schema.json",
       "description": "lib-tags generator"
+    },
+    "auth": {
+      "factory": "./src/shared/generators/auth/generator",
+      "schema": "./src/shared/generators/auth/schema.json",
+      "description": "authentication library for Expo projects"
     }
   }
 }

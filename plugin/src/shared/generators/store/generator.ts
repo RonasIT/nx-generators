@@ -5,6 +5,7 @@ import {
   addDependenciesToPackageJson,
   formatFiles,
   generateFiles,
+  installPackagesTask,
   Tree
 } from '@nx/devkit';
 import { dependencies } from '../../dependencies';
@@ -43,6 +44,8 @@ export async function runStoreGenerator(
   }
 
   await formatFiles(tree);
+
+  installPackagesTask(tree);
 }
 
 export default runStoreGenerator;

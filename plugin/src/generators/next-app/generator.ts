@@ -12,7 +12,7 @@ import { NextAppGeneratorSchema } from './schema';
 import { existsSync } from 'fs';
 import { dependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
-import { runApiClientGenerator, runAppEnvGenerator, runFormUtilsGenerator } from '../../shared/generators';
+import { runApiClientGenerator, runAppEnvGenerator, runFormUtilsGenerator, runStoreGenerator } from '../../shared/generators';
 import { addNxAppTag, askQuestion, formatName } from '../../shared/utils';
 import * as path from 'path';
 
@@ -38,7 +38,7 @@ export async function nextAppGenerator(
   const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
 
   if (shouldGenerateStoreLib) {
-    execSync(`npx nx g store ${options.name} ${options.directory} ${BaseGeneratorType.NEXT_APP}`, { stdio: 'inherit' });
+    await runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });
   }
 
   const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';

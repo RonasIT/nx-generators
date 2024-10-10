@@ -141,8 +141,6 @@ export async function expoAppGenerator(
     if (shouldGenerateAuthLibs) {
       execSync(`npx nx g auth ${options.name} ${options.directory}`, { stdio: 'inherit' });
     }
-
-    execSync(`npx nx g ui-kitten ${options.name} ${options.directory}`, { stdio: 'inherit' });
   };
 }
 

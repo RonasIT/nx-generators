@@ -5,7 +5,6 @@ import {
   addDependenciesToPackageJson,
   formatFiles,
   generateFiles,
-  installPackagesTask,
   Tree
 } from '@nx/devkit';
 import { dependencies } from '../../dependencies';

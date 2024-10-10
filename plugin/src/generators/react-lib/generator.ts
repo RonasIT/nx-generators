@@ -2,7 +2,7 @@ import { formatFiles, generateFiles, getProjects, Tree, output } from '@nx/devki
 import * as path from 'path';
 import { ReactLibGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
-import { formatName, askQuestion, dynamicImport, filterSource, LibraryType, addNxScopeTag, constants } from '../../shared/utils';
+import { formatName, askQuestion, dynamicImport, filterSource, LibraryType, addNxScopeTag, constants, validateLibraryType } from '../../shared/utils';
 import { isBoolean } from 'lodash';
 import { getLibDirectoryName } from './utils';
 
@@ -37,7 +37,7 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   const isSharedLib = options.app === constants.sharedValue;
 
   options.scope = options.scope || (isSharedLib ? '' : await askQuestion(`Enter the scope (e.g: profile) or '${constants.sharedValue}': `));
-  options.type = options.type || await autocomplete({
+  options.type = options.type ? validateLibraryType(options.type) : await autocomplete({
     message: 'Select the library type: ',
     source: (input) => filterSource(input, Object.values(LibraryType))
   });

@@ -8,7 +8,7 @@ import {
   Tree,
 } from '@nx/devkit';
 import { dependencies } from '../../dependencies';
-import { formatName, formatAppIdentifier, getImportPathPrefix } from '../../utils';
+import { formatName, formatAppIdentifier, getImportPathPrefix, LibraryType } from '../../utils';
 
 export async function runUIKittenGenerator(
   tree: Tree,
@@ -19,7 +19,7 @@ export async function runUIKittenGenerator(
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
 
   // Generate shared libs
-  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=feature --name=user-theme-provider --withComponent=false`, {
+  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=${LibraryType.FEATURES} --name=user-theme-provider --withComponent=false`, {
     stdio: 'inherit',
   });
 

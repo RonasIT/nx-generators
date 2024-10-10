@@ -41,6 +41,16 @@ const parseLibsPaths = () => {
   return tsconfig.compilerOptions.paths;
 };
 
+export const validateLibraryType = (type: string): string => {
+  const allLibraryTypes = Object.values(LibraryType);
+
+  if (!allLibraryTypes.includes(type as LibraryType)) {
+    throw new Error(`Invalid library type: ${type}.\nAvailable types: ${allLibraryTypes.join(', ')}`);
+  }
+
+  return type;
+}
+
 export const getNxLibsPaths = (types: Array<LibraryType>) => {
   const libs = parseLibsPaths();
 

@@ -44,8 +44,6 @@ export async function runStoreGenerator(
   }
 
   await formatFiles(tree);
-
-  installPackagesTask(tree);
 }
 
 export default runStoreGenerator;

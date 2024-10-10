@@ -21,13 +21,7 @@
         "index": 1
       },
       "x-prompt": "Enter the name of the directory in the 'apps/' folder"
-    },
-    "confirmation": {
-      "type": "boolean",
-      "description": "",
-      "$default": true,
-      "x-prompt": "Do you want to install @ui-kitten?"
     }
   },
-  "required": ["name", "directory", "confirmation"]
+  "required": ["name", "directory"]
 }

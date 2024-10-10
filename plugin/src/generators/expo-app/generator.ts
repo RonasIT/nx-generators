@@ -20,7 +20,8 @@ import {
   runStorageGenerator,
   runRNStylesGenerator,
   runFormUtilsGenerator,
-  runStoreGenerator
+  runStoreGenerator,
+  runUIKittenGenerator
 } from '../../shared/generators';
 import { formatName, formatAppIdentifier, addNxAppTag, askQuestion, getImportPathPrefix } from '../../shared/utils';
 
@@ -64,8 +65,15 @@ export async function expoAppGenerator(
   const shouldGenerateAuthLibs = shouldGenerateApiClientLib && await askQuestion('Do you want to create auth lib? (y/n): ') === 'y';
 
   const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
+
   if (shouldGenerateFormUtilsLib) {
     await runFormUtilsGenerator(tree, options);
+  }
+
+  const shouldGenerateUIKittenLib = await askQuestion('Do you want to install @ui-kitten? (y/n): ') === 'y';
+
+  if (shouldGenerateUIKittenLib) {
+    await runUIKittenGenerator(tree, options);
   }
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
@@ -101,7 +109,7 @@ export async function expoAppGenerator(
     formatName,
     formatAppIdentifier,
     formatDirectory: () => libPath,
-    isUIKittenEnabled: false,
+    isUIKittenEnabled: shouldGenerateUIKittenLib,
     isStoreEnabled: shouldGenerateStoreLib,
     appDirectory: options.directory
   });

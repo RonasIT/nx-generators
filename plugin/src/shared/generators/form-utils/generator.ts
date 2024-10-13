@@ -4,7 +4,7 @@ import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 
 export async function runFormUtilsGenerator(
   tree: Tree,
-  options: { name: string; directory: string }
+  options: { directory: string }
 ) {
   const libRoot = `libs/${options.directory}`;
 

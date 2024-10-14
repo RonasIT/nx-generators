@@ -20,7 +20,7 @@ export async function libTagsGenerator(
   tree: Tree,
   options: LibTagsGeneratorSchema,
 ) {
-  const hasUnstagedChanges = execSync('git status -s').toString('utf8');
+  const hasUnstagedChanges = !options.skipRepoCheck && execSync('git status -s').toString('utf8');
 
   if (hasUnstagedChanges) {
     const shouldContinue = await askQuestion('You have unstaged changes. Are you sure you want to continue? (y/n): ') === 'y';

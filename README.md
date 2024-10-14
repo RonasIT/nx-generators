@@ -115,15 +115,15 @@ Generates a library according to [NX notation](https://nx.dev/concepts/more-conc
 1. `app` (optional) - name of an app or `shared`.
 
 1. `scope` (optional) - name of a scope or `shared`.
-This option is for a library, related to an app.
+   This option is for a library, related to an app.
 
 1. `type` (optional) - type of library.
-Possible values are `features`, `data-access`, `ui` and `utils`.
+   Possible values are `features`, `data-access`, `ui` and `utils`.
 
 1. `name` (optional) - name of a library.
 
 1. `withComponent` (optional) - generate the library with `lib/component.tsx` file.
-This option is for `features` or `ui` library.
+   This option is for `features` or `ui` library.
 
 1. `withComponentForwardRef` (optional) - generate a component with `forwardRef` in `lib/component.tsx` file.
    This option works if `withComponent` is `true`.
@@ -207,10 +207,66 @@ Checks and configures [NX library tags](https://nx.dev/features/enforce-module-b
 
 1. `silent` (optional) - disables all logs
 
+2. `skipRepoCheck` (optional) - disables check repository status
+
 #### Example
 
 ```sh
 npx nx g lib-tags
+```
+
+### 10. `lib-rename`
+
+Renames an existing library and updates imports
+
+#### Options
+
+1. `srcLibName` (optional) - name of the library (e.g.: `mobile-account-features-profile-settings`)
+
+2. `destLibName` (optional) - new name of the library (e.g.: `user-settings`, project name will be `mobile-account-features-user-settings`)
+
+#### Example
+
+```sh
+npx nx g lib-rename --srcLibName="mobile-account-features-profile-settings" --destLibName="user-settings"
+```
+
+### 11. `lib-move`
+
+Moves the library to a new destination. This utility also calls `lib-tags` generator.
+
+#### Options
+
+1. `srcLibName` (optional) - name of the library (e.g.: `mobile-account-features-profile-settings`)
+
+2. `app` (optional) - name of an app or `shared`.
+
+3. `scope` (optional) - name of a scope or `shared`.
+   This option is for a library, related to an app.
+
+4. `type` (optional) - type of library.
+   Possible values are `features`, `data-access`, `ui` and `utils`.
+
+5. `name` (optional) - name of a library.
+
+#### Example
+
+```sh
+npx nx g lib-move --srcLibName="mobile-account-features-profile-settings" --app=mobile --scope=settings --type=features --name="user-settings"
+```
+
+### 12. `lib-remove`
+
+Removes the library. Before deleting a library you must remove all references to it.
+
+#### Options
+
+1. `libName` (optional) - name of the library (e.g.: `mobile-account-features-profile-settings`)
+
+#### Example
+
+```sh
+npx nx g lib-remove --libName="mobile-account-features-profile-settings"
 ```
 
 ### Note
@@ -220,3 +276,4 @@ Each generator accepts the `--help` argument to see generator instructions.
 ```sh
 npx nx g react-lib --help
 ```
+

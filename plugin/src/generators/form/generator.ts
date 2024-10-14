@@ -3,7 +3,7 @@ import * as path from 'path';
 import { FormGeneratorSchema } from './schema';
 import { dynamicImport, formatName, getNxLibsPaths, LibraryType, searchNxLibsPaths } from '../../shared/utils';
 import { dependencies } from '../../shared/dependencies';
-import { addFormUsage, getFormUtilsDirectory, updateIndex } from './utils';
+import { addFormUsage, getAppName, getFormUtilsDirectory, updateIndex } from './utils';
 
 export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
   // Get input data
@@ -27,7 +27,7 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
     throw new Error('The form already exists');
   }
 
-  const formUtilsDirectory = await getFormUtilsDirectory();
+  const formUtilsDirectory = await getFormUtilsDirectory(tree, getAppName(libPath));
   const formClassName = `${formatName(fileName, true)}FormSchema`;
   generateFiles(tree, path.join(__dirname, `files`), formsPath, { className: formClassName, fileName, formUtilsDirectory });
   updateIndex(formsPath, fileName, tree);

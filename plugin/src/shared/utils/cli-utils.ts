@@ -1,6 +1,8 @@
 import * as readline from 'readline';
 import * as fs from 'fs';
-import { Tree } from '@nx/devkit';
+import { getProjects, Tree } from '@nx/devkit';
+import { dynamicImport } from './dynamic-import';
+import { constants } from './constants';
 
 export const askQuestion = (question: string, defaultAnswer?: string): Promise<string> => {
   const rl = readline.createInterface({
@@ -88,3 +90,32 @@ export const appendFileContent = (path: string, endContent: string, tree: Tree) 
 
   tree.write(path, contentUpdate);
 };
+
+const getProjectsDetails = (tree: Tree) => Array.from(getProjects(tree))
+  .filter(([_, project]) => project.projectType === 'application')
+  .map(([name, project]) => ({ name, path: project.root }));
+
+export const selectApplication = async (tree: Tree, message: string) => {
+  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
+  const projects = getProjectsDetails(tree);
+
+  if (!projects.length) {
+    throw new Error('No application found. Create an application first.');
+  }
+
+  return autocomplete({
+    message,
+    source: async (input) => {
+      const entries = [...projects, { name: constants.sharedValue, path: constants.sharedValue }].map((project) => ({
+        name: `${project.name} (${project.path})`,
+        value: project.path.replace('apps/', '')
+      }));
+
+      if (!input) {
+        return entries;
+      }
+
+      return entries.filter((entry) => entry.name.toLowerCase().includes(input.toLowerCase()));
+    }
+  });
+}

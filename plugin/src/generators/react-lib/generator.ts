@@ -1,38 +1,25 @@
-import { formatFiles, generateFiles, getProjects, Tree, output } from '@nx/devkit';
+import { formatFiles, generateFiles, output, Tree } from '@nx/devkit';
 import * as path from 'path';
 import { ReactLibGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
-import { formatName, askQuestion, dynamicImport, filterSource, LibraryType, addNxScopeTag, constants, validateLibraryType } from '../../shared/utils';
+import {
+  addNxScopeTag,
+  askQuestion,
+  constants,
+  dynamicImport,
+  filterSource,
+  formatName,
+  LibraryType,
+  selectApplication,
+  validateLibraryType
+} from '../../shared/utils';
 import { isBoolean } from 'lodash';
 import { getLibDirectoryName } from './utils';
 
-const getProjectsDetails = (tree: Tree) => Array.from(getProjects(tree))
-  .filter(([_, project]) => project.projectType === 'application')
-  .map(([name, project]) => ({ name, path: project.root }));
-
 export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema) {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
-  const projects = getProjectsDetails(tree);
 
-  if (!projects.length) {
-    throw new Error('No application found. Create an application first.');
-  }
-
-  options.app = options.app || await autocomplete({
-    message: 'Select the application: ',
-    source: async (input) => {
-      const entries = [...projects, { name: constants.sharedValue, path: constants.sharedValue }].map((project) => ({
-        name: `${project.name} (${project.path})`,
-        value: project.path.replace('apps/', '')
-      }));
-
-      if (!input) {
-        return entries;
-      }
-
-      return entries.filter((entry) => entry.name.toLowerCase().includes(input.toLowerCase()));
-    }
-  });
+  options.app = options.app || await selectApplication(tree, 'Select the application: ');
 
   const isSharedLib = options.app === constants.sharedValue;
 

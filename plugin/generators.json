@@ -65,6 +65,11 @@
       "schema": "./src/generators/lib-move/schema.json",
       "description": "library move utility"
     },
+    "lib-remove": {
+      "factory": "./src/generators/lib-remove/generator",
+      "schema": "./src/generators/lib-remove/schema.json",
+      "description": "library remove utility"
+    },
     "auth": {
       "factory": "./src/shared/generators/auth/generator",
       "schema": "./src/shared/generators/auth/schema.json",

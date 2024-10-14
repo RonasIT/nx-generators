@@ -1,0 +1,25 @@
+import { Tree } from '@nx/devkit';
+import { LibRemoveGeneratorSchema } from './schema';
+import { askQuestion, selectLibrary } from '../../shared/utils';
+import { execSync } from 'child_process';
+
+export async function libRemoveGenerator(
+  tree: Tree,
+  options: LibRemoveGeneratorSchema
+) {
+  const libraryName = options.libName || (await selectLibrary(tree, 'Select the source library: ')).name;
+
+  if (!libraryName) {
+    throw new Error('No library found!');
+  }
+
+  const isConfirmed = await askQuestion(`Are you sure you want to remove ${libraryName}?`);
+
+  if (!isConfirmed) {
+    return;
+  }
+
+  execSync(`npx nx g rm --project=${libraryName}`, { stdio: 'inherit'});
+}
+
+export default libRemoveGenerator;

@@ -58,7 +58,12 @@
     "lib-rename": {
       "factory": "./src/generators/lib-rename/generator",
       "schema": "./src/generators/lib-rename/schema.json",
-      "description": "rename library utility"
+      "description": "library rename utility"
+    },
+    "lib-move": {
+      "factory": "./src/generators/lib-move/generator",
+      "schema": "./src/generators/lib-move/schema.json",
+      "description": "library move utility"
     },
     "auth": {
       "factory": "./src/shared/generators/auth/generator",

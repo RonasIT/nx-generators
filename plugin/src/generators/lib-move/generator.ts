@@ -25,7 +25,7 @@ export async function libMoveGenerator(
 
     srcLibraryPath = library.path;
   } else {
-    const selectedLibrary = await selectLibrary(tree, 'Select the source library: ');
+    const selectedLibrary = await selectLibrary(tree, 'Select the library to move: ');
 
     srcLibraryName = selectedLibrary.name;
     srcLibraryPath = selectedLibrary.path;
@@ -33,7 +33,6 @@ export async function libMoveGenerator(
   
   const libPathSegments = srcLibraryPath.split('/');
   const defaultDestLibraryName = libPathSegments.pop();
-  const destLibraryName = options.name || await askQuestion('Enter a new library name: ', defaultDestLibraryName);
 
   options.app = options.app || await selectApplication(tree, 'Select the application: ');
 
@@ -45,6 +44,7 @@ export async function libMoveGenerator(
     source: (input) => filterSource(input, Object.values(LibraryType))
   });
 
+  const destLibraryName = options.name || await askQuestion('Enter a new library name: ', defaultDestLibraryName);
   const libDirectoryName = getLibDirectoryName(destLibraryName, options.scope);
   const libPath = path.normalize(`${options.app}/${options.scope}/${options.type}/${libDirectoryName}`);
 

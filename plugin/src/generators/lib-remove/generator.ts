@@ -7,19 +7,19 @@ export async function libRemoveGenerator(
   tree: Tree,
   options: LibRemoveGeneratorSchema
 ) {
-  const libraryName = options.libName || (await selectLibrary(tree, 'Select the source library: ')).name;
+  const libraryName = options.libName || (await selectLibrary(tree, 'Select the library to remove: ')).name;
 
   if (!libraryName) {
     throw new Error('No library found!');
   }
 
-  const isConfirmed = await askQuestion(`Are you sure you want to remove ${libraryName}?`);
+  const isConfirmed = await askQuestion(`Are you sure you want to remove ${libraryName} (y/n)?`);
 
   if (!isConfirmed) {
     return;
   }
 
-  execSync(`npx nx g rm --project=${libraryName}`, { stdio: 'inherit'});
+  execSync(`npx nx g rm --project=${libraryName}`, { stdio: 'inherit' });
 }
 
 export default libRemoveGenerator;

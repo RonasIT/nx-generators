@@ -21,7 +21,7 @@ export async function libRenameGenerator(
 
     srcLibraryPath = library.path;
   } else {
-    const selectedLibrary = await selectLibrary(tree, 'Select the source library: ');
+    const selectedLibrary = await selectLibrary(tree, 'Select the library to rename: ');
 
     srcLibraryName = selectedLibrary.name;
     srcLibraryPath = selectedLibrary.path;

@@ -36,8 +36,10 @@ export async function libRenameGenerator(
   libPathSegments.push(destLibraryName);
 
   const destLibraryPath = libPathSegments.join('/');
-
-  execSync(`npx nx g mv --project=${srcLibraryName} --destination=${destLibraryPath}`);
+  // NOTE: Disable selection for library name (as provided / as derived) by excluding stdio from options
+  const log = execSync(`npx nx g mv --project=${srcLibraryName} --destination=${destLibraryPath}`);
+  
+  console.log(log.toString('utf8'));
 }
 
 export default libRenameGenerator;

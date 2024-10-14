@@ -120,11 +120,13 @@ export const selectApplication = async (tree: Tree, message: string) => {
   });
 };
 
+export const getLibrariesDetails = (tree: Tree) => Array.from(getProjects(tree))
+  .filter(([_, project]) => project.projectType === 'library')
+  .map(([name, project]) => ({ name, path: project.root }));
+
 export const selectLibrary = async (tree: Tree, message: string) => {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
-  const projects = Array.from(getProjects(tree))
-    .filter(([_, project]) => project.projectType === 'library')
-    .map(([name, project]) => ({ name, path: project.root }));
+  const projects = getLibrariesDetails(tree);
 
   if (!projects.length) { 
     throw new Error('No libraries found!');

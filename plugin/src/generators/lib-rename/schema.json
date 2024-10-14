@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/schema",
-  "$id": "Lib rename",
+  "$id": "Lib rename utility",
   "title": "",
   "type": "object",
   "properties": {

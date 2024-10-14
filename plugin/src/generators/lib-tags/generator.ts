@@ -9,7 +9,11 @@ import { LibTagsContext } from './interfaces';
 const context: LibTagsContext = {
   config: {},
   rules: [],
-  log: console.log
+  log: console.log,
+  reload: (tree: Tree) => {
+    context.config = readESLintConfig(tree).config;
+    context.rules = getNxRules(context.config);
+  }
 };
 
 export async function libTagsGenerator(
@@ -54,8 +58,7 @@ export async function libTagsGenerator(
 
   applications.forEach((application) => checkApplicationTags(application, tree, context));
 
-  context.config = readESLintConfig(tree).config;
-  context.rules = getNxRules(context.config);
+  context.reload(tree);
 
   libraries.forEach((library) => checkLibraryTags(library, tree, context));
 

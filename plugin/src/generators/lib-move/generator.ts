@@ -1,9 +1,9 @@
-import { Tree, output } from '@nx/devkit';
+import { Tree } from '@nx/devkit';
 import { LibMoveGeneratorSchema } from './schema';
 import { LibraryType, askQuestion, constants, dynamicImport, filterSource, getLibrariesDetails, selectApplication, selectLibrary, validateLibraryType } from '../../shared/utils';
 import { execSync } from 'child_process';
 import { getLibDirectoryName } from '../react-lib/utils';
-import path = require('path');
+import * as path from 'path';
 
 export async function libMoveGenerator(
   tree: Tree,
@@ -45,9 +45,6 @@ export async function libMoveGenerator(
     source: (input) => filterSource(input, Object.values(LibraryType))
   });
 
-  const scopeTag = options.scope || constants.sharedValue;
-  const tags = [`app:${options.app}`, `scope:${scopeTag}`, `type:${options.type}`];
-
   const libDirectoryName = getLibDirectoryName(destLibraryName, options.scope);
   const libPath = path.normalize(`${options.app}/${options.scope}/${options.type}/${libDirectoryName}`);
 
@@ -55,11 +52,9 @@ export async function libMoveGenerator(
   const log = execSync(`npx nx g mv --project=${srcLibraryName} --destination=${libPath}`);
   
   console.log(log.toString('utf8'));
-  output.success({ title: `${libPath.replace('/', '-')}`});
 
-  // TODO: add tags, run tags validation
   return () => {
-
+    execSync('npx nx g lib-tags', { stdio: 'inherit' });
   };
 }
 

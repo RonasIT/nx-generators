@@ -23,7 +23,7 @@ export async function libMoveGenerator(
   const { name: srcLibraryName, path: srcLibraryPath } = await getLibraryDetailsByName(tree, options.srcLibName);
   
   const libPathSegments = srcLibraryPath.split('/');
-  const defaultDestLibraryName = libPathSegments.pop();
+  const defaultLibraryName = libPathSegments.pop();
 
   options.app = options.app || (await selectProject(tree, 'application', 'Select the application: ')).name;
 
@@ -35,8 +35,8 @@ export async function libMoveGenerator(
     source: (input) => filterSource(input, Object.values(LibraryType))
   });
 
-  const destLibraryName = options.name || await askQuestion('Enter a new library name: ', defaultDestLibraryName);
-  const libDirectoryName = getLibDirectoryName(destLibraryName, options.scope);
+  const libraryName = options.name || await askQuestion('If you want to rename the library, enter its new name. Otherwise just press Enter: ', defaultLibraryName);
+  const libDirectoryName = getLibDirectoryName(libraryName, options.scope);
   const libPath = path.normalize(`${options.app}/${options.scope}/${options.type}/${libDirectoryName}`);
 
   // NOTE: Disable selection for library name (as provided / as derived) by excluding stdio from options

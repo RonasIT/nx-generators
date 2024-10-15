@@ -11,10 +11,10 @@ import {
   formatName,
   LibraryType,
   selectApplication,
-  validateLibraryType
+  validateLibraryType,
+  getLibDirectoryName
 } from '../../shared/utils';
 import { isBoolean } from 'lodash';
-import { getLibDirectoryName } from './utils';
 
 export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema) {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');

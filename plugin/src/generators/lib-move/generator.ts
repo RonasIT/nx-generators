@@ -1,8 +1,18 @@
 import { Tree } from '@nx/devkit';
 import { LibMoveGeneratorSchema } from './schema';
-import { LibraryType, askQuestion, constants, dynamicImport, filterSource, getLibrariesDetails, selectApplication, selectLibrary, validateLibraryType } from '../../shared/utils';
+import {
+  LibraryType,
+  askQuestion,
+  constants,
+  dynamicImport,
+  filterSource,
+  getLibrariesDetails,
+  selectApplication,
+  selectLibrary,
+  validateLibraryType,
+  getLibDirectoryName
+} from '../../shared/utils';
 import { execSync } from 'child_process';
-import { getLibDirectoryName } from '../react-lib/utils';
 import * as path from 'path';
 
 export async function libMoveGenerator(

@@ -10,7 +10,7 @@ import {
   filterSource,
   formatName,
   LibraryType,
-  selectApplication,
+  selectProject,
   validateLibraryType,
   getLibDirectoryName
 } from '../../shared/utils';
@@ -19,7 +19,7 @@ import { isBoolean } from 'lodash';
 export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema) {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
 
-  options.app = options.app || await selectApplication(tree, 'Select the application: ');
+  options.app = options.app || (await selectProject(tree, 'application', 'Select the application: ')).name;
 
   const isSharedLib = options.app === constants.sharedValue;
 

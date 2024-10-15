@@ -95,12 +95,12 @@ export const getProjectsDetails = (tree: Tree, projectType: ProjectType) => Arra
   .filter(([_, project]) => project.projectType === projectType)
   .map(([name, project]) => ({ name, path: project.root }));
 
-export const selectApplication = async (tree: Tree, message: string) => {
+export const selectProject = async (tree: Tree, projectType: ProjectType, message: string): Promise<{ name: string, path: string }> => {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
-  const projects = getProjectsDetails(tree, 'application');
+  const projects = getProjectsDetails(tree, projectType);
 
   if (!projects.length) {
-    throw new Error('No application found. Create an application first.');
+    throw new Error(`No projects of type ${projectType} found.`);
   }
 
   return autocomplete({
@@ -108,32 +108,7 @@ export const selectApplication = async (tree: Tree, message: string) => {
     source: async (input) => {
       const entries = [...projects, { name: constants.sharedValue, path: constants.sharedValue }].map((project) => ({
         name: `${project.name} (${project.path})`,
-        value: project.path.replace('apps/', '')
-      }));
-
-      if (!input) {
-        return entries;
-      }
-
-      return entries.filter((entry) => entry.name.toLowerCase().includes(input.toLowerCase()));
-    }
-  });
-};
-
-export const selectLibrary = async (tree: Tree, message: string) => {
-  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
-  const projects = getProjectsDetails(tree, 'library');
-
-  if (!projects.length) { 
-    throw new Error('No libraries found!');
-  }
-
-  return autocomplete({
-    message,
-    source: async (input) => {
-      const entries = projects.map((project) => ({
-        name: `${project.name} (${project.path})`,
-        value: project
+        value: { ...project, name: projectType === 'application' ? project.path.replace('apps/', '') : project.name } 
       }));
 
       if (!input) {

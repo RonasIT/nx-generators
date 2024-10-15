@@ -1,6 +1,6 @@
 import { Tree } from '@nx/devkit';
 import { LibRenameGeneratorSchema } from './schema';
-import { askQuestion, getProjectsDetails, selectLibrary } from '../../shared/utils';
+import { askQuestion, getProjectsDetails, selectProject } from '../../shared/utils';
 import { execSync } from 'child_process';
 
 export async function libRenameGenerator(
@@ -21,7 +21,7 @@ export async function libRenameGenerator(
 
     srcLibraryPath = library.path;
   } else {
-    const selectedLibrary = await selectLibrary(tree, 'Select the library to rename: ');
+    const selectedLibrary = await selectProject(tree, 'library', 'Select the library to rename: ');
 
     srcLibraryName = selectedLibrary.name;
     srcLibraryPath = selectedLibrary.path;

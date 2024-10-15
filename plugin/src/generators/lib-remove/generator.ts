@@ -1,13 +1,13 @@
 import { Tree } from '@nx/devkit';
 import { LibRemoveGeneratorSchema } from './schema';
-import { askQuestion, selectLibrary } from '../../shared/utils';
+import { askQuestion, selectProject } from '../../shared/utils';
 import { execSync } from 'child_process';
 
 export async function libRemoveGenerator(
   tree: Tree,
   options: LibRemoveGeneratorSchema
 ) {
-  const libraryName = options.libName || (await selectLibrary(tree, 'Select the library to remove: ')).name;
+  const libraryName = options.libName || (await selectProject(tree, 'library', 'Select the library to remove: ')).name;
 
   if (!libraryName) {
     throw new Error('No library found!');

@@ -7,8 +7,7 @@ import {
   dynamicImport,
   filterSource,
   getProjectsDetails,
-  selectApplication,
-  selectLibrary,
+  selectProject,
   validateLibraryType,
   getLibDirectoryName
 } from '../../shared/utils';
@@ -35,7 +34,7 @@ export async function libMoveGenerator(
 
     srcLibraryPath = library.path;
   } else {
-    const selectedLibrary = await selectLibrary(tree, 'Select the library to move: ');
+    const selectedLibrary = await selectProject(tree, 'library', 'Select the library to move: ');
 
     srcLibraryName = selectedLibrary.name;
     srcLibraryPath = selectedLibrary.path;
@@ -44,7 +43,7 @@ export async function libMoveGenerator(
   const libPathSegments = srcLibraryPath.split('/');
   const defaultDestLibraryName = libPathSegments.pop();
 
-  options.app = options.app || await selectApplication(tree, 'Select the application: ');
+  options.app = options.app || (await selectProject(tree, 'application', 'Select the application: ')).name;
 
   const isSharedLib = options.app === constants.sharedValue;
 

@@ -5,7 +5,8 @@ import {
   getNxLibsPaths,
   LibraryType,
   searchAliasPath,
-  searchNxLibsPaths, selectApplication
+  searchNxLibsPaths,
+  selectProject
 } from '../../../shared/utils';
 import { runFormUtilsGenerator } from '../../../shared/generators';
 import { Tree } from '@nx/devkit';
@@ -22,7 +23,7 @@ export async function getFormUtilsDirectory(tree: Tree, appName: string): Promis
   const formUtilsLibsPaths = getFormUtilsPaths();
 
   if (!formUtilsLibsPaths.length) {
-    const formUtilsAppDirectory = await selectApplication(tree, 'It\'s necessary to generate form utilities. What application should they be in?')
+    const formUtilsAppDirectory = (await selectProject(tree, 'application', 'It\'s necessary to generate form utilities. What application should they be in?')).name;
     await runFormUtilsGenerator(tree, { directory: formUtilsAppDirectory });
 
     return searchAliasPath(getFormUtilsPaths()[0]);

@@ -6,7 +6,7 @@ import {
   constants,
   dynamicImport,
   filterSource,
-  getLibrariesDetails,
+  getProjectsDetails,
   selectApplication,
   selectLibrary,
   validateLibraryType,
@@ -27,7 +27,7 @@ export async function libMoveGenerator(
   if (options.srcLibName) {
     srcLibraryName = options.srcLibName;
 
-    const library = getLibrariesDetails(tree).find((library) => library.name === srcLibraryName);
+    const library = getProjectsDetails(tree, 'library').find((library) => library.name === srcLibraryName);
 
     if (!library) {
       throw new Error(`Library ${srcLibraryName} not found`);

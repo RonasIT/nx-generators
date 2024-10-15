@@ -1,6 +1,6 @@
 import { Tree } from '@nx/devkit';
 import { LibRenameGeneratorSchema } from './schema';
-import { askQuestion, getLibrariesDetails, selectLibrary } from '../../shared/utils';
+import { askQuestion, getProjectsDetails, selectLibrary } from '../../shared/utils';
 import { execSync } from 'child_process';
 
 export async function libRenameGenerator(
@@ -13,7 +13,7 @@ export async function libRenameGenerator(
   if (options.srcLibName) {
     srcLibraryName = options.srcLibName;
 
-    const library = getLibrariesDetails(tree).find((library) => library.name === srcLibraryName);
+    const library = getProjectsDetails(tree, 'library').find((library) => library.name === srcLibraryName);
 
     if (!library) {
       throw new Error(`Library ${srcLibraryName} not found`);

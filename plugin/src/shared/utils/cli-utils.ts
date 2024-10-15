@@ -1,6 +1,6 @@
 import * as readline from 'readline';
 import * as fs from 'fs';
-import { getProjects, Tree } from '@nx/devkit';
+import { getProjects, ProjectType, Tree } from '@nx/devkit';
 import { dynamicImport } from './dynamic-import';
 import { constants } from './constants';
 
@@ -91,13 +91,13 @@ export const appendFileContent = (path: string, endContent: string, tree: Tree) 
   tree.write(path, contentUpdate);
 };
 
-const getProjectsDetails = (tree: Tree) => Array.from(getProjects(tree))
-  .filter(([_, project]) => project.projectType === 'application')
+export const getProjectsDetails = (tree: Tree, projectType: ProjectType) => Array.from(getProjects(tree))
+  .filter(([_, project]) => project.projectType === projectType)
   .map(([name, project]) => ({ name, path: project.root }));
 
 export const selectApplication = async (tree: Tree, message: string) => {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
-  const projects = getProjectsDetails(tree);
+  const projects = getProjectsDetails(tree, 'application');
 
   if (!projects.length) {
     throw new Error('No application found. Create an application first.');
@@ -120,13 +120,9 @@ export const selectApplication = async (tree: Tree, message: string) => {
   });
 };
 
-export const getLibrariesDetails = (tree: Tree) => Array.from(getProjects(tree))
-  .filter(([_, project]) => project.projectType === 'library')
-  .map(([name, project]) => ({ name, path: project.root }));
-
 export const selectLibrary = async (tree: Tree, message: string) => {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
-  const projects = getLibrariesDetails(tree);
+  const projects = getProjectsDetails(tree, 'library');
 
   if (!projects.length) { 
     throw new Error('No libraries found!');

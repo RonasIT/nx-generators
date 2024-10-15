@@ -62,14 +62,14 @@ npx nx g react-lib
 
 #### Options
 
-1. `srcLibName` (optional) - name of the library (e.g.: `mobile-account-features-profile-settings`)
+1. `currentLibName` (optional) - name of the library (e.g.: `mobile-account-features-profile-settings`)
 
-2. `destLibName` (optional) - new name of the library (e.g.: `user-settings`, project name will be `mobile-account-features-user-settings`)
+2. `newLibName` (optional) - new name of the library (e.g.: `user-settings`, project name will be `mobile-account-features-user-settings`)
 
 #### Example
 
 ```sh
-npx nx g lib-rename --srcLibName="mobile-account-features-profile-settings" --destLibName="user-settings"
+npx nx g lib-rename --currentLibName="mobile-account-features-profile-settings" --newLibName="user-settings"
 ```
 
 #### Move library

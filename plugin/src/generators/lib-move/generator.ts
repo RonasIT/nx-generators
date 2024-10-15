@@ -6,7 +6,7 @@ import {
   constants,
   dynamicImport,
   filterSource,
-  getProjectsDetails,
+  getLibraryDetailsByName,
   selectProject,
   validateLibraryType,
   getLibDirectoryName
@@ -20,25 +20,7 @@ export async function libMoveGenerator(
 ) {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
 
-  let srcLibraryName: string;
-  let srcLibraryPath: string;
-
-  if (options.srcLibName) {
-    srcLibraryName = options.srcLibName;
-
-    const library = getProjectsDetails(tree, 'library').find((library) => library.name === srcLibraryName);
-
-    if (!library) {
-      throw new Error(`Library ${srcLibraryName} not found`);
-    }
-
-    srcLibraryPath = library.path;
-  } else {
-    const selectedLibrary = await selectProject(tree, 'library', 'Select the library to move: ');
-
-    srcLibraryName = selectedLibrary.name;
-    srcLibraryPath = selectedLibrary.path;
-  }
+  const { name: srcLibraryName, path: srcLibraryPath } = await getLibraryDetailsByName(tree, options.srcLibName);
   
   const libPathSegments = srcLibraryPath.split('/');
   const defaultDestLibraryName = libPathSegments.pop();

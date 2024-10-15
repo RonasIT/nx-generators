@@ -119,3 +119,27 @@ export const selectProject = async (tree: Tree, projectType: ProjectType, messag
     }
   });
 };
+
+export const getLibraryDetailsByName = async (tree: Tree, libraryName?: string): Promise<{ name: string; path: string }> => {
+  let selectedLibraryName: string;
+  let selectedLibraryPath: string;
+
+  if (libraryName) {
+    selectedLibraryName = libraryName;
+
+    const library = getProjectsDetails(tree, 'library').find((library) => library.name === selectedLibraryName);
+
+    if (!library) {
+      throw new Error(`Library ${selectedLibraryName} not found`);
+    }
+
+    selectedLibraryPath = library.path;
+  } else {
+    const selectedLibrary = await selectProject(tree, 'library', 'Select the library to move: ');
+
+    selectedLibraryName = selectedLibrary.name;
+    selectedLibraryPath = selectedLibrary.path;
+  }
+
+  return { name: selectedLibraryName, path: selectedLibraryPath };
+};

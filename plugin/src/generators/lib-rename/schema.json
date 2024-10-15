@@ -4,12 +4,12 @@
   "title": "",
   "type": "object",
   "properties": {
-    "srcLibName": {
+    "currentLibName": {
       "type": "string",
       "description": "Name of the library (project name)",
       "default": ""
     },
-    "destLibName": {
+    "newLibName": {
       "type": "string",
       "description": "New library name",
       "default": ""

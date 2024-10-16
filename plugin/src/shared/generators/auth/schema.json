@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/schema",
-  "$id": "ExpoApp",
+  "$id": "ExpoAuthLibrary",
   "title": "",
   "type": "object",
   "properties": {

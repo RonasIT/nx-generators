@@ -10,7 +10,8 @@ import {
   filterSource,
   formatName,
   LibraryType,
-  selectApplication
+  selectApplication,
+  validateLibraryType
 } from '../../shared/utils';
 import { isBoolean } from 'lodash';
 import { getLibDirectoryName } from './utils';
@@ -23,7 +24,7 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   const isSharedLib = options.app === constants.sharedValue;
 
   options.scope = options.scope || (isSharedLib ? '' : await askQuestion(`Enter the scope (e.g: profile) or '${constants.sharedValue}': `));
-  options.type = options.type || await autocomplete({
+  options.type = options.type ? validateLibraryType(options.type) : await autocomplete({
     message: 'Select the library type: ',
     source: (input) => filterSource(input, Object.values(LibraryType))
   });

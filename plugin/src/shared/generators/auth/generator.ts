@@ -4,12 +4,14 @@ import {
   addDependenciesToPackageJson,
   formatFiles,
   generateFiles,
+  installPackagesTask,
   Tree
 } from '@nx/devkit';
 import { dependencies, devDependencies } from '../../dependencies';
 import { formatName, formatAppIdentifier, searchAliasPath, getImportPathPrefix } from '../../utils';
 import { existsSync } from 'fs';
 import { IndentationText, Project, QuoteKind, StructureKind, SyntaxKind } from 'ts-morph';
+import { AuthGeneratorSchema } from './schema';
 
 const updateStore = (libRoot: string): void => {
   const project = new Project({
@@ -54,7 +56,7 @@ const updateStore = (libRoot: string): void => {
 
 export async function runAuthGenerator(
   tree: Tree,
-  options: { name: string; directory: string }
+  options: AuthGeneratorSchema
 ) {
   const appRoot = `apps/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
@@ -88,6 +90,8 @@ export async function runAuthGenerator(
   }
 
   await formatFiles(tree);
+
+  installPackagesTask(tree);
 }
 
 export default runAuthGenerator;

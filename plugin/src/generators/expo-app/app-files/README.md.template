@@ -44,22 +44,37 @@ After that [resign](https://docs.expo.dev/app-signing/app-credentials/#re-signin
 1. Push changes: `git push && git push --tags`
 1. Create new release in [Releases](../../../../-/releases) based on tag you pushed
 
-### 2. Create builds
+### 2. Build
 
-- `build:dev` - build development version for internal testing
-- `build:prod` - build production version for stores
+Create builds using [EAS Build](https://docs.expo.dev/build/introduction/):
+
+- `build:debug` - build [dev-client](https://docs.expo.dev/develop/development-builds/create-a-build/) for local development
+- `build:internal` - build development version for [internal distribution](https://docs.expo.dev/tutorial/eas/internal-distribution-builds/) (APK/Ad-Hoc build)
+- `build:dev` - build development version for internal testing (AAB/IPA build)
+- `build:prod` - build production version for stores (AAB/IPA build)
+
+**Tip**: you can [create builds locally](https://docs.expo.dev/build-reference/local-builds/) by passing `--local` flag when starting build command.
 
 ### 3. Distribute
 
-#### Internal testing
+#### Internal
 
-- Android: share .apk builds with testers
-- iOS: send created builds to Testflight using `submit:ios:dev`
+Create an internal or debug build and share the build file within your team.
 
-#### Production
+#### Stores
 
-- Android: Download production build artifact and upload it to Google Play Console
-- iOS: submit production builds App Store Connect using `submit:ios:prod`
+Created builds can be submitted to stores using [EAS Submit](https://docs.expo.dev/submit/introduction/):
+
+- `submit:dev` - select and submit development build for internal testing in App Store/Google Play. Build will be distributed automatically for all testers.
+- `submit:prod` - select and submit production build to App Store/Google Play. After that you can publish the release manually.
+
+**Tip**: you can skip this step by passing the `--auto-submit` flag when creating builds.
+This will automatically send created builds to App Store/Google Play. Example:
+
+- `build:dev --auto-submit` - build development version and submit for internal testing in App Store/Google Play.
+- `build:prod --auto-submit` - build production version and submit to App Store/Google Play. Release should be published manually.
+
+**Note**: initial setup is required for [Android](https://docs.expo.dev/submit/android/) and [iOS](https://docs.expo.dev/submit/ios)
 
 ### OTA updates
 

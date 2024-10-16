@@ -17,10 +17,11 @@ import { BaseGeneratorType } from '../../shared/enums';
 import {
   runAppEnvGenerator,
   runApiClientGenerator,
-  runAuthGenerator,
   runStorageGenerator,
   runRNStylesGenerator,
-  runFormUtilsGenerator
+  runFormUtilsGenerator,
+  runStoreGenerator,
+  runUIKittenGenerator
 } from '../../shared/generators';
 import { formatName, formatAppIdentifier, addNxAppTag, askQuestion, getImportPathPrefix } from '../../shared/utils';
 
@@ -52,7 +53,7 @@ export async function expoAppGenerator(
   const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
 
   if (shouldGenerateStoreLib) {
-    execSync(`npx nx g store ${options.name} ${options.directory} ${BaseGeneratorType.EXPO_APP}`, { stdio: 'inherit' });
+    await runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
   }
 
   const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
@@ -63,13 +64,16 @@ export async function expoAppGenerator(
 
   const shouldGenerateAuthLibs = shouldGenerateApiClientLib && await askQuestion('Do you want to create auth lib? (y/n): ') === 'y';
 
-  if (shouldGenerateAuthLibs) {
-    await runAuthGenerator(tree, options);
-  }
-
   const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
+
   if (shouldGenerateFormUtilsLib) {
     await runFormUtilsGenerator(tree, options);
+  }
+
+  const shouldGenerateUIKittenLib = await askQuestion('Do you want to install @ui-kitten? (y/n): ') === 'y';
+
+  if (shouldGenerateUIKittenLib) {
+    await runUIKittenGenerator(tree, options);
   }
 
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
@@ -105,7 +109,7 @@ export async function expoAppGenerator(
     formatName,
     formatAppIdentifier,
     formatDirectory: () => libPath,
-    isUIKittenEnabled: false,
+    isUIKittenEnabled: shouldGenerateUIKittenLib,
     isStoreEnabled: shouldGenerateStoreLib,
     appDirectory: options.directory
   });
@@ -133,7 +137,10 @@ export async function expoAppGenerator(
   return () => {
     installPackagesTask(tree);
     execSync('npx expo install --fix', { stdio: 'inherit' });
-    execSync(`npx nx g ui-kitten ${options.name} ${options.directory}`, { stdio: 'inherit' });
+
+    if (shouldGenerateAuthLibs) {
+      execSync(`npx nx g auth ${options.name} ${options.directory}`, { stdio: 'inherit' });
+    }
   };
 }
 

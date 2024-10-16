@@ -47,6 +47,8 @@ Example:
 npx nx g react-lib
 ```
 
+Check [the generators docs](https://github.com/RonasIT/nx-generators/blob/main/README.md#generators-overview) for more operations with libraries.
+
 #### Generate components
 
 - `npx nx g react-component` - generate a root component in some library
@@ -55,60 +57,6 @@ npx nx g react-lib
 #### Generate apps
 
 - `npx nx g expo-app` - generate new RN Expo app
-
-#### Rename library
-
-- `npx nx g lib-rename` - renames an existing library and updates imports
-
-#### Options
-
-1. `currentLibName` (optional) - name of the library (e.g.: `mobile-account-features-profile-settings`)
-
-2. `newLibName` (optional) - new name of the library (e.g.: `user-settings`, project name will be `mobile-account-features-user-settings`)
-
-#### Example
-
-```sh
-npx nx g lib-rename --currentLibName="mobile-account-features-profile-settings" --newLibName="user-settings"
-```
-
-#### Move library
-
-- `npx nx g lib-move` - moves the library to a new destination. This utility also calls `lib-tags` generator.
-
-#### Options
-
-1. `srcLibName` (optional) - name of the library (e.g.: `mobile-account-features-profile-settings`)
-
-2. `app` (optional) - name of an app or `shared`.
-
-3. `scope` (optional) - name of a scope or `shared`.
-   This option is for a library, related to an app.
-
-4. `type` (optional) - type of library.
-   Possible values are `features`, `data-access`, `ui` and `utils`.
-
-5. `name` (optional) - name of a library.
-
-#### Example
-
-```sh
-npx nx g lib-move --srcLibName="mobile-account-features-profile-settings" --app=mobile --scope=settings --type=features --name="user-settings"
-```
-
-#### Remove library
-
-- `npx nx g lib-remove` - removes the library. Before deleting a library you must remove all references to it.
-
-#### Options
-
-1. `libName` (optional) - name of the library (e.g.: `mobile-account-features-profile-settings`)
-
-#### Example
-
-```sh
-npx nx g lib-remove --libName="mobile-account-features-profile-settings"
-```
 
 ### Running tasks
 

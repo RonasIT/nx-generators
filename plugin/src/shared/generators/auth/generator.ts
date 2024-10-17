@@ -91,7 +91,9 @@ export async function runAuthGenerator(
 
   await formatFiles(tree);
 
-  installPackagesTask(tree);
+  return () => {
+    installPackagesTask(tree);
+  };
 }
 
 export default runAuthGenerator;

@@ -37,6 +37,28 @@ const verifyLibraryTag = (
 
       callback();
     }
+
+    const tagFromLibPath = getTagFromLibPath(project.root, tagType);
+    const isInvalidTag = tag !== `${tagType}:${tagFromLibPath}`;
+
+    if (isInvalidTag) {
+      context.log(`Invalid tag ${tag}. Updating...\n`);
+
+      project = readProjectConfiguration(tree, project.name);
+
+      const filteredTags = project.tags.filter((item) => item !== tag);
+
+      project.tags = [...filteredTags, `${tagType}:${tagFromLibPath}`];
+
+      updateProjectConfiguration(tree, project.name, project);
+
+      if (tagType === 'scope') {
+        addNxScopeTag(tree,  tagFromLibPath);
+        context.reload(tree);
+      }
+
+      verifyLibraryTag(project, tree, `${tagType}:${tagFromLibPath}`, tagType, context);
+    }
   } else {
     context.log(`Missing ${tagType} tag for ${project.name}. Adding...`);
 
@@ -56,6 +78,7 @@ const verifyLibraryTag = (
 
     if (tagType === 'scope') {
       addNxScopeTag(tree,  tag);
+      context.reload(tree);
     }
   }
 };
@@ -71,6 +94,7 @@ export const checkApplicationTags = (project: ProjectConfiguration, tree: Tree, 
     if (!appTagRule) {
       context.log(`Missing app tag rule for ${appTag}. Adding...\n`);
       addNxAppTag(tree, appTag.replace('app:', ''));
+      context.reload(tree);
     }
   } else {
     context.log(`Missing app tag for ${project.name}. Adding...`);
@@ -79,6 +103,7 @@ export const checkApplicationTags = (project: ProjectConfiguration, tree: Tree, 
 
     updateProjectConfiguration(tree, project.name, { ...project, tags: [...project.tags, `app:${projectAppTag}`] });
     addNxAppTag(tree,  projectAppTag);
+    context.reload(tree);
   }
 
   if (!hasTypeTag) {
@@ -100,6 +125,7 @@ export const checkLibraryTags = (project: ProjectConfiguration, tree: Tree, cont
   verifyLibraryTag(project, tree, scopeTag, 'scope', context, () => {
     context.log(`Missing scope tag rule for ${scopeTag}. Adding...`);
     addNxScopeTag(tree, scopeTag.replace('scope:', ''));
+    context.reload(tree);
   });
   verifyLibraryTag(project, tree, typeTag, 'type', context);
 };

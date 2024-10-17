@@ -8,6 +8,11 @@
       "type": "boolean",
       "description": "",
       "$default": false
+    },
+    "skipRepoCheck": {
+      "type": "boolean",
+      "description": "",
+      "$default": false
     }
   },
   "required": []

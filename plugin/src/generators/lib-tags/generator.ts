@@ -9,14 +9,18 @@ import { LibTagsContext } from './interfaces';
 const context: LibTagsContext = {
   config: {},
   rules: [],
-  log: console.log
+  log: console.log,
+  reload: (tree: Tree) => {
+    context.config = readESLintConfig(tree).config;
+    context.rules = getNxRules(context.config);
+  }
 };
 
 export async function libTagsGenerator(
   tree: Tree,
   options: LibTagsGeneratorSchema,
 ) {
-  const hasUnstagedChanges = execSync('git status -s').toString('utf8');
+  const hasUnstagedChanges = !options.skipRepoCheck && execSync('git status -s').toString('utf8');
 
   if (hasUnstagedChanges) {
     const shouldContinue = await askQuestion('You have unstaged changes. Are you sure you want to continue? (y/n): ') === 'y';
@@ -54,8 +58,7 @@ export async function libTagsGenerator(
 
   applications.forEach((application) => checkApplicationTags(application, tree, context));
 
-  context.config = readESLintConfig(tree).config;
-  context.rules = getNxRules(context.config);
+  context.reload(tree);
 
   libraries.forEach((library) => checkLibraryTags(library, tree, context));
 

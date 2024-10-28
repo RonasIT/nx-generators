@@ -122,21 +122,23 @@ export const verifyEsLintConfig = (tree: Tree): Record<string, any> => {
     }
 
     if (areRulesDisabled || areRulesBroken) {
-      const esLintConfigTemplate = readJson(tree, 'plugin/src/generators/code-checks/files/.eslintrc.json.template');
-      const templateRules = getNxRulesEntryOrThrowError(esLintConfigTemplate);
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const esLintConfigRulesTemplate = require('./config-template.json');
+      // const esLintConfigTemplate = readJson(tree, 'plugin/src/generators/code-checks/files/.eslintrc.json.template');
+      // const templateRules = getNxRulesEntryOrThrowError(esLintConfigTemplate);
   
-      rulesEntry[1] = templateRules.rules['@nx/enforce-module-boundaries'][1];
+      rulesEntry[1] = esLintConfigRulesTemplate;
 
       writeJson(tree, path, config);
     }
     // TODO: use custom errors
   } catch {
     output.warn({ title: output.bold('ESLint config has no @nx/enforce-module-boundaries rule. Updating rules...') });
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const esLintConfigRulesTemplate = require('./config-template.json');
+    // const templateRules = getNxRulesEntryOrThrowError(esLintConfigTemplate);
 
-    const esLintConfigTemplate = readJson(tree, 'plugin/src/generators/code-checks/files/.eslintrc.json.template');
-    const templateRules = getNxRulesEntryOrThrowError(esLintConfigTemplate);
-
-    config.overrides.push(templateRules);
+    config.overrides.push(esLintConfigRulesTemplate);
 
     writeJson(tree, path, config);
   }

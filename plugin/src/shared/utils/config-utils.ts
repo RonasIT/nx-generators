@@ -123,7 +123,7 @@ export const verifyEsLintConfig = (tree: Tree): Record<string, any> => {
 
     if (areRulesDisabled || areRulesBroken) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const esLintConfigTemplate = require('./config-template.json');
+      const esLintConfigTemplate = require('../templates/config-template.json');
       const templateRules = esLintConfigTemplate.rules['@nx/enforce-module-boundaries'];
   
       rulesEntry[0] = templateRules[0];
@@ -135,7 +135,7 @@ export const verifyEsLintConfig = (tree: Tree): Record<string, any> => {
   } catch {
     output.warn({ title: output.bold('ESLint config has no @nx/enforce-module-boundaries rule. Updating rules...') });
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const esLintConfigRulesTemplate = require('./config-template.json');
+    const esLintConfigRulesTemplate = require('../templates/config-template.json');
 
     config.overrides.push(esLintConfigRulesTemplate);
 

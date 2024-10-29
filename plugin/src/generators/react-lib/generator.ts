@@ -1,58 +1,48 @@
-import { formatFiles, generateFiles, getProjects, Tree } from '@nx/devkit';
+import { formatFiles, generateFiles, output, Tree } from '@nx/devkit';
 import * as path from 'path';
 import { ReactLibGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
-import { formatName, askQuestion, dynamicImport, filterSource, LibraryType, addNxScopeTag } from '../../shared/utils';
+import {
+  addNxScopeTag,
+  askQuestion,
+  constants,
+  dynamicImport,
+  filterSource,
+  formatName,
+  LibraryType,
+  selectProject,
+  validateLibraryType,
+  getLibDirectoryName
+} from '../../shared/utils';
 import { isBoolean } from 'lodash';
 
-const getProjectsDetails = (tree: Tree) => Array.from(getProjects(tree))
-  .filter(([_, project]) => project.projectType === 'application')
-  .map(([name, project]) => ({ name, path: project.root }));
-
-export async function reactLibGenerator(
-  tree: Tree,
-  options: ReactLibGeneratorSchema
-) {
+export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema) {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
-  const projects = getProjectsDetails(tree);
 
-  if (!projects.length) {
-    throw new Error('No application found. Create an application first.');
-  }
+  options.app = options.app || (await selectProject(tree, 'application', 'Select the application: ')).name;
 
-  options.app = options.app || await autocomplete({
-    message: 'Select the application: ',
-    source: async (input) => {
-      const entries = [...projects, { name: 'shared', path: 'shared' }].map((project) => ({
-        name: `${project.name} (${project.path})`,
-        value: project.path.replace('apps/', '')
-      }));
+  const isSharedLib = options.app === constants.sharedValue;
 
-      if (!input) {
-        return entries;
-      }
-
-      return entries.filter((entry) => entry.name.toLowerCase().includes(input.toLowerCase()));
-    }
-  });
-
-  const isSharedLib = options.app === 'shared';
-
-  options.scope = options.scope || (isSharedLib ? '' : await askQuestion('Enter the scope (e.g: profile) or \'shared\': '));
-  options.type = options.type || await autocomplete({
+  options.scope = options.scope || (isSharedLib ? '' : await askQuestion(`Enter the scope (e.g: profile) or '${constants.sharedValue}': `));
+  options.type = options.type ? validateLibraryType(options.type) : await autocomplete({
     message: 'Select the library type: ',
     source: (input) => filterSource(input, Object.values(LibraryType))
   });
-  options.name = options.name || await askQuestion('Enter the name of the library (e.g: settings): ');
+  options.name = options.name || (await askQuestion('Enter the name of the library (e.g: settings): '));
 
   if ([LibraryType.FEATURES, LibraryType.UI].includes(options.type as LibraryType) && !isBoolean(options.withComponent)) {
-    options.withComponent = await askQuestion('Generate component inside lib folder? (y/n): ') === 'y';
+    options.withComponent = (await askQuestion('Generate component inside lib folder? (y/n): ')) === 'y';
+
+    if (!isBoolean(options.withComponentForwardRef)) {
+      options.withComponentForwardRef = await askQuestion('Generate component with forwardRef? (y/n): ') === 'y';
+    }
   }
 
-  const scopeTag = options.scope || 'shared';
+  const scopeTag = options.scope || constants.sharedValue;
   const tags = [`app:${options.app}`, `scope:${scopeTag}`, `type:${options.type}`];
 
-  const libPath = path.normalize(`libs/${options.app}/${options.scope}/${options.type}/${options.name}`);
+  const libDirectoryName = getLibDirectoryName(options.name, options.scope);
+  const libPath = path.normalize(`libs/${options.app}/${options.scope}/${options.type}/${libDirectoryName}`);
   const command = `npx nx g @nx/expo:lib --skipPackageJson --unitTestRunner=none --tags="${tags.join(', ')}" --projectNameAndRootFormat=derived ${libPath}`;
   const commandWithOptions = options.dryRun ? command + ' --dry-run' : command;
 
@@ -61,13 +51,17 @@ export async function reactLibGenerator(
   if (options.withComponent) {
     const srcPath = `${libPath}/src`;
 
-    generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, formatName });
+    generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, name: formatName(options.name, true) });
     tree.write(`${srcPath}/index.ts`, 'export * from \'./lib\';');
   }
 
   addNxScopeTag(tree, scopeTag);
 
   await formatFiles(tree);
+
+  if (libDirectoryName !== options.name) {
+    output.warn({ title: `The library directory was changed to ${output.bold(libDirectoryName)} so that it does not start with the scope name.`});
+  }
 }
 
 export default reactLibGenerator;

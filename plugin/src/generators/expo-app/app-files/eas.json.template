@@ -2,10 +2,7 @@
   "build": {
     "development": {
       "channel": "development",
-      "distribution": "internal",
-      "ios": {
-        "distribution": "store"
-      },
+      "distribution": "store",
       "env": {
         "EXPO_PUBLIC_APP_ENV": "development"
       }
@@ -13,16 +10,11 @@
     "debug": {
       "extends": "development",
       "developmentClient": true,
-      "ios": {
-        "distribution": "internal"
-      }
+      "distribution": "internal"
     },
-    "staging": {
-      "channel": "staging",
-      "distribution": "store",
-      "env": {
-        "EXPO_PUBLIC_APP_ENV": "staging"
-      }
+    "internal": {
+      "extends": "development",
+      "distribution": "internal"
     },
     "production": {
       "channel": "production",
@@ -33,6 +25,25 @@
     }
   },
   "submit": {
-    "production": {}
+    "development": {
+      "android": {
+        "track": "internal",
+        "releaseStatus": "draft"
+      },
+      "ios": {
+        "ascAppId": "YOUR_APP_ID",
+        "appleTeamId": "YOUR_TEAM_ID"
+      }
+    },
+    "production": {
+      "android": {
+        "track": "production",
+        "releaseStatus": "draft"
+      },
+      "ios": {
+        "ascAppId": "YOUR_APP_ID",
+        "appleTeamId": "YOUR_TEAM_ID"
+      }
+    }
   }
 }

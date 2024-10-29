@@ -58,6 +58,8 @@ npx nx g react-component
 
 ## Generators overview
 
+### Repository
+
 ### 1. `repo-config`
 
 Setups the monorepo structure for development.
@@ -65,6 +67,8 @@ Setups the monorepo structure for development.
 ### 2. `code-checks`
 
 Configures code checks and formatting with pre-commit hook.
+
+### Apps
 
 ### 3. `expo-app`
 
@@ -106,6 +110,8 @@ or
 npx nx g next-app my-app web
 ```
 
+### Libraries
+
 ### 5. `react-lib`
 
 Generates a library according to [NX notation](https://nx.dev/concepts/more-concepts/applications-and-libraries).
@@ -125,19 +131,94 @@ Generates a library according to [NX notation](https://nx.dev/concepts/more-conc
 1. `withComponent` (optional) - generate the library with `lib/component.tsx` file.
    This option is for `features` or `ui` library.
 
+1. `withComponentForwardRef` (optional) - generate a component with `forwardRef` in `lib/component.tsx` file.
+   This option works if `withComponent` is `true`.
+
 1. `dryRun` (optional) - generate the library without creating files
 
 #### Example
 
 ```sh
-npx nx g react-lib --app=mobile --scope=account --type=features --name=profile-settings --withComponent --dryRun
+npx nx g react-lib --app=mobile --scope=account --type=features --name=profile-settings --withComponent --withComponentForwardRef --dryRun
 ```
 or
 ```sh
 npx nx g react-lib --dryRun
 ```
 
-### 6. `react-component`
+### 6. `lib-rename`
+
+Renames an existing library and updates imports
+
+#### Options
+
+1. `currentLibName` (optional) - name of the library (e.g.: `mobile-account-features-profile-settings`)
+
+2. `newLibName` (optional) - new name of the library (e.g.: `user-settings`, project name will be `mobile-account-features-user-settings`)
+
+#### Example
+
+```sh
+npx nx g lib-rename --currentLibName="mobile-account-features-profile-settings" --newLibName="user-settings"
+```
+
+### 7. `lib-move`
+
+Moves the library to a new destination. This utility also calls `lib-tags` generator.
+
+#### Options
+
+1. `srcLibName` (optional) - name of the library (e.g.: `mobile-account-features-profile-settings`)
+
+2. `app` (optional) - name of an app or `shared`.
+
+3. `scope` (optional) - name of a scope or `shared`.
+   This option is for a library, related to an app.
+
+4. `type` (optional) - type of library.
+   Possible values are `features`, `data-access`, `ui` and `utils`.
+
+5. `name` (optional) - name of a library.
+
+#### Example
+
+```sh
+npx nx g lib-move --srcLibName="mobile-account-features-profile-settings" --app=mobile --scope=settings --type=features --name="user-settings"
+```
+
+### 8. `lib-remove`
+
+Removes the library. Before deleting a library you must remove all references to it.
+
+#### Options
+
+1. `libName` (optional) - name of the library (e.g.: `mobile-account-features-profile-settings`)
+
+#### Example
+
+```sh
+npx nx g lib-remove --libName="mobile-account-features-profile-settings"
+```
+
+### 9. `lib-tags`
+
+Checks and configures [NX library tags](https://nx.dev/features/enforce-module-boundaries). If your project does not already use library tags, you can add them using this generator.
+
+#### Options
+
+1. `silent` (optional) - disables all logs
+
+2. `skipRepoCheck` (optional) - disables check repository status
+
+#### Example
+
+```sh
+npx nx g lib-tags
+```
+
+### Components
+
+### 10. `react-component`
 
 Creates a React component in particular library.
 
@@ -147,33 +228,19 @@ Creates a React component in particular library.
 
 2. `subcomponent` (optional) - generate a folder for components
 
+3. `withForwardRef` (optional) - generate a component with forwardRef
+
 #### Example
 
 ```sh
-npx nx g react-component --name=AppButton --subcomponent
+npx nx g react-component --name=AppButton --subcomponent --withForwardRef
 ```
 or
 ```sh
-npx nx g react-component AppButton --subcomponent
+npx nx g react-component AppButton --subcomponent --withForwardRef
 ```
 
-### 7. `entity-api`
-
-Creates an API with related entities in API library. It also updates redux store middlewares, reducers.
-
-#### Options
-
-1. `name` (optional) - name of the entity (e.g. User)
-
-2. `baseEndpoint` (optional) - name of used endpoint in your API (e.g. /users)
-
-#### Example
-
-```sh
-npx nx g entity-api --name=User --baseEndpoint=users
-```
-
-### 8. `form`
+### 11. `form`
 
 Generates a form schema class and adds its usage to a component or a hook.
 
@@ -194,6 +261,24 @@ or
 npx nx g form profile-settings ProfileSettings
 ```
 
+### Services
+
+### 12. `entity-api`
+
+Creates an API with related entities in API library. It also updates redux store middlewares, reducers.
+
+#### Options
+
+1. `name` (optional) - name of the entity (e.g. User)
+
+2. `baseEndpoint` (optional) - name of used endpoint in your API (e.g. /users)
+
+#### Example
+
+```sh
+npx nx g entity-api --name=User --baseEndpoint=users
+```
+
 ### Note
 
 Each generator accepts the `--help` argument to see generator instructions.
@@ -201,3 +286,4 @@ Each generator accepts the `--help` argument to see generator instructions.
 ```sh
 npx nx g react-lib --help
 ```
+

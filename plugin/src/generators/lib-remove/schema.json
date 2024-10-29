@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Lib remove utility",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "libName": {
+      "type": "string",
+      "description": "Name of the library (project name)",
+      "default": ""
+    }
+  },
+  "required": []
+}

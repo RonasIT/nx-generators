@@ -5,3 +5,5 @@ export * from './is-expo-app';
 export * from './dynamic-import';
 export * from './config-utils';
 export * from './ts-utils';
+export * from './constants';
+export * from './get-lib-directory-name';

@@ -4,6 +4,7 @@ import * as path from 'path';
 import { camelCase, kebabCase, startCase } from 'lodash';
 import { EntityApiGeneratorSchema } from './schema';
 import {
+  addNamedImport,
   appendFileContent,
   askQuestion,
   dynamicImport,
@@ -11,14 +12,13 @@ import {
   getNxLibsPaths,
   LibraryType,
   searchAliasPath,
-  searchNxLibsPaths
+  searchNxLibsPaths,
 } from '../../shared/utils';
 
-export async function entityApiGenerator(
-  tree: Tree,
-  options: EntityApiGeneratorSchema
-) {
-  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
+export async function entityApiGenerator(tree: Tree, options: EntityApiGeneratorSchema) {
+  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
+    'inquirer-autocomplete-standalone',
+  );
   const nxLibsPaths = getNxLibsPaths([LibraryType.DATA_ACCESS]);
   const apiLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/api/src', 'endsWith');
   const apiClientLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/api-client/src', 'endsWith');
@@ -34,14 +34,14 @@ export async function entityApiGenerator(
   if (apiClientLibsPaths.length > 1) {
     apiClientLibsPaths[0] = await autocomplete({
       message: 'Select the api client library path:',
-      source: (input) => filterSource(input, apiClientLibsPaths)
+      source: (input) => filterSource(input, apiClientLibsPaths),
     });
   }
 
   if (apiLibsPaths.length > 1) {
     apiLibsPaths[0] = await autocomplete({
       message: 'Select the api library path:',
-      source: (input) => filterSource(input, apiLibsPaths)
+      source: (input) => filterSource(input, apiLibsPaths),
     });
   }
 
@@ -51,11 +51,12 @@ export async function entityApiGenerator(
   const libPath = apiLibsPaths[0];
   const libRootPath = `${libPath}/lib`;
 
-  options.name = options.name || await askQuestion('Enter the name of the entity (e.g: User): ');
+  options.name = options.name || (await askQuestion('Enter the name of the entity (e.g: User): '));
 
   const apiName = kebabCase(options.name);
 
-  options.baseEndpoint = options.baseEndpoint || await askQuestion('Enter the base endpoint (e.g: /users): ', `/${apiName}`);
+  options.baseEndpoint =
+    options.baseEndpoint || (await askQuestion('Enter the base endpoint (e.g: /users): ', `/${apiName}`));
 
   const apiPath = `${libRootPath}/${apiName}`;
   const entityName = startCase(camelCase(apiName)).replace(/\s+/g, '');
@@ -66,7 +67,7 @@ export async function entityApiGenerator(
     entityName,
     entityFileName: apiName,
     apiClientDirectory,
-    baseEndpoint: options.baseEndpoint.startsWith('/') ? options.baseEndpoint : `/${options.baseEndpoint}` 
+    baseEndpoint: options.baseEndpoint.startsWith('/') ? options.baseEndpoint : `/${options.baseEndpoint}`,
   });
 
   tree.rename(`${apiPath}/models/entity.ts`, `${apiPath}/models/${apiName}.ts`);
@@ -84,7 +85,7 @@ export async function entityApiGenerator(
   if (storeLibsPaths.length > 1) {
     storeLibsPaths[0] = await autocomplete({
       message: 'Select the store library path:',
-      source: (input) => filterSource(input, storeLibsPaths)
+      source: (input) => filterSource(input, storeLibsPaths),
     });
   }
 
@@ -93,27 +94,25 @@ export async function entityApiGenerator(
   const project = new Project({
     manipulationSettings: {
       indentationText: IndentationText.TwoSpaces,
-      quoteKind: QuoteKind.Single
-    }
+      quoteKind: QuoteKind.Single,
+    },
   });
   const store = project.addSourceFileAtPath(`${storeLibsPaths[0]}/store.ts`);
-  // TODO: create declaration if not exists
-  const apiImportsDeclaration = store.getImportDeclarationOrThrow((node) => node.getModuleSpecifierValue() === apiDirectory);
-  
-  apiImportsDeclaration.addNamedImport(apiNameDeclaration);
+
+  addNamedImport(apiNameDeclaration, apiDirectory, store);
 
   const rootReducer = store.getVariableDeclarationOrThrow('rootReducer');
-  
-  rootReducer.getInitializerIfKindOrThrow(SyntaxKind.ObjectLiteralExpression)
-    .addProperty({
-      name: `[${apiNameDeclaration}.reducerPath]`,
-      initializer: `${apiNameDeclaration}.reducer`,
-      kind: StructureKind.PropertyAssignment
-    });
+
+  rootReducer.getInitializerIfKindOrThrow(SyntaxKind.ObjectLiteralExpression).addProperty({
+    name: `[${apiNameDeclaration}.reducerPath]`,
+    initializer: `${apiNameDeclaration}.reducer`,
+    kind: StructureKind.PropertyAssignment,
+  });
 
   const middlewares = store.getVariableDeclarationOrThrow('middlewares');
 
-  middlewares.getInitializerIfKindOrThrow(SyntaxKind.ArrayLiteralExpression)
+  middlewares
+    .getInitializerIfKindOrThrow(SyntaxKind.ArrayLiteralExpression)
     .addElement(`${apiNameDeclaration}.middleware`);
 
   project.saveSync();

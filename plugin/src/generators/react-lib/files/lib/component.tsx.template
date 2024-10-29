@@ -1,10 +1,20 @@
-import React, { Fragment, ReactElement } from 'react';
+import React, { <% if(withComponentForwardRef) { %>forwardRef, ForwardedRef, <% } %>Fragment, ReactElement } from 'react';
 
-interface <%= formatName(name, true) %>Props {
+interface <%= name %>Props {
   // TODO: Describe props
 }
 
-export function <%= formatName(name, true) %>(props: <%= formatName(name, true) %>Props): ReactElement {
+<% if(withComponentForwardRef) { %>
+export const <%= name %> = forwardRef(function Component(
+  props: <%= name %>Props,
+  ref: ForwardedRef<>, // TODO: add ref type
+): ReactElement {
+  // TODO: Implement component
+  return <Fragment />;
+});
+<% } else { %>
+export function <%= name %>(props: <%= name %>Props): ReactElement {
   // TODO: Implement component
   return <Fragment />;
 }
+<% } %>

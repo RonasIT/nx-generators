@@ -15,6 +15,9 @@
     "baseUrl": ".",
     "paths": {
       "@nx-generators/source": ["src/index.ts"],
+      "@ronas-it/expo-app/shared/utils/app-env": [
+        "libs/expo-app/shared/utils/app-env/src/index.ts"
+      ],
       "@ronas-it/nx-generators": ["plugin/src/index.ts"],
       "@ronas-it/test/shared/utils/app-env": [
         "libs/test/shared/utils/app-env/src/index.ts"

@@ -1,0 +1,9 @@
+{
+  "name": "expo-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/expo-app/src",
+  "projectType": "application",
+  "tags": ["app:expo-app", "type:app"],
+  "// targets": "to see all targets run: nx show project expo-app --web",
+  "targets": {}
+}

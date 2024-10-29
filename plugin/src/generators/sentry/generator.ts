@@ -91,7 +91,7 @@ export async function sentryGenerator(
       'VariableStatement:has(Identifier[name="withNx"]):has(CallExpression:has(Identifier[name="require"]))',
       (node) => `${node.getText()}
         const { withSentryConfig } = require('@sentry/nextjs');
-        
+        \n
         `,
       {},
     );

@@ -1,6 +1,5 @@
 import { ExpoConfig } from '@expo/config';
 import { EASConfig } from 'expo-constants/build/Constants.types';
-
 const createConfig = (): Omit<ExpoConfig, 'extra'> & {
   extra: {
     eas: EASConfig;
@@ -9,8 +8,8 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & {
   const projectId = '';
   const appId = 'com.expo.app.dev';
   const extra = {
+    sentry: { dsn: 'test.dsn' },
     eas: { projectId } as EASConfig,
-    sentry: { dsn: 'sentry.test.dsn' },
   };
   return {
     name: 'Expo App Dev',

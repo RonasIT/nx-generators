@@ -11,8 +11,6 @@ import { tsquery } from '@phenomnomnominal/tsquery';
 import {
   createPrinter,
   factory,
-  transform,
-  NodeFlags,
   ObjectLiteralExpression,
   PropertyAssignment,
   SyntaxKind,
@@ -158,7 +156,6 @@ const wrapIntoSentryConfig = (content: string): string => {
 };
 
 /* expo sentry generators */
-
 const addRequiredImportsExpo = (content: string): string =>
   tsquery.replace(
     content,
@@ -177,6 +174,30 @@ const removeExportsKeywordForRootLayout = (content: string): string =>
     {
       visitAllChildren: true,
     },
+  );
+
+const updateExtraConfig = (content: string, DSN: string): string =>
+  createPrinter().printFile(
+    tsquery.map(
+      tsquery.ast(content),
+      'VariableDeclaration > Identifier[name="extra"] ~ ObjectLiteralExpression',
+      (node: ObjectLiteralExpression) =>
+        factory.createObjectLiteralExpression([
+          ...node.properties,
+          factory.createPropertyAssignment(
+            'sentry',
+            factory.createObjectLiteralExpression([
+              factory.createPropertyAssignment(
+                'dsn',
+                factory.createStringLiteral(DSN),
+              ),
+            ]),
+          ),
+        ]),
+      {
+        visitAllChildren: true,
+      },
+    ),
   );
 
 const addSentryPluginToAppConfig = (content: string): string =>
@@ -226,6 +247,7 @@ export async function sentryGenerator(
   options: SentryGeneratorSchema,
 ) {
   const projectRoot = `apps/${options.directory}`;
+  const projectPackagePath = `${projectRoot}/package.json`;
 
   if (isNextApp(tree, projectRoot)) {
     addDependenciesToPackageJson(tree, nextAppDependencies, {});
@@ -301,6 +323,12 @@ export async function sentryGenerator(
     generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
   } else if (isExpoApp(tree, projectRoot)) {
     addDependenciesToPackageJson(tree, expoAppDependencies, {});
+    addDependenciesToPackageJson(
+      tree,
+      expoAppDependencies,
+      {},
+      projectPackagePath,
+    );
 
     const layoutContent = tree
       .read(`${projectRoot}/app/_layout.tsx`)
@@ -330,42 +358,9 @@ export async function sentryGenerator(
       .read(`${projectRoot}/app.config.ts`)
       .toString();
 
-    const updatedAppConfigContent = createPrinter().printFile(
-      tsquery.map(
-        tsquery.ast(appConfigContent),
-        'VariableDeclaration:has(Identifier[name="createConfig"]) ReturnStatement PropertyAssignment:has(Identifier[name="plugins"]) > ArrayLiteralExpression',
-        (node: ArrayLiteralExpression) => {
-          console.log(node.getText());
-
-          const objectLiteralExpression = factory.createObjectLiteralExpression(
-            [
-              factory.createPropertyAssignment(
-                'organization',
-                factory.createStringLiteral(''),
-              ),
-              factory.createPropertyAssignment(
-                'project',
-                factory.createStringLiteral(''),
-              ),
-            ],
-          );
-
-          addSyntheticLeadingComment(
-            objectLiteralExpression,
-            SyntaxKind.SingleLineCommentTrivia,
-            ' TODO Update organization and project name',
-          );
-
-          // TODO: Add comment
-          return factory.createArrayLiteralExpression([
-            ...node.elements,
-            factory.createArrayLiteralExpression([
-              factory.createStringLiteral('@sentry/react-native/expo'),
-              objectLiteralExpression,
-            ]),
-          ]);
-        },
-      ),
+    const updatedAppConfigContent = updateExtraConfig(
+      addSentryPluginToAppConfig(appConfigContent),
+      options.DSN,
     );
 
     tree.write(`${projectRoot}/app.config.ts`, updatedAppConfigContent);

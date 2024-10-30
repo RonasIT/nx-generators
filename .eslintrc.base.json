@@ -53,6 +53,10 @@
               {
                 "sourceTag": "app:expo-app",
                 "onlyDependOnLibsWithTags": ["app:expo-app", "app:shared"]
+              },
+              {
+                "sourceTag": "app:next-app",
+                "onlyDependOnLibsWithTags": ["app:next-app", "app:shared"]
               }
             ]
           }

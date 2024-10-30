@@ -30,8 +30,10 @@ type PropertyAssignmentData = {
 
 /*
   TODO:
-  - Figure out how to keep whitespaces after mapping
-  - Find a better way to apply multiple mapping/replacing without variables propagation
+  - Refactor generator with subfunctions
+  - Complete expo sentry generator
+  - Implement next sentry generator
+  - Add post-generator prettier
 */
 
 const generatePropertyAssignment = ({
@@ -65,39 +67,22 @@ const generateObjectLiteralExpression = (
   ]);
 };
 
-const nextAppDependencies = {
-  '@sentry/nextjs': '^8.21.0',
+const addRequiredImports = (content: string): string => {
+  return tsquery.replace(
+    content,
+    'VariableStatement:has(Identifier[name="withNx"]):has(CallExpression:has(Identifier[name="require"]))',
+    (node) => `${node.getText()}
+      const { withSentryConfig } = require('@sentry/nextjs');
+      \n
+      `,
+    {},
+  );
 };
 
-const expoAppDependencies = {
-  '@sentry/react-native': '~5.22.0',
-};
-
-export async function sentryGenerator(
-  tree: Tree,
-  options: SentryGeneratorSchema,
-) {
-  const projectRoot = `apps/${options.directory}`;
-
-  if (isNextApp(tree, projectRoot)) {
-    addDependenciesToPackageJson(tree, nextAppDependencies, {});
-
-    const nextConfigContent = tree
-      .read(`${projectRoot}/next.config.js`)
-      .toString();
-
-    const nextWithImports = tsquery.replace(
-      nextConfigContent,
-      'VariableStatement:has(Identifier[name="withNx"]):has(CallExpression:has(Identifier[name="require"]))',
-      (node) => `${node.getText()}
-        const { withSentryConfig } = require('@sentry/nextjs');
-        \n
-        `,
-      {},
-    );
-
-    const updatedNextConfig = tsquery.map(
-      tsquery.ast(nextWithImports),
+const modifyNextConfig = (content: string): string => {
+  return createPrinter().printFile(
+    tsquery.map(
+      tsquery.ast(content),
       'Identifier[name="nextConfig"] ~ ObjectLiteralExpression',
       (node: ObjectLiteralExpression) => {
         return generateObjectLiteralExpression(
@@ -138,42 +123,70 @@ export async function sentryGenerator(
       {
         visitAllChildren: true,
       },
+    ),
+  );
+};
+
+const wrapIntoSentryConfig = (content: string): string => {
+  const withSentryWebpackPluginOptions = tsquery.replace(
+    content,
+    'ExpressionStatement:has(CallExpression > Identifier[name="composePlugins"])',
+    (node) => {
+      return `
+      /**
+      * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
+      **/
+
+      const sentryWebpackPluginOptions = {
+        silent: true,
+        org: '',
+        project: 'web-next-js-client',
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+      };
+
+      ${node.getText()}`;
+    },
+    {
+      visitAllChildren: true,
+    },
+  );
+
+  return tsquery.replace(
+    withSentryWebpackPluginOptions,
+    'CallExpression > CallExpression:has(Identifier[name="composePlugins"]) > Identifier[name="nextConfig"]',
+    (node) => `withSentryConfig(${node.getText()}, sentryWebpackPluginOptions)`,
+    {
+      visitAllChildren: true,
+    },
+  );
+};
+
+const nextAppDependencies = {
+  '@sentry/nextjs': '^8.21.0',
+};
+
+const expoAppDependencies = {
+  '@sentry/react-native': '~5.22.0',
+};
+
+export async function sentryGenerator(
+  tree: Tree,
+  options: SentryGeneratorSchema,
+) {
+  const projectRoot = `apps/${options.directory}`;
+
+  if (isNextApp(tree, projectRoot)) {
+    addDependenciesToPackageJson(tree, nextAppDependencies, {});
+
+    const nextConfigContent = tree
+      .read(`${projectRoot}/next.config.js`)
+      .toString();
+
+    const updatedNextConfigContent = wrapIntoSentryConfig(
+      modifyNextConfig(addRequiredImports(nextConfigContent)),
     );
 
-    const withSentryWebpackPluginOptions = tsquery.replace(
-      createPrinter().printFile(updatedNextConfig),
-      'ExpressionStatement:has(CallExpression > Identifier[name="composePlugins"])',
-      (node) => {
-        return `
-        /**
-        * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
-        **/
-
-        const sentryWebpackPluginOptions = {
-          silent: true,
-          org: '',
-          project: 'web-next-js-client',
-          authToken: process.env.SENTRY_AUTH_TOKEN,
-        };
-
-        ${node.getText()}`;
-      },
-      {
-        visitAllChildren: true,
-      },
-    );
-
-    const withSentryConfig = tsquery.replace(
-      withSentryWebpackPluginOptions,
-      'CallExpression > CallExpression:has(Identifier[name="composePlugins"]) > Identifier[name="nextConfig"]',
-      (node) =>
-        `withSentryConfig(${node.getText()}, sentryWebpackPluginOptions)`,
-      {
-        visitAllChildren: true,
-      },
-    );
-
-    tree.write(`${projectRoot}/next.config.js`, withSentryConfig);
+    tree.write(`${projectRoot}/next.config.js`, updatedNextConfigContent);
 
     // const nextConfigContent = tree
     //   .read(`${projectRoot}/next.config.js`)
@@ -227,13 +240,13 @@ export async function sentryGenerator(
     //   `,
     // );
 
-    // const envFiles = ['.env', '.env.development', '.env.production'];
-    // envFiles.forEach((file) => {
-    //   const envContent = tree.read(`${projectRoot}/${file}`).toString();
-    //   tree.write(`${projectRoot}/${file}`, envContent + 'SENTRY_AUTH_TOKEN=');
-    // });
+    const envFiles = ['.env', '.env.development', '.env.production'];
+    envFiles.forEach((file) => {
+      const envContent = tree.read(`${projectRoot}/${file}`).toString();
+      tree.write(`${projectRoot}/${file}`, envContent + 'SENTRY_AUTH_TOKEN=');
+    });
 
-    // generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
+    generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
   } else if (isExpoApp(tree, projectRoot)) {
     addDependenciesToPackageJson(tree, expoAppDependencies, {});
 

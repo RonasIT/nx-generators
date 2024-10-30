@@ -15,6 +15,12 @@
     "baseUrl": ".",
     "paths": {
       "@nx-generators/source": ["src/index.ts"],
+      "@ronas-it/expo-app/shared/data-access/storage": [
+        "libs/expo-app/shared/data-access/storage/src/index.ts"
+      ],
+      "@ronas-it/expo-app/shared/ui/styles": [
+        "libs/expo-app/shared/ui/styles/src/index.ts"
+      ],
       "@ronas-it/expo-app/shared/utils/app-env": [
         "libs/expo-app/shared/utils/app-env/src/index.ts"
       ],

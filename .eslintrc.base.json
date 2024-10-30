@@ -49,6 +49,10 @@
               {
                 "sourceTag": "type:ui",
                 "onlyDependOnLibsWithTags": ["type:ui", "type:utils"]
+              },
+              {
+                "sourceTag": "app:expo-app",
+                "onlyDependOnLibsWithTags": ["app:expo-app", "app:shared"]
               }
             ]
           }

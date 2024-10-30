@@ -1,13 +1,15 @@
-const { withNxMetro } = require('@nx/expo');
 const { getDefaultConfig } = require('@expo/metro-config');
+const { withNxMetro } = require('@nx/expo');
 const { mergeConfig } = require('metro-config');
+const path = require('path');
 
-const defaultConfig = getDefaultConfig(__dirname);
+const appRoot = __dirname;
+const monorepoRoot = path.resolve(appRoot, '../..');
+const defaultConfig = getDefaultConfig(appRoot);
 const { assetExts, sourceExts } = defaultConfig.resolver;
-
 /**
  * Metro configuration
- * https://reactnative.dev/docs/metro
+ * https://facebook.github.io/metro/docs/configuration
  *
  * @type {import('metro-config').MetroConfig}
  */
@@ -28,5 +30,5 @@ module.exports = withNxMetro(mergeConfig(defaultConfig, customConfig), {
   // all the file extensions used for imports other than 'ts', 'tsx', 'js', 'jsx', 'json'
   extensions: [],
   // Specify folders to watch, in addition to Nx defaults (workspace libraries and node_modules)
-  watchFolders: [],
+  watchFolders: [monorepoRoot],
 });

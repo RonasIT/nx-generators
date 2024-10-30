@@ -20,6 +20,7 @@ import {
   Expression,
   NodeArray,
   ObjectLiteralElementLike,
+  ArrayLiteralExpression,
 } from 'typescript';
 
 type PropertyAssignmentData = {
@@ -60,27 +61,23 @@ const generatePropertyAssignment = ({
 const generateObjectLiteralExpression = (
   objectData: Array<PropertyAssignmentData>,
   restProperties: NodeArray<ObjectLiteralElementLike>,
-): ObjectLiteralExpression => {
-  return factory.createObjectLiteralExpression([
+): ObjectLiteralExpression =>
+  factory.createObjectLiteralExpression([
     ...objectData.map(generatePropertyAssignment),
     ...restProperties,
   ]);
-};
 
-const addRequiredImports = (content: string): string => {
-  return tsquery.replace(
+const addRequiredImports = (content: string): string =>
+  tsquery.replace(
     content,
     'VariableStatement:has(Identifier[name="withNx"]):has(CallExpression:has(Identifier[name="require"]))',
     (node) => `${node.getText()}
-      const { withSentryConfig } = require('@sentry/nextjs');
-      \n
-      `,
+      const { withSentryConfig } = require('@sentry/nextjs');`,
     {},
   );
-};
 
-const modifyNextConfig = (content: string): string => {
-  return createPrinter().printFile(
+const modifyNextConfig = (content: string): string =>
+  createPrinter().printFile(
     tsquery.map(
       tsquery.ast(content),
       'Identifier[name="nextConfig"] ~ ObjectLiteralExpression',
@@ -125,12 +122,11 @@ const modifyNextConfig = (content: string): string => {
       },
     ),
   );
-};
 
 const wrapIntoSentryConfig = (content: string): string => {
   const withSentryWebpackPluginOptions = tsquery.replace(
     content,
-    'ExpressionStatement:has(CallExpression > Identifier[name="composePlugins"])',
+    'ExpressionStatement:has(CallExpression Identifier[name="withNx"])',
     (node) => {
       return `
       /**
@@ -153,13 +149,69 @@ const wrapIntoSentryConfig = (content: string): string => {
 
   return tsquery.replace(
     withSentryWebpackPluginOptions,
-    'CallExpression > CallExpression:has(Identifier[name="composePlugins"]) > Identifier[name="nextConfig"]',
+    'CallExpression > CallExpression:has(Identifier[name="withNx"]) Identifier[name="nextConfig"]',
     (node) => `withSentryConfig(${node.getText()}, sentryWebpackPluginOptions)`,
     {
       visitAllChildren: true,
     },
   );
 };
+
+/* expo sentry generators */
+
+const addRequiredImportsExpo = (content: string): string =>
+  tsquery.replace(
+    content,
+    'ImportDeclaration:has(StringLiteral[value="expo-router"])',
+    (node) =>
+      `${node.getText()}
+        import * as Sentry from "@sentry/react-native";
+        import Constants from "expo-constants";`,
+  );
+
+const removeExportsKeywordForRootLayout = (content: string): string =>
+  tsquery.replace(
+    content,
+    'FunctionDeclaration:has(Identifier[name="RootLayout"]) > :matches(ExportKeyword, DefaultKeyword)',
+    () => '',
+    {
+      visitAllChildren: true,
+    },
+  );
+
+const addSentryPluginToAppConfig = (content: string): string =>
+  createPrinter().printFile(
+    tsquery.map(
+      tsquery.ast(content),
+      'VariableDeclaration:has(Identifier[name="createConfig"]) ReturnStatement PropertyAssignment:has(Identifier[name="plugins"]) > ArrayLiteralExpression',
+      (node: ArrayLiteralExpression) => {
+        const objectLiteralExpression = factory.createObjectLiteralExpression([
+          factory.createPropertyAssignment(
+            'organization',
+            factory.createStringLiteral(''),
+          ),
+          factory.createPropertyAssignment(
+            'project',
+            factory.createStringLiteral(''),
+          ),
+        ]);
+
+        addSyntheticLeadingComment(
+          objectLiteralExpression,
+          SyntaxKind.SingleLineCommentTrivia,
+          ' TODO Update organization and project name',
+        );
+
+        return factory.createArrayLiteralExpression([
+          ...node.elements,
+          factory.createArrayLiteralExpression([
+            factory.createStringLiteral('@sentry/react-native/expo'),
+            objectLiteralExpression,
+          ]),
+        ]);
+      },
+    ),
+  );
 
 const nextAppDependencies = {
   '@sentry/nextjs': '^8.21.0',
@@ -252,17 +304,15 @@ export async function sentryGenerator(
 
     const layoutContent = tree
       .read(`${projectRoot}/app/_layout.tsx`)
-      .toString()
-      .replace(
-        /^import { Stack } from 'expo-router';$/gm,
-        `import { Stack } from 'expo-router';import * as Sentry from "@sentry/react-native";import Constants from "expo-constants";`,
-      )
-      .replace(/^export default function RootLayout/gm, `function RootLayout`);
+      .toString();
+
+    const updatedLayoutContent = removeExportsKeywordForRootLayout(
+      addRequiredImportsExpo(layoutContent),
+    );
 
     tree.write(
       `${projectRoot}/app/_layout.tsx`,
-      layoutContent +
-        `
+      `${updatedLayoutContent}
       const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
       Sentry.init({
@@ -278,20 +328,90 @@ export async function sentryGenerator(
 
     const appConfigContent = tree
       .read(`${projectRoot}/app.config.ts`)
-      .toString()
-      .replace(
-        /plugins: \[/g,
-        `plugins: [ [
-        '@sentry/react-native/expo',
-        {
-          // TODO Update organization and project name
-          organization: '',
-          project: ''
-        }
-      ],`,
-      );
+      .toString();
 
-    tree.write(`${projectRoot}/app.config.ts`, appConfigContent);
+    const updatedAppConfigContent = createPrinter().printFile(
+      tsquery.map(
+        tsquery.ast(appConfigContent),
+        'VariableDeclaration:has(Identifier[name="createConfig"]) ReturnStatement PropertyAssignment:has(Identifier[name="plugins"]) > ArrayLiteralExpression',
+        (node: ArrayLiteralExpression) => {
+          console.log(node.getText());
+
+          const objectLiteralExpression = factory.createObjectLiteralExpression(
+            [
+              factory.createPropertyAssignment(
+                'organization',
+                factory.createStringLiteral(''),
+              ),
+              factory.createPropertyAssignment(
+                'project',
+                factory.createStringLiteral(''),
+              ),
+            ],
+          );
+
+          addSyntheticLeadingComment(
+            objectLiteralExpression,
+            SyntaxKind.SingleLineCommentTrivia,
+            ' TODO Update organization and project name',
+          );
+
+          // TODO: Add comment
+          return factory.createArrayLiteralExpression([
+            ...node.elements,
+            factory.createArrayLiteralExpression([
+              factory.createStringLiteral('@sentry/react-native/expo'),
+              objectLiteralExpression,
+            ]),
+          ]);
+        },
+      ),
+    );
+
+    tree.write(`${projectRoot}/app.config.ts`, updatedAppConfigContent);
+
+    // const layoutContent = tree
+    //   .read(`${projectRoot}/app/_layout.tsx`)
+    //   .toString()
+    //   .replace(
+    //     /^import { Stack } from 'expo-router';$/gm,
+    //     `import { Stack } from 'expo-router';import * as Sentry from "@sentry/react-native";import Constants from "expo-constants";`,
+    //   )
+    //   .replace(/^export default function RootLayout/gm, `function RootLayout`);
+
+    // tree.write(
+    //   `${projectRoot}/app/_layout.tsx`,
+    //   layoutContent +
+    //     `
+    //   const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
+
+    //   Sentry.init({
+    //     dsn: Constants.expoConfig?.extra?.sentry?.dsn,
+    //     environment: Constants.expoConfig?.extra?.env,
+    //     debug: false,
+    //     integrations: [new Sentry.ReactNativeTracing({ routingInstrumentation })],
+    //     enabled: !__DEV__
+    //   });
+
+    //   export default Sentry.wrap(RootLayout);`,
+    // );
+
+    // const appConfigContent = tree
+    //   .read(`${projectRoot}/app.config.ts`)
+    //   .toString()
+    //   .replace(
+    //     /plugins: \[/g,
+    //     `plugins: [ [
+    //     '@sentry/react-native/expo',
+    //     {
+    //       // TODO Update organization and project name
+    //       organization: '',
+    //       project: ''
+    //     }
+    //   ],`,
+    //   );
+
+    // tree.write(`${projectRoot}/app.config.ts`, appConfigContent);
   }
 
   await formatFiles(tree);

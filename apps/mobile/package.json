@@ -6,7 +6,7 @@
     "@eva-design/eva": "^2.2.0",
     "@hookform/resolvers": "^3.3.4",
     "@ronas-it/axios-api-client": "^0.1.0",
-    "@ronas-it/react-native-common-modules": "^0.4.2",
+    "@ronas-it/react-native-common-modules": "^0.5.0",
     "@ronas-it/rtkq-entity-api": "^0.3.1",
     "@ui-kitten/components": "^5.3.1",
     "expo": "~51.0.8",
@@ -29,18 +29,20 @@
     "react-native-svg-transformer": "^1.4.0",
     "react-redux": "^9.1.2",
     "tslib": "^2.6.2",
-    "yup": "^1.4.0"
+    "yup": "^1.4.0",
+    "expo-dev-client": "~4.0.28"
   },
   "scripts": {
     "start": "cross-env EXPO_PUBLIC_APP_ENV=development npx expo start",
     "start:prod": "cross-env EXPO_PUBLIC_APP_ENV=production npx expo start",
     "build:dev": "eas build --no-wait -p all --profile=development",
+    "build:internal": "npm run build:dev -- --profile=internal",
     "build:debug": "npm run build:dev -- --profile=debug",
     "build:prod": "npm run build:dev -- --profile=production",
     "update:dev": "cross-env EXPO_PUBLIC_APP_ENV=development eas update --branch development",
     "update:prod": "cross-env EXPO_PUBLIC_APP_ENV=production eas update --branch production",
-    "submit:ios:dev": "cross-env EXPO_PUBLIC_APP_ENV=development eas submit --no-wait -p ios --profile=development",
-    "submit:ios:prod": "cross-env EXPO_PUBLIC_APP_ENV=production eas submit --no-wait -p ios --profile=production",
+    "submit:dev": "cross-env EXPO_PUBLIC_APP_ENV=development eas submit --no-wait --profile=development",
+    "submit:prod": "cross-env EXPO_PUBLIC_APP_ENV=production eas submit --no-wait --profile=production",
     "eas-build-pre-install": "cd ../../ && node tools/scripts/eas-build-pre-install.mjs . apps/mobile && cp package-lock.json apps/mobile",
     "eas-build-post-install": "cd ../../ && node tools/scripts/eas-build-post-install.mjs . apps/mobile"
   },

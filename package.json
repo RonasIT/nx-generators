@@ -14,7 +14,7 @@
     "@nx/devkit": "19.3.0",
     "@nx/plugin": "^19.3.0",
     "@ronas-it/axios-api-client": "^0.1.0",
-    "@ronas-it/react-native-common-modules": "^0.4.2",
+    "@ronas-it/react-native-common-modules": "^0.5.0",
     "@ronas-it/rtkq-entity-api": "^0.3.1",
     "@ui-kitten/components": "^5.3.1",
     "expo": "~51.0.8",
@@ -37,8 +37,9 @@
     "react-native-screens": "3.31.1",
     "react-native-web": "~0.19.11",
     "react-redux": "^9.1.2",
+    "ts-morph": "^23.0.0",
     "tslib": "^2.6.3",
-    "ts-morph": "^23.0.0"
+    "expo-dev-client": "~4.0.28"
   },
   "devDependencies": {
     "@expo/cli": "~0.18.13",

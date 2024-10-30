@@ -49,6 +49,31 @@
       "factory": "./src/generators/form/generator",
       "schema": "./src/generators/form/schema.json",
       "description": "form generator"
+    },
+    "lib-tags": {
+      "factory": "./src/generators/lib-tags/generator",
+      "schema": "./src/generators/lib-tags/schema.json",
+      "description": "lib-tags generator"
+    },
+    "lib-rename": {
+      "factory": "./src/generators/lib-rename/generator",
+      "schema": "./src/generators/lib-rename/schema.json",
+      "description": "library rename utility"
+    },
+    "lib-move": {
+      "factory": "./src/generators/lib-move/generator",
+      "schema": "./src/generators/lib-move/schema.json",
+      "description": "library move utility"
+    },
+    "lib-remove": {
+      "factory": "./src/generators/lib-remove/generator",
+      "schema": "./src/generators/lib-remove/schema.json",
+      "description": "library remove utility"
+    },
+    "auth": {
+      "factory": "./src/shared/generators/auth/generator",
+      "schema": "./src/shared/generators/auth/schema.json",
+      "description": "authentication library for Expo projects"
     }
   }
 }

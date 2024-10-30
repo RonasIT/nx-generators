@@ -41,20 +41,13 @@ Each generator accepts the `--help` argument to show instructions.
 
 #### Generate libraries
 
+Example:
+
 ```sh
 npx nx g react-lib
-npx nx g react-lib {app-name|shared}/{context?}/{type}/{name}
 ```
 
-Examples:
-
-```sh
-npx nx g react-lib mobile/account/features/profile-settings
-# generate a "profile-settings" feature library in "account" context for "mobile" app
-
-npx nx g react-lib shared/ui/ui-kit
-# generate a "ui-kit" ui-library shared between all apps
-```
+Check [the generators docs](https://github.com/RonasIT/nx-generators/blob/main/README.md#generators-overview) for more operations with libraries.
 
 #### Generate components
 

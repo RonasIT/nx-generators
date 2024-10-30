@@ -5,26 +5,21 @@ import {
   addDependenciesToPackageJson,
   formatFiles,
   generateFiles,
-  installPackagesTask,
   Tree,
 } from '@nx/devkit';
 import { dependencies } from '../../dependencies';
-import { formatName, formatAppIdentifier, getImportPathPrefix } from '../../utils';
+import { formatName, formatAppIdentifier, getImportPathPrefix, LibraryType } from '../../utils';
 
 export async function runUIKittenGenerator(
   tree: Tree,
-  options: { name: string; directory: string, confirmation: string }
+  options: { name: string; directory: string }
 ) {
   const appRoot = `apps/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
 
-  if (!options.confirmation) {
-    return;
-  }
-
   // Generate shared libs
-  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=feature --name=user-theme-provider --withComponent=false`, {
+  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=${LibraryType.FEATURES} --name=user-theme-provider --withComponent=false`, {
     stdio: 'inherit',
   });
 
@@ -32,14 +27,6 @@ export async function runUIKittenGenerator(
 
   // Remove unnecessary files and files that will be replaced
   tree.delete(`${libRoot}/shared/features/user-theme-provider/src/index.ts`);
-
-  generateFiles(tree, path.join(__dirname, '../../../generators/expo-app/app-files/app'), `${appRoot}/app`, {
-    ...options,
-    formatName,
-    formatAppIdentifier,
-    formatDirectory: () => libPath,
-    isUIKittenEnabled: true
-  });
 
   // Add lib files
   generateFiles(tree, path.join(__dirname, 'lib-files'), libRoot, {
@@ -63,10 +50,6 @@ export async function runUIKittenGenerator(
   }
 
   await formatFiles(tree);
-
-  return () => {
-    installPackagesTask(tree);
-  };
 }
 
 export default runUIKittenGenerator;

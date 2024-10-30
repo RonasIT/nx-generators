@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Lib rename utility",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "currentLibName": {
+      "type": "string",
+      "description": "Name of the library (project name)",
+      "default": ""
+    },
+    "newLibName": {
+      "type": "string",
+      "description": "New library name",
+      "default": ""
+    }
+  },
+  "required": []
+}

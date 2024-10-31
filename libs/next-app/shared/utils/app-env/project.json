@@ -1,9 +1,0 @@
-{
-  "name": "next-app-shared-utils-app-env",
-  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/next-app/shared/utils/app-env/src",
-  "projectType": "library",
-  "tags": ["app:next-app", "scope:shared", "type:utils"],
-  "// targets": "to see all targets run: nx show project next-app-shared-utils-app-env --web",
-  "targets": {}
-}

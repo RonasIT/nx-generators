@@ -49,18 +49,6 @@
               {
                 "sourceTag": "type:ui",
                 "onlyDependOnLibsWithTags": ["type:ui", "type:utils"]
-              },
-              {
-                "sourceTag": "app:expo-app",
-                "onlyDependOnLibsWithTags": ["app:expo-app", "app:shared"]
-              },
-              {
-                "sourceTag": "app:next-app",
-                "onlyDependOnLibsWithTags": ["app:next-app", "app:shared"]
-              },
-              {
-                "sourceTag": "app:expo-app-2",
-                "onlyDependOnLibsWithTags": ["app:expo-app-2", "app:shared"]
               }
             ]
           }

@@ -1,9 +1,0 @@
-{
-  "name": "expo-app-shared-data-access-storage",
-  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/expo-app/shared/data-access/storage/src",
-  "projectType": "library",
-  "tags": ["app:expo-app", "scope:shared", "type:data-access"],
-  "// targets": "to see all targets run: nx show project expo-app-shared-data-access-storage --web",
-  "targets": {}
-}

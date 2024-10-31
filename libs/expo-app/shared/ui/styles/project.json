@@ -1,9 +1,0 @@
-{
-  "name": "expo-app-shared-ui-styles",
-  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/expo-app/shared/ui/styles/src",
-  "projectType": "library",
-  "tags": ["app:expo-app", "scope:shared", "type:ui"],
-  "// targets": "to see all targets run: nx show project expo-app-shared-ui-styles --web",
-  "targets": {}
-}

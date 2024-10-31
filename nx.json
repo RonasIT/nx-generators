@@ -44,42 +44,11 @@
       "options": {
         "targetName": "lint"
       }
-    },
-    {
-      "plugin": "@nx/next/plugin",
-      "options": {
-        "startTargetName": "start",
-        "buildTargetName": "build",
-        "devTargetName": "dev",
-        "serveStaticTargetName": "serve-static"
-      }
-    },
-    {
-      "plugin": "@nx/expo/plugin",
-      "options": {
-        "startTargetName": "start",
-        "buildTargetName": "build",
-        "prebuildTargetName": "prebuild",
-        "serveTargetName": "serve",
-        "installTargetName": "install",
-        "exportTargetName": "export",
-        "submitTargetName": "submit",
-        "runIosTargetName": "run-ios",
-        "runAndroidTargetName": "run-android"
-      }
     }
   ],
   "release": {
     "version": {
       "preVersionCommand": "npx nx run-many -t build"
-    }
-  },
-  "generators": {
-    "@nx/next": {
-      "application": {
-        "style": "scss",
-        "linter": "eslint"
-      }
     }
   }
 }

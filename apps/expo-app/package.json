@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@ronas-it/react-native-common-modules": "^0.4.0",
-    "@sentry/react-native": "~5.22.0",
+    "@sentry/react-native": "~6.1.0",
     "@testing-library/jest-native": "*",
     "@testing-library/react-native": "*",
     "expo": "*",

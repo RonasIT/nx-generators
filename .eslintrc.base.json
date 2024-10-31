@@ -57,6 +57,10 @@
               {
                 "sourceTag": "app:next-app",
                 "onlyDependOnLibsWithTags": ["app:next-app", "app:shared"]
+              },
+              {
+                "sourceTag": "app:expo-app-2",
+                "onlyDependOnLibsWithTags": ["app:expo-app-2", "app:shared"]
               }
             ]
           }

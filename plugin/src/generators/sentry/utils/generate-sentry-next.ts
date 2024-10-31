@@ -6,7 +6,7 @@ import { createPrinter, factory, ObjectLiteralExpression } from 'typescript';
 import { createObjectLiteralExpression } from './create-object-literal-expression';
 
 const nextAppDependencies = {
-  '@sentry/nextjs': '^8.21.0',
+  '@sentry/nextjs': '^8.35.0',
 };
 
 const addRequiredImports = (content: string): string =>

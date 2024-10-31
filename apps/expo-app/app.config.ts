@@ -7,10 +7,7 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & {
 } => {
   const projectId = '';
   const appId = 'com.expo.app.dev';
-  const extra = {
-    sentry: { dsn: 'test.dsn' },
-    eas: { projectId } as EASConfig,
-  };
+  const extra = { sentry: { dsn: 'dsn' }, eas: { projectId } as EASConfig };
   return {
     name: 'Expo App Dev',
     slug: 'expo-app-app',

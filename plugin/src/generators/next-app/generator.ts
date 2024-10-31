@@ -12,7 +12,12 @@ import { NextAppGeneratorSchema } from './schema';
 import { existsSync } from 'fs';
 import { dependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
-import { runApiClientGenerator, runAppEnvGenerator, runFormUtilsGenerator, runStoreGenerator } from '../../shared/generators';
+import {
+  runApiClientGenerator,
+  runAppEnvGenerator,
+  runFormUtilsGenerator,
+  runStoreGenerator,
+} from '../../shared/generators';
 import { addNxAppTag, askQuestion, formatName } from '../../shared/utils';
 import * as path from 'path';
 
@@ -35,19 +40,29 @@ export async function nextAppGenerator(
 
   await runAppEnvGenerator(tree, options);
 
-  const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
+  const shouldGenerateStoreLib =
+    (await askQuestion('Do you want to create store lib? (y/n): ')) === 'y';
 
   if (shouldGenerateStoreLib) {
-    await runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });
+    await runStoreGenerator(tree, {
+      ...options,
+      baseGeneratorType: BaseGeneratorType.NEXT_APP,
+    });
   }
 
-  const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
+  const shouldGenerateApiClientLib =
+    shouldGenerateStoreLib &&
+    (await askQuestion('Do you want to create api client lib? (y/n): ')) ===
+      'y';
 
   if (shouldGenerateApiClientLib) {
     await runApiClientGenerator(tree, options);
   }
 
-  const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
+  const shouldGenerateFormUtilsLib =
+    (await askQuestion(
+      'Do you want to create a lib with the form utils? (y/n): ',
+    )) === 'y';
 
   if (shouldGenerateFormUtilsLib) {
     await runFormUtilsGenerator(tree, options);
@@ -88,6 +103,7 @@ export async function nextAppGenerator(
 
   return () => {
     installPackagesTask(tree);
+
     if (options.withSentry) {
       execSync(`npx nx g sentry --directory=${options.directory}`, {
         stdio: 'inherit',

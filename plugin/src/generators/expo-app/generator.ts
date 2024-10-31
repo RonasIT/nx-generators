@@ -167,6 +167,12 @@ export async function expoAppGenerator(
         stdio: 'inherit',
       });
     }
+
+    if (options.withSentry) {
+      execSync(`npx nx g sentry --directory=${options.directory}`, {
+        stdio: 'inherit',
+      });
+    }
   };
 }
 

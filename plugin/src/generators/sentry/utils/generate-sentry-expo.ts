@@ -12,7 +12,7 @@ import { createObjectLiteralExpression } from './create-object-literal-expressio
 import { SentryGeneratorSchema } from '../schema';
 
 const expoAppDependencies = {
-  '@sentry/react-native': '~5.22.0',
+  '@sentry/react-native': '~6.1.0',
 };
 
 const addRequiredImportsExpo = (content: string): string =>
@@ -95,6 +95,21 @@ const addSentryPluginToAppConfig = (content: string): string =>
     ),
   );
 
+const updateMetroConfig = (content: string): string => {
+  const metroConfigContentWithImport = tsquery.replace(
+    content,
+    'VariableStatement:has(Identifier[name="getDefaultConfig"]):has(CallExpression:has(Identifier[name="require"]))',
+    () =>
+      "const { getSentryExpoConfig } = require('@sentry/react-native/metro');",
+  );
+
+  return tsquery.replace(
+    metroConfigContentWithImport,
+    'VariableDeclaration CallExpression > Identifier[name="getDefaultConfig"]',
+    () => 'getSentryExpoConfig',
+  );
+};
+
 export function generateSentryExpo(
   tree: Tree,
   options: SentryGeneratorSchema,
@@ -140,4 +155,12 @@ export function generateSentryExpo(
   );
 
   tree.write(`${projectRoot}/app.config.ts`, updatedAppConfigContent);
+
+  const metroConfigContent = tree
+    .read(`${projectRoot}/metro.config.js`)
+    .toString();
+
+  const updatedMetroConfigContent = updateMetroConfig(metroConfigContent);
+
+  tree.write(`${projectRoot}/metro.config.js`, updatedMetroConfigContent);
 }

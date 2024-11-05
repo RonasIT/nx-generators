@@ -2,6 +2,7 @@ export const dependencies = {
   'expo-app': {
     "@ronas-it/react-native-common-modules": "^0.4.0",
     'expo-constants': '~16.0.2',
+    'expo-dev-client': '^4.0.20',
     'expo-router': '~3.5.16',
     'react-native-safe-area-context': '^4.10.5',
     'react-native-screens': '^3.32.0',
@@ -61,7 +62,6 @@ export const devDependencies = {
     'tsc-files': '^1.1.4',
   },
   'expo-app': {
-    'expo-dev-client': '^4.0.20',
     '@types/lodash': '^4.14.194',
   },
   'expo-app-root': {

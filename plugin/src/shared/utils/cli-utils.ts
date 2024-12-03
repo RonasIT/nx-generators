@@ -18,6 +18,7 @@ export const askQuestion = (question: string, defaultAnswer?: string): Promise<s
 
   return new Promise((resolve) =>
     rl.question(question, (answer) => {
+      rl.write('\r');
       rl.close();
       resolve(answer);
     }),

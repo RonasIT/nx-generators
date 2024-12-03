@@ -33,7 +33,7 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   if ([LibraryType.FEATURES, LibraryType.UI].includes(options.type as LibraryType) && !isBoolean(options.withComponent)) {
     options.withComponent = (await askQuestion('Generate component inside lib folder? (y/n): ')) === 'y';
 
-    if (!isBoolean(options.withComponentForwardRef)) {
+    if (options.withComponent && !isBoolean(options.withComponentForwardRef)) {
       options.withComponentForwardRef = await askQuestion('Generate component with forwardRef? (y/n): ') === 'y';
     }
   }

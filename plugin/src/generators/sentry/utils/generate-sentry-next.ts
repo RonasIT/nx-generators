@@ -111,16 +111,6 @@ export function generateSentryNext(
     wrapIntoSentryConfig(modifyNextConfig(addRequiredImports(fileContent))),
   );
 
-  // const nextConfigContent = tree
-  //   .read(`${projectRoot}/next.config.js`)
-  //   .toString();
-
-  // const updatedNextConfigContent = wrapIntoSentryConfig(
-  //   modifyNextConfig(addRequiredImports(nextConfigContent)),
-  // );
-
-  // tree.write(`${projectRoot}/next.config.js`, updatedNextConfigContent);
-
   const envFiles = ['.env', '.env.development', '.env.production'];
   envFiles.forEach((file) => {
     updateFile(
@@ -128,9 +118,6 @@ export function generateSentryNext(
       `${projectRoot}/${file}`,
       (fileContent) => fileContent + 'SENTRY_AUTH_TOKEN=',
     );
-
-    // const envContent = tree.read(`${projectRoot}/${file}`).toString();
-    // tree.write(`${projectRoot}/${file}`, envContent + 'SENTRY_AUTH_TOKEN=');
   });
 
   generateFiles(tree, path.join(__dirname, '../files'), projectRoot, options);

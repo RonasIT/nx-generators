@@ -145,50 +145,11 @@ export function generateSentryExpo(
       export default Sentry.wrap(RootLayout);`;
   });
 
-  // const layoutContent = tree.read(`${projectRoot}/app/_layout.tsx`).toString();
-
-  // const updatedLayoutContent = removeExportsKeywordForRootLayout(
-  //   addRequiredImportsExpo(layoutContent),
-  // );
-
-  // tree.write(
-  //   `${projectRoot}/app/_layout.tsx`,
-  //   `${updatedLayoutContent}
-  //     const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
-
-  //     Sentry.init({
-  //       dsn: Constants.expoConfig?.extra?.sentry?.dsn,
-  //       environment: Constants.expoConfig?.extra?.env,
-  //       debug: false,
-  //       integrations: [new Sentry.ReactNativeTracing({ routingInstrumentation })],
-  //       enabled: !__DEV__
-  //     });
-
-  //     export default Sentry.wrap(RootLayout);`,
-  // );
-
   updateFile(tree, `${projectRoot}/app.config.ts`, (fileContent) =>
     updateExtraConfig(addSentryPluginToAppConfig(fileContent), options.dsn),
   );
 
-  // const appConfigContent = tree.read(`${projectRoot}/app.config.ts`).toString();
-
-  // const updatedAppConfigContent = updateExtraConfig(
-  //   addSentryPluginToAppConfig(appConfigContent),
-  //   options.dsn,
-  // );
-
-  // tree.write(`${projectRoot}/app.config.ts`, updatedAppConfigContent);
-
   updateFile(tree, `${projectRoot}/metro.config.js`, (fileContent) =>
     updateMetroConfig(fileContent),
   );
-
-  // const metroConfigContent = tree
-  //   .read(`${projectRoot}/metro.config.js`)
-  //   .toString();
-
-  // const updatedMetroConfigContent = updateMetroConfig(metroConfigContent);
-
-  // tree.write(`${projectRoot}/metro.config.js`, updatedMetroConfigContent);
 }

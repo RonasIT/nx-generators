@@ -19,5 +19,5 @@
       "x-prompt": "What is your Sentry DSN?"
     }
   },
-  "required": ["directory", "DSN"]
+  "required": ["directory", "dsn"]
 }

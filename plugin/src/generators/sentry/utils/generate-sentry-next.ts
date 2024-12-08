@@ -4,6 +4,7 @@ import { SentryGeneratorSchema } from '../schema';
 import { tsquery } from '@phenomnomnominal/tsquery';
 import { createPrinter, factory, ObjectLiteralExpression } from 'typescript';
 import { createObjectLiteralExpression } from './create-object-literal-expression';
+import { updateFile } from '../../../shared/utils';
 
 const nextAppDependencies = {
   '@sentry/nextjs': '^8.35.0',
@@ -106,20 +107,30 @@ export function generateSentryNext(
 ) {
   addDependenciesToPackageJson(tree, nextAppDependencies, {});
 
-  const nextConfigContent = tree
-    .read(`${projectRoot}/next.config.js`)
-    .toString();
-
-  const updatedNextConfigContent = wrapIntoSentryConfig(
-    modifyNextConfig(addRequiredImports(nextConfigContent)),
+  updateFile(tree, `${projectRoot}/next.config.js`, (fileContent) =>
+    wrapIntoSentryConfig(modifyNextConfig(addRequiredImports(fileContent))),
   );
 
-  tree.write(`${projectRoot}/next.config.js`, updatedNextConfigContent);
+  // const nextConfigContent = tree
+  //   .read(`${projectRoot}/next.config.js`)
+  //   .toString();
+
+  // const updatedNextConfigContent = wrapIntoSentryConfig(
+  //   modifyNextConfig(addRequiredImports(nextConfigContent)),
+  // );
+
+  // tree.write(`${projectRoot}/next.config.js`, updatedNextConfigContent);
 
   const envFiles = ['.env', '.env.development', '.env.production'];
   envFiles.forEach((file) => {
-    const envContent = tree.read(`${projectRoot}/${file}`).toString();
-    tree.write(`${projectRoot}/${file}`, envContent + 'SENTRY_AUTH_TOKEN=');
+    updateFile(
+      tree,
+      `${projectRoot}/${file}`,
+      (fileContent) => fileContent + 'SENTRY_AUTH_TOKEN=',
+    );
+
+    // const envContent = tree.read(`${projectRoot}/${file}`).toString();
+    // tree.write(`${projectRoot}/${file}`, envContent + 'SENTRY_AUTH_TOKEN=');
   });
 
   generateFiles(tree, path.join(__dirname, '../files'), projectRoot, options);

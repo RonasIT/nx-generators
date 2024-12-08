@@ -25,7 +25,7 @@
     "withSentry": {
       "type": "boolean",
       "default": false,
-      "x-prompt": "Do you want to use sentry in your app?"
+      "x-prompt": "Do you want to use Sentry in your app?"
     }
   },
   "required": ["name", "directory", "withSentry"]

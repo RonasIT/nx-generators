@@ -13,7 +13,7 @@
       },
       "x-prompt": "Enter the name of the directory in the 'apps/' folder (e.g: web)"
     },
-    "DSN": {
+    "dsn": {
       "type": "string",
       "description": "",
       "x-prompt": "What is your Sentry DSN?"

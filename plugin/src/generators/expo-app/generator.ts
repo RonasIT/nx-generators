@@ -7,7 +7,7 @@ import {
   installPackagesTask,
   readJson,
   Tree,
-  writeJson
+  writeJson,
 } from '@nx/devkit';
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
@@ -21,13 +21,19 @@ import {
   runRNStylesGenerator,
   runFormUtilsGenerator,
   runStoreGenerator,
-  runUIKittenGenerator
+  runUIKittenGenerator,
 } from '../../shared/generators';
-import { formatName, formatAppIdentifier, addNxAppTag, askQuestion, getImportPathPrefix } from '../../shared/utils';
+import {
+  formatName,
+  formatAppIdentifier,
+  addNxAppTag,
+  askQuestion,
+  getImportPathPrefix,
+} from '../../shared/utils';
 
 export async function expoAppGenerator(
   tree: Tree,
-  options: ExpoAppGeneratorSchema
+  options: ExpoAppGeneratorSchema,
 ) {
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
@@ -36,12 +42,12 @@ export async function expoAppGenerator(
   const tags = [`app:${options.directory}`, 'type:app'];
 
   // Install @nx/expo plugin
-  execSync('npx nx add @nx/expo', { stdio: 'inherit' })
+  execSync('npx nx add @nx/expo', { stdio: 'inherit' });
 
   if (!existsSync(appRoot)) {
     execSync(
       `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`,
-      { stdio: 'inherit' }
+      { stdio: 'inherit' },
     );
   }
 
@@ -50,27 +56,40 @@ export async function expoAppGenerator(
   await runStorageGenerator(tree, options);
   await runRNStylesGenerator(tree, options);
 
-  const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
+  const shouldGenerateStoreLib =
+    (await askQuestion('Do you want to create store lib? (y/n): ')) === 'y';
 
   if (shouldGenerateStoreLib) {
-    await runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
+    await runStoreGenerator(tree, {
+      ...options,
+      baseGeneratorType: BaseGeneratorType.EXPO_APP,
+    });
   }
 
-  const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
+  const shouldGenerateApiClientLib =
+    shouldGenerateStoreLib &&
+    (await askQuestion('Do you want to create api client lib? (y/n): ')) ===
+      'y';
 
   if (shouldGenerateApiClientLib) {
     await runApiClientGenerator(tree, options);
   }
 
-  const shouldGenerateAuthLibs = shouldGenerateApiClientLib && await askQuestion('Do you want to create auth lib? (y/n): ') === 'y';
+  const shouldGenerateAuthLibs =
+    shouldGenerateApiClientLib &&
+    (await askQuestion('Do you want to create auth lib? (y/n): ')) === 'y';
 
-  const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
+  const shouldGenerateFormUtilsLib =
+    (await askQuestion(
+      'Do you want to create a lib with the form utils? (y/n): ',
+    )) === 'y';
 
   if (shouldGenerateFormUtilsLib) {
     await runFormUtilsGenerator(tree, options);
   }
 
-  const shouldGenerateUIKittenLib = await askQuestion('Do you want to install @ui-kitten? (y/n): ') === 'y';
+  const shouldGenerateUIKittenLib =
+    (await askQuestion('Do you want to install @ui-kitten? (y/n): ')) === 'y';
 
   if (shouldGenerateUIKittenLib) {
     await runUIKittenGenerator(tree, options);
@@ -111,7 +130,7 @@ export async function expoAppGenerator(
     formatDirectory: () => libPath,
     isUIKittenEnabled: shouldGenerateUIKittenLib,
     isStoreEnabled: shouldGenerateStoreLib,
-    appDirectory: options.directory
+    appDirectory: options.directory,
   });
 
   addNxAppTag(tree, options.directory);
@@ -122,15 +141,20 @@ export async function expoAppGenerator(
     tree,
     {
       ...dependencies['expo-app'],
-      ...dependencies['expo-app-root']
+      ...dependencies['expo-app-root'],
     },
     {
       ...devDependencies['expo-app'],
-      ...devDependencies['expo-app-root']
-    }
+      ...devDependencies['expo-app-root'],
+    },
   );
 
-  addDependenciesToPackageJson(tree, dependencies['expo-app'], devDependencies['expo-app'], appPackagePath);
+  addDependenciesToPackageJson(
+    tree,
+    dependencies['expo-app'],
+    devDependencies['expo-app'],
+    appPackagePath,
+  );
 
   await formatFiles(tree);
 
@@ -139,7 +163,15 @@ export async function expoAppGenerator(
     execSync('npx expo install --fix', { stdio: 'inherit' });
 
     if (shouldGenerateAuthLibs) {
-      execSync(`npx nx g auth ${options.name} ${options.directory}`, { stdio: 'inherit' });
+      execSync(`npx nx g auth ${options.name} ${options.directory}`, {
+        stdio: 'inherit',
+      });
+    }
+
+    if (options.withSentry) {
+      execSync(`npx nx g sentry --directory=${options.directory}`, {
+        stdio: 'inherit',
+      });
     }
   };
 }

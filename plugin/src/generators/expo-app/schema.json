@@ -21,7 +21,12 @@
         "index": 1
       },
       "x-prompt": "Enter the name of the directory in the 'apps/' folder (e.g: mobile)"
+    },
+    "withSentry": {
+      "type": "boolean",
+      "default": false,
+      "x-prompt": "Do you want to use Sentry in your app?"
     }
   },
-  "required": ["name", "directory"]
+  "required": ["name", "directory", "withSentry"]
 }

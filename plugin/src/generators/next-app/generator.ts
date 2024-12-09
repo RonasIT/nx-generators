@@ -82,8 +82,8 @@ export async function nextAppGenerator(
   // Add dependencies
   const packageJson = readJson(tree, 'package.json');
   const hasNxExpo = !!packageJson.devDependencies['@nx/expo'];
-  const nxNextVersion = packageJson.devDependencies['@nx/next'];
-  addDependenciesToPackageJson(tree, dependencies['next-app'], hasNxExpo ? {} : { '@nx/expo': nxNextVersion });
+  const nxVersion = packageJson.devDependencies['nx'];
+  addDependenciesToPackageJson(tree, dependencies['next-app'], hasNxExpo ? {} : { '@nx/expo': nxVersion });
 
   await formatFiles(tree);
 

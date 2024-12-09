@@ -37,6 +37,13 @@ export async function nextAppGenerator(
     );
   }
 
+  // Install @nx/expo to generate libs
+  const packageJson = readJson(tree, 'package.json');
+  const hasNxExpo = !!packageJson.devDependencies['@nx/expo'];
+  if (!hasNxExpo) {
+    execSync('npx nx add @nx/expo', { stdio: 'inherit' });
+  }
+
   await runAppEnvGenerator(tree, options);
 
   if (shouldGenerateStoreLib) {
@@ -80,10 +87,7 @@ export async function nextAppGenerator(
   addNxAppTag(tree, options.directory);
 
   // Add dependencies
-  const packageJson = readJson(tree, 'package.json');
-  const hasNxExpo = !!packageJson.devDependencies['@nx/expo'];
-  const nxVersion = packageJson.devDependencies['nx'];
-  addDependenciesToPackageJson(tree, dependencies['next-app'], hasNxExpo ? {} : { '@nx/expo': nxVersion });
+  addDependenciesToPackageJson(tree, dependencies['next-app'], {});
 
   await formatFiles(tree);
 

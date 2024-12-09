@@ -29,6 +29,12 @@ export async function expoAppGenerator(
   tree: Tree,
   options: ExpoAppGeneratorSchema
 ) {
+  const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
+  const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
+  const shouldGenerateAuthLibs = shouldGenerateApiClientLib && await askQuestion('Do you want to create auth lib? (y/n): ') === 'y';
+  const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
+  const shouldGenerateUIKittenLib = await askQuestion('Do you want to install @ui-kitten? (y/n): ') === 'y';
+
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
   const appTestFolder = `apps/${options.directory}-e2e`;
@@ -50,27 +56,17 @@ export async function expoAppGenerator(
   await runStorageGenerator(tree, options);
   await runRNStylesGenerator(tree, options);
 
-  const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
-
   if (shouldGenerateStoreLib) {
     await runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
   }
-
-  const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
 
   if (shouldGenerateApiClientLib) {
     await runApiClientGenerator(tree, options);
   }
 
-  const shouldGenerateAuthLibs = shouldGenerateApiClientLib && await askQuestion('Do you want to create auth lib? (y/n): ') === 'y';
-
-  const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
-
   if (shouldGenerateFormUtilsLib) {
     await runFormUtilsGenerator(tree, options);
   }
-
-  const shouldGenerateUIKittenLib = await askQuestion('Do you want to install @ui-kitten? (y/n): ') === 'y';
 
   if (shouldGenerateUIKittenLib) {
     await runUIKittenGenerator(tree, options);

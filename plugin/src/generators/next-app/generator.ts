@@ -80,7 +80,10 @@ export async function nextAppGenerator(
   addNxAppTag(tree, options.directory);
 
   // Add dependencies
-  addDependenciesToPackageJson(tree, dependencies['next-app'], {});
+  const packageJson = readJson(tree, 'package.json');
+  const hasNxExpo = !!packageJson.dependencies['@nx/expo'];
+  const nxNextVersion = packageJson.dependencies['@nx/next'];
+  addDependenciesToPackageJson(tree, dependencies['next-app'], hasNxExpo ? {} : { '@nx/expo': nxNextVersion });
 
   await formatFiles(tree);
 

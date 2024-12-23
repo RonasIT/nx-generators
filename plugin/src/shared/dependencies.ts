@@ -1,15 +1,15 @@
 export const dependencies = {
   'expo-app': {
     "@ronas-it/react-native-common-modules": "^0.4.0",
-    'expo-constants': '~16.0.2',
-    'expo-dev-client': '^4.0.20',
-    'expo-router': '~3.5.16',
+    'expo-constants': '~17.0.3',
+    'expo-dev-client': '^5.0.6',
+    'expo-router': '~4.0.14',
     'react-native-safe-area-context': '^4.10.5',
-    'react-native-screens': '^3.32.0',
-    'expo-linking': '^6.3.1',
-    'expo-status-bar': '^1.12.1',
-    'expo-updates': '^0.25.17',
-    'expo-insights': '~0.7.0',
+    'react-native-screens': '~4.1.0',
+    'expo-linking': '~7.0.3',
+    'expo-status-bar': '^2.0.0',
+    'expo-updates': '^0.26.10',
+    'expo-insights': '~0.8.1',
     "lodash-es": "^4.17.21"
   },
   'expo-app-root': {
@@ -46,19 +46,19 @@ export const dependencies = {
 
 export const devDependencies = {
   'code-checks': {
-    'eslint': '^8.56.0',
+    'eslint': '^9.8.0',
     'prettier': '^3.3.2',
     'eslint-config-prettier': '^9.1.0',
-    'eslint-import-resolver-typescript': '^3.6.1',
+    'eslint-import-resolver-typescript': '^3.7.0',
     'eslint-plugin-import': '^2.29.1',
     'eslint-plugin-jsx-a11y': '^6.9.0',
     'eslint-plugin-react': '^7.34.3',
-    'eslint-plugin-react-hooks': '^4.6.2',
-    'eslint-plugin-react-native': '^4.1.0',
-    'eslint-plugin-unused-imports': '^3.0.0',
+    'eslint-plugin-react-hooks': '^5.0.0',
+    'eslint-plugin-unused-imports': '^4.1.4',
     'husky': '^9.1.5',
-    '@typescript-eslint/eslint-plugin': '^7.13.1',
-    '@typescript-eslint/parser': '^7.13.1',
+    '@stylistic/eslint-plugin-js': '^2.12.1',
+    '@typescript-eslint/eslint-plugin': '^8.18.1',
+    '@typescript-eslint/parser': '^8.18.1',
     'tsc-files': '^1.1.4',
   },
   'expo-app': {

@@ -28,7 +28,7 @@
       }
     }
   },
-  "plugins": ["@typescript-eslint", "unused-imports", "react", "react-hooks", "react-native", "import"],
+  "plugins": ["@typescript-eslint", "@stylistic/js", "unused-imports", "react", "react-hooks", "import"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
@@ -57,7 +57,7 @@
       { "blankLine": "always", "prev": "*", "next": "multiline-block-like" }
     ],
     "@typescript-eslint/no-use-before-define": ["warn", { "variables": false }],
-    "@typescript-eslint/lines-between-class-members": ["warn", "always", { "exceptAfterSingleLine": true }],
+    "@stylistic/js/lines-between-class-members": ["warn", "always", { "exceptAfterSingleLine": true }],
     "@typescript-eslint/no-inferrable-types": ["warn", { "ignoreParameters": true }],
     "@typescript-eslint/explicit-module-boundary-types": ["warn", { "allowArgumentsExplicitlyTypedAsAny": true }],
     "@typescript-eslint/no-explicit-any": "off",
@@ -130,8 +130,8 @@
         "format": ["UPPER_CASE"]
       }
     ],
-    "unused-imports/no-unused-imports-ts": "warn",
-    "unused-imports/no-unused-vars-ts": [
+    "unused-imports/no-unused-imports": "warn",
+    "unused-imports/no-unused-vars": [
       "warn",
       { "vars": "all", "varsIgnorePattern": "^_", "argsIgnorePattern": "^_", "ignoreRestSiblings": true }
     ],
@@ -141,9 +141,6 @@
     "react/jsx-max-props-per-line": [1, { "maximum": { "single": 2, "multi": 1 } }],
     "react/jsx-first-prop-new-line": ["warn", "multiline"],
     "react/prop-types": "off",
-    "react-native/no-unused-styles": "warn",
-    "react-native/no-inline-styles": "warn",
-    "react-native/no-single-element-style-arrays": "warn",
     "react/jsx-fragments": ["warn", "element"],
     "import/newline-after-import": "warn",
     "import/no-unresolved": "error",

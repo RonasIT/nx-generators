@@ -2,5 +2,6 @@
   "root": true,
   "plugins": ["@nx"],
   "extends": ["./.eslint.ronasit.json"],
-  "overrides": []
+  "overrides": [],
+  "ignorePatterns": ["**/*.js", "apps/*/app.config.ts"]
 }

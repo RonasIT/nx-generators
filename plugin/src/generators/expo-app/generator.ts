@@ -84,6 +84,7 @@ export async function expoAppGenerator(
   tree.delete(`${appRoot}/index.js`);
   tree.delete(`${appRoot}/webpack.config.js`);
   tree.delete(`${appRoot}/.eslintrc.json`);
+  tree.delete('${appRoot}/eslint.config.cjs');
   tree.delete(`${appRoot}/app.json`);
   tree.delete(`${appRoot}/eas.json`);
   tree.delete(`${appRoot}/metro.config.js`);

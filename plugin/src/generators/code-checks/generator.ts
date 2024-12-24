@@ -39,6 +39,10 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   const gitignoreContent = tree.read('.gitignore')?.toString() + '\n.eslintcache\n';
   tree.write('.gitignore', gitignoreContent);
 
+  // Update .eslintignore
+  const eslintignoreContent = tree.read('.eslintignore')?.toString() + '\n**/*.js\napps/*/app.config.ts\n';
+  tree.write('.eslintignore', eslintignoreContent);
+
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const configTemplate = require('../../shared/templates/config-template.json');
 

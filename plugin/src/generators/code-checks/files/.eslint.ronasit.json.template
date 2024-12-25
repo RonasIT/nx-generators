@@ -66,7 +66,7 @@
       { "accessibility": "explicit", "overrides": { "constructors": "no-public" } }
     ],
     "@typescript-eslint/explicit-function-return-type": ["warn", { "allowExpressions": true }],
-    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/no-require-imports": "off",
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/array-type": ["warn", { "default": "generic", "readonly": "generic" }],
     "@typescript-eslint/member-ordering": [

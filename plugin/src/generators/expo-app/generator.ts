@@ -6,7 +6,9 @@ import {
   generateFiles,
   installPackagesTask,
   readJson,
+  readProjectConfiguration,
   Tree,
+  updateProjectConfiguration,
   writeJson
 } from '@nx/devkit';
 import { ExpoAppGeneratorSchema } from './schema';
@@ -42,11 +44,17 @@ export async function expoAppGenerator(
   const tags = [`app:${options.directory}`, 'type:app'];
 
   // Install @nx/expo plugin
-  execSync('npx nx add @nx/expo', { stdio: 'inherit' })
+  execSync('npx nx add @nx/expo', { stdio: 'inherit' });
 
-  if (!existsSync(appRoot)) {
+  if (existsSync(appRoot)) {
+    const project = readProjectConfiguration(tree, options.directory);
+
+    project.tags = [`app:${options.directory}`, 'type:app'];
+
+    updateProjectConfiguration(tree, project.name, project);
+  } else {
     execSync(
-      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`,
+      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=eslint --unitTestRunner=none --e2eTestRunner=none`,
       { stdio: 'inherit' }
     );
   }
@@ -84,7 +92,7 @@ export async function expoAppGenerator(
   tree.delete(`${appRoot}/index.js`);
   tree.delete(`${appRoot}/webpack.config.js`);
   tree.delete(`${appRoot}/.eslintrc.json`);
-  tree.delete('${appRoot}/eslint.config.cjs');
+  tree.delete(`${appRoot}/eslint.config.cjs`);
   tree.delete(`${appRoot}/app.json`);
   tree.delete(`${appRoot}/eas.json`);
   tree.delete(`${appRoot}/metro.config.js`);

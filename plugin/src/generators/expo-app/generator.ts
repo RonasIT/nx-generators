@@ -44,19 +44,19 @@ export async function expoAppGenerator(
   const tags = [`app:${options.directory}`, 'type:app'];
 
   // Install @nx/expo plugin
-  execSync('npx nx add @nx/expo', { stdio: 'inherit' })
+  execSync('npx nx add @nx/expo', { stdio: 'inherit' });
 
-  if (!existsSync(appRoot)) {
-    execSync(
-      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=eslint --unitTestRunner=none --e2eTestRunner=none`,
-      { stdio: 'inherit' }
-    );
-  } else {
+  if (existsSync(appRoot)) {
     const project = readProjectConfiguration(tree, options.directory);
 
     project.tags = [`app:${options.directory}`, 'type:app'];
 
     updateProjectConfiguration(tree, project.name, project);
+  } else {
+    execSync(
+      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=eslint --unitTestRunner=none --e2eTestRunner=none`,
+      { stdio: 'inherit' }
+    );
   }
 
   // Generate shared libs

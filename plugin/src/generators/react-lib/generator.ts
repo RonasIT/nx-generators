@@ -12,7 +12,7 @@ import {
   LibraryType,
   selectProject,
   validateLibraryType,
-  getLibDirectoryName
+  getLibDirectoryName, createCliReadline
 } from '../../shared/utils';
 import { isBoolean } from 'lodash';
 
@@ -28,15 +28,18 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
     message: 'Select the library type: ',
     source: (input) => filterSource(input, Object.values(LibraryType))
   });
-  options.name = options.name || (await askQuestion('Enter the name of the library (e.g: settings): '));
+
+  const cliReadline = createCliReadline()
+  options.name = options.name || (await askQuestion('Enter the name of the library (e.g: settings): ', null, cliReadline));
 
   if ([LibraryType.FEATURES, LibraryType.UI].includes(options.type as LibraryType) && !isBoolean(options.withComponent)) {
-    options.withComponent = (await askQuestion('Generate component inside lib folder? (y/n): ')) === 'y';
+    options.withComponent = (await askQuestion('Generate component inside lib folder? (y/n): ', null, cliReadline)) === 'y';
 
     if (options.withComponent && !isBoolean(options.withComponentForwardRef)) {
-      options.withComponentForwardRef = await askQuestion('Generate component with forwardRef? (y/n): ') === 'y';
+      options.withComponentForwardRef = await askQuestion('Generate component with forwardRef? (y/n): ', null, cliReadline) === 'y';
     }
   }
+  cliReadline.close();
 
   const scopeTag = options.scope || constants.sharedValue;
   const tags = [`app:${options.app}`, `scope:${scopeTag}`, `type:${options.type}`];

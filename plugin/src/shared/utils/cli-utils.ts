@@ -4,11 +4,13 @@ import { getProjects, ProjectType, Tree } from '@nx/devkit';
 import { dynamicImport } from './dynamic-import';
 import { constants } from './constants';
 
-export const askQuestion = (question: string, defaultAnswer?: string): Promise<string> => {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+export const createCliReadline = (): readline.Interface => readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+})
+
+export const askQuestion = (question: string, defaultAnswer?: string, cliReadline?: readline.Interface): Promise<string> => {
+  const rl = cliReadline || createCliReadline();
 
   if (defaultAnswer) {
     rl.write(defaultAnswer);
@@ -18,7 +20,9 @@ export const askQuestion = (question: string, defaultAnswer?: string): Promise<s
 
   return new Promise((resolve) =>
     rl.question(question, (answer) => {
-      rl.close();
+      if (!cliReadline) {
+        rl.close();
+      }
       resolve(answer);
     }),
   );

@@ -6,13 +6,13 @@ import { EntityApiGeneratorSchema } from './schema';
 import {
   addNamedImport,
   appendFileContent,
-  askQuestion,
+  askQuestion, createCliReadline,
   dynamicImport,
   filterSource,
   getNxLibsPaths,
   LibraryType,
   searchAliasPath,
-  searchNxLibsPaths,
+  searchNxLibsPaths
 } from '../../shared/utils';
 
 export async function entityApiGenerator(tree: Tree, options: EntityApiGeneratorSchema) {
@@ -51,12 +51,14 @@ export async function entityApiGenerator(tree: Tree, options: EntityApiGenerator
   const libPath = apiLibsPaths[0];
   const libRootPath = `${libPath}/lib`;
 
-  options.name = options.name || (await askQuestion('Enter the name of the entity (e.g: User): '));
+  const cliReadline = createCliReadline();
+  options.name = options.name || (await askQuestion('Enter the name of the entity (e.g: User): ', null, cliReadline));
 
   const apiName = kebabCase(options.name);
 
   options.baseEndpoint =
-    options.baseEndpoint || (await askQuestion('Enter the base endpoint (e.g: /users): ', `/${apiName}`));
+    options.baseEndpoint || (await askQuestion('Enter the base endpoint (e.g: /users): ', `/${apiName}`, cliReadline));
+  cliReadline.close();
 
   const apiPath = `${libRootPath}/${apiName}`;
   const entityName = startCase(camelCase(apiName)).replace(/\s+/g, '');

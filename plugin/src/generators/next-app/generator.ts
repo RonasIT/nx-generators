@@ -44,7 +44,7 @@ export async function nextAppGenerator(
     execSync('npx nx add @nx/expo', { stdio: 'inherit' });
   }
 
-  await runAppEnvGenerator(tree, options);
+  await runAppEnvGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });
 
   if (shouldGenerateStoreLib) {
     await runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });

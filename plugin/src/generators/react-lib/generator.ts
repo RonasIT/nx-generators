@@ -26,7 +26,7 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   options.scope = options.scope || (isSharedLib ? '' : await askQuestion(`Enter the scope (e.g: profile) or '${constants.sharedValue}': `));
   options.type = options.type ? validateLibraryType(options.type) : await autocomplete({
     message: 'Select the library type: ',
-    source: (input) => filterSource(input, Object.values(LibraryType))
+    source: (input) => filterSource(input as string, Object.values(LibraryType))
   });
   options.name = options.name || (await askQuestion('Enter the name of the library (e.g: settings): '));
 

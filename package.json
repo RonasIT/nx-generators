@@ -7,7 +7,7 @@
     "deps:sync": "npx syncpack fix-mismatches",
     "lint": "npx tsc && cross-env ESLINT_USE_FLAT_CONFIG=false npx eslint ./",
     "format": "npx prettier --write . && npm run lint -- --fix",
-    "prepare": "husky install",
+    "prepare": "husky",
     "build": "nx build",
     "test": "nx test"
   },
@@ -116,6 +116,6 @@
   "lint-staged": {
     "*.{ts,tsx}": "tsc-files --noEmit types.d.ts",
     "*.{ts,tsx,js,html,json,md}": "prettier --write",
-    "*.{ts,tsx,js}": "eslint --cache --fix"
+    "*.{ts,tsx,js}": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint --cache --fix"
   }
 }

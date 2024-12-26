@@ -1,4 +1,4 @@
-import { ExpoConfig } from '@expo/config';
+import { ExpoConfig } from 'expo/config';
 import { EASConfig } from 'expo-constants/build/Constants.types';
 
 const createConfig = (): Omit<ExpoConfig, 'extra'> & {

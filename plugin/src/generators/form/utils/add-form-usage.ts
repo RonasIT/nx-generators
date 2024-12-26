@@ -32,7 +32,13 @@ function getForwardRefFunction(variable: VariableDeclaration): FunctionExpressio
     throw new Error('Could not find a component function in forwardRef');
   }
 
-  return argument.asKind(argument.getKind() === SyntaxKind.FunctionExpression ? SyntaxKind.FunctionExpression : SyntaxKind.ArrowFunction);
+  const functionExpression = argument.asKind(argument.getKind() === SyntaxKind.FunctionExpression ? SyntaxKind.FunctionExpression : SyntaxKind.ArrowFunction);
+
+  if (!functionExpression) {
+    throw new Error('Could not get a component function in forwardRef');
+  }
+
+  return functionExpression;
 }
 
 function getPlaceOfUse(file: SourceFile, placeOfUseName: string): FunctionExpression | ArrowFunction | FunctionDeclaration {

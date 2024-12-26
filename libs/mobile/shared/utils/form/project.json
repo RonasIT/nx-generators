@@ -1,0 +1,13 @@
+{
+  "name": "mobile-shared-utils-form",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/mobile/shared/utils/form/src",
+  "projectType": "library",
+  "tags": [
+    "app:mobile",
+    "type:utils",
+    "scope:shared"
+  ],
+  "// targets": "to see all targets run: nx show project mobile-shared-utils-form --web",
+  "targets": {}
+}

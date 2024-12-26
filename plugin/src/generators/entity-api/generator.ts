@@ -34,18 +34,18 @@ export async function entityApiGenerator(tree: Tree, options: EntityApiGenerator
   if (apiClientLibsPaths.length > 1) {
     apiClientLibsPaths[0] = await autocomplete({
       message: 'Select the api client library path:',
-      source: (input) => filterSource(input, apiClientLibsPaths),
+      source: (input) => filterSource(input as string, apiClientLibsPaths),
     });
   }
 
   if (apiLibsPaths.length > 1) {
     apiLibsPaths[0] = await autocomplete({
       message: 'Select the api library path:',
-      source: (input) => filterSource(input, apiLibsPaths),
+      source: (input) => filterSource(input as string, apiLibsPaths),
     });
   }
 
-  const apiDirectory = searchAliasPath(apiLibsPaths[0]);
+  const apiDirectory = searchAliasPath(apiLibsPaths[0]) as string;
   const apiClientDirectory = searchAliasPath(apiClientLibsPaths[0]);
 
   const libPath = apiLibsPaths[0];
@@ -87,7 +87,7 @@ export async function entityApiGenerator(tree: Tree, options: EntityApiGenerator
   if (storeLibsPaths.length > 1) {
     storeLibsPaths[0] = await autocomplete({
       message: 'Select the store library path:',
-      source: (input) => filterSource(input, storeLibsPaths),
+      source: (input) => filterSource(input as string, storeLibsPaths),
     });
   }
 

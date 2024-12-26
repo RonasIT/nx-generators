@@ -1,0 +1,13 @@
+{
+  "name": "mobile-shared-ui-ui-kit",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/mobile/shared/ui/ui-kit/src",
+  "projectType": "library",
+  "tags": [
+    "app:mobile",
+    "type:ui",
+    "scope:shared"
+  ],
+  "// targets": "to see all targets run: nx show project mobile-shared-ui-ui-kit --web",
+  "targets": {}
+}

@@ -32,7 +32,7 @@ export async function libMoveGenerator(
   options.scope = options.scope || (isSharedLib ? '' : await askQuestion(`Enter the scope (e.g: profile) or '${constants.sharedValue}': `));
   options.type = options.type ? validateLibraryType(options.type) : await autocomplete({
     message: 'Select the library type: ',
-    source: (input) => filterSource(input, Object.values(LibraryType))
+    source: (input) => filterSource(input as string, Object.values(LibraryType))
   });
 
   const libraryName = options.name || await askQuestion('If you want to rename the library, enter its new name. Otherwise just press Enter: ', defaultLibraryName);

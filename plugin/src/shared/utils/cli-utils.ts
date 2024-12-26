@@ -35,7 +35,7 @@ export enum LibraryType {
   UTILS = 'utils',
 }
 
-const parseLibsPaths = () => {
+const parseLibsPaths = (): Record<string, Array<string>> => {
   let tsconfig;
 
   if (fs.existsSync('tsconfig.base.json')) {

@@ -45,7 +45,7 @@ export async function libMoveGenerator(
   console.log(log.toString('utf8'));
 
   return () => {
-    execSync('npx nx g lib-tags', { stdio: 'inherit' });
+    execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
   };
 }
 

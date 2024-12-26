@@ -19,6 +19,7 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
 
   // Delete files
   tree.delete('.eslintrc.json');
+  tree.delete('eslint.config.cjs');
   tree.delete('.prettierrc');
 
   // Configure pre-commit hook
@@ -43,7 +44,7 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   tree.write('.eslintignore', eslintignoreContent);
 
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const configTemplate = require('../../shared/utils/config-template.json');
+  const configTemplate = require('../../shared/templates/config-template.json');
 
   // Add files
   generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);

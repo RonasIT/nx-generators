@@ -20,6 +20,10 @@ export async function nextAppGenerator(
   tree: Tree,
   options: NextAppGeneratorSchema,
 ) {
+  const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
+  const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
+  const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
+
   const appRoot = `apps/${options.directory}`;
   const tags = [`app:${options.directory}`, 'type:app'];
 
@@ -33,21 +37,22 @@ export async function nextAppGenerator(
     );
   }
 
-  await runAppEnvGenerator(tree, options);
+  // Install @nx/expo to generate libs
+  const packageJson = readJson(tree, 'package.json');
+  const hasNxExpo = !!packageJson.devDependencies['@nx/expo'];
+  if (!hasNxExpo) {
+    execSync('npx nx add @nx/expo', { stdio: 'inherit' });
+  }
 
-  const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
+  await runAppEnvGenerator(tree, options);
 
   if (shouldGenerateStoreLib) {
     await runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });
   }
 
-  const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
-
   if (shouldGenerateApiClientLib) {
     await runApiClientGenerator(tree, options);
   }
-
-  const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
 
   if (shouldGenerateFormUtilsLib) {
     await runFormUtilsGenerator(tree, options);

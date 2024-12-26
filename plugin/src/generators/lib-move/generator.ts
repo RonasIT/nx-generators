@@ -45,7 +45,7 @@ export async function libMoveGenerator(tree: Tree, options: LibMoveGeneratorSche
       defaultLibraryName,
     ));
   const libDirectoryName = getLibDirectoryName(libraryName, options.scope);
-  const libPath = `libs/${path.normalize(`${options.app} /${options.scope}/${options.type}/${libDirectoryName}`)}`;
+  const libPath = `libs/${path.normalize(`${options.app}/${options.scope}/${options.type}/${libDirectoryName}`)}`;
 
   execSync(`npx nx g mv --project=${srcLibraryName} --destination=${libPath}`, { stdio: 'inherit' });
 

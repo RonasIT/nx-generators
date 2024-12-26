@@ -32,7 +32,7 @@ export async function nextAppGenerator(
 
   if (!existsSync(appRoot)) {
     execSync(
-      `npx nx g @nx/next:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --projectNameAndRootFormat=as-provided --appDir=true --style=scss --src=false --unitTestRunner=none --e2eTestRunner=none`,
+      `npx nx g @nx/next:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=eslint --appDir=true --style=scss --src=false --unitTestRunner=none --e2eTestRunner=none`,
       { stdio: 'inherit' },
     );
   }

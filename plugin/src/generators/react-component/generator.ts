@@ -4,7 +4,7 @@ import { kebabCase } from 'lodash';
 import { ReactComponentGeneratorSchema } from './schema';
 import {
   appendFileContent,
-  askQuestion,
+  askQuestion, createCliReadline,
   dynamicImport,
   formatName,
   getNxLibsPaths,
@@ -30,9 +30,11 @@ export async function reactComponentGenerator(
     }
   });
 
-  options.name = options.name || await askQuestion('Enter the name of the component (e.g: AppButton): ');
-  options.subcomponent = options.subcomponent || await askQuestion('Generate component inside components folder? (y/n): ') === 'y';
-  options.withForwardRef = options.withForwardRef || await askQuestion('Generate component with forwardRef? (y/n): ') === 'y';
+  const cliReadline = createCliReadline();
+  options.name = options.name || await askQuestion('Enter the name of the component (e.g: AppButton): ', null, cliReadline);
+  options.subcomponent = options.subcomponent || await askQuestion('Generate component inside components folder? (y/n): ', null, cliReadline) === 'y';
+  options.withForwardRef = options.withForwardRef || await askQuestion('Generate component with forwardRef? (y/n): ', null, cliReadline) === 'y';
+  cliReadline.close();
 
   const libRootPath = `${libPath}/lib`;
   const componentsPath = `${libRootPath}/components`;

@@ -1,12 +1,12 @@
-import { formatFiles, generateFiles, Tree } from '@nx/devkit';
-import { IndentationText, Project, QuoteKind, StructureKind, SyntaxKind } from 'ts-morph';
 import * as path from 'path';
+import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 import { camelCase, kebabCase, startCase } from 'lodash';
-import { EntityApiGeneratorSchema } from './schema';
+import { IndentationText, Project, QuoteKind, StructureKind, SyntaxKind } from 'ts-morph';
 import {
   addNamedImport,
   appendFileContent,
-  askQuestion, createCliReadline,
+  askQuestion,
+  createCliReadline,
   dynamicImport,
   filterSource,
   getNxLibsPaths,
@@ -14,6 +14,7 @@ import {
   searchAliasPath,
   searchNxLibsPaths
 } from '../../shared/utils';
+import { EntityApiGeneratorSchema } from './schema';
 
 export async function entityApiGenerator(tree: Tree, options: EntityApiGeneratorSchema) {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
@@ -34,14 +35,14 @@ export async function entityApiGenerator(tree: Tree, options: EntityApiGenerator
   if (apiClientLibsPaths.length > 1) {
     apiClientLibsPaths[0] = await autocomplete({
       message: 'Select the api client library path:',
-      source: (input) => filterSource(input as string, apiClientLibsPaths),
+      source: (input) => filterSource(input as string, apiClientLibsPaths)
     });
   }
 
   if (apiLibsPaths.length > 1) {
     apiLibsPaths[0] = await autocomplete({
       message: 'Select the api library path:',
-      source: (input) => filterSource(input as string, apiLibsPaths),
+      source: (input) => filterSource(input as string, apiLibsPaths)
     });
   }
 
@@ -52,7 +53,8 @@ export async function entityApiGenerator(tree: Tree, options: EntityApiGenerator
   const libRootPath = `${libPath}/lib`;
 
   const cliReadline = createCliReadline();
-  options.name = options.name || (await askQuestion('Enter the name of the entity (e.g: User): ', null, cliReadline));
+  options.name =
+    options.name || (await askQuestion('Enter the name of the entity (e.g: User): ', undefined, cliReadline));
 
   const apiName = kebabCase(options.name);
 
@@ -69,7 +71,7 @@ export async function entityApiGenerator(tree: Tree, options: EntityApiGenerator
     entityName,
     entityFileName: apiName,
     apiClientDirectory,
-    baseEndpoint: options.baseEndpoint.startsWith('/') ? options.baseEndpoint : `/${options.baseEndpoint}`,
+    baseEndpoint: options.baseEndpoint.startsWith('/') ? options.baseEndpoint : `/${options.baseEndpoint}`
   });
 
   tree.rename(`${apiPath}/models/entity.ts`, `${apiPath}/models/${apiName}.ts`);
@@ -87,7 +89,7 @@ export async function entityApiGenerator(tree: Tree, options: EntityApiGenerator
   if (storeLibsPaths.length > 1) {
     storeLibsPaths[0] = await autocomplete({
       message: 'Select the store library path:',
-      source: (input) => filterSource(input as string, storeLibsPaths),
+      source: (input) => filterSource(input as string, storeLibsPaths)
     });
   }
 
@@ -96,8 +98,8 @@ export async function entityApiGenerator(tree: Tree, options: EntityApiGenerator
   const project = new Project({
     manipulationSettings: {
       indentationText: IndentationText.TwoSpaces,
-      quoteKind: QuoteKind.Single,
-    },
+      quoteKind: QuoteKind.Single
+    }
   });
   const store = project.addSourceFileAtPath(`${storeLibsPaths[0]}/store.ts`);
 
@@ -108,7 +110,7 @@ export async function entityApiGenerator(tree: Tree, options: EntityApiGenerator
   rootReducer.getInitializerIfKindOrThrow(SyntaxKind.ObjectLiteralExpression).addProperty({
     name: `[${apiNameDeclaration}.reducerPath]`,
     initializer: `${apiNameDeclaration}.reducer`,
-    kind: StructureKind.PropertyAssignment,
+    kind: StructureKind.PropertyAssignment
   });
 
   const middlewares = store.getVariableDeclarationOrThrow('middlewares');

@@ -12,13 +12,17 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
   const libPath = await autocomplete({
     message: 'Enter the library path: ',
     source: async (input) => {
-      const filteredNxLibsPaths = searchNxLibsPaths(availableLibsPaths, input)
+      const filteredNxLibsPaths = searchNxLibsPaths(availableLibsPaths, input as string)
 
       return filteredNxLibsPaths.map((path) => ({ value: path }))
     }
   });
   const fileName = options.name;
   const placeOfUse = options.placeOfUse;
+
+  if (!fileName) {
+    throw new Error('Form name is required');
+  }
 
   // Generate form class
   const formsPath = `${libPath}/lib/forms`;

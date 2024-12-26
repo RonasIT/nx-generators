@@ -51,7 +51,7 @@ export async function expoAppGenerator(
 
     project.tags = [`app:${options.directory}`, 'type:app'];
 
-    updateProjectConfiguration(tree, project.name, project);
+    updateProjectConfiguration(tree, project.name as string, project);
   } else {
     execSync(
       `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=eslint --unitTestRunner=none --e2eTestRunner=none`,
@@ -60,7 +60,7 @@ export async function expoAppGenerator(
   }
 
   // Generate shared libs
-  await runAppEnvGenerator(tree, options);
+  await runAppEnvGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
   await runStorageGenerator(tree, options);
   await runRNStylesGenerator(tree, options);
 

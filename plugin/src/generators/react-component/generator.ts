@@ -24,7 +24,7 @@ export async function reactComponentGenerator(
   const libPath = await autocomplete({
     message: 'Enter the library path:',
     source: async (input) => {
-      const filteredNxLibsPaths = searchNxLibsPaths(nxLibsPaths, input)
+      const filteredNxLibsPaths = searchNxLibsPaths(nxLibsPaths, input as string)
 
       return filteredNxLibsPaths.map((path) => ({ value: path }))
     }

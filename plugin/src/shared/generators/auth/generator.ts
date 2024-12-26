@@ -28,6 +28,14 @@ const updateStore = (libRoot: string): void => {
   const apiAlias = searchAliasPath(apiPath);
   const authAlias = searchAliasPath(authPath);
 
+  if (!apiAlias) {
+    throw new Error('Could not find API library.');
+  }
+
+  if (!authAlias) {
+    throw new Error('Could not find Auth library.');
+  }
+
   store.addImportDeclarations([
     { moduleSpecifier: apiAlias, namedImports: ['authApi', 'profileApi'] },
     { moduleSpecifier: authAlias, namedImports: [ 'authListenerMiddleware', 'authReducer', 'authReducerPath'] }

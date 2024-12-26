@@ -1,5 +1,13 @@
 {
   "compilerOptions": {
+    "jsx": "react-native",
+    "allowJs": true,
+    "noEmit": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "strictPropertyInitialization": false,
+    "strictNullChecks": true,
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -12,57 +20,28 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
       "@nx-generators/source": ["src/index.ts"],
-      "@ronas-it/mobile/auth/features/login-form": [
-        "libs/mobile/auth/features/login-form/src/index.ts"
-      ],
-      "@ronas-it/mobile/profile/features/details": [
-        "libs/mobile/profile/features/details/src/index.ts"
-      ],
-      "@ronas-it/mobile/shared/data-access/api": [
-        "libs/mobile/shared/data-access/api/src/index.ts"
-      ],
-      "@ronas-it/mobile/shared/data-access/api-client": [
-        "libs/mobile/shared/data-access/api-client/src/index.ts"
-      ],
-      "@ronas-it/mobile/shared/data-access/auth": [
-        "libs/mobile/shared/data-access/auth/src/index.ts"
-      ],
-      "@ronas-it/mobile/shared/data-access/storage": [
-        "libs/mobile/shared/data-access/storage/src/index.ts"
-      ],
-      "@ronas-it/mobile/shared/data-access/store": [
-        "libs/mobile/shared/data-access/store/src/index.ts"
-      ],
+      "@ronas-it/mobile/auth/features/login-form": ["libs/mobile/auth/features/login-form/src/index.ts"],
+      "@ronas-it/mobile/profile/features/details": ["libs/mobile/profile/features/details/src/index.ts"],
+      "@ronas-it/mobile/shared/data-access/api": ["libs/mobile/shared/data-access/api/src/index.ts"],
+      "@ronas-it/mobile/shared/data-access/api-client": ["libs/mobile/shared/data-access/api-client/src/index.ts"],
+      "@ronas-it/mobile/shared/data-access/auth": ["libs/mobile/shared/data-access/auth/src/index.ts"],
+      "@ronas-it/mobile/shared/data-access/storage": ["libs/mobile/shared/data-access/storage/src/index.ts"],
+      "@ronas-it/mobile/shared/data-access/store": ["libs/mobile/shared/data-access/store/src/index.ts"],
       "@ronas-it/mobile/shared/features/user-theme-provider": [
         "libs/mobile/shared/features/user-theme-provider/src/index.ts"
       ],
-      "@ronas-it/mobile/shared/ui/app-version": [
-        "libs/mobile/shared/ui/app-version/src/index.ts"
-      ],
-      "@ronas-it/mobile/shared/ui/assets": [
-        "libs/mobile/shared/ui/assets/src/index.ts"
-      ],
-      "@ronas-it/mobile/shared/ui/styles": [
-        "libs/mobile/shared/ui/styles/src/index.ts"
-      ],
-      "@ronas-it/mobile/shared/ui/ui-kit": [
-        "libs/mobile/shared/ui/ui-kit/src/index.ts"
-      ],
-      "@ronas-it/mobile/shared/utils/app-env": [
-        "libs/mobile/shared/utils/app-env/src/index.ts"
-      ],
-      "@ronas-it/mobile/shared/utils/form": [
-        "libs/mobile/shared/utils/form/src/index.ts"
-      ],
+      "@ronas-it/mobile/shared/ui/app-version": ["libs/mobile/shared/ui/app-version/src/index.ts"],
+      "@ronas-it/mobile/shared/ui/assets": ["libs/mobile/shared/ui/assets/src/index.ts"],
+      "@ronas-it/mobile/shared/ui/styles": ["libs/mobile/shared/ui/styles/src/index.ts"],
+      "@ronas-it/mobile/shared/ui/ui-kit": ["libs/mobile/shared/ui/ui-kit/src/index.ts"],
+      "@ronas-it/mobile/shared/utils/app-env": ["libs/mobile/shared/utils/app-env/src/index.ts"],
+      "@ronas-it/mobile/shared/utils/form": ["libs/mobile/shared/utils/form/src/index.ts"],
       "@ronas-it/nx-generators": ["plugin/src/index.ts"]
     }
   },
-  "files": [],
-  "include": [],
   "references": [
     {
       "path": "./tsconfig.lib.json"

@@ -1,26 +1,59 @@
 {
-  "ignorePatterns": ["!**/*"],
+  "root": true,
+  "plugins": ["@nx"],
+  "extends": ["./.eslint.ronasit.json"],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.json"],
-      "parser": "jsonc-eslint-parser",
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@nx/dependency-checks": [
+        "@nx/enforce-module-boundaries": [
           "error",
           {
-            "ignoredFiles": ["{projectRoot}/vite.config.{js,ts,mjs,mts}"]
+            "enforceBuildableLibDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "app:shared",
+                "onlyDependOnLibsWithTags": ["app:shared"]
+              },
+              {
+                "sourceTag": "scope:shared",
+                "onlyDependOnLibsWithTags": ["scope:*"]
+              },
+              {
+                "sourceTag": "type:app",
+                "onlyDependOnLibsWithTags": [
+                  "type:features",
+                  "type:ui",
+                  "type:utils",
+                  "type:data-access"
+                ]
+              },
+              {
+                "sourceTag": "type:utils",
+                "onlyDependOnLibsWithTags": ["type:utils"]
+              },
+              {
+                "sourceTag": "type:data-access",
+                "onlyDependOnLibsWithTags": ["type:data-access", "type:utils"]
+              },
+              {
+                "sourceTag": "type:features",
+                "onlyDependOnLibsWithTags": [
+                  "type:features",
+                  "type:data-access",
+                  "type:ui",
+                  "type:utils"
+                ]
+              },
+              {
+                "sourceTag": "type:ui",
+                "onlyDependOnLibsWithTags": ["type:ui", "type:utils"]
+              }
+            ]
           }
         ]
       }
     }
-  ],
-  "extends": ["./.eslintrc.base.json"]
+  ]
 }

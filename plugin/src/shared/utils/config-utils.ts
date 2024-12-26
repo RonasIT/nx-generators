@@ -9,7 +9,7 @@ export interface Constraint {
 }
 
 const getNxRulesEntry = (config: Record<string, any>): { files: Array<string>, rules: Record<string, any> } =>
-  config.overrides?.find((entry) => !!entry.rules['@nx/enforce-module-boundaries']);
+  config.overrides?.find((entry: { rules: { [x: string]: any; }; }) => !!entry.rules['@nx/enforce-module-boundaries']);
 
 export const getNxRulesEntryOrThrowError = (config: Record<string, any>): { files: Array<string>, rules: Record<string, any> } => {
   if (!config) {
@@ -113,8 +113,8 @@ export const verifyEsLintConfig = (tree: Tree): Record<string, any> => {
 
   try {
     const rulesEntry = getNxRulesEntryOrThrowError(config).rules['@nx/enforce-module-boundaries'];
-    const tags = rulesEntry[1].depConstraints.map((rule) => rule.sourceTag);
-    const areRulesDisabled = rulesEntry[1].depConstraints.find((rule) => rule.sourceTag === '*' && rule.onlyDependOnLibsWithTags.includes('*'));
+    const tags = rulesEntry[1].depConstraints.map((rule: Constraint) => rule.sourceTag);
+    const areRulesDisabled = rulesEntry[1].depConstraints.find((rule: Constraint) => rule.sourceTag === '*' && rule.onlyDependOnLibsWithTags.includes('*'));
     const areRulesBroken = !importantTags.every((tag) => tags.includes(tag));
 
     if (rulesEntry[0] !== 'error') {

@@ -26,19 +26,21 @@ export async function getFormUtilsDirectory(tree: Tree, appName: string): Promis
     const formUtilsAppDirectory = (await selectProject(tree, 'application', 'It\'s necessary to generate form utilities. What application should they be in?')).name;
     await runFormUtilsGenerator(tree, { directory: formUtilsAppDirectory });
 
-    return searchAliasPath(getFormUtilsPaths()[0]);
+    return searchAliasPath(getFormUtilsPaths()[0]) as string;
   }
 
   if (formUtilsLibsPaths.length > 1) {
     if (appName === constants.sharedValue) {
-      return searchAliasPath(formUtilsLibsPaths.find((path) => getAppName(path) === constants.sharedValue))
+      const path = formUtilsLibsPaths.find((path) => getAppName(path) === constants.sharedValue) as string;
+
+      return searchAliasPath(path) as string;
     }
 
     formUtilsLibsPaths[0] = await autocomplete({
       message: 'Select the path of the library with the form utilities: ',
-      source: (input) => filterSource(input, formUtilsLibsPaths.filter((path) => [appName, constants.sharedValue].includes(getAppName(path))))
+      source: (input) => filterSource(input as string, formUtilsLibsPaths.filter((path) => [appName, constants.sharedValue].includes(getAppName(path))))
     });
   }
 
-  return searchAliasPath(formUtilsLibsPaths[0]);
+  return searchAliasPath(formUtilsLibsPaths[0]) as string;
 }

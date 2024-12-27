@@ -2,7 +2,6 @@
   "root": true,
   "plugins": ["@nx"],
   "extends": ["./.eslint.ronasit.json"],
-  "ignorePatterns": ["node_modules", "**/*.js", "apps/*/app.config.ts"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

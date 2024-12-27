@@ -1,50 +1,56 @@
-import { formatFiles, generateFiles, Tree } from '@nx/devkit';
+import { existsSync } from 'fs';
 import * as path from 'path';
+import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 import { kebabCase } from 'lodash';
-import { ReactComponentGeneratorSchema } from './schema';
 import {
   appendFileContent,
-  askQuestion, createCliReadline,
+  askQuestion,
+  createCliReadline,
   dynamicImport,
   formatName,
   getNxLibsPaths,
   LibraryType,
   searchNxLibsPaths
 } from '../../shared/utils';
-import { existsSync } from 'fs';
+import { ReactComponentGeneratorSchema } from './schema';
 
-export async function reactComponentGenerator(
-  tree: Tree,
-  options: ReactComponentGeneratorSchema
-) {
-  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
+export async function reactComponentGenerator(tree: Tree, options: ReactComponentGeneratorSchema) {
+  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
+    'inquirer-autocomplete-standalone',
+  );
 
   const nxLibsPaths = getNxLibsPaths([LibraryType.FEATURES, LibraryType.UI]);
 
   const libPath = await autocomplete({
     message: 'Enter the library path:',
     source: async (input) => {
-      const filteredNxLibsPaths = searchNxLibsPaths(nxLibsPaths, input as string)
+      const filteredNxLibsPaths = searchNxLibsPaths(nxLibsPaths, input as string);
 
-      return filteredNxLibsPaths.map((path) => ({ value: path }))
+      return filteredNxLibsPaths.map((path) => ({ value: path }));
     }
   });
 
   const cliReadline = createCliReadline();
-  options.name = options.name || await askQuestion('Enter the name of the component (e.g: AppButton): ', null, cliReadline);
-  options.subcomponent = options.subcomponent || await askQuestion('Generate component inside components folder? (y/n): ', null, cliReadline) === 'y';
-  options.withForwardRef = options.withForwardRef || await askQuestion('Generate component with forwardRef? (y/n): ', null, cliReadline) === 'y';
+  options.name =
+    options.name || (await askQuestion('Enter the name of the component (e.g: AppButton): ', undefined, cliReadline));
+  options.subcomponent =
+    options.subcomponent ||
+    (await askQuestion('Generate component inside components folder? (y/n): ', undefined, cliReadline)) === 'y';
+  options.withForwardRef =
+    options.withForwardRef ||
+    (await askQuestion('Generate component with forwardRef? (y/n): ', undefined, cliReadline)) === 'y';
   cliReadline.close();
 
   const libRootPath = `${libPath}/lib`;
   const componentsPath = `${libRootPath}/components`;
-  const componentPath = options.subcomponent
-    ? `${libRootPath}/components/${kebabCase(options.name)}`
-    : libRootPath;
+  const componentPath = options.subcomponent ? `${libRootPath}/components/${kebabCase(options.name)}` : libRootPath;
   const shouldUpdateSrcIndex = !existsSync(libRootPath);
   const shouldUpdateLibIndex = !existsSync(componentsPath) && options.subcomponent;
 
-  generateFiles(tree, path.join(__dirname, `files`), componentPath, { ...options, name: formatName(options.name, true)  });
+  generateFiles(tree, path.join(__dirname, `files`), componentPath, {
+    ...options,
+    name: formatName(options.name, true)
+  });
 
   const updateIndexes = (): void => {
     const componentsIndexFilePath = `${libRootPath}/components/index.ts`;
@@ -62,7 +68,7 @@ export async function reactComponentGenerator(
     } else {
       appendFileContent(componentsIndexFilePath, `export * from './${kebabCase(options.name)}';\n`, tree);
     }
-  }
+  };
 
   if (options.subcomponent) {
     updateIndexes();

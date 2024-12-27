@@ -1,7 +1,7 @@
-import { formatFiles, generateFiles, output, Tree } from '@nx/devkit';
-import * as path from 'path';
-import { ReactLibGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
+import * as path from 'path';
+import { formatFiles, generateFiles, output, Tree } from '@nx/devkit';
+import { isBoolean } from 'lodash';
 import {
   addNxScopeTag,
   askQuestion,
@@ -12,31 +12,44 @@ import {
   LibraryType,
   selectProject,
   validateLibraryType,
-  getLibDirectoryName, createCliReadline
+  getLibDirectoryName,
+  createCliReadline
 } from '../../shared/utils';
-import { isBoolean } from 'lodash';
+import { ReactLibGeneratorSchema } from './schema';
 
 export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema) {
-  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
+  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
+    'inquirer-autocomplete-standalone',
+  );
 
   options.app = options.app || (await selectProject(tree, 'application', 'Select the application: ')).name;
 
   const isSharedLib = options.app === constants.sharedValue;
 
-  options.scope = options.scope || (isSharedLib ? '' : await askQuestion(`Enter the scope (e.g: profile) or '${constants.sharedValue}': `));
-  options.type = options.type ? validateLibraryType(options.type) : await autocomplete({
-    message: 'Select the library type: ',
-    source: (input) => filterSource(input as string, Object.values(LibraryType))
-  });
+  options.scope =
+    options.scope ||
+    (isSharedLib ? '' : await askQuestion(`Enter the scope (e.g: profile) or '${constants.sharedValue}': `));
+  options.type = options.type
+    ? validateLibraryType(options.type)
+    : await autocomplete({
+      message: 'Select the library type: ',
+      source: (input) => filterSource(input as string, Object.values(LibraryType))
+    });
 
-  const cliReadline = createCliReadline()
-  options.name = options.name || (await askQuestion('Enter the name of the library (e.g: settings): ', null, cliReadline));
+  const cliReadline = createCliReadline();
+  options.name =
+    options.name || (await askQuestion('Enter the name of the library (e.g: settings): ', undefined, cliReadline));
 
-  if ([LibraryType.FEATURES, LibraryType.UI].includes(options.type as LibraryType) && !isBoolean(options.withComponent)) {
-    options.withComponent = (await askQuestion('Generate component inside lib folder? (y/n): ', null, cliReadline)) === 'y';
+  if (
+    [LibraryType.FEATURES, LibraryType.UI].includes(options.type as LibraryType) &&
+    !isBoolean(options.withComponent)
+  ) {
+    options.withComponent =
+      (await askQuestion('Generate component inside lib folder? (y/n): ', undefined, cliReadline)) === 'y';
 
     if (options.withComponent && !isBoolean(options.withComponentForwardRef)) {
-      options.withComponentForwardRef = await askQuestion('Generate component with forwardRef? (y/n): ', null, cliReadline) === 'y';
+      options.withComponentForwardRef =
+        (await askQuestion('Generate component with forwardRef? (y/n): ', undefined, cliReadline)) === 'y';
     }
   }
   cliReadline.close();
@@ -64,7 +77,9 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   await formatFiles(tree);
 
   if (libDirectoryName !== options.name) {
-    output.warn({ title: `The library directory was changed to ${output.bold(libDirectoryName)} so that it does not start with the scope name.`});
+    output.warn({
+      title: `The library directory was changed to ${output.bold(libDirectoryName)} so that it does not start with the scope name.`
+    });
   }
 }
 

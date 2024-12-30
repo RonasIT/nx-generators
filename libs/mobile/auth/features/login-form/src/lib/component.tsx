@@ -29,7 +29,7 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps): JSX.Element {
 
   const form = useForm<LoginFormSchema>({
     defaultValues: formSchema.formValues,
-    resolver: yupResolver<any>(LoginFormSchema.validationSchema)
+    resolver: yupResolver<any>(LoginFormSchema.validationSchema),
   });
   const { handleSubmit, formState, control } = form;
 
@@ -85,20 +85,20 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps): JSX.Element {
 
 const style = createStyles({
   content: {
-    paddingTop: '2rem'
+    paddingTop: '2rem',
   },
   logo: {
     width: '3.5rem',
     height: '3.5rem',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   title: {
-    marginVertical: '2rem'
+    marginVertical: '2rem',
   },
   form: {
-    gap: '0.5rem'
+    gap: '0.5rem',
   },
   footer: {
-    marginTop: '2rem'
-  }
+    marginTop: '2rem',
+  },
 });

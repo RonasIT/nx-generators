@@ -11,19 +11,19 @@ export const headerVerticalPadding = 0.625 * rem;
 
 EStyleSheet.build({
   $rem: rem,
-  $screenWidth: screenWidth
+  $screenWidth: screenWidth,
 });
 
 export const commonStyle = createStyles({
   container: {
-    paddingHorizontal: spacings.contentOffset
+    paddingHorizontal: spacings.contentOffset,
   },
   fullFlex: {
-    flex: 1
+    flex: 1,
   },
   fullWidth: {
-    width: '100%'
-  }
+    width: '100%',
+  },
 });
 
 export const getResponsiveWidth = (width: number): number => screenWidth * (width / 100);

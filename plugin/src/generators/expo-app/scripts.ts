@@ -8,5 +8,5 @@ export default {
   'update:dev': 'cross-env EXPO_PUBLIC_APP_ENV=development eas update --branch development',
   'update:prod': 'cross-env EXPO_PUBLIC_APP_ENV=production eas update --branch production',
   'submit:dev': 'cross-env EXPO_PUBLIC_APP_ENV=development eas submit --no-wait --profile=development',
-  'submit:prod': 'cross-env EXPO_PUBLIC_APP_ENV=production eas submit --no-wait --profile=production'
+  'submit:prod': 'cross-env EXPO_PUBLIC_APP_ENV=production eas submit --no-wait --profile=production',
 };

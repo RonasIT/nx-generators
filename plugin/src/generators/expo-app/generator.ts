@@ -10,7 +10,7 @@ import {
   readProjectConfiguration,
   Tree,
   updateProjectConfiguration,
-  writeJson
+  writeJson,
 } from '@nx/devkit';
 import { dependencies, devDependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
@@ -21,7 +21,7 @@ import {
   runRNStylesGenerator,
   runFormUtilsGenerator,
   runStoreGenerator,
-  runUIKittenGenerator
+  runUIKittenGenerator,
 } from '../../shared/generators';
 import { formatName, formatAppIdentifier, addNxAppTag, askQuestion, getImportPathPrefix } from '../../shared/utils';
 import { ExpoAppGeneratorSchema } from './schema';
@@ -104,7 +104,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   appPackageJson.main = 'expo-router/entry';
   appPackageJson.scripts = {
     ...scripts,
-    ...appPackageJson.scripts
+    ...appPackageJson.scripts,
   };
   writeJson(tree, appPackagePath, appPackageJson);
 
@@ -116,7 +116,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     formatDirectory: () => libPath,
     isUIKittenEnabled: shouldGenerateUIKittenLib,
     isStoreEnabled: shouldGenerateStoreLib,
-    appDirectory: options.directory
+    appDirectory: options.directory,
   });
 
   addNxAppTag(tree, options.directory);
@@ -127,11 +127,11 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     tree,
     {
       ...dependencies['expo-app'],
-      ...dependencies['expo-app-root']
+      ...dependencies['expo-app-root'],
     },
     {
       ...devDependencies['expo-app'],
-      ...devDependencies['expo-app-root']
+      ...devDependencies['expo-app-root'],
     },
   );
 

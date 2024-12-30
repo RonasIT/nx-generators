@@ -2,5 +2,5 @@ import { BaseQueryFunction, createAxiosBaseQuery } from '@ronas-it/rtkq-entity-a
 import { apiService } from '../service';
 
 export const axiosBaseQuery: BaseQueryFunction = createAxiosBaseQuery({
-  getHttpClient: () => apiService.httpClient
+  getHttpClient: () => apiService.httpClient,
 });

@@ -13,7 +13,7 @@ export async function runStoreGenerator(tree: Tree, options: StoreGeneratorSchem
 
   // Generate shared libs
   execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=store`, {
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
 
   const appPackagePath = `${appRoot}/package.json`;
@@ -26,7 +26,7 @@ export async function runStoreGenerator(tree: Tree, options: StoreGeneratorSchem
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath
+    formatDirectory: () => libPath,
   });
 
   // Add dependencies

@@ -36,26 +36,28 @@ export const AppTextInput = React.forwardRef(function Component(
   const [isSecured, setIsSecured] = useState(true);
 
   const renderAccessoryRight = useMemo(
-    () => isPassword ? (
-      <AppPressableIcon
-        name={isSecured ? 'eye' : 'eyeOff'}
-        color={theme['text-primary-color']}
-        onPress={() => setIsSecured(!isSecured)}
-      />
-    ) : (
-      accessoryRight
-    ),
+    () =>
+      isPassword ? (
+        <AppPressableIcon
+          name={isSecured ? 'eye' : 'eyeOff'}
+          color={theme['text-primary-color']}
+          onPress={() => setIsSecured(!isSecured)}
+        />
+      ) : (
+        accessoryRight
+      ),
     [isSecured],
   );
 
   const renderLabel = useMemo(
-    (): InputProps['label'] => typeof label === 'string' ? (
-      <View>
-        <AppText category={'c1'}>{label}</AppText>
-      </View>
-    ) : (
-      label
-    ),
+    (): InputProps['label'] =>
+      typeof label === 'string' ? (
+        <View>
+          <AppText category={'c1'}>{label}</AppText>
+        </View>
+      ) : (
+        label
+      ),
     [label],
   );
 
@@ -90,6 +92,6 @@ export const AppTextInput = React.forwardRef(function Component(
 
 const styles = createStyles({
   text: {
-    alignSelf: 'flex-start'
-  }
+    alignSelf: 'flex-start',
+  },
 });

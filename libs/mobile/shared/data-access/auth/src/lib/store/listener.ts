@@ -3,7 +3,7 @@ import {
   onRequestRefreshTokenInterceptor,
   onResponseRefreshTokenInterceptor,
   RefreshTokenInterceptorOptions,
-  tokenInterceptor
+  tokenInterceptor,
 } from '@ronas-it/axios-api-client';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { DateTime } from 'luxon';
@@ -31,15 +31,15 @@ authListenerMiddleware.startListening({
       request: [
         [
           tokenInterceptor({
-            getToken: () => authSelectors.token(getState()) ?? ''
-          })
-        ]
-      ]
+            getToken: () => authSelectors.token(getState()) ?? '',
+          }),
+        ],
+      ],
     });
 
     dispatch(authActions.setIsAppReady(true));
     isAuthenticated && dispatch(profileApi.endpoints.getProfile.initiate());
-  }
+  },
 });
 
 authListenerMiddleware.startListening({
@@ -56,14 +56,14 @@ authListenerMiddleware.startListening({
       },
       onError: () => {
         return dispatch(authApi.endpoints.logout.initiate()).unwrap();
-      }
+      },
     };
 
     apiService.useInterceptors({
       request: [[onRequestRefreshTokenInterceptor(options)]],
-      response: [[null, onResponseRefreshTokenInterceptor(options)]]
+      response: [[null, onResponseRefreshTokenInterceptor(options)]],
     });
-  }
+  },
 });
 
 authListenerMiddleware.startListening({
@@ -72,7 +72,7 @@ authListenerMiddleware.startListening({
     dispatch(authActions.saveToken({ token, ttl }));
     appStorageService.isAuthenticated.set('true');
     dispatch(authActions.setIsAuthenticated(true));
-  }
+  },
 });
 
 authListenerMiddleware.startListening({
@@ -87,7 +87,7 @@ authListenerMiddleware.startListening({
     dispatch(authActions.setToken(null));
 
     dispatch(profileApi.util.resetApiState());
-  }
+  },
 });
 
 authListenerMiddleware.startListening({
@@ -100,5 +100,5 @@ authListenerMiddleware.startListening({
 
     dispatch(authActions.setToken(token));
     dispatch(authActions.setTokenExpiresAt(tokenExpires));
-  }
+  },
 });

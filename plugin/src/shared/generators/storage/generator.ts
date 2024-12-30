@@ -9,7 +9,7 @@ export async function runStorageGenerator(tree: Tree, options: { name: string; d
 
   // Generate shared libs
   execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=storage`, {
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
 
   // Remove unnecessary files and files that will be replaced
@@ -20,7 +20,7 @@ export async function runStorageGenerator(tree: Tree, options: { name: string; d
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath
+    formatDirectory: () => libPath,
   });
 
   await formatFiles(tree);

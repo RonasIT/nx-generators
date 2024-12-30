@@ -7,7 +7,7 @@ import {
   LogInResponse,
   RefreshTokenResponse,
   RegisterRequest,
-  RestorePasswordRequest
+  RestorePasswordRequest,
 } from './models';
 
 export const authApi = createAppApi({
@@ -20,11 +20,11 @@ export const authApi = createAppApi({
         return {
           method: 'POST',
           url: '/login',
-          data: request
+          data: request,
         };
       },
       transformResponse: (response) => plainToInstance(LogInResponse, response),
-      transformErrorResponse: (response) => ({ ...response, skipToast: true })
+      transformErrorResponse: (response) => ({ ...response, skipToast: true }),
     }),
     register: builder.mutation<LogInResponse, RegisterRequest>({
       query: (params) => {
@@ -33,17 +33,17 @@ export const authApi = createAppApi({
         return {
           method: 'POST',
           url: '/register',
-          data: request
+          data: request,
         };
       },
       transformResponse: (response) => plainToInstance(LogInResponse, response),
-      transformErrorResponse: (response) => ({ ...response, skipToast: true })
+      transformErrorResponse: (response) => ({ ...response, skipToast: true }),
     }),
     refreshToken: builder.mutation<RefreshTokenResponse, void>({
       query: () => ({
         method: 'GET',
-        url: '/auth/refresh'
-      })
+        url: '/auth/refresh',
+      }),
     }),
     forgotPassword: builder.mutation<void, ForgotPasswordRequest>({
       query: (params) => {
@@ -52,10 +52,10 @@ export const authApi = createAppApi({
         return {
           method: 'POST',
           url: '/auth/forgot-password',
-          data: request
+          data: request,
         };
       },
-      transformErrorResponse: (response) => ({ ...response, skipToast: true })
+      transformErrorResponse: (response) => ({ ...response, skipToast: true }),
     }),
     restorePassword: builder.mutation<void, RestorePasswordRequest>({
       query: (params) => {
@@ -64,15 +64,15 @@ export const authApi = createAppApi({
         return {
           method: 'POST',
           url: '/auth/restore-password',
-          params: request
+          params: request,
         };
-      }
+      },
     }),
     logout: builder.mutation<void, void>({
       query: () => ({
         method: 'POST',
-        url: '/auth/logout'
-      })
-    })
-  })
+        url: '/auth/logout',
+      }),
+    }),
+  }),
 });

@@ -14,7 +14,7 @@ export const addNamedImport = (namedImport: string, moduleSpecifier: string, fil
   } else {
     file.addImportDeclaration({
       namedImports: [namedImport],
-      moduleSpecifier
+      moduleSpecifier,
     });
   }
 };

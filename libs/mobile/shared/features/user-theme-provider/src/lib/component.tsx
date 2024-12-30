@@ -19,19 +19,16 @@ export const UserThemeContext = createContext<{
   setUserTheme: (value: UserTheme) => void;
   toggleIsAutoTheme: (isAutoTheme: boolean) => void;
 }>({
-      userTheme: userThemeConfig.defaultUserTheme,
-      hasDeviceTheme: null,
-      isAutoTheme: null,
-      setUserTheme: noop,
-      toggleIsAutoTheme: noop
-    });
+  userTheme: userThemeConfig.defaultUserTheme,
+  hasDeviceTheme: null,
+  isAutoTheme: null,
+  setUserTheme: noop,
+  toggleIsAutoTheme: noop,
+});
 
 export function UserThemeProvider({ children }: UserThemeProviderProps): ReactElement {
   return (
-    <ApplicationProvider
-      {...eva}
-      theme={theme['dark']}
-      customMapping={mapping as CustomSchemaType}>
+    <ApplicationProvider {...eva} theme={theme['dark']} customMapping={mapping as CustomSchemaType}>
       <ThemeProvider value={DarkTheme}>
         {/* eslint-disable-next-line react/style-prop-object */}
         <StatusBar style={'light'} />

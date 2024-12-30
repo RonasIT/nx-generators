@@ -6,7 +6,7 @@ import { profileApiConfig } from './config';
 import { GetProfileRequest } from './models';
 
 export enum ProfileApiTag {
-  PROFILE = 'profile'
+  PROFILE = 'profile',
 }
 
 export const profileApi = createAppApi({
@@ -21,11 +21,11 @@ export const profileApi = createAppApi({
         return {
           method: 'GET',
           url: '/profile',
-          params
+          params,
         };
       },
       transformResponse: (response) => plainToInstance(User, response),
-      providesTags: [ProfileApiTag.PROFILE]
+      providesTags: [ProfileApiTag.PROFILE],
     }),
     updateProfile: builder.mutation<void, User>({
       query: (params) => {
@@ -34,19 +34,19 @@ export const profileApi = createAppApi({
         return {
           method: 'PUT',
           url: '/profile',
-          data: request
+          data: request,
         };
       },
-      invalidatesTags: [ProfileApiTag.PROFILE]
+      invalidatesTags: [ProfileApiTag.PROFILE],
     }),
     deleteProfile: builder.mutation<void, void>({
       query: () => {
         return {
           method: 'DELETE',
-          url: '/profile'
+          url: '/profile',
         };
       },
-      invalidatesTags: [ProfileApiTag.PROFILE]
-    })
-  })
+      invalidatesTags: [ProfileApiTag.PROFILE],
+    }),
+  }),
 });

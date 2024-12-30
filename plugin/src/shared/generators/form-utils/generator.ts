@@ -7,7 +7,7 @@ export async function runFormUtilsGenerator(tree: Tree, options: { directory: st
 
   // Generate shared libs
   execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=utils --name=form`, {
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
 
   // Remove unnecessary files and files that will be replaced

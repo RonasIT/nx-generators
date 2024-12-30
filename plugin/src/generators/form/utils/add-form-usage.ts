@@ -7,7 +7,7 @@ import {
   QuoteKind,
   SourceFile,
   SyntaxKind,
-  VariableDeclaration
+  VariableDeclaration,
 } from 'ts-morph';
 import { addNamedImport } from '../../../shared/utils';
 
@@ -73,8 +73,8 @@ export async function addFormUsage(libPath: string, placeOfUseName: string, form
   const project = new Project({
     manipulationSettings: {
       indentationText: IndentationText.TwoSpaces,
-      quoteKind: QuoteKind.Single
-    }
+      quoteKind: QuoteKind.Single,
+    },
   });
   const files = project.addSourceFilesAtPaths([`${libPath}/lib/**/*.tsx`, `${libPath}/lib/**/*.ts`]);
   const file = files.find((file) => file.getFunction(placeOfUseName) || file.getVariableDeclaration(placeOfUseName));

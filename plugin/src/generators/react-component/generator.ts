@@ -10,7 +10,7 @@ import {
   formatName,
   getNxLibsPaths,
   LibraryType,
-  searchNxLibsPaths
+  searchNxLibsPaths,
 } from '../../shared/utils';
 import { ReactComponentGeneratorSchema } from './schema';
 
@@ -27,7 +27,7 @@ export async function reactComponentGenerator(tree: Tree, options: ReactComponen
       const filteredNxLibsPaths = searchNxLibsPaths(nxLibsPaths, input as string);
 
       return filteredNxLibsPaths.map((path) => ({ value: path }));
-    }
+    },
   });
 
   const cliReadline = createCliReadline();
@@ -49,7 +49,7 @@ export async function reactComponentGenerator(tree: Tree, options: ReactComponen
 
   generateFiles(tree, path.join(__dirname, `files`), componentPath, {
     ...options,
-    name: formatName(options.name, true)
+    name: formatName(options.name, true),
   });
 
   const updateIndexes = (): void => {

@@ -38,6 +38,7 @@ export interface MediaQuery {
   [key: string]: Extended<AnyStyle>;
 }
 
-export const createStyles = <T = EStyleSet>(styles: EStyleSet<T>): StyleSet<T> => EStyleSheet.create(styles) as StyleSet<T>;
+export const createStyles = <T = EStyleSet>(styles: EStyleSet<T>): StyleSet<T> =>
+  EStyleSheet.create(styles) as StyleSet<T>;
 export const styleValue = (key: string, prop?: string): any => EStyleSheet.value(key, prop);
 export const flattenStyle = (style: AnyStyle): AnyStyle => EStyleSheet.flatten(style);

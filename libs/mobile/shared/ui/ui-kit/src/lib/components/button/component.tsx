@@ -46,6 +46,6 @@ export const AppButton = forwardRef<Button, AppButtonProps>(function Component(
 const styles = createStyles({
   container: {
     paddingHorizontal: spacings.containerOffset,
-    paddingVertical: spacings.contentOffset
-  }
+    paddingVertical: spacings.contentOffset,
+  },
 });

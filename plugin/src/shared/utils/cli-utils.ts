@@ -4,10 +4,11 @@ import { getProjects, ProjectType, Tree } from '@nx/devkit';
 import { constants } from './constants';
 import { dynamicImport } from './dynamic-import';
 
-export const createCliReadline = (): readline.Interface => readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+export const createCliReadline = (): readline.Interface =>
+  readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
 
 export const askQuestion = (
   question: string,
@@ -22,19 +23,21 @@ export const askQuestion = (
     setTimeout(() => rl.write(null, { ctrl: true, name: 'e' }));
   }
 
-  return new Promise((resolve) => rl.question(question, (answer) => {
-    if (!cliReadline) {
-      rl.close();
-    }
-    resolve(answer);
-  }),);
+  return new Promise((resolve) =>
+    rl.question(question, (answer) => {
+      if (!cliReadline) {
+        rl.close();
+      }
+      resolve(answer);
+    }),
+  );
 };
 
 export enum LibraryType {
   UI = 'ui',
   DATA_ACCESS = 'data-access',
   FEATURES = 'features',
-  UTILS = 'utils'
+  UTILS = 'utils',
 }
 
 const parseLibsPaths = (): Record<string, Array<string>> => {
@@ -97,9 +100,10 @@ export const appendFileContent = (path: string, endContent: string, tree: Tree):
   tree.write(path, contentUpdate);
 };
 
-export const getProjectsDetails = (tree: Tree, projectType: ProjectType): Array<{ name: string; path: string; }> => Array.from(getProjects(tree))
-  .filter(([_, project]) => project.projectType === projectType)
-  .map(([name, project]) => ({ name, path: project.root }));
+export const getProjectsDetails = (tree: Tree, projectType: ProjectType): Array<{ name: string; path: string }> =>
+  Array.from(getProjects(tree))
+    .filter(([_, project]) => project.projectType === projectType)
+    .map(([name, project]) => ({ name, path: project.root }));
 
 export const selectProject = async (
   tree: Tree,
@@ -120,7 +124,7 @@ export const selectProject = async (
     source: async (input) => {
       const entries = [...projects, { name: constants.sharedValue, path: constants.sharedValue }].map((project) => ({
         name: `${project.name} (${project.path})`,
-        value: { ...project, name: projectType === 'application' ? project.path.replace('apps/', '') : project.name }
+        value: { ...project, name: projectType === 'application' ? project.path.replace('apps/', '') : project.name },
       }));
 
       if (!input) {
@@ -128,7 +132,7 @@ export const selectProject = async (
       }
 
       return entries.filter((entry) => entry.name.toLowerCase().includes(input.toLowerCase()));
-    }
+    },
   });
 };
 

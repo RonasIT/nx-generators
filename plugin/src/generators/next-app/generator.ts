@@ -8,7 +8,7 @@ import {
   installPackagesTask,
   readJson,
   Tree,
-  writeJson
+  writeJson,
 } from '@nx/devkit';
 import { dependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
@@ -16,7 +16,7 @@ import {
   runApiClientGenerator,
   runAppEnvGenerator,
   runFormUtilsGenerator,
-  runStoreGenerator
+  runStoreGenerator,
 } from '../../shared/generators';
 import { addNxAppTag, askQuestion, formatName } from '../../shared/utils';
 import { NextAppGeneratorSchema } from './schema';
@@ -86,7 +86,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   // Add app files
   generateFiles(tree, path.join(__dirname, 'files'), appRoot, {
     ...options,
-    formatName
+    formatName,
   });
 
   addNxAppTag(tree, options.directory);

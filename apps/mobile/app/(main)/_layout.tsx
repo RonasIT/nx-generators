@@ -11,7 +11,7 @@ export default function MainNavigation(): ReactElement {
         name='index'
         options={{
           headerTitleAlign: 'left',
-          title: translate('TEXT_PROFILE')
+          title: translate('TEXT_PROFILE'),
         }}
       />
     </Stack>

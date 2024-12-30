@@ -54,7 +54,7 @@ const verifyLibraryTag = ({ project, tree, tag, tagType, context, ruleNotFoundCa
         tree,
         tag: `${tagType}:${tagFromLibPath}`,
         tagType,
-        context
+        context,
       });
     }
   } else {
@@ -74,7 +74,7 @@ const verifyLibraryTag = ({ project, tree, tag, tagType, context, ruleNotFoundCa
 
     updateProjectConfiguration(tree, project.name as string, {
       ...project,
-      tags: [...(project.tags || []), `${tagType}:${tag}`]
+      tags: [...(project.tags || []), `${tagType}:${tag}`],
     });
 
     if (tagType === 'scope') {
@@ -104,7 +104,7 @@ export const checkApplicationTags = (project: ProjectConfiguration, tree: Tree, 
 
     updateProjectConfiguration(tree, project.name as string, {
       ...project,
-      tags: [...(project.tags || []), `app:${projectAppTag}`]
+      tags: [...(project.tags || []), `app:${projectAppTag}`],
     });
     addNxAppTag(tree, projectAppTag);
     context.reload(tree);
@@ -117,7 +117,7 @@ export const checkApplicationTags = (project: ProjectConfiguration, tree: Tree, 
 
     updateProjectConfiguration(tree, project.name as string, {
       ...project,
-      tags: [...(project.tags || []), 'type:app']
+      tags: [...(project.tags || []), 'type:app'],
     });
   }
 };
@@ -139,7 +139,7 @@ export const checkLibraryTags = (project: ProjectConfiguration, tree: Tree, cont
       context.log(`Missing scope tag rule for ${scopeTag}. Adding...`);
       addNxScopeTag(tree, scopeTag?.replace('scope:', '') as string);
       context.reload(tree);
-    }
+    },
   });
   verifyLibraryTag({ project, tree, tag: typeTag, tagType: 'type', context });
 };

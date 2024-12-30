@@ -1,3 +1,3 @@
 export default {
-  'deps:sync': 'npx syncpack fix-mismatches'
+  'deps:sync': 'npx syncpack fix-mismatches',
 };

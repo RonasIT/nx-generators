@@ -18,15 +18,15 @@ const useLanguage = setLanguage(
       ...require('i18n/mobile/app/en.json'),
       ...require('i18n/mobile/auth/en.json'),
       ...require('i18n/mobile/profile/en.json'),
-      ...require('i18n/mobile/shared/en.json')
-    }
+      ...require('i18n/mobile/shared/en.json'),
+    },
   },
   'en',
 );
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const unstable_settings = {
-  initialRouteName: 'index'
+  initialRouteName: 'index',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.

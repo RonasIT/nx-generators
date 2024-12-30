@@ -6,7 +6,7 @@ import {
   installPackagesTask,
   readJson,
   Tree,
-  writeJson
+  writeJson,
 } from '@nx/devkit';
 import { devDependencies } from '../../shared/dependencies';
 import { formatName, getProjectName } from '../../shared/utils';
@@ -28,7 +28,7 @@ export async function repoConfigGenerator(tree: Tree) {
   // Add project files
   generateFiles(tree, path.join(__dirname, 'files'), projectRoot, {
     name: getProjectName(projectPackageJson.name),
-    formatName
+    formatName,
   });
 
   // Add dependencies

@@ -11,8 +11,8 @@ const updateStore = (libRoot: string): void => {
   const project = new Project({
     manipulationSettings: {
       indentationText: IndentationText.TwoSpaces,
-      quoteKind: QuoteKind.Single
-    }
+      quoteKind: QuoteKind.Single,
+    },
   });
 
   const storePath = `${libRoot}/shared/data-access/store/src`;
@@ -32,7 +32,7 @@ const updateStore = (libRoot: string): void => {
 
   store.addImportDeclarations([
     { moduleSpecifier: apiAlias, namedImports: ['authApi', 'profileApi'] },
-    { moduleSpecifier: authAlias, namedImports: ['authListenerMiddleware', 'authReducer', 'authReducerPath'] }
+    { moduleSpecifier: authAlias, namedImports: ['authListenerMiddleware', 'authReducer', 'authReducerPath'] },
   ]);
 
   const rootReducer = store.getVariableDeclarationOrThrow('rootReducer');
@@ -40,7 +40,7 @@ const updateStore = (libRoot: string): void => {
   rootReducer.getInitializerIfKindOrThrow(SyntaxKind.ObjectLiteralExpression).addProperties([
     { name: '[authApi.reducerPath]', initializer: 'authApi.reducer', kind: StructureKind.PropertyAssignment },
     { name: '[authReducerPath]', initializer: 'authReducer', kind: StructureKind.PropertyAssignment },
-    { name: '[profileApi.reducerPath]', initializer: 'profileApi.reducer', kind: StructureKind.PropertyAssignment }
+    { name: '[profileApi.reducerPath]', initializer: 'profileApi.reducer', kind: StructureKind.PropertyAssignment },
   ]);
 
   const middlewares = store.getVariableDeclarationOrThrow('middlewares');
@@ -48,7 +48,7 @@ const updateStore = (libRoot: string): void => {
   middlewares
     .getInitializerIfKindOrThrow(SyntaxKind.ArrayLiteralExpression)
     .addElements(['authApi.middleware', 'authListenerMiddleware.middleware', 'profileApi.middleware'], {
-      useNewLines: true
+      useNewLines: true,
     });
 
   project.saveSync();
@@ -61,10 +61,10 @@ export async function runAuthGenerator(tree: Tree, options: AuthGeneratorSchema)
 
   // Generate shared libs
   execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=api`, {
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
   execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=auth`, {
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
 
   const appPackagePath = `${appRoot}/package.json`;
@@ -78,7 +78,7 @@ export async function runAuthGenerator(tree: Tree, options: AuthGeneratorSchema)
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath
+    formatDirectory: () => libPath,
   });
 
   updateStore(libRoot);

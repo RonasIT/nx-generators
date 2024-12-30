@@ -16,14 +16,14 @@ export class LoginFormSchema implements BaseFormSchema<LoginFormSchema> {
       email: Yup.string()
         .email(i18n.t('AUTH.VALIDATION.TEXT_VALIDATION_EMAIL'))
         .required(i18n.t('AUTH.VALIDATION.TEXT_VALIDATION_REQUIRED_FIELD')),
-      password: Yup.string().required(i18n.t('TEXT_VALIDATION_REQUIRED_FIELD'))
+      password: Yup.string().required(i18n.t('TEXT_VALIDATION_REQUIRED_FIELD')),
     });
   }
 
   public get formValues(): FormValues<LoginFormSchema> {
     return {
       email: this.email,
-      password: this.password
+      password: this.password,
     };
   }
 }

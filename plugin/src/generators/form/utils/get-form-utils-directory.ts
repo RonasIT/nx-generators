@@ -8,7 +8,7 @@ import {
   LibraryType,
   searchAliasPath,
   searchNxLibsPaths,
-  selectProject
+  selectProject,
 } from '../../../shared/utils';
 import { getAppName } from './get-app-name';
 
@@ -47,10 +47,11 @@ export async function getFormUtilsDirectory(tree: Tree, appName: string): Promis
 
     formUtilsLibsPaths[0] = await autocomplete({
       message: 'Select the path of the library with the form utilities: ',
-      source: (input) => filterSource(
-        input as string,
-        formUtilsLibsPaths.filter((path) => [appName, constants.sharedValue].includes(getAppName(path))),
-      )
+      source: (input) =>
+        filterSource(
+          input as string,
+          formUtilsLibsPaths.filter((path) => [appName, constants.sharedValue].includes(getAppName(path))),
+        ),
     });
   }
 

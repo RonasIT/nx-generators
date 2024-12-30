@@ -12,7 +12,7 @@ const initialState: AuthState = {
   isAuthenticated: null,
   isAppReady: false,
   token: null,
-  tokenExpiresAt: null
+  tokenExpiresAt: null,
 };
 
 const authSlice = createSlice({
@@ -30,19 +30,19 @@ const authSlice = createSlice({
     },
     setTokenExpiresAt(state, { payload }: PayloadAction<DateTime | null>) {
       state.tokenExpiresAt = payload;
-    }
+    },
   },
   selectors: {
     isAuthenticated: (state) => state.isAuthenticated,
     isAppReady: (state) => state.isAppReady,
     token: (state) => state.token,
-    tokenExpiresAt: (state) => state.tokenExpiresAt
-  }
+    tokenExpiresAt: (state) => state.tokenExpiresAt,
+  },
 });
 
 export const authActions = {
   ...authSlice.actions,
-  saveToken: createAction<{ token: string | null; ttl: number }>('authState/saveToken')
+  saveToken: createAction<{ token: string | null; ttl: number }>('authState/saveToken'),
 };
 
 export const authReducer = authSlice.reducer;

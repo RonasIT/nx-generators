@@ -9,7 +9,7 @@ export type AppState = AppStateFromRootReducer<typeof rootReducer>;
 const rootReducer = {
   [authApi.reducerPath]: authApi.reducer,
   [authReducerPath]: authReducer,
-  [profileApi.reducerPath]: profileApi.reducer
+  [profileApi.reducerPath]: profileApi.reducer,
 };
 
 const middlewares = [authApi.middleware, authListenerMiddleware.middleware, profileApi.middleware];
@@ -20,7 +20,7 @@ const enhancers = reactotron ? [reactotron.createEnhancer()] : [];
 const initStore = createStoreInitializer({
   rootReducer: rootReducer as unknown as Reducer<AppState>,
   middlewares,
-  enhancers
+  enhancers,
 });
 
 export const store = initStore();

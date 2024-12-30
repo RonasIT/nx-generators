@@ -5,5 +5,5 @@ import profile from './profile.svg';
 export const Icons = {
   eye,
   eyeOff,
-  profile
+  profile,
 };

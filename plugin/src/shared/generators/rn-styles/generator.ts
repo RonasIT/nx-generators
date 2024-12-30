@@ -14,7 +14,7 @@ export async function runRNStylesGenerator(tree: Tree, options: { name: string; 
   execSync(
     `npx nx g react-lib --app=${options.directory} --scope=shared --type=ui --name=styles --withComponent=false`,
     {
-      stdio: 'inherit'
+      stdio: 'inherit',
     },
   );
 
@@ -28,7 +28,7 @@ export async function runRNStylesGenerator(tree: Tree, options: { name: string; 
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath
+    formatDirectory: () => libPath,
   });
 
   // Add dependencies

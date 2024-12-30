@@ -13,7 +13,7 @@ const context: LibTagsContext = {
   reload: (tree: Tree) => {
     context.config = readESLintConfig(tree).config;
     context.rules = getNxRules(context.config);
-  }
+  },
 };
 
 export async function libTagsGenerator(tree: Tree, options: LibTagsGeneratorSchema): Promise<void> {

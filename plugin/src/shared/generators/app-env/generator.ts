@@ -14,7 +14,7 @@ export async function runAppEnvGenerator(
 
   // Generate shared libs
   execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=utils --name=app-env`, {
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
 
   // Remove unnecessary files and files that will be replaced
@@ -26,7 +26,7 @@ export async function runAppEnvGenerator(
     formatName,
     formatAppIdentifier,
     formatDirectory: () => libPath,
-    appType
+    appType,
   });
 
   await formatFiles(tree);

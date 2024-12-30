@@ -29,23 +29,20 @@ export function ProfileDetails(): ReactElement {
           <AppSpinner />
         )}
       </View>
-      <AppButton
-        onPress={() => logout()}
-        title={translate('BUTTON_LOGOUT')}
-        isLoading={isLoading} />
+      <AppButton onPress={() => logout()} title={translate('BUTTON_LOGOUT')} isLoading={isLoading} />
     </Fragment>
   );
 }
 
 const styles = createStyles({
   profile: {
-    gap: '1rem'
+    gap: '1rem',
   },
   photo: {
     alignSelf: 'center',
     width: '75%',
     aspectRatio: 1,
     overflow: 'hidden',
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });

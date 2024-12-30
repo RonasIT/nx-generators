@@ -7,7 +7,7 @@ import {
   installPackagesTask,
   readJson,
   Tree,
-  writeJson
+  writeJson,
 } from '@nx/devkit';
 import { devDependencies } from '../../shared/dependencies';
 import config from './config';

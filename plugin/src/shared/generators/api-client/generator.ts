@@ -12,7 +12,7 @@ export async function runApiClientGenerator(tree: Tree, options: { name: string;
 
   // Generate shared libs
   execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=api-client`, {
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
 
   const appPackagePath = `${appRoot}/package.json`;
@@ -25,7 +25,7 @@ export async function runApiClientGenerator(tree: Tree, options: { name: string;
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath
+    formatDirectory: () => libPath,
   });
 
   // Add dependencies

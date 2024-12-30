@@ -14,7 +14,7 @@ export async function runUIKittenGenerator(tree: Tree, options: { name: string; 
   execSync(
     `npx nx g react-lib --app=${options.directory} --scope=shared --type=${LibraryType.FEATURES} --name=user-theme-provider --withComponent=false`,
     {
-      stdio: 'inherit'
+      stdio: 'inherit',
     },
   );
 
@@ -28,7 +28,7 @@ export async function runUIKittenGenerator(tree: Tree, options: { name: string; 
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath
+    formatDirectory: () => libPath,
   });
 
   // Update styles lib exports

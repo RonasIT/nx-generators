@@ -17,7 +17,7 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
       const filteredNxLibsPaths = searchNxLibsPaths(availableLibsPaths, input as string);
 
       return filteredNxLibsPaths.map((path) => ({ value: path }));
-    }
+    },
   });
   const fileName = options.name;
   const placeOfUse = options.placeOfUse;
@@ -39,7 +39,7 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
   generateFiles(tree, path.join(__dirname, `files`), formsPath, {
     className: formClassName,
     fileName,
-    formUtilsDirectory
+    formUtilsDirectory,
   });
   updateIndex(formsPath, fileName, tree);
 

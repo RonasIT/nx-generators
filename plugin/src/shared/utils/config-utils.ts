@@ -8,7 +8,8 @@ export interface Constraint {
   onlyDependOnLibsWithTags: Array<string>;
 }
 
-const getNxRulesEntry = (config: Record<string, any>): { files: Array<string>; rules: Record<string, any> } => config.overrides?.find((entry: { rules: { [x: string]: any } }) => !!entry.rules['@nx/enforce-module-boundaries']);
+const getNxRulesEntry = (config: Record<string, any>): { files: Array<string>; rules: Record<string, any> } =>
+  config.overrides?.find((entry: { rules: { [x: string]: any } }) => !!entry.rules['@nx/enforce-module-boundaries']);
 
 export const getNxRulesEntryOrThrowError = (
   config: Record<string, any>,
@@ -79,7 +80,7 @@ export const addNxAppTag = (tree: Tree, appDirectory: string): void => {
 
   constraints.push({
     sourceTag: `app:${appDirectory}`,
-    onlyDependOnLibsWithTags: [`app:${appDirectory}`, 'app:shared']
+    onlyDependOnLibsWithTags: [`app:${appDirectory}`, 'app:shared'],
   });
 
   writeJson(tree, path, config);
@@ -114,7 +115,7 @@ export const verifyEsLintConfig = (tree: Tree): Record<string, any> => {
     'type:data-access',
     'type:features',
     'type:ui',
-    'type:utils'
+    'type:utils',
   ];
 
   if (!config || isEmpty(config)) {

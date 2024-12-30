@@ -27,18 +27,18 @@ const darkTheme: typeof evaDark = {
   'background-basic-color-3': colors.backgroundTertiary,
 
   'border-basic-color-1': colors.borderPrimary,
-  'border-basic-color-2': colors.borderSecondary
+  'border-basic-color-2': colors.borderSecondary,
 };
 
 const lightTheme: Theme = {
-  ...darkTheme
+  ...darkTheme,
 };
 
 export const themeColorNames: Record<keyof typeof darkTheme, string> = mapValues(darkTheme, (_, key) => key);
 
 export const theme = {
   light: lightTheme,
-  dark: darkTheme
+  dark: darkTheme,
 };
 
 export type UserTheme = keyof typeof theme;

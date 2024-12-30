@@ -1,7 +1,8 @@
-export const formatName = (value: string, withoutSpaces = false): string => value
-  .split('-')
-  .map((word) => `${word.charAt(0).toUpperCase()}${word.substring(1)}`)
-  .join(withoutSpaces ? '' : ' ');
+export const formatName = (value: string, withoutSpaces = false): string =>
+  value
+    .split('-')
+    .map((word) => `${word.charAt(0).toUpperCase()}${word.substring(1)}`)
+    .join(withoutSpaces ? '' : ' ');
 
 export const formatAppIdentifier = (value: string): string => value.toLowerCase().replace(/-/g, '.');
 

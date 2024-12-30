@@ -1,12 +1,9 @@
-import { Tree } from '@nx/devkit';
-import { LibRemoveGeneratorSchema } from './schema';
-import { askQuestion, selectProject } from '../../shared/utils';
 import { execSync } from 'child_process';
+import { Tree } from '@nx/devkit';
+import { askQuestion, selectProject } from '../../shared/utils';
+import { LibRemoveGeneratorSchema } from './schema';
 
-export async function libRemoveGenerator(
-  tree: Tree,
-  options: LibRemoveGeneratorSchema
-) {
+export async function libRemoveGenerator(tree: Tree, options: LibRemoveGeneratorSchema): Promise<void> {
   const libraryName = options.libName || (await selectProject(tree, 'library', 'Select the library to remove: ')).name;
 
   if (!libraryName) {

@@ -1,7 +1,7 @@
-import React, { ReactElement } from 'react';
 import { ProfileDetails } from '@ronas-it/mobile/profile/features/details';
 import { commonStyle } from '@ronas-it/mobile/shared/ui/styles';
 import { AppScreen } from '@ronas-it/mobile/shared/ui/ui-kit';
+import React, { ReactElement } from 'react';
 
 export default function ProfileScreen(): ReactElement {
   return (

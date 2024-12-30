@@ -11,7 +11,7 @@ export default function AuthLayout(): ReactElement {
         name='index'
         options={{
           headerTitleAlign: 'left',
-          title: translate('TEXT_LOG_IN')
+          title: translate('TEXT_LOG_IN'),
         }}
       />
     </Stack>

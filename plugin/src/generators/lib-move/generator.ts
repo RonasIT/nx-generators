@@ -10,7 +10,7 @@ import {
   getLibraryDetailsByName,
   selectProject,
   validateLibraryType,
-  getLibDirectoryName
+  getLibDirectoryName,
 } from '../../shared/utils';
 import { LibMoveGeneratorSchema } from './schema';
 
@@ -34,9 +34,9 @@ export async function libMoveGenerator(tree: Tree, options: LibMoveGeneratorSche
   options.type = options.type
     ? validateLibraryType(options.type)
     : await autocomplete({
-      message: 'Select the library type: ',
-      source: (input) => filterSource(input as string, Object.values(LibraryType))
-    });
+        message: 'Select the library type: ',
+        source: (input) => filterSource(input as string, Object.values(LibraryType)),
+      });
 
   const libraryName =
     options.name ||
@@ -49,7 +49,7 @@ export async function libMoveGenerator(tree: Tree, options: LibMoveGeneratorSche
 
   execSync(`npx nx g mv --project=${srcLibraryName} --destination=${libPath}`, { stdio: 'inherit' });
 
-  return () => {
+  return (): void => {
     execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
   };
 }

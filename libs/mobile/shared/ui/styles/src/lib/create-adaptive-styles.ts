@@ -29,14 +29,7 @@ export function createAdaptiveStyles<T extends EStyleSet = EStyleSet>(
     const appTheme = useAppTheme();
 
     return useMemo(
-      () =>
-        createStyles<T>(
-          cloneDeep(
-            isFunction(stylesOrGetter)
-              ? stylesOrGetter(theme || appTheme)
-              : stylesOrGetter,
-          ),
-        ),
+      () => createStyles<T>(cloneDeep(isFunction(stylesOrGetter) ? stylesOrGetter(theme || appTheme) : stylesOrGetter)),
       [width, theme, appTheme],
     );
   };

@@ -7,22 +7,10 @@ import {
 } from '@ronas-it/axios-api-client';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { DateTime } from 'luxon';
-import {
-  authApi,
-  profileApi,
-  LogInResponse,
-} from '@ronas-it/mobile/shared/data-access/api';
-import {
-  apiService,
-  configuration,
-} from '@ronas-it/mobile/shared/data-access/api-client';
+import { authApi, profileApi, LogInResponse } from '@ronas-it/mobile/shared/data-access/api';
+import { apiService, configuration } from '@ronas-it/mobile/shared/data-access/api-client';
 import { appStorageService } from '@ronas-it/mobile/shared/data-access/storage';
-import {
-  authActions,
-  authReducerPath,
-  authSelectors,
-  AuthState,
-} from './slice';
+import { authActions, authReducerPath, authSelectors, AuthState } from './slice';
 
 export const authListenerMiddleware = createListenerMiddleware<{
   [authReducerPath]: AuthState;
@@ -36,11 +24,7 @@ authListenerMiddleware.startListening({
     const token = await appStorageService.token.get();
 
     dispatch(authActions.setIsAuthenticated(isAuthenticated === 'true'));
-    dispatch(
-      authActions.setTokenExpiresAt(
-        tokenExpiresAt ? DateTime.fromISO(tokenExpiresAt) : null,
-      ),
-    );
+    dispatch(authActions.setTokenExpiresAt(tokenExpiresAt ? DateTime.fromISO(tokenExpiresAt) : null));
     dispatch(authActions.setToken(token ?? null));
 
     apiService.useInterceptors({
@@ -65,9 +49,7 @@ authListenerMiddleware.startListening({
       configuration: configuration.auth,
       getIsAuthenticated: () => authSelectors.isAuthenticated(getState()),
       runTokenRefreshRequest: async () => {
-        const { token, ttl } = await dispatch(
-          authApi.endpoints.refreshToken.initiate(),
-        ).unwrap();
+        const { token, ttl } = await dispatch(authApi.endpoints.refreshToken.initiate()).unwrap();
         dispatch(authActions.saveToken({ token, ttl }));
 
         return token;
@@ -85,14 +67,8 @@ authListenerMiddleware.startListening({
 });
 
 authListenerMiddleware.startListening({
-  matcher: isAnyOf(
-    authApi.endpoints.login.matchFulfilled,
-    authApi.endpoints.register.matchFulfilled,
-  ),
-  effect: async (
-    { payload: { token, ttl } }: { payload: LogInResponse },
-    { dispatch },
-  ) => {
+  matcher: isAnyOf(authApi.endpoints.login.matchFulfilled, authApi.endpoints.register.matchFulfilled),
+  effect: async ({ payload: { token, ttl } }: { payload: LogInResponse }, { dispatch }) => {
     dispatch(authActions.saveToken({ token, ttl }));
     appStorageService.isAuthenticated.set('true');
     dispatch(authActions.setIsAuthenticated(true));
@@ -100,10 +76,7 @@ authListenerMiddleware.startListening({
 });
 
 authListenerMiddleware.startListening({
-  matcher: isAnyOf(
-    authApi.endpoints.logout.matchFulfilled,
-    authApi.endpoints.logout.matchRejected,
-  ),
+  matcher: isAnyOf(authApi.endpoints.logout.matchFulfilled, authApi.endpoints.logout.matchRejected),
   effect: async (_, { dispatch }) => {
     appStorageService.isAuthenticated.remove();
     appStorageService.tokenExpiresAt.remove();

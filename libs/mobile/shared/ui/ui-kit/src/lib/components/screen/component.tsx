@@ -48,12 +48,12 @@ export function AppScreen(props: AppScreenProps & (ScrollableScreenProps | NonSc
               ...restProps,
             },
           ],
-    [scrollDisabled, restProps, noOutsideSpacing]
+    [scrollDisabled, restProps, noOutsideSpacing],
   );
 
   const content = useMemo(
     () => <ViewComponent {...viewComponentProps}>{children}</ViewComponent>,
-    [children, viewComponentProps]
+    [children, viewComponentProps],
   );
 
   return withBackgroundImage ? (

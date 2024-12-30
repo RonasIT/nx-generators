@@ -7,7 +7,7 @@ import {
   QuoteKind,
   SourceFile,
   SyntaxKind,
-  VariableDeclaration
+  VariableDeclaration,
 } from 'ts-morph';
 import { addNamedImport } from '../../../shared/utils';
 
@@ -16,23 +16,28 @@ function getFormUsageCode(formClassName: string): string {
 const form = useForm({
   defaultValues: formSchema.formValues,
   resolver: yupResolver(${formClassName}.validationSchema)
-});\n\n`
+});\n\n`;
 }
 
 function getForwardRefFunction(variable: VariableDeclaration): FunctionExpression | ArrowFunction {
   const callExpressionInitializer = variable.getInitializerIfKind(SyntaxKind.CallExpression);
-  const hasForwardRef = callExpressionInitializer?.getExpression().getText() === 'forwardRef'
+  const hasForwardRef = callExpressionInitializer?.getExpression().getText() === 'forwardRef';
+
   if (!hasForwardRef) {
     throw new Error('Could not find forwardRef');
   }
 
   const argument = callExpressionInitializer.getArguments()[0];
-  const hasComponentFunction = argument && [SyntaxKind.FunctionExpression, SyntaxKind.ArrowFunction].includes(argument.getKind())
+  const hasComponentFunction =
+    argument && [SyntaxKind.FunctionExpression, SyntaxKind.ArrowFunction].includes(argument.getKind());
+
   if (!hasComponentFunction) {
     throw new Error('Could not find a component function in forwardRef');
   }
 
-  const functionExpression = argument.asKind(argument.getKind() === SyntaxKind.FunctionExpression ? SyntaxKind.FunctionExpression : SyntaxKind.ArrowFunction);
+  const functionExpression = argument.asKind(
+    argument.getKind() === SyntaxKind.FunctionExpression ? SyntaxKind.FunctionExpression : SyntaxKind.ArrowFunction,
+  );
 
   if (!functionExpression) {
     throw new Error('Could not get a component function in forwardRef');
@@ -41,31 +46,39 @@ function getForwardRefFunction(variable: VariableDeclaration): FunctionExpressio
   return functionExpression;
 }
 
-function getPlaceOfUse(file: SourceFile, placeOfUseName: string): FunctionExpression | ArrowFunction | FunctionDeclaration {
+function getPlaceOfUse(
+  file: SourceFile,
+  placeOfUseName: string,
+): FunctionExpression | ArrowFunction | FunctionDeclaration {
   const placeOfUseFunction = file.getFunction(placeOfUseName);
+
   if (placeOfUseFunction) {
     return placeOfUseFunction;
   }
 
   const variable = file.getVariableDeclaration(placeOfUseName);
+
   if (!variable) {
     throw new Error(`Could not find the place where the form should be used (${placeOfUseName}).`);
   }
 
-  return variable.getInitializerIfKind(SyntaxKind.FunctionExpression)
-    || variable.getInitializerIfKind(SyntaxKind.ArrowFunction)
-    || getForwardRefFunction(variable);
+  return (
+    variable.getInitializerIfKind(SyntaxKind.FunctionExpression) ||
+    variable.getInitializerIfKind(SyntaxKind.ArrowFunction) ||
+    getForwardRefFunction(variable)
+  );
 }
 
 export async function addFormUsage(libPath: string, placeOfUseName: string, formClassName: string): Promise<void> {
   const project = new Project({
     manipulationSettings: {
       indentationText: IndentationText.TwoSpaces,
-      quoteKind: QuoteKind.Single
-    }
+      quoteKind: QuoteKind.Single,
+    },
   });
   const files = project.addSourceFilesAtPaths([`${libPath}/lib/**/*.tsx`, `${libPath}/lib/**/*.ts`]);
   const file = files.find((file) => file.getFunction(placeOfUseName) || file.getVariableDeclaration(placeOfUseName));
+
   if (!file) {
     throw new Error('Could not find the place where the form should be used.');
   }

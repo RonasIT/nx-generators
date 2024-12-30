@@ -6,11 +6,11 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ScrollView, View } from 'react-native';
 import { authApi } from '@ronas-it/mobile/shared/data-access/api';
-import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
 import { AppVersion } from '@ronas-it/mobile/shared/ui/app-version';
+import { Images } from '@ronas-it/mobile/shared/ui/assets';
+import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
 import { AppButton, AppText, ErrorMessage, FormTextInput } from '@ronas-it/mobile/shared/ui/ui-kit';
 import { FormValues } from '@ronas-it/mobile/shared/utils/form';
-import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { LoginFormSchema } from './forms';
 
 interface LoginFormProps {
@@ -23,11 +23,13 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps): JSX.Element {
   const [login, { isLoading, isSuccess, error }] = authApi.useLoginMutation();
   const appName = Constants?.expoConfig?.name;
 
-  const onSubmit = (form: FormValues<LoginFormSchema>) => login(form);
+  const onSubmit = (form: FormValues<LoginFormSchema>): void => {
+    login(form);
+  };
 
   const form = useForm<LoginFormSchema>({
     defaultValues: formSchema.formValues,
-    resolver: yupResolver<any>(LoginFormSchema.validationSchema)
+    resolver: yupResolver<any>(LoginFormSchema.validationSchema),
   });
   const { handleSubmit, formState, control } = form;
 
@@ -65,7 +67,7 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps): JSX.Element {
         />
         {!!error?.message && <ErrorMessage message={error.message} />}
       </View>
-      
+
       <View style={style.footer}>
         <AppButton
           onPress={handleSubmit(onSubmit)}
@@ -73,7 +75,8 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps): JSX.Element {
           isLoading={isLoading}
           disabled={!formState.isValid}
           testID='submit-button'
-          title={translate('BUTTON_SUBMIT')} />
+          title={translate('BUTTON_SUBMIT')}
+        />
       </View>
       <AppVersion />
     </ScrollView>
@@ -82,20 +85,20 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps): JSX.Element {
 
 const style = createStyles({
   content: {
-    paddingTop: '2rem'
+    paddingTop: '2rem',
   },
   logo: {
     width: '3.5rem',
     height: '3.5rem',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   title: {
-    marginVertical: '2rem'
+    marginVertical: '2rem',
   },
   form: {
-    gap: '0.5rem'
+    gap: '0.5rem',
   },
   footer: {
-    marginTop: '2rem'
-  }
+    marginTop: '2rem',
+  },
 });

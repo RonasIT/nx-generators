@@ -26,7 +26,5 @@ export const commonStyle = createStyles({
   },
 });
 
-export const getResponsiveWidth = (width: number) =>
-  screenWidth * (width / 100);
-export const getResponsiveHeight = (height: number) =>
-  screenHeight * (height / 100);
+export const getResponsiveWidth = (width: number): number => screenWidth * (width / 100);
+export const getResponsiveHeight = (height: number): number => screenHeight * (height / 100);

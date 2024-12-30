@@ -1,10 +1,10 @@
-import { Tree, getProjects, ProjectConfiguration, formatFiles, output } from '@nx/devkit';
-import { LibTagsGeneratorSchema } from './schema';
 import { execSync } from 'child_process';
-import { askQuestion, getNxRules, readESLintConfig, verifyEsLintConfig } from '../../shared/utils';
+import { Tree, getProjects, ProjectConfiguration, formatFiles, output } from '@nx/devkit';
 import { noop } from 'lodash';
-import { checkApplicationTags, checkLibraryTags } from './utils';
+import { askQuestion, getNxRules, readESLintConfig, verifyEsLintConfig } from '../../shared/utils';
 import { LibTagsContext } from './interfaces';
+import { LibTagsGeneratorSchema } from './schema';
+import { checkApplicationTags, checkLibraryTags } from './utils';
 
 const context: LibTagsContext = {
   config: {},
@@ -13,17 +13,15 @@ const context: LibTagsContext = {
   reload: (tree: Tree) => {
     context.config = readESLintConfig(tree).config;
     context.rules = getNxRules(context.config);
-  }
+  },
 };
 
-export async function libTagsGenerator(
-  tree: Tree,
-  options: LibTagsGeneratorSchema,
-) {
+export async function libTagsGenerator(tree: Tree, options: LibTagsGeneratorSchema): Promise<void> {
   const hasUnstagedChanges = !options.skipRepoCheck && execSync('git status -s').toString('utf8');
 
   if (hasUnstagedChanges) {
-    const shouldContinue = await askQuestion('You have unstaged changes. Are you sure you want to continue? (y/n): ') === 'y';
+    const shouldContinue =
+      (await askQuestion('You have unstaged changes. Are you sure you want to continue? (y/n): ')) === 'y';
 
     if (!shouldContinue) {
       return;

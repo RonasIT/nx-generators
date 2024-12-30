@@ -4,6 +4,7 @@ export function getLibDirectoryName(libName: string, scopeName: string): string 
   let newLibWords = libWords;
 
   const startsWithScopeWords = scopeWords.every((word, index) => libWords[index] === word);
+
   if (startsWithScopeWords && libWords.length > scopeWords.length) {
     newLibWords = libWords.slice(scopeWords.length);
   }

@@ -12,11 +12,7 @@ const rootReducer = {
   [profileApi.reducerPath]: profileApi.reducer,
 };
 
-const middlewares = [
-  authApi.middleware,
-  authListenerMiddleware.middleware,
-  profileApi.middleware,
-];
+const middlewares = [authApi.middleware, authListenerMiddleware.middleware, profileApi.middleware];
 
 const reactotron = setupReactotron('my-app');
 const enhancers = reactotron ? [reactotron.createEnhancer()] : [];

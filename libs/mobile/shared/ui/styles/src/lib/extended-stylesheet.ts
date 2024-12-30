@@ -16,11 +16,7 @@ interface AnyStyleSet {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type EStyleSet<T = any> = {
-  [K in keyof T]: T[K] extends Variable<number>
-    ? T[K]
-    : T[K] extends MediaQuery
-      ? T[K]
-      : Extended<AnyStyle>;
+  [K in keyof T]: T[K] extends Variable<number> ? T[K] : T[K] extends MediaQuery ? T[K] : Extended<AnyStyle>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,10 +38,7 @@ export interface MediaQuery {
   [key: string]: Extended<AnyStyle>;
 }
 
-export const createStyles = <T = EStyleSet>(
-  styles: EStyleSet<T>,
-): StyleSet<T> => EStyleSheet.create(styles) as StyleSet<T>;
-export const styleValue = (key: string, prop?: string) =>
-  EStyleSheet.value(key, prop);
-export const flattenStyle = (style: AnyStyle): AnyStyle =>
-  EStyleSheet.flatten(style);
+export const createStyles = <T = EStyleSet>(styles: EStyleSet<T>): StyleSet<T> =>
+  EStyleSheet.create(styles) as StyleSet<T>;
+export const styleValue = (key: string, prop?: string): any => EStyleSheet.value(key, prop);
+export const flattenStyle = (style: AnyStyle): AnyStyle => EStyleSheet.flatten(style);

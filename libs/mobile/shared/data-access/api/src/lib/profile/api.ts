@@ -1,9 +1,6 @@
 import { prepareRequestParams } from '@ronas-it/rtkq-entity-api';
 import { plainToInstance } from 'class-transformer';
-import {
-  axiosBaseQuery,
-  createAppApi,
-} from '@ronas-it/mobile/shared/data-access/api-client';
+import { axiosBaseQuery, createAppApi } from '@ronas-it/mobile/shared/data-access/api-client';
 import { User } from '../user';
 import { profileApiConfig } from './config';
 import { GetProfileRequest } from './models';
@@ -19,10 +16,7 @@ export const profileApi = createAppApi({
   endpoints: (builder) => ({
     getProfile: builder.query<User, void>({
       query: () => {
-        const params = prepareRequestParams(
-          profileApiConfig.defaultGetProfileParams,
-          GetProfileRequest,
-        );
+        const params = prepareRequestParams(profileApiConfig.defaultGetProfileParams, GetProfileRequest);
 
         return {
           method: 'GET',

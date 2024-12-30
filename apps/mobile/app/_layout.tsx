@@ -2,13 +2,13 @@ import { authSelectors } from '@ronas-it/mobile/shared/data-access/auth';
 import { store } from '@ronas-it/mobile/shared/data-access/store';
 import { UserThemeProvider } from '@ronas-it/mobile/shared/features/user-theme-provider';
 import { fonts } from '@ronas-it/mobile/shared/ui/styles';
+import { setLanguage } from '@ronas-it/react-native-common-modules';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { ReactElement, useEffect } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { setLanguage } from '@ronas-it/react-native-common-modules';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -18,15 +18,15 @@ const useLanguage = setLanguage(
       ...require('i18n/mobile/app/en.json'),
       ...require('i18n/mobile/auth/en.json'),
       ...require('i18n/mobile/profile/en.json'),
-      ...require('i18n/mobile/shared/en.json')
-    }
+      ...require('i18n/mobile/shared/en.json'),
+    },
   },
-  'en'
+  'en',
 );
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const unstable_settings = {
-  initialRouteName: 'index'
+  initialRouteName: 'index',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.

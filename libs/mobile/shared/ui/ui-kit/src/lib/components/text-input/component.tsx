@@ -30,7 +30,7 @@ export const AppTextInput = React.forwardRef(function Component(
     multiline,
     ...props
   }: AppTextInputProps,
-  ref: React.ForwardedRef<Input>
+  ref: React.ForwardedRef<Input>,
 ): ReactElement {
   const theme = useAppTheme();
   const [isSecured, setIsSecured] = useState(true);
@@ -46,21 +46,19 @@ export const AppTextInput = React.forwardRef(function Component(
       ) : (
         accessoryRight
       ),
-    [isSecured]
+    [isSecured],
   );
 
   const renderLabel = useMemo(
     (): InputProps['label'] =>
       typeof label === 'string' ? (
         <View>
-          <AppText category={'c1'}>
-            {label}
-          </AppText>
+          <AppText category={'c1'}>{label}</AppText>
         </View>
       ) : (
         label
       ),
-    [label]
+    [label],
   );
 
   const renderErrorCaption = useMemo(() => error && <ErrorMessage message={error} />, [error]);
@@ -95,5 +93,5 @@ export const AppTextInput = React.forwardRef(function Component(
 const styles = createStyles({
   text: {
     alignSelf: 'flex-start',
-  }
+  },
 });

@@ -28,14 +28,7 @@
       }
     }
   },
-  "plugins": [
-    "@typescript-eslint",
-    "@stylistic",
-    "unused-imports",
-    "react",
-    "react-hooks",
-    "import"
-  ],
+  "plugins": ["@typescript-eslint", "@stylistic", "unused-imports", "react", "react-hooks", "import"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
@@ -53,10 +46,7 @@
     "no-dupe-class-members": "off",
     "import/prefer-default-export": "off",
     "@stylistic/implicit-arrow-linebreak": ["warn", "beside"],
-    "@stylistic/newline-per-chained-call": [
-      "warn",
-      { "ignoreChainWithDepth": 2 }
-    ],
+    "@stylistic/newline-per-chained-call": ["warn", { "ignoreChainWithDepth": 2 }],
     "@stylistic/function-call-argument-newline": ["warn", "consistent"],
     "@stylistic/function-paren-newline": ["warn", "consistent"],
     "@stylistic/array-element-newline": ["warn", "consistent"],
@@ -67,19 +57,9 @@
       { "blankLine": "always", "prev": "*", "next": "multiline-block-like" }
     ],
     "@typescript-eslint/no-use-before-define": ["warn", { "variables": false }],
-    "@stylistic/lines-between-class-members": [
-      "warn",
-      "always",
-      { "exceptAfterSingleLine": true }
-    ],
-    "@typescript-eslint/no-inferrable-types": [
-      "warn",
-      { "ignoreParameters": true }
-    ],
-    "@typescript-eslint/explicit-module-boundary-types": [
-      "warn",
-      { "allowArgumentsExplicitlyTypedAsAny": true }
-    ],
+    "@stylistic/lines-between-class-members": ["warn", "always", { "exceptAfterSingleLine": true }],
+    "@typescript-eslint/no-inferrable-types": ["warn", { "ignoreParameters": true }],
+    "@typescript-eslint/explicit-module-boundary-types": ["warn", { "allowArgumentsExplicitlyTypedAsAny": true }],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-member-accessibility": [
       "warn",
@@ -88,16 +68,10 @@
         "overrides": { "constructors": "no-public" }
       }
     ],
-    "@typescript-eslint/explicit-function-return-type": [
-      "warn",
-      { "allowExpressions": true }
-    ],
+    "@typescript-eslint/explicit-function-return-type": ["warn", { "allowExpressions": true }],
     "@typescript-eslint/no-require-imports": "off",
     "@typescript-eslint/no-unused-vars": "off",
-    "@typescript-eslint/array-type": [
-      "warn",
-      { "default": "generic", "readonly": "generic" }
-    ],
+    "@typescript-eslint/array-type": ["warn", { "default": "generic", "readonly": "generic" }],
     "@typescript-eslint/member-ordering": [
       "warn",
       {
@@ -138,14 +112,8 @@
     ],
     "@stylistic/jsx-quotes": ["warn", "prefer-single"],
     "react/jsx-boolean-value": "off",
-    "@stylistic/jsx-self-closing-comp": [
-      "warn",
-      { "component": true, "html": true }
-    ],
-    "@stylistic/jsx-max-props-per-line": [
-      1,
-      { "maximum": { "single": 2, "multi": 1 } }
-    ],
+    "@stylistic/jsx-self-closing-comp": ["warn", { "component": true, "html": true }],
+    "@stylistic/jsx-max-props-per-line": [1, { "maximum": { "single": 2, "multi": 1 } }],
     "@stylistic/jsx-first-prop-new-line": ["warn", "multiline"],
     "react/prop-types": "off",
     "react/jsx-fragments": ["warn", "element"],
@@ -155,16 +123,7 @@
     "import/order": [
       "warn",
       {
-        "groups": [
-          "builtin",
-          "external",
-          "internal",
-          "parent",
-          "sibling",
-          "index",
-          "object",
-          "type"
-        ],
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index", "object", "type"],
         "alphabetize": { "order": "asc" }
       }
     ],

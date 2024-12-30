@@ -34,8 +34,7 @@ const lightTheme: Theme = {
   ...darkTheme,
 };
 
-export const themeColorNames: Record<keyof typeof darkTheme, string> =
-  mapValues(darkTheme, (_, key) => key);
+export const themeColorNames: Record<keyof typeof darkTheme, string> = mapValues(darkTheme, (_, key) => key);
 
 export const theme = {
   light: lightTheme,

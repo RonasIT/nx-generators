@@ -26,7 +26,7 @@ export const AppButton = forwardRef<Button, AppButtonProps>(function Component(
     withPaddings,
     ...props
   }: AppButtonProps,
-  ref
+  ref,
 ): ReactElement {
   return (
     <Button

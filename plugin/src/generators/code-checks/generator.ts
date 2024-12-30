@@ -56,15 +56,11 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   writeJson(tree, '.eslintrc.json', esLintConfig);
 
   // Install necessary dependencies
-  addDependenciesToPackageJson(
-    tree,
-    {},
-    devDependencies['code-checks']
-  );
+  addDependenciesToPackageJson(tree, {}, devDependencies['code-checks']);
 
   await formatFiles(tree);
 
-  return () => {
+  return (): void => {
     installPackagesTask(tree);
   };
 }

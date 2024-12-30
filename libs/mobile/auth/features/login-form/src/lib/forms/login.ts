@@ -11,13 +11,12 @@ export class LoginFormSchema implements BaseFormSchema<LoginFormSchema> {
     this.password = schema?.password || '';
   }
 
-
   public static get validationSchema(): Yup.ObjectSchema<FormValues<LoginFormSchema>> {
     return Yup.object().shape({
       email: Yup.string()
         .email(i18n.t('AUTH.VALIDATION.TEXT_VALIDATION_EMAIL'))
         .required(i18n.t('AUTH.VALIDATION.TEXT_VALIDATION_REQUIRED_FIELD')),
-      password: Yup.string().required(i18n.t('TEXT_VALIDATION_REQUIRED_FIELD'))
+      password: Yup.string().required(i18n.t('TEXT_VALIDATION_REQUIRED_FIELD')),
     });
   }
 

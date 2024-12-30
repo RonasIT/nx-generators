@@ -13,11 +13,11 @@ import {
   selectProject,
   validateLibraryType,
   getLibDirectoryName,
-  createCliReadline
+  createCliReadline,
 } from '../../shared/utils';
 import { ReactLibGeneratorSchema } from './schema';
 
-export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema) {
+export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema): Promise<void> {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
     'inquirer-autocomplete-standalone',
   );
@@ -32,9 +32,9 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   options.type = options.type
     ? validateLibraryType(options.type)
     : await autocomplete({
-      message: 'Select the library type: ',
-      source: (input) => filterSource(input as string, Object.values(LibraryType))
-    });
+        message: 'Select the library type: ',
+        source: (input) => filterSource(input as string, Object.values(LibraryType)),
+      });
 
   const cliReadline = createCliReadline();
   options.name =
@@ -78,7 +78,7 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
 
   if (libDirectoryName !== options.name) {
     output.warn({
-      title: `The library directory was changed to ${output.bold(libDirectoryName)} so that it does not start with the scope name.`
+      title: `The library directory was changed to ${output.bold(libDirectoryName)} so that it does not start with the scope name.`,
     });
   }
 }

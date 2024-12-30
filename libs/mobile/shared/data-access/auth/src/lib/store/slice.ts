@@ -42,9 +42,7 @@ const authSlice = createSlice({
 
 export const authActions = {
   ...authSlice.actions,
-  saveToken: createAction<{ token: string | null; ttl: number }>(
-    'authState/saveToken',
-  ),
+  saveToken: createAction<{ token: string | null; ttl: number }>('authState/saveToken'),
 };
 
 export const authReducer = authSlice.reducer;

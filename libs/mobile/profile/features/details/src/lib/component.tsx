@@ -5,11 +5,7 @@ import { View } from 'react-native';
 import { authApi, profileApi } from '@ronas-it/mobile/shared/data-access/api';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { commonStyle, createStyles } from '@ronas-it/mobile/shared/ui/styles';
-import {
-  AppText,
-  AppButton,
-  AppSpinner,
-} from '@ronas-it/mobile/shared/ui/ui-kit';
+import { AppText, AppButton, AppSpinner } from '@ronas-it/mobile/shared/ui/ui-kit';
 
 export function ProfileDetails(): ReactElement {
   const translate = useTranslation('PROFILE.DETAILS');
@@ -22,9 +18,7 @@ export function ProfileDetails(): ReactElement {
       <View style={commonStyle.fullFlex}>
         {profile ? (
           <View style={styles.profile}>
-            <AppText category="h1">
-              {translate('TEXT_GREETING', { name: profile.nickname })}
-            </AppText>
+            <AppText category='h1'>{translate('TEXT_GREETING', { name: profile.nickname })}</AppText>
             <Image source={avatarSrc} style={styles.photo} />
             <View>
               <AppText>{translate('TEXT_EMAIL', { email: profile.email })}</AppText>
@@ -38,8 +32,7 @@ export function ProfileDetails(): ReactElement {
       <AppButton
         onPress={() => logout()}
         title={translate('BUTTON_LOGOUT')}
-        isLoading={isLoading}
-      />
+        isLoading={isLoading} />
     </Fragment>
   );
 }

@@ -1,15 +1,12 @@
 import { prepareRequestParams } from '@ronas-it/rtkq-entity-api';
 import { plainToInstance } from 'class-transformer';
-import {
-  axiosBaseQuery,
-  createAppApi,
-} from '@ronas-it/mobile/shared/data-access/api-client';
+import { axiosBaseQuery, createAppApi } from '@ronas-it/mobile/shared/data-access/api-client';
 import { User } from '../user';
 import { profileApiConfig } from './config';
 import { GetProfileRequest } from './models';
 
 export enum ProfileApiTag {
-  PROFILE = 'profile',
+  PROFILE = 'profile'
 }
 
 export const profileApi = createAppApi({
@@ -19,19 +16,16 @@ export const profileApi = createAppApi({
   endpoints: (builder) => ({
     getProfile: builder.query<User, void>({
       query: () => {
-        const params = prepareRequestParams(
-          profileApiConfig.defaultGetProfileParams,
-          GetProfileRequest,
-        );
+        const params = prepareRequestParams(profileApiConfig.defaultGetProfileParams, GetProfileRequest);
 
         return {
           method: 'GET',
           url: '/profile',
-          params,
+          params
         };
       },
       transformResponse: (response) => plainToInstance(User, response),
-      providesTags: [ProfileApiTag.PROFILE],
+      providesTags: [ProfileApiTag.PROFILE]
     }),
     updateProfile: builder.mutation<void, User>({
       query: (params) => {
@@ -40,19 +34,19 @@ export const profileApi = createAppApi({
         return {
           method: 'PUT',
           url: '/profile',
-          data: request,
+          data: request
         };
       },
-      invalidatesTags: [ProfileApiTag.PROFILE],
+      invalidatesTags: [ProfileApiTag.PROFILE]
     }),
     deleteProfile: builder.mutation<void, void>({
       query: () => {
         return {
           method: 'DELETE',
-          url: '/profile',
+          url: '/profile'
         };
       },
-      invalidatesTags: [ProfileApiTag.PROFILE],
-    }),
-  }),
+      invalidatesTags: [ProfileApiTag.PROFILE]
+    })
+  })
 });

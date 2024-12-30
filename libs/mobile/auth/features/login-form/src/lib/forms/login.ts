@@ -11,7 +11,6 @@ export class LoginFormSchema implements BaseFormSchema<LoginFormSchema> {
     this.password = schema?.password || '';
   }
 
-
   public static get validationSchema(): Yup.ObjectSchema<FormValues<LoginFormSchema>> {
     return Yup.object().shape({
       email: Yup.string()
@@ -24,7 +23,7 @@ export class LoginFormSchema implements BaseFormSchema<LoginFormSchema> {
   public get formValues(): FormValues<LoginFormSchema> {
     return {
       email: this.email,
-      password: this.password,
+      password: this.password
     };
   }
 }

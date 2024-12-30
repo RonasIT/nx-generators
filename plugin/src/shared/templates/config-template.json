@@ -17,12 +17,7 @@
           },
           {
             "sourceTag": "type:app",
-            "onlyDependOnLibsWithTags": [
-              "type:features",
-              "type:ui",
-              "type:utils",
-              "type:data-access"
-            ]
+            "onlyDependOnLibsWithTags": ["type:features", "type:ui", "type:utils", "type:data-access"]
           },
           {
             "sourceTag": "type:utils",
@@ -34,12 +29,7 @@
           },
           {
             "sourceTag": "type:features",
-            "onlyDependOnLibsWithTags": [
-              "type:features",
-              "type:data-access",
-              "type:ui",
-              "type:utils"
-            ]
+            "onlyDependOnLibsWithTags": ["type:features", "type:data-access", "type:ui", "type:utils"]
           },
           {
             "sourceTag": "type:ui",

@@ -33,7 +33,7 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
     'text-caption-2-font-family': fontFamily.bold,
     'text-label-font-size': rem,
     'text-label-font-weight': '400',
-    'text-label-font-family': fontFamily.regular,
+    'text-label-font-family': fontFamily.regular
   },
   components: {
     Text: {
@@ -41,20 +41,20 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
         scope: 'all',
         parameters: {
           lineHeight: {
-            type: 'number',
-          },
+            type: 'number'
+          }
         },
         appearances: {},
         variantGroups: {
           category: {
             xs1: {
-              default: false,
+              default: false
             },
             xs2: {
-              default: false,
-            },
-          },
-        },
+              default: false
+            }
+          }
+        }
       },
       appearances: {
         default: {
@@ -62,72 +62,72 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
           variantGroups: {
             category: {
               h1: {
-                lineHeight: 2 * rem,
+                lineHeight: 2 * rem
               },
               h2: {
-                lineHeight: 1.5 * rem,
+                lineHeight: 1.5 * rem
               },
               s1: {
-                lineHeight: 1.5 * rem,
+                lineHeight: 1.5 * rem
               },
               s2: {
-                lineHeight: 1.375 * rem,
+                lineHeight: 1.375 * rem
               },
               p1: {
-                lineHeight: 1.25 * rem,
+                lineHeight: 1.25 * rem
               },
               p2: {
-                lineHeight: 1.25 * rem,
+                lineHeight: 1.25 * rem
               },
               c1: {
-                lineHeight: rem,
+                lineHeight: rem
               },
               c2: {
-                lineHeight: rem,
+                lineHeight: rem
               },
               xs1: {
                 fontFamily: fontFamily.regular,
                 fontSize: 0.6875 * rem,
-                lineHeight: rem,
+                lineHeight: rem
               },
               xs2: {
                 fontFamily: fontFamily.bold,
                 fontSize: 0.6875 * rem,
-                lineHeight: rem,
-              },
+                lineHeight: rem
+              }
             },
             status: {
               basic: {
-                color: colors.textPrimary,
+                color: colors.textPrimary
               },
               danger: {
-                color: colors.error,
-              },
-            },
-          },
-        },
-      },
+                color: colors.error
+              }
+            }
+          }
+        }
+      }
     },
     Button: {
       meta: {
         parameters: {
           opacity: {
-            type: 'number',
+            type: 'number'
           },
           height: {
-            type: 'number',
-          },
+            type: 'number'
+          }
         },
         variantGroups: {
           size: {
             medium: {
-              default: false,
+              default: false
             },
             large: {
-              default: true,
-            },
-          },
-        },
+              default: true
+            }
+          }
+        }
       },
       appearances: {
         filled: {
@@ -143,15 +143,15 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
                   active: {
                     backgroundColor: colors.primaryPressed,
                     borderColor: colors.primaryPressed,
-                    borderWidth: 1,
+                    borderWidth: 1
                   },
                   disabled: {
                     backgroundColor: colors.textTertriary,
                     borderColor: colors.textTertriary,
                     borderWidth: 1,
-                    textColor: colors.textSecondary,
-                  },
-                },
+                    textColor: colors.textSecondary
+                  }
+                }
               },
               basic: {
                 textColor: colors.textPrimary,
@@ -162,16 +162,16 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
                   active: {
                     textColor: colors.textPrimary,
                     borderColor: colors.textTertriary,
-                    backgroundColor: colors.textTertriary,
+                    backgroundColor: colors.textTertriary
                   },
                   disabled: {
                     backgroundColor: colors.backgroundTertiary,
                     borderColor: colors.backgroundTertiary,
                     borderWidth: 1,
-                    textColor: colors.textSecondary,
-                  },
-                },
-              },
+                    textColor: colors.textSecondary
+                  }
+                }
+              }
             },
             size: {
               large: {
@@ -186,7 +186,7 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
                 paddingVertical: 0,
                 iconMarginHorizontal: 0,
                 iconWidth: 'auto',
-                iconHeight: 'auto',
+                iconHeight: 'auto'
               },
               medium: {
                 textFontFamily: fontFamily.bold,
@@ -200,7 +200,7 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
                 paddingVertical: 0,
                 iconMarginHorizontal: 0,
                 iconWidth: 'auto',
-                iconHeight: 'auto',
+                iconHeight: 'auto'
               },
               small: {
                 textFontFamily: fontFamily.bold,
@@ -209,10 +209,10 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
                 minHeight: 40,
                 minWidth: 40,
                 borderRadius: 12,
-                borderWidth: 1,
-              },
-            },
-          },
+                borderWidth: 1
+              }
+            }
+          }
         },
         ghost: {
           variantGroups: {
@@ -225,14 +225,14 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
                   active: {
                     backgroundColor: 'transparent',
                     borderColor: 'transparent',
-                    textColor: colors.primaryPressed,
+                    textColor: colors.primaryPressed
                   },
                   disabled: {
                     backgroundColor: 'transparent',
                     borderColor: 'transparent',
-                    textColor: colors.textSecondary,
-                  },
-                },
+                    textColor: colors.textSecondary
+                  }
+                }
               },
               basic: {
                 backgroundColor: 'transparent',
@@ -242,19 +242,19 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
                   active: {
                     backgroundColor: 'transparent',
                     borderColor: 'transparent',
-                    textColor: colors.textSecondary,
+                    textColor: colors.textSecondary
                   },
                   disabled: {
                     backgroundColor: 'transparent',
                     borderColor: 'transparent',
-                    textColor: colors.textSecondary,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
+                    textColor: colors.textSecondary
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     },
     Input: {
       appearances: {
@@ -262,7 +262,7 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
           mapping: {
             textFontFamily: fontFamily.regular,
             textFontSize: rem,
-            captionFontWeight: '400',
+            captionFontWeight: '400'
           },
           variantGroups: {
             status: {
@@ -274,9 +274,9 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
                 state: {
                   focused: {
                     backgroundColor: colors.backgroundSecondary,
-                    borderColor: colors.textSecondary,
-                  },
-                },
+                    borderColor: colors.textSecondary
+                  }
+                }
               },
               danger: {
                 backgroundColor: colors.backgroundTertiary,
@@ -288,10 +288,10 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
                     textColor: colors.textPrimary,
                     placeholderColor: colors.textSecondary,
                     backgroundColor: colors.backgroundSecondary,
-                    borderColor: colors.error,
-                  },
-                },
-              },
+                    borderColor: colors.error
+                  }
+                }
+              }
             },
             size: {
               medium: {
@@ -299,12 +299,12 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
                 textFontSize: rem,
                 borderRadius: 12,
                 paddingVertical: 7,
-                paddingHorizontal: 9,
-              },
-            },
-          },
-        },
-      },
+                paddingHorizontal: 9
+              }
+            }
+          }
+        }
+      }
     },
     Avatar: {
       appearances: {
@@ -313,24 +313,24 @@ export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {
             size: {
               large: {
                 height: 6.75 * rem,
-                width: 6.75 * rem,
+                width: 6.75 * rem
               },
               medium: {
                 height: 2.5 * rem,
-                width: 2.5 * rem,
+                width: 2.5 * rem
               },
               small: {
                 height: 1.5 * rem,
-                width: 1.5 * rem,
+                width: 1.5 * rem
               },
               tiny: {
                 height: rem,
-                width: rem,
-              },
-            },
-          },
-        },
-      },
-    },
-  },
+                width: rem
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 };

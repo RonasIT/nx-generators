@@ -12,7 +12,11 @@ interface ErrorMessageProps extends AppTextProps {
 export function ErrorMessage({ message, textStyle, containerStyle, ...props }: ErrorMessageProps): ReactElement {
   return (
     <View style={[styles.container, containerStyle]}>
-      <AppText status={'danger'} category={'c1'} style={textStyle} {...props}>
+      <AppText
+        status={'danger'}
+        category={'c1'}
+        style={textStyle}
+        {...props}>
         {message}
       </AppText>
     </View>
@@ -21,6 +25,6 @@ export function ErrorMessage({ message, textStyle, containerStyle, ...props }: E
 
 const styles = createStyles({
   container: {
-    paddingTop: 4,
-  },
+    paddingTop: 4
+  }
 });

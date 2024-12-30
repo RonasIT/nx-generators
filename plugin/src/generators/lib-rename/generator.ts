@@ -3,7 +3,7 @@ import { Tree } from '@nx/devkit';
 import { askQuestion, getLibraryDetailsByName } from '../../shared/utils';
 import { LibRenameGeneratorSchema } from './schema';
 
-export async function libRenameGenerator(tree: Tree, options: LibRenameGeneratorSchema) {
+export async function libRenameGenerator(tree: Tree, options: LibRenameGeneratorSchema): Promise<void> {
   const { name: currentLibraryName, path: currentLibraryPath } = await getLibraryDetailsByName(
     tree,
     options.currentLibName,

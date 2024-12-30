@@ -30,37 +30,33 @@ export const AppTextInput = React.forwardRef(function Component(
     multiline,
     ...props
   }: AppTextInputProps,
-  ref: React.ForwardedRef<Input>
+  ref: React.ForwardedRef<Input>,
 ): ReactElement {
   const theme = useAppTheme();
   const [isSecured, setIsSecured] = useState(true);
 
   const renderAccessoryRight = useMemo(
-    () =>
-      isPassword ? (
-        <AppPressableIcon
-          name={isSecured ? 'eye' : 'eyeOff'}
-          color={theme['text-primary-color']}
-          onPress={() => setIsSecured(!isSecured)}
-        />
-      ) : (
-        accessoryRight
-      ),
-    [isSecured]
+    () => isPassword ? (
+      <AppPressableIcon
+        name={isSecured ? 'eye' : 'eyeOff'}
+        color={theme['text-primary-color']}
+        onPress={() => setIsSecured(!isSecured)}
+      />
+    ) : (
+      accessoryRight
+    ),
+    [isSecured],
   );
 
   const renderLabel = useMemo(
-    (): InputProps['label'] =>
-      typeof label === 'string' ? (
-        <View>
-          <AppText category={'c1'}>
-            {label}
-          </AppText>
-        </View>
-      ) : (
-        label
-      ),
-    [label]
+    (): InputProps['label'] => typeof label === 'string' ? (
+      <View>
+        <AppText category={'c1'}>{label}</AppText>
+      </View>
+    ) : (
+      label
+    ),
+    [label],
   );
 
   const renderErrorCaption = useMemo(() => error && <ErrorMessage message={error} />, [error]);
@@ -94,6 +90,6 @@ export const AppTextInput = React.forwardRef(function Component(
 
 const styles = createStyles({
   text: {
-    alignSelf: 'flex-start',
+    alignSelf: 'flex-start'
   }
 });

@@ -1,6 +1,6 @@
 export const dependencies = {
   'expo-app': {
-    "@ronas-it/react-native-common-modules": "^0.6.0",
+    '@ronas-it/react-native-common-modules': '^0.6.0',
     'expo-constants': '~17.0.3',
     'expo-dev-client': '^5.0.6',
     'expo-router': '~4.0.14',
@@ -10,7 +10,7 @@ export const dependencies = {
     'expo-status-bar': '^2.0.0',
     'expo-updates': '^0.26.10',
     'expo-insights': '~0.8.1',
-    "lodash-es": "^4.17.21"
+    'lodash-es': '^4.17.21'
   },
   'expo-app-root': {
     // Need new version to fix this error:
@@ -18,18 +18,18 @@ export const dependencies = {
     'react-native-svg-transformer': '^1.4.0'
   },
   'next-app': {
-    'next-intl': '^3.17.2',
+    'next-intl': '^3.17.2'
   },
   'api-client': {
-    '@ronas-it/axios-api-client': '^0.1.0',
+    '@ronas-it/axios-api-client': '^0.1.0'
   },
-  'auth': {
-    'luxon': '^3.4.4'
+  auth: {
+    luxon: '^3.4.4'
   },
   'rn-styles': {
     'react-native-extended-stylesheet': '^0.12.0'
   },
-  'store': {
+  store: {
     '@ronas-it/rtkq-entity-api': '^0.3.1',
     'react-redux': '^9.1.2'
   },
@@ -37,17 +37,17 @@ export const dependencies = {
     '@eva-design/eva': '^2.2.0',
     '@ui-kitten/components': '^5.3.1'
   },
-  'form': {
+  form: {
     '@hookform/resolvers': '^3.9.0',
     'react-hook-form': '^7.53.0',
-    'yup': '^1.4.0'
+    yup: '^1.4.0'
   }
 };
 
 export const devDependencies = {
   'code-checks': {
-    'eslint': '^9.8.0',
-    'prettier': '^3.3.2',
+    eslint: '^9.8.0',
+    prettier: '^3.3.2',
     'eslint-config-prettier': '^9.1.0',
     'eslint-import-resolver-typescript': '^3.7.0',
     'eslint-plugin-import': '^2.29.1',
@@ -55,22 +55,22 @@ export const devDependencies = {
     'eslint-plugin-react': '^7.34.3',
     'eslint-plugin-react-hooks': '^5.0.0',
     'eslint-plugin-unused-imports': '^4.1.4',
-    'husky': '^9.1.5',
+    husky: '^9.1.5',
     '@stylistic/eslint-plugin': '^2.12.1',
     '@typescript-eslint/eslint-plugin': '^8.18.1',
     '@typescript-eslint/parser': '^8.18.1',
-    'tsc-files': '^1.1.4',
+    'tsc-files': '^1.1.4'
   },
   'expo-app': {
-    '@types/lodash': '^4.14.194',
+    '@types/lodash': '^4.14.194'
   },
   'expo-app-root': {
     'cross-env': '^7.0.3'
   },
   'repo-config': {
-    'syncpack': '^12.3.2',
+    syncpack: '^12.3.2'
   },
-  'auth': {
+  auth: {
     '@types/luxon': '3.4.2'
   }
 };

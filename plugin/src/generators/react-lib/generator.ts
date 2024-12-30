@@ -17,7 +17,7 @@ import {
 } from '../../shared/utils';
 import { ReactLibGeneratorSchema } from './schema';
 
-export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema) {
+export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema): Promise<void> {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
     'inquirer-autocomplete-standalone',
   );

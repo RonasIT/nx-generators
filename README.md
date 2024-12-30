@@ -85,7 +85,9 @@ Generates and configures an Expo React Native app.
 ```sh
 npx nx g expo-app --name=my-app --directory=mobile
 ```
+
 or
+
 ```sh
 npx nx g expo-app my-app mobile
 ```
@@ -105,7 +107,9 @@ Generates and configures a Next.js app.
 ```sh
 npx nx g next-app --name=my-app --directory=web
 ```
+
 or
+
 ```sh
 npx nx g next-app my-app web
 ```
@@ -141,7 +145,9 @@ Generates a library according to [NX notation](https://nx.dev/concepts/more-conc
 ```sh
 npx nx g react-lib --app=mobile --scope=account --type=features --name=profile-settings --withComponent --withComponentForwardRef --dryRun
 ```
+
 or
+
 ```sh
 npx nx g react-lib --dryRun
 ```
@@ -235,7 +241,9 @@ Creates a React component in particular library.
 ```sh
 npx nx g react-component --name=AppButton --subcomponent --withForwardRef
 ```
+
 or
+
 ```sh
 npx nx g react-component AppButton --subcomponent --withForwardRef
 ```
@@ -256,7 +264,9 @@ Generates a form schema class and adds its usage to a component or a hook.
 ```sh
 npx nx g form --name=profile-settings --placeOfUse=ProfileSettings
 ```
+
 or
+
 ```sh
 npx nx g form profile-settings ProfileSettings
 ```
@@ -286,4 +296,3 @@ Each generator accepts the `--help` argument to see generator instructions.
 ```sh
 npx nx g react-lib --help
 ```
-

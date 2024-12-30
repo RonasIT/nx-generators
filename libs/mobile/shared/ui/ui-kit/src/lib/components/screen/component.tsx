@@ -36,24 +36,23 @@ export function AppScreen(props: AppScreenProps & (ScrollableScreenProps | NonSc
   const headerHeight = useHeaderHeight();
 
   const [ViewComponent, viewComponentProps] = useMemo(
-    (): [typeof View, ViewProps] | [typeof ScrollView, ScrollViewProps] =>
-      scrollDisabled
-        ? [View, { style: [commonStyle.fullFlex, !noOutsideSpacing && styles.container, elementStyle], ...restProps }]
-        : [
-            ScrollView,
-            {
-              contentContainerStyle: [styles.scroll, !noOutsideSpacing && styles.container, elementStyle],
-              showsVerticalScrollIndicator: false,
-              keyboardShouldPersistTaps: 'handled',
-              ...restProps,
-            },
-          ],
-    [scrollDisabled, restProps, noOutsideSpacing]
+    (): [typeof View, ViewProps] | [typeof ScrollView, ScrollViewProps] => scrollDisabled
+      ? [View, { style: [commonStyle.fullFlex, !noOutsideSpacing && styles.container, elementStyle], ...restProps }]
+      : [
+        ScrollView,
+        {
+          contentContainerStyle: [styles.scroll, !noOutsideSpacing && styles.container, elementStyle],
+          showsVerticalScrollIndicator: false,
+          keyboardShouldPersistTaps: 'handled',
+          ...restProps
+        }
+      ],
+    [scrollDisabled, restProps, noOutsideSpacing],
   );
 
   const content = useMemo(
     () => <ViewComponent {...viewComponentProps}>{children}</ViewComponent>,
-    [children, viewComponentProps]
+    [children, viewComponentProps],
   );
 
   return withBackgroundImage ? (
@@ -63,7 +62,10 @@ export function AppScreen(props: AppScreenProps & (ScrollableScreenProps | NonSc
       {content}
     </ImageBackground>
   ) : (
-    <Layout level='1' style={commonStyle.fullFlex} testID={testID}>
+    <Layout
+      level='1'
+      style={commonStyle.fullFlex}
+      testID={testID}>
       {content}
     </Layout>
   );
@@ -71,9 +73,9 @@ export function AppScreen(props: AppScreenProps & (ScrollableScreenProps | NonSc
 
 const styles = createStyles({
   scroll: {
-    minHeight: '100%',
+    minHeight: '100%'
   },
   container: {
-    paddingHorizontal: spacings.containerOffset,
-  },
+    paddingHorizontal: spacings.containerOffset
+  }
 });

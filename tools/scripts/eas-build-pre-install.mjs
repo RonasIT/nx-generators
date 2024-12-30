@@ -16,18 +16,11 @@ if (!projectRoot) {
   throw new Error('Missing project root');
 }
 try {
-  const workspacePackage = JSON.parse(
-    readFileSync(join(workspaceRoot, 'package.json')).toString(),
-  );
-  const projectPackage = JSON.parse(
-    readFileSync(join(projectRoot, 'package.json')).toString(),
-  );
+  const workspacePackage = JSON.parse(readFileSync(join(workspaceRoot, 'package.json')).toString());
+  const projectPackage = JSON.parse(readFileSync(join(projectRoot, 'package.json')).toString());
   projectPackage.dependencies = workspacePackage.dependencies;
   projectPackage.devDependencies = workspacePackage.devDependencies;
-  writeFileSync(
-    join(projectRoot, 'package.json'),
-    JSON.stringify(projectPackage, null, 2),
-  );
+  writeFileSync(join(projectRoot, 'package.json'), JSON.stringify(projectPackage, null, 2));
 } catch (e) {
   console.error('Error reading package.json file', e);
 }

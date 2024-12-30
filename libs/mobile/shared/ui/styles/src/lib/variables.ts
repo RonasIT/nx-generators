@@ -20,7 +20,7 @@ export const colors = {
   error: '#F93487',
   success: '#31B264',
   warning: '#DB8709',
-  active: '#F0F0F0',
+  active: '#F0F0F0'
 };
 
 export const spacings = {
@@ -28,11 +28,11 @@ export const spacings = {
   basicOffset: '1rem', // 16px
   contentOffset: '1.25rem', // 20px
   containerOffset: '1.5rem', // 24px
-  containerSecondaryOffset: '2rem', // 32px
+  containerSecondaryOffset: '2rem' // 32px
 };
 
 export const fontFamily = {
   regular: 'Gilroy Regular',
   bold: 'Gilroy Bold',
-  semiBold: 'Gilroy SemiBold',
+  semiBold: 'Gilroy SemiBold'
 };

@@ -11,7 +11,10 @@ export function AppSpinner({ size = 'large', containerStyle, ...restProps }: App
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <ActivityIndicator color={theme['color-primary-default']} size={size} {...restProps} />
+      <ActivityIndicator
+        color={theme['color-primary-default']}
+        size={size}
+        {...restProps} />
     </View>
   );
 }
@@ -21,6 +24,6 @@ const styles = createStyles({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    height: '100%',
-  },
+    height: '100%'
+  }
 });

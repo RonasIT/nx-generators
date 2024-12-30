@@ -26,7 +26,7 @@ export const AppButton = forwardRef<Button, AppButtonProps>(function Component(
     withPaddings,
     ...props
   }: AppButtonProps,
-  ref
+  ref,
 ): ReactElement {
   return (
     <Button
@@ -46,6 +46,6 @@ export const AppButton = forwardRef<Button, AppButtonProps>(function Component(
 const styles = createStyles({
   container: {
     paddingHorizontal: spacings.containerOffset,
-    paddingVertical: spacings.contentOffset,
-  },
+    paddingVertical: spacings.contentOffset
+  }
 });

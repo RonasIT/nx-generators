@@ -10,7 +10,10 @@ interface AppPressableIconProps extends IconProps {
 
 export function AppPressableIcon({ onPress, layoutStyle, ...props }: AppPressableIconProps): ReactElement {
   return (
-    <AppPressable onPress={onPress} style={layoutStyle} hitSlop={10}>
+    <AppPressable
+      onPress={onPress}
+      style={layoutStyle}
+      hitSlop={10}>
       <Icon {...props} />
     </AppPressable>
   );

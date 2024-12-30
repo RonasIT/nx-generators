@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import { existsSync, rmSync } from 'fs';
 import * as path from 'path';
 import {
   addDependenciesToPackageJson,
@@ -11,9 +12,6 @@ import {
   updateProjectConfiguration,
   writeJson
 } from '@nx/devkit';
-import { ExpoAppGeneratorSchema } from './schema';
-import scripts from './scripts';
-import { existsSync, rmSync } from 'fs';
 import { dependencies, devDependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import {
@@ -26,16 +24,18 @@ import {
   runUIKittenGenerator
 } from '../../shared/generators';
 import { formatName, formatAppIdentifier, addNxAppTag, askQuestion, getImportPathPrefix } from '../../shared/utils';
+import { ExpoAppGeneratorSchema } from './schema';
+import scripts from './scripts';
 
-export async function expoAppGenerator(
-  tree: Tree,
-  options: ExpoAppGeneratorSchema
-) {
-  const shouldGenerateStoreLib = await askQuestion('Do you want to create store lib? (y/n): ') === 'y';
-  const shouldGenerateApiClientLib = shouldGenerateStoreLib && await askQuestion('Do you want to create api client lib? (y/n): ') === 'y';
-  const shouldGenerateAuthLibs = shouldGenerateApiClientLib && await askQuestion('Do you want to create auth lib? (y/n): ') === 'y';
-  const shouldGenerateFormUtilsLib = await askQuestion('Do you want to create a lib with the form utils? (y/n): ') === 'y';
-  const shouldGenerateUIKittenLib = await askQuestion('Do you want to install @ui-kitten? (y/n): ') === 'y';
+export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSchema) {
+  const shouldGenerateStoreLib = (await askQuestion('Do you want to create store lib? (y/n): ')) === 'y';
+  const shouldGenerateApiClientLib =
+    shouldGenerateStoreLib && (await askQuestion('Do you want to create api client lib? (y/n): ')) === 'y';
+  const shouldGenerateAuthLibs =
+    shouldGenerateApiClientLib && (await askQuestion('Do you want to create auth lib? (y/n): ')) === 'y';
+  const shouldGenerateFormUtilsLib =
+    (await askQuestion('Do you want to create a lib with the form utils? (y/n): ')) === 'y';
+  const shouldGenerateUIKittenLib = (await askQuestion('Do you want to install @ui-kitten? (y/n): ')) === 'y';
 
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
@@ -55,7 +55,7 @@ export async function expoAppGenerator(
   } else {
     execSync(
       `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=eslint --unitTestRunner=none --e2eTestRunner=none`,
-      { stdio: 'inherit' }
+      { stdio: 'inherit' },
     );
   }
 
@@ -104,7 +104,7 @@ export async function expoAppGenerator(
   appPackageJson.main = 'expo-router/entry';
   appPackageJson.scripts = {
     ...scripts,
-    ...appPackageJson.scripts,
+    ...appPackageJson.scripts
   };
   writeJson(tree, appPackagePath, appPackageJson);
 
@@ -132,14 +132,14 @@ export async function expoAppGenerator(
     {
       ...devDependencies['expo-app'],
       ...devDependencies['expo-app-root']
-    }
+    },
   );
 
   addDependenciesToPackageJson(tree, dependencies['expo-app'], devDependencies['expo-app'], appPackagePath);
 
   await formatFiles(tree);
 
-  return () => {
+  return (): void => {
     installPackagesTask(tree);
     execSync('npx expo install --fix', { stdio: 'inherit' });
 

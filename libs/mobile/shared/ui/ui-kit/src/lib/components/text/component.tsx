@@ -12,11 +12,14 @@ export function AppText({
   category = 'p1',
   ...restProps
 }: AppTextProps): ReactElement {
-  return <Text style={[isCentered && styles.center, elementStyle]} category={category} {...restProps} />;
+  return <Text
+    style={[isCentered && styles.center, elementStyle]}
+    category={category}
+    {...restProps} />;
 }
 
 const styles = createStyles({
   center: {
-    textAlign: 'center',
-  },
+    textAlign: 'center'
+  }
 });

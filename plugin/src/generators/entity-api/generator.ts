@@ -16,7 +16,7 @@ import {
 } from '../../shared/utils';
 import { EntityApiGeneratorSchema } from './schema';
 
-export async function entityApiGenerator(tree: Tree, options: EntityApiGeneratorSchema) {
+export async function entityApiGenerator(tree: Tree, options: EntityApiGeneratorSchema): Promise<void> {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
     'inquirer-autocomplete-standalone',
   );

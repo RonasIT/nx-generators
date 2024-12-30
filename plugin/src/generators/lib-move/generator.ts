@@ -49,7 +49,7 @@ export async function libMoveGenerator(tree: Tree, options: LibMoveGeneratorSche
 
   execSync(`npx nx g mv --project=${srcLibraryName} --destination=${libPath}`, { stdio: 'inherit' });
 
-  return () => {
+  return (): void => {
     execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
   };
 }

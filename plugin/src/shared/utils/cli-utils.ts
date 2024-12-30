@@ -1,15 +1,19 @@
-import * as readline from 'readline';
 import * as fs from 'fs';
+import * as readline from 'readline';
 import { getProjects, ProjectType, Tree } from '@nx/devkit';
-import { dynamicImport } from './dynamic-import';
 import { constants } from './constants';
+import { dynamicImport } from './dynamic-import';
 
 export const createCliReadline = (): readline.Interface => readline.createInterface({
   input: process.stdin,
-  output: process.stdout,
-})
+  output: process.stdout
+});
 
-export const askQuestion = (question: string, defaultAnswer?: string, cliReadline?: readline.Interface): Promise<string> => {
+export const askQuestion = (
+  question: string,
+  defaultAnswer?: string,
+  cliReadline?: readline.Interface,
+): Promise<string> => {
   const rl = cliReadline || createCliReadline();
 
   if (defaultAnswer) {
@@ -18,21 +22,19 @@ export const askQuestion = (question: string, defaultAnswer?: string, cliReadlin
     setTimeout(() => rl.write(null, { ctrl: true, name: 'e' }));
   }
 
-  return new Promise((resolve) =>
-    rl.question(question, (answer) => {
-      if (!cliReadline) {
-        rl.close();
-      }
-      resolve(answer);
-    }),
-  );
+  return new Promise((resolve) => rl.question(question, (answer) => {
+    if (!cliReadline) {
+      rl.close();
+    }
+    resolve(answer);
+  }),);
 };
 
 export enum LibraryType {
   UI = 'ui',
   DATA_ACCESS = 'data-access',
   FEATURES = 'features',
-  UTILS = 'utils',
+  UTILS = 'utils'
 }
 
 const parseLibsPaths = (): Record<string, Array<string>> => {
@@ -55,9 +57,9 @@ export const validateLibraryType = (type: string): string => {
   }
 
   return type;
-}
+};
 
-export const getNxLibsPaths = (types: Array<LibraryType>) => {
+export const getNxLibsPaths = (types: Array<LibraryType>): Array<string> => {
   const libs = parseLibsPaths();
 
   return Object.values(libs)
@@ -69,18 +71,18 @@ export const searchNxLibsPaths = (
   paths: Array<string>,
   input: string,
   method: 'includes' | 'startsWith' | 'endsWith' = 'includes',
-) => {
+): Array<string> => {
   return paths.filter((path) => path[method](input));
 };
 
-export const searchAliasPath = (input: string) => {
+export const searchAliasPath = (input: string): string | undefined => {
   const libs = parseLibsPaths();
   const path = Object.keys(libs).find((key) => libs[key][0].includes(input));
 
   return path;
 };
 
-export const filterSource = async (input: string, source: Array<string>) => {
+export const filterSource = async (input: string, source: Array<string>): Promise<Array<{ value: string }>> => {
   const filteredData = input
     ? source.filter((pathname) => pathname.toLowerCase().includes(input.toLowerCase()))
     : source;
@@ -88,19 +90,25 @@ export const filterSource = async (input: string, source: Array<string>) => {
   return filteredData.map((path) => ({ value: path }));
 };
 
-export const appendFileContent = (path: string, endContent: string, tree: Tree) => {
+export const appendFileContent = (path: string, endContent: string, tree: Tree): void => {
   const content = tree.read(path, 'utf-8');
   const contentUpdate = (content || '') + endContent;
 
   tree.write(path, contentUpdate);
 };
 
-export const getProjectsDetails = (tree: Tree, projectType: ProjectType) => Array.from(getProjects(tree))
+export const getProjectsDetails = (tree: Tree, projectType: ProjectType): Array<{ name: string; path: string; }> => Array.from(getProjects(tree))
   .filter(([_, project]) => project.projectType === projectType)
   .map(([name, project]) => ({ name, path: project.root }));
 
-export const selectProject = async (tree: Tree, projectType: ProjectType, message: string): Promise<{ name: string, path: string }> => {
-  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>('inquirer-autocomplete-standalone');
+export const selectProject = async (
+  tree: Tree,
+  projectType: ProjectType,
+  message: string,
+): Promise<{ name: string; path: string }> => {
+  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
+    'inquirer-autocomplete-standalone',
+  );
   const projects = getProjectsDetails(tree, projectType);
 
   if (!projects.length) {
@@ -112,7 +120,7 @@ export const selectProject = async (tree: Tree, projectType: ProjectType, messag
     source: async (input) => {
       const entries = [...projects, { name: constants.sharedValue, path: constants.sharedValue }].map((project) => ({
         name: `${project.name} (${project.path})`,
-        value: { ...project, name: projectType === 'application' ? project.path.replace('apps/', '') : project.name } 
+        value: { ...project, name: projectType === 'application' ? project.path.replace('apps/', '') : project.name }
       }));
 
       if (!input) {
@@ -124,7 +132,10 @@ export const selectProject = async (tree: Tree, projectType: ProjectType, messag
   });
 };
 
-export const getLibraryDetailsByName = async (tree: Tree, libraryName?: string): Promise<{ name: string; path: string }> => {
+export const getLibraryDetailsByName = async (
+  tree: Tree,
+  libraryName?: string,
+): Promise<{ name: string; path: string }> => {
   let selectedLibraryName: string;
   let selectedLibraryPath: string;
 

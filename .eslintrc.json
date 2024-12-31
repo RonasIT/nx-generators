@@ -1,7 +1,5 @@
 {
-  "root": true,
-  "plugins": ["@nx"],
-  "extends": ["./.eslint.ronasit.json"],
+  "extends": ["./.eslint.ronasit.json", "./.eslintrc.base.json"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

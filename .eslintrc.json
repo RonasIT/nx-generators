@@ -1,5 +1,5 @@
 {
-  "extends": ["./.eslint.ronasit.json", "./.eslintrc.base.json"],
+  "extends": ["./.eslintrc.base.json", "./.eslint.ronasit.json"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

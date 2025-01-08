@@ -1,14 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "jsx": "react-native",
-    "allowJs": true,
-    "noEmit": true,
-    "strict": true,
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
-    "strictPropertyInitialization": false,
-    "strictNullChecks": true,
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -21,6 +13,7 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
       "@nx-generators/source": ["src/index.ts"],

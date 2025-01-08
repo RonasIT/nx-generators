@@ -9,7 +9,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "es2015",
-    "module": "commonjs",
+    "module": "esnext",
     "lib": ["es2020", "dom"],
     "jsx": "react-native",
     "allowJs": true,

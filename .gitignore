@@ -56,4 +56,7 @@ npm-debug.*
 web-build/
 cache/
 
+ios
+android
+
 .eslintcache

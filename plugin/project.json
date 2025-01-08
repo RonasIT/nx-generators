@@ -47,7 +47,7 @@
     },
     "nx-release-publish": {
       "options": {
-        "packageRoot": "dist/{projectRoot}"
+        "packageRoot": "dist/nx-generators"
       }
     }
   }

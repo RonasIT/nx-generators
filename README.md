@@ -296,3 +296,37 @@ Each generator accepts the `--help` argument to see generator instructions.
 ```sh
 npx nx g react-lib --help
 ```
+
+## Development
+
+### Repository structure
+
+Key repository elements:
+
+- `plugin` - contains the publishable package with generators source code;
+- `apps/mobile` and `libs` - an example RN app with libraries that showcases current generators capability, recommended app structure, and examples of libraries usage.
+
+### Local development
+
+1. Change or edit the source code of generators in the `plugin/src` directory.
+1. You can test work of generators by running them repository. Example: `npx nx g expo-app`
+1. Update generators metadata in `plugin/generators.json` if necessary.
+1. Submit a PR with changes.
+
+### Build
+
+In order to build package run:
+
+```sh
+npx nx run nx-generators:build
+```
+
+Build results are placed in `dist/nx-generators` directory.
+
+### Publish
+
+To publish package dist to NPM run the following command:
+
+```sh
+nx run nx-generators:nx-release-publish
+```

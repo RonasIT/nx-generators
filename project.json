@@ -1,29 +1,7 @@
 {
-  "name": "nx-generators",
+  "name": "@ronas-it/nx-generators-workspace",
   "$schema": "node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "src",
-  "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/nx-generators",
-        "main": "./src/index.ts",
-        "tsConfig": "./tsconfig.lib.json",
-        "assets": ["*.md"]
-      }
-    },
-    "lint": {
-      "command": "eslint ./src ./package.json"
-    },
-    "test": {
-      "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
-      "options": {
-        "reportsDirectory": "coverage/nx-generators"
-      }
-    },
     "local-registry": {
       "executor": "@nx/js:verdaccio",
       "options": {
@@ -32,6 +10,5 @@
         "storage": "tmp/local-registry/storage"
       }
     }
-  },
-  "tags": []
+  }
 }

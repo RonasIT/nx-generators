@@ -1,11 +1,11 @@
 export const dependencies = {
   'expo-app': {
     '@react-native-async-storage/async-storage': '~1.23.1',
-    '@ronas-it/react-native-common-modules': '^0.6.0',
+    '@ronas-it/react-native-common-modules': '^0.6.2',
     'expo-constants': '~17.0.3',
     'expo-dev-client': '^5.0.6',
     'expo-router': '~4.0.14',
-    'react-native-safe-area-context': '~5.0.0',
+    'react-native-safe-area-context': '^4.12.0',
     'react-native-screens': '~4.4.0',
     'expo-linking': '~7.0.3',
     'expo-status-bar': '^2.0.0',
@@ -31,7 +31,7 @@ export const dependencies = {
     'react-native-extended-stylesheet': '^0.12.0',
   },
   store: {
-    '@ronas-it/rtkq-entity-api': '^0.3.1',
+    '@ronas-it/rtkq-entity-api': '^0.4.3',
     'react-redux': '^9.1.2',
   },
   'ui-kitten': {

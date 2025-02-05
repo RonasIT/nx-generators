@@ -1,10 +1,10 @@
-import { addDependenciesToPackageJson, generateFiles, Tree } from '@nx/devkit';
 import * as path from 'path';
-import { SentryGeneratorSchema } from '../schema';
+import { addDependenciesToPackageJson, generateFiles, Tree } from '@nx/devkit';
 import { tsquery } from '@phenomnomnominal/tsquery';
 import { createPrinter, factory, ObjectLiteralExpression } from 'typescript';
-import { createObjectLiteralExpression } from './create-object-literal-expression';
 import { updateFile } from '../../../shared/utils';
+import { SentryGeneratorSchema } from '../schema';
+import { createObjectLiteralExpression } from './create-object-literal-expression';
 
 const nextAppDependencies = {
   '@sentry/nextjs': '^8.35.0',
@@ -24,20 +24,18 @@ const modifyNextConfig = (content: string): string =>
     tsquery.map(
       tsquery.ast(content),
       'Identifier[name="nextConfig"] ~ ObjectLiteralExpression',
-      (node: ObjectLiteralExpression) => {
+      (node) => {
         return createObjectLiteralExpression(
           [
             {
               key: 'widenClientFileUpload',
               initializer: factory.createTrue(),
-              comment:
-                'Upload a larger set of source maps for prettier stack traces (increases build time)',
+              comment: 'Upload a larger set of source maps for prettier stack traces (increases build time)',
             },
             {
               key: 'transpileClientSDK',
               initializer: factory.createTrue(),
-              comment:
-                'Transpiles SDK to be compatible with IE11 (increases bundle size)',
+              comment: 'Transpiles SDK to be compatible with IE11 (increases bundle size)',
             },
             {
               key: 'tunnelRoute',
@@ -53,11 +51,10 @@ const modifyNextConfig = (content: string): string =>
             {
               key: 'disableLogger',
               initializer: factory.createTrue(),
-              comment:
-                'Automatically tree-shake Sentry logger statements to reduce bundle size',
+              comment: 'Automatically tree-shake Sentry logger statements to reduce bundle size',
             },
           ],
-          node.properties,
+          (node as ObjectLiteralExpression).properties,
         );
       },
       {
@@ -100,11 +97,7 @@ const wrapIntoSentryConfig = (content: string): string => {
   );
 };
 
-export function generateSentryNext(
-  tree: Tree,
-  options: SentryGeneratorSchema,
-  projectRoot: string,
-) {
+export function generateSentryNext(tree: Tree, options: SentryGeneratorSchema, projectRoot: string) {
   addDependenciesToPackageJson(tree, nextAppDependencies, {});
 
   updateFile(tree, `${projectRoot}/next.config.js`, (fileContent) =>
@@ -113,11 +106,7 @@ export function generateSentryNext(
 
   const envFiles = ['.env', '.env.development', '.env.production'];
   envFiles.forEach((file) => {
-    updateFile(
-      tree,
-      `${projectRoot}/${file}`,
-      (fileContent) => fileContent + 'SENTRY_AUTH_TOKEN=',
-    );
+    updateFile(tree, `${projectRoot}/${file}`, (fileContent) => fileContent + 'SENTRY_AUTH_TOKEN=');
   });
 
   generateFiles(tree, path.join(__dirname, '../files'), projectRoot, options);

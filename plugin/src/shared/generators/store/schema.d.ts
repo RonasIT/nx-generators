@@ -1,4 +1,4 @@
-import { BaseGeneratorType } from '../enums/base-generator-type';
+import { BaseGeneratorType } from '../../enums/base-generator-type';
 
 export interface StoreGeneratorSchema {
   name: string;

@@ -1,0 +1,15 @@
+{
+  "AUTH": {
+    "VALIDATION": {
+      "TEXT_VALIDATION_REQUIRED_FIELD": "Please fill out this field",
+      "TEXT_VALIDATION_INVALID": "The value you entered is invalid",
+      "TEXT_VALIDATION_EMAIL": "Please enter a valid email address"
+    },
+    "LOGIN_FORM": {
+      "TEXT_TITLE": "Welcome to {{value}}",
+      "TEXT_LOGIN": "Email",
+      "TEXT_PASSWORD": "Password",
+      "BUTTON_SUBMIT": "Login"
+    }
+  }
+}

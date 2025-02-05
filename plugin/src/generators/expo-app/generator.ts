@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import { existsSync, rmSync } from 'fs';
 import * as path from 'path';
 import {
   addDependenciesToPackageJson,
@@ -6,12 +7,11 @@ import {
   generateFiles,
   installPackagesTask,
   readJson,
+  readProjectConfiguration,
   Tree,
+  updateProjectConfiguration,
   writeJson,
 } from '@nx/devkit';
-import { ExpoAppGeneratorSchema } from './schema';
-import scripts from './scripts';
-import { existsSync, rmSync } from 'fs';
 import { dependencies, devDependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import {
@@ -23,18 +23,20 @@ import {
   runStoreGenerator,
   runUIKittenGenerator,
 } from '../../shared/generators';
-import {
-  formatName,
-  formatAppIdentifier,
-  addNxAppTag,
-  askQuestion,
-  getImportPathPrefix,
-} from '../../shared/utils';
+import { formatName, formatAppIdentifier, addNxAppTag, askQuestion, getImportPathPrefix } from '../../shared/utils';
+import { ExpoAppGeneratorSchema } from './schema';
+import scripts from './scripts';
 
-export async function expoAppGenerator(
-  tree: Tree,
-  options: ExpoAppGeneratorSchema,
-) {
+export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSchema) {
+  const shouldGenerateStoreLib = (await askQuestion('Do you want to create store lib? (y/n): ')) === 'y';
+  const shouldGenerateApiClientLib =
+    shouldGenerateStoreLib && (await askQuestion('Do you want to create api client lib? (y/n): ')) === 'y';
+  const shouldGenerateAuthLibs =
+    shouldGenerateApiClientLib && (await askQuestion('Do you want to create auth lib? (y/n): ')) === 'y';
+  const shouldGenerateFormUtilsLib =
+    (await askQuestion('Do you want to create a lib with the form utils? (y/n): ')) === 'y';
+  const shouldGenerateUIKittenLib = (await askQuestion('Do you want to install @ui-kitten? (y/n): ')) === 'y';
+
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
   const appTestFolder = `apps/${options.directory}-e2e`;
@@ -44,20 +46,23 @@ export async function expoAppGenerator(
   // Install @nx/expo plugin
   execSync('npx nx add @nx/expo', { stdio: 'inherit' });
 
-  if (!existsSync(appRoot)) {
+  if (existsSync(appRoot)) {
+    const project = readProjectConfiguration(tree, options.directory);
+
+    project.tags = [`app:${options.directory}`, 'type:app'];
+
+    updateProjectConfiguration(tree, project.name as string, project);
+  } else {
     execSync(
-      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --projectNameAndRootFormat=as-provided --unitTestRunner=none --e2eTestRunner=none`,
+      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=eslint --unitTestRunner=none --e2eTestRunner=none`,
       { stdio: 'inherit' },
     );
   }
 
   // Generate shared libs
-  await runAppEnvGenerator(tree, options);
+  await runAppEnvGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
   await runStorageGenerator(tree, options);
   await runRNStylesGenerator(tree, options);
-
-  const shouldGenerateStoreLib =
-    (await askQuestion('Do you want to create store lib? (y/n): ')) === 'y';
 
   if (shouldGenerateStoreLib) {
     await runStoreGenerator(tree, {
@@ -66,30 +71,13 @@ export async function expoAppGenerator(
     });
   }
 
-  const shouldGenerateApiClientLib =
-    shouldGenerateStoreLib &&
-    (await askQuestion('Do you want to create api client lib? (y/n): ')) ===
-      'y';
-
   if (shouldGenerateApiClientLib) {
     await runApiClientGenerator(tree, options);
   }
 
-  const shouldGenerateAuthLibs =
-    shouldGenerateApiClientLib &&
-    (await askQuestion('Do you want to create auth lib? (y/n): ')) === 'y';
-
-  const shouldGenerateFormUtilsLib =
-    (await askQuestion(
-      'Do you want to create a lib with the form utils? (y/n): ',
-    )) === 'y';
-
   if (shouldGenerateFormUtilsLib) {
     await runFormUtilsGenerator(tree, options);
   }
-
-  const shouldGenerateUIKittenLib =
-    (await askQuestion('Do you want to install @ui-kitten? (y/n): ')) === 'y';
 
   if (shouldGenerateUIKittenLib) {
     await runUIKittenGenerator(tree, options);
@@ -107,6 +95,7 @@ export async function expoAppGenerator(
   tree.delete(`${appRoot}/index.js`);
   tree.delete(`${appRoot}/webpack.config.js`);
   tree.delete(`${appRoot}/.eslintrc.json`);
+  tree.delete(`${appRoot}/eslint.config.cjs`);
   tree.delete(`${appRoot}/app.json`);
   tree.delete(`${appRoot}/eas.json`);
   tree.delete(`${appRoot}/metro.config.js`);
@@ -149,16 +138,11 @@ export async function expoAppGenerator(
     },
   );
 
-  addDependenciesToPackageJson(
-    tree,
-    dependencies['expo-app'],
-    devDependencies['expo-app'],
-    appPackagePath,
-  );
+  addDependenciesToPackageJson(tree, dependencies['expo-app'], devDependencies['expo-app'], appPackagePath);
 
   await formatFiles(tree);
 
-  return () => {
+  return (): void => {
     installPackagesTask(tree);
     execSync('npx expo install --fix', { stdio: 'inherit' });
 

@@ -1,0 +1,9 @@
+{
+  "name": "mobile-shared-features-user-theme-provider",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/mobile/shared/features/user-theme-provider/src",
+  "projectType": "library",
+  "tags": ["app:mobile", "type:features", "scope:shared"],
+  "// targets": "to see all targets run: nx show project mobile-shared-features-user-theme-provider --web",
+  "targets": {}
+}

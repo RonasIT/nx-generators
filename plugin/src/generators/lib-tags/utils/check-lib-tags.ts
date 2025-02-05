@@ -1,8 +1,7 @@
 import { ProjectConfiguration, Tree, readProjectConfiguration, updateProjectConfiguration } from '@nx/devkit';
 import { addNxAppTag, addNxScopeTag, constants } from '../../../shared/utils';
-import { LibTagsContext } from '../interfaces';
-
-type TagType = 'app' | 'scope' | 'type';
+import { LibTagsContext, VerifyTagConfig } from '../interfaces';
+import { TagType } from '../types';
 
 const getTagFromLibPath = (libPath: string, type: TagType): string => {
   const projectAppTag = libPath.split('/')[1];
@@ -17,14 +16,7 @@ const getTagFromLibPath = (libPath: string, type: TagType): string => {
   }
 };
 
-const verifyLibraryTag = (
-  project: ProjectConfiguration,
-  tree: Tree,
-  tag: string,
-  tagType: TagType,
-  context: LibTagsContext,
-  ruleNotFoundCallback?: () => void
-): void => {
+const verifyLibraryTag = ({ project, tree, tag, tagType, context, ruleNotFoundCallback }: VerifyTagConfig): void => {
   const defaultRuleNotFoundCallback = (): void => {
     throw new Error(`Missing ${tagType} tag rule for ${tag}. Please add it to the ESLint config file.`);
   };
@@ -44,25 +36,31 @@ const verifyLibraryTag = (
     if (isInvalidTag) {
       context.log(`Invalid tag ${tag}. Updating...\n`);
 
-      project = readProjectConfiguration(tree, project.name);
+      project = readProjectConfiguration(tree, project.name as string);
 
-      const filteredTags = project.tags.filter((item) => item !== tag);
+      const filteredTags = project.tags?.filter((item) => item !== tag) || [];
 
       project.tags = [...filteredTags, `${tagType}:${tagFromLibPath}`];
 
-      updateProjectConfiguration(tree, project.name, project);
+      updateProjectConfiguration(tree, project.name as string, project);
 
       if (tagType === 'scope') {
-        addNxScopeTag(tree,  tagFromLibPath);
+        addNxScopeTag(tree, tagFromLibPath);
         context.reload(tree);
       }
 
-      verifyLibraryTag(project, tree, `${tagType}:${tagFromLibPath}`, tagType, context);
+      verifyLibraryTag({
+        project,
+        tree,
+        tag: `${tagType}:${tagFromLibPath}`,
+        tagType,
+        context,
+      });
     }
   } else {
     context.log(`Missing ${tagType} tag for ${project.name}. Adding...`);
 
-    project = readProjectConfiguration(tree, project.name);
+    project = readProjectConfiguration(tree, project.name as string);
 
     const tag = getTagFromLibPath(project.root, tagType);
 
@@ -74,10 +72,13 @@ const verifyLibraryTag = (
       }
     }
 
-    updateProjectConfiguration(tree, project.name, { ...project, tags: [...project.tags, `${tagType}:${tag}`] });
+    updateProjectConfiguration(tree, project.name as string, {
+      ...project,
+      tags: [...(project.tags || []), `${tagType}:${tag}`],
+    });
 
     if (tagType === 'scope') {
-      addNxScopeTag(tree,  tag);
+      addNxScopeTag(tree, tag);
       context.reload(tree);
     }
   }
@@ -85,8 +86,8 @@ const verifyLibraryTag = (
 
 export const checkApplicationTags = (project: ProjectConfiguration, tree: Tree, context: LibTagsContext): void => {
   const { tags } = project;
-  const appTag = tags.find((tag) => tag.startsWith('app:'));
-  const hasTypeTag = tags.includes('type:app');
+  const appTag = tags?.find((tag) => tag.startsWith('app:'));
+  const hasTypeTag = tags?.includes('type:app');
 
   if (appTag) {
     const appTagRule = context.rules.find((rule) => rule.sourceTag === appTag);
@@ -99,33 +100,46 @@ export const checkApplicationTags = (project: ProjectConfiguration, tree: Tree, 
   } else {
     context.log(`Missing app tag for ${project.name}. Adding...`);
 
-    const projectAppTag = project.root.split('/').pop();
+    const projectAppTag = project.root.split('/').pop() as string;
 
-    updateProjectConfiguration(tree, project.name, { ...project, tags: [...project.tags, `app:${projectAppTag}`] });
-    addNxAppTag(tree,  projectAppTag);
+    updateProjectConfiguration(tree, project.name as string, {
+      ...project,
+      tags: [...(project.tags || []), `app:${projectAppTag}`],
+    });
+    addNxAppTag(tree, projectAppTag);
     context.reload(tree);
   }
 
   if (!hasTypeTag) {
     context.log(`Missing type tag for ${project.name}. Adding...`);
 
-    project = readProjectConfiguration(tree, project.name);
+    project = readProjectConfiguration(tree, project.name as string);
 
-    updateProjectConfiguration(tree, project.name, { ...project, tags: [...project.tags, 'type:app'] });
+    updateProjectConfiguration(tree, project.name as string, {
+      ...project,
+      tags: [...(project.tags || []), 'type:app'],
+    });
   }
 };
 
 export const checkLibraryTags = (project: ProjectConfiguration, tree: Tree, context: LibTagsContext): void => {
   const { tags } = project;
-  const appTag = tags.find((tag) => tag.startsWith('app:'));
-  const scopeTag = tags.find((tag) => tag.startsWith('scope:'));
-  const typeTag = tags.find((tag) => tag.startsWith('type:'));
+  const appTag = tags?.find((tag) => tag.startsWith('app:'));
+  const scopeTag = tags?.find((tag) => tag.startsWith('scope:'));
+  const typeTag = tags?.find((tag) => tag.startsWith('type:'));
 
-  verifyLibraryTag(project, tree, appTag, 'app', context);
-  verifyLibraryTag(project, tree, scopeTag, 'scope', context, () => {
-    context.log(`Missing scope tag rule for ${scopeTag}. Adding...`);
-    addNxScopeTag(tree, scopeTag.replace('scope:', ''));
-    context.reload(tree);
+  verifyLibraryTag({ project, tree, tag: appTag, tagType: 'app', context });
+  verifyLibraryTag({
+    project,
+    tree,
+    tag: scopeTag,
+    tagType: 'scope',
+    context,
+    ruleNotFoundCallback: () => {
+      context.log(`Missing scope tag rule for ${scopeTag}. Adding...`);
+      addNxScopeTag(tree, scopeTag?.replace('scope:', '') as string);
+      context.reload(tree);
+    },
   });
-  verifyLibraryTag(project, tree, typeTag, 'type', context);
+  verifyLibraryTag({ project, tree, tag: typeTag, tagType: 'type', context });
 };

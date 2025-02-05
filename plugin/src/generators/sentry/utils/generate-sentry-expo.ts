@@ -8,9 +8,9 @@ import {
   addSyntheticLeadingComment,
   ArrayLiteralExpression,
 } from 'typescript';
-import { createObjectLiteralExpression } from './create-object-literal-expression';
+import { updateFile } from '../../../shared/utils/update-file';
 import { SentryGeneratorSchema } from '../schema';
-import { updateFile } from 'plugin/src/shared/utils';
+import { createObjectLiteralExpression } from './create-object-literal-expression';
 
 const expoAppDependencies = {
   '@sentry/react-native': '~6.1.0',
@@ -41,20 +41,17 @@ const updateExtraConfig = (content: string, dsn: string): string =>
     tsquery.map(
       tsquery.ast(content),
       'VariableDeclaration > Identifier[name="extra"] ~ ObjectLiteralExpression',
-      (node: ObjectLiteralExpression) =>
+      (node) =>
         createObjectLiteralExpression(
           [
             {
               key: 'sentry',
               initializer: factory.createObjectLiteralExpression([
-                factory.createPropertyAssignment(
-                  'dsn',
-                  factory.createStringLiteral(dsn),
-                ),
+                factory.createPropertyAssignment('dsn', factory.createStringLiteral(dsn)),
               ]),
             },
           ],
-          node.properties,
+          (node as ObjectLiteralExpression).properties,
         ),
       {
         visitAllChildren: true,
@@ -67,16 +64,10 @@ const addSentryPluginToAppConfig = (content: string): string =>
     tsquery.map(
       tsquery.ast(content),
       'VariableDeclaration:has(Identifier[name="createConfig"]) ReturnStatement PropertyAssignment:has(Identifier[name="plugins"]) > ArrayLiteralExpression',
-      (node: ArrayLiteralExpression) => {
+      (node) => {
         const objectLiteralExpression = factory.createObjectLiteralExpression([
-          factory.createPropertyAssignment(
-            'organization',
-            factory.createStringLiteral(''),
-          ),
-          factory.createPropertyAssignment(
-            'project',
-            factory.createStringLiteral(''),
-          ),
+          factory.createPropertyAssignment('organization', factory.createStringLiteral('')),
+          factory.createPropertyAssignment('project', factory.createStringLiteral('')),
         ]);
 
         addSyntheticLeadingComment(
@@ -86,7 +77,7 @@ const addSentryPluginToAppConfig = (content: string): string =>
         );
 
         return factory.createArrayLiteralExpression([
-          ...node.elements,
+          ...(node as ArrayLiteralExpression).elements,
           factory.createArrayLiteralExpression([
             factory.createStringLiteral('@sentry/react-native/expo'),
             objectLiteralExpression,
@@ -100,8 +91,7 @@ const updateMetroConfig = (content: string): string => {
   const metroConfigContentWithImport = tsquery.replace(
     content,
     'VariableStatement:has(Identifier[name="getDefaultConfig"]):has(CallExpression:has(Identifier[name="require"]))',
-    () =>
-      "const { getSentryExpoConfig } = require('@sentry/react-native/metro');",
+    () => 'const { getSentryExpoConfig } = require(\'@sentry/react-native/metro\');',
   );
 
   return tsquery.replace(
@@ -111,25 +101,14 @@ const updateMetroConfig = (content: string): string => {
   );
 };
 
-export function generateSentryExpo(
-  tree: Tree,
-  options: SentryGeneratorSchema,
-  projectRoot: string,
-) {
+export function generateSentryExpo(tree: Tree, options: SentryGeneratorSchema, projectRoot: string) {
   const projectPackagePath = `${projectRoot}/package.json`;
 
   addDependenciesToPackageJson(tree, expoAppDependencies, {});
-  addDependenciesToPackageJson(
-    tree,
-    expoAppDependencies,
-    {},
-    projectPackagePath,
-  );
+  addDependenciesToPackageJson(tree, expoAppDependencies, {}, projectPackagePath);
 
   updateFile(tree, `${projectRoot}/app/_layout.tsx`, (fileContent) => {
-    const updatedLayoutContent = removeExportsKeywordForRootLayout(
-      addRequiredImportsExpo(fileContent),
-    );
+    const updatedLayoutContent = removeExportsKeywordForRootLayout(addRequiredImportsExpo(fileContent));
 
     return `${updatedLayoutContent}
       const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
@@ -149,7 +128,5 @@ export function generateSentryExpo(
     updateExtraConfig(addSentryPluginToAppConfig(fileContent), options.dsn),
   );
 
-  updateFile(tree, `${projectRoot}/metro.config.js`, (fileContent) =>
-    updateMetroConfig(fileContent),
-  );
+  updateFile(tree, `${projectRoot}/metro.config.js`, (fileContent) => updateMetroConfig(fileContent));
 }

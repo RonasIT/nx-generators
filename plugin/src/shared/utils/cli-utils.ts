@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as readline from 'readline';
 import { getProjects, ProjectType, Tree } from '@nx/devkit';
+import { compact } from 'lodash';
 import { constants } from './constants';
 import { dynamicImport } from './dynamic-import';
 
@@ -109,6 +110,7 @@ export const selectProject = async (
   tree: Tree,
   projectType: ProjectType,
   message: string,
+  applicationsOnly: boolean = false,
 ): Promise<{ name: string; path: string }> => {
   const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
     'inquirer-autocomplete-standalone',
@@ -122,7 +124,10 @@ export const selectProject = async (
   return autocomplete({
     message,
     source: async (input) => {
-      const entries = [...projects, { name: constants.sharedValue, path: constants.sharedValue }].map((project) => ({
+      const entries = compact([
+        ...projects,
+        !applicationsOnly && { name: constants.sharedValue, path: constants.sharedValue },
+      ]).map((project) => ({
         name: `${project.name} (${project.path})`,
         value: { ...project, name: projectType === 'application' ? project.path.replace('apps/', '') : project.name },
       }));

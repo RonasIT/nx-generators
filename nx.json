@@ -58,6 +58,15 @@
         "runIosTargetName": "run-ios",
         "runAndroidTargetName": "run-android"
       }
+    },
+    {
+      "plugin": "@nx/next/plugin",
+      "options": {
+        "startTargetName": "start",
+        "buildTargetName": "build",
+        "devTargetName": "dev",
+        "serveStaticTargetName": "serve-static"
+      }
     }
   ],
   "release": {
@@ -65,5 +74,13 @@
       "preVersionCommand": "npx nx run-many -t build"
     }
   },
-  "useLegacyCache": true
+  "useLegacyCache": true,
+  "generators": {
+    "@nx/next": {
+      "application": {
+        "style": "scss",
+        "linter": "eslint"
+      }
+    }
+  }
 }

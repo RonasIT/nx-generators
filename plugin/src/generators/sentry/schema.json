@@ -7,11 +7,7 @@
     "directory": {
       "type": "string",
       "description": "",
-      "$default": {
-        "$source": "argv",
-        "index": 0
-      },
-      "x-prompt": "Enter the name of the directory in the 'apps/' folder (e.g: web)"
+      "default": ""
     },
     "dsn": {
       "type": "string",

@@ -1,18 +1,18 @@
 import { formatFiles, Tree } from '@nx/devkit';
+import { isExpoApp, isNextApp, selectProject } from '../../shared/utils';
 import { SentryGeneratorSchema } from './schema';
-import { isExpoApp, isNextApp } from '../../shared/utils';
 import { generateSentryNext, generateSentryExpo } from './utils';
 
-export async function sentryGenerator(
-  tree: Tree,
-  options: SentryGeneratorSchema,
-) {
-  const projectRoot = `apps/${options.directory}`;
+export async function sentryGenerator(tree: Tree, options: SentryGeneratorSchema) {
+  options.directory =
+    options.directory || (await selectProject(tree, 'application', 'Select the application: ', true)).path;
 
-  if (isNextApp(tree, projectRoot)) {
-    generateSentryNext(tree, options, projectRoot);
-  } else if (isExpoApp(tree, projectRoot)) {
-    generateSentryExpo(tree, options, projectRoot);
+  console.log('options.directory', options.directory);
+
+  if (isNextApp(tree, options.directory)) {
+    generateSentryNext(tree, options, options.directory);
+  } else if (isExpoApp(tree, options.directory)) {
+    generateSentryExpo(tree, options, options.directory);
   }
 
   await formatFiles(tree);

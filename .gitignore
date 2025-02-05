@@ -60,3 +60,7 @@ ios
 android
 
 .eslintcache
+
+# Next.js
+.next
+out

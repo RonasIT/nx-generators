@@ -65,7 +65,10 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   await runRNStylesGenerator(tree, options);
 
   if (shouldGenerateStoreLib) {
-    await runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
+    await runStoreGenerator(tree, {
+      ...options,
+      baseGeneratorType: BaseGeneratorType.EXPO_APP,
+    });
   }
 
   if (shouldGenerateApiClientLib) {
@@ -144,7 +147,15 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     execSync('npx expo install --fix', { stdio: 'inherit' });
 
     if (shouldGenerateAuthLibs) {
-      execSync(`npx nx g auth ${options.name} ${options.directory}`, { stdio: 'inherit' });
+      execSync(`npx nx g auth ${options.name} ${options.directory}`, {
+        stdio: 'inherit',
+      });
+    }
+
+    if (options.withSentry) {
+      execSync(`npx nx g sentry --directory=${appRoot}`, {
+        stdio: 'inherit',
+      });
     }
   };
 }

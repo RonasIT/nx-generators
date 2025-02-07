@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Sentry",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "directory": {
+      "type": "string",
+      "description": "",
+      "default": ""
+    },
+    "dsn": {
+      "type": "string",
+      "description": "",
+      "x-prompt": "What is your Sentry DSN?"
+    }
+  },
+  "required": ["dsn"]
+}

@@ -43,6 +43,14 @@ export const dependencies = {
     'react-hook-form': '^7.53.0',
     yup: '^1.4.0',
   },
+  sentry: {
+    expo: {
+      '@sentry/react-native': '~6.6.0',
+    },
+    next: {
+      '@sentry/nextjs': '^8.54.0',
+    },
+  },
 };
 
 export const devDependencies = {

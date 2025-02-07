@@ -1,5 +1,6 @@
 export * from './format-utils';
 export * from './cli-utils';
+export * from './get-app-framework-name';
 export * from './dynamic-import';
 export * from './config-utils';
 export * from './ts-utils';

@@ -52,7 +52,10 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   await runAppEnvGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });
 
   if (shouldGenerateStoreLib) {
-    await runStoreGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });
+    await runStoreGenerator(tree, {
+      ...options,
+      baseGeneratorType: BaseGeneratorType.NEXT_APP,
+    });
   }
 
   if (shouldGenerateApiClientLib) {
@@ -98,6 +101,12 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
 
   return (): void => {
     installPackagesTask(tree);
+
+    if (options.withSentry) {
+      execSync(`npx nx g sentry --directory=${appRoot}`, {
+        stdio: 'inherit',
+      });
+    }
   };
 }
 

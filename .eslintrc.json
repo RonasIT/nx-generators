@@ -37,10 +37,6 @@
               {
                 "sourceTag": "type:ui",
                 "onlyDependOnLibsWithTags": ["type:ui", "type:utils"]
-              },
-              {
-                "sourceTag": "app:my-next-folder",
-                "onlyDependOnLibsWithTags": ["app:my-next-folder", "app:shared"]
               }
             ]
           }

@@ -153,7 +153,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     }
 
     if (options.withSentry) {
-      execSync(`npx nx g sentry --directory=${options.directory}`, {
+      execSync(`npx nx g sentry --directory=${appRoot}`, {
         stdio: 'inherit',
       });
     }

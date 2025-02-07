@@ -103,7 +103,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
     installPackagesTask(tree);
 
     if (options.withSentry) {
-      execSync(`npx nx g sentry --directory=${options.directory}`, {
+      execSync(`npx nx g sentry --directory=${appRoot}`, {
         stdio: 'inherit',
       });
     }

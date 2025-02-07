@@ -1,5 +1,5 @@
 import { formatFiles, Tree } from '@nx/devkit';
-import { isExpoApp, isNextApp, selectProject } from '../../shared/utils';
+import { getAppFrameworkName, selectProject } from '../../shared/utils';
 import { SentryGeneratorSchema } from './schema';
 import { generateSentryNext, generateSentryExpo } from './utils';
 
@@ -7,11 +7,11 @@ export async function sentryGenerator(tree: Tree, options: SentryGeneratorSchema
   options.directory =
     options.directory || (await selectProject(tree, 'application', 'Select the application: ', true)).path;
 
-  console.log('options.directory', options.directory);
+  const appFrameworkName = getAppFrameworkName(tree, options.directory);
 
-  if (isNextApp(tree, options.directory)) {
+  if (appFrameworkName === 'next') {
     generateSentryNext(tree, options, options.directory);
-  } else if (isExpoApp(tree, options.directory)) {
+  } else if (appFrameworkName === 'expo') {
     generateSentryExpo(tree, options, options.directory);
   }
 

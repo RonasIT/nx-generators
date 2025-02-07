@@ -94,11 +94,15 @@ export const filterSource = async (input: string, source: Array<string>): Promis
   return filteredData.map((path) => ({ value: path }));
 };
 
-export const appendFileContent = (path: string, endContent: string, tree: Tree): void => {
-  const content = tree.read(path, 'utf-8');
-  const contentUpdate = (content || '') + endContent;
+export const updateFileContent = (path: string, updater: (fileContent: string) => string, tree: Tree): void => {
+  const fileContent = tree.read(path, 'utf-8');
 
-  tree.write(path, contentUpdate);
+  tree.write(path, updater(fileContent || ''));
+};
+
+// TODO: Test this one
+export const appendFileContent = (path: string, endContent: string, tree: Tree): void => {
+  updateFileContent(path, (fileContent) => fileContent + endContent, tree);
 };
 
 export const getProjectsDetails = (tree: Tree, projectType: ProjectType): Array<{ name: string; path: string }> =>

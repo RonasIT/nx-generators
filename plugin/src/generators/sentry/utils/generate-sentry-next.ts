@@ -2,13 +2,10 @@ import * as path from 'path';
 import { addDependenciesToPackageJson, generateFiles, Tree } from '@nx/devkit';
 import { tsquery } from '@phenomnomnominal/tsquery';
 import { createPrinter, factory, ObjectLiteralExpression } from 'typescript';
-import { updateFile } from '../../../shared/utils';
+import { dependencies } from '../../../shared/dependencies';
+import { updateFileContent } from '../../../shared/utils';
 import { SentryGeneratorSchema } from '../schema';
 import { createObjectLiteralExpression } from './create-object-literal-expression';
-
-const nextAppDependencies = {
-  '@sentry/nextjs': '^8.35.0',
-};
 
 const addRequiredImports = (content: string): string =>
   tsquery.replace(
@@ -98,15 +95,17 @@ const wrapIntoSentryConfig = (content: string): string => {
 };
 
 export function generateSentryNext(tree: Tree, options: SentryGeneratorSchema, projectRoot: string) {
-  addDependenciesToPackageJson(tree, nextAppDependencies, {});
+  addDependenciesToPackageJson(tree, dependencies.sentry.next, {});
 
-  updateFile(tree, `${projectRoot}/next.config.js`, (fileContent) =>
-    wrapIntoSentryConfig(modifyNextConfig(addRequiredImports(fileContent))),
+  updateFileContent(
+    `${projectRoot}/next.config.js`,
+    (fileContent) => wrapIntoSentryConfig(modifyNextConfig(addRequiredImports(fileContent))),
+    tree,
   );
 
   const envFiles = ['.env', '.env.development', '.env.production'];
   envFiles.forEach((file) => {
-    updateFile(tree, `${projectRoot}/${file}`, (fileContent) => fileContent + 'SENTRY_AUTH_TOKEN=');
+    updateFileContent(`${projectRoot}/${file}`, (fileContent) => fileContent + 'SENTRY_AUTH_TOKEN=', tree);
   });
 
   generateFiles(tree, path.join(__dirname, '../files'), projectRoot, options);

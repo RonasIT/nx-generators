@@ -8,13 +8,10 @@ import {
   addSyntheticLeadingComment,
   ArrayLiteralExpression,
 } from 'typescript';
-import { updateFile } from '../../../shared/utils/update-file';
+import { dependencies } from '../../../shared/dependencies';
+import { updateFileContent } from '../../../shared/utils';
 import { SentryGeneratorSchema } from '../schema';
 import { createObjectLiteralExpression } from './create-object-literal-expression';
-
-const expoAppDependencies = {
-  '@sentry/react-native': '~6.1.0',
-};
 
 const addRequiredImportsExpo = (content: string): string =>
   tsquery.replace(
@@ -23,7 +20,8 @@ const addRequiredImportsExpo = (content: string): string =>
     (node) =>
       `${node.getText()}
         import * as Sentry from "@sentry/react-native";
-        import Constants from "expo-constants";`,
+        import Constants from "expo-constants";
+        import { isRunningInExpoGo } from 'expo';`,
   );
 
 const removeExportsKeywordForRootLayout = (content: string): string =>
@@ -104,29 +102,38 @@ const updateMetroConfig = (content: string): string => {
 export function generateSentryExpo(tree: Tree, options: SentryGeneratorSchema, projectRoot: string) {
   const projectPackagePath = `${projectRoot}/package.json`;
 
-  addDependenciesToPackageJson(tree, expoAppDependencies, {});
-  addDependenciesToPackageJson(tree, expoAppDependencies, {}, projectPackagePath);
+  addDependenciesToPackageJson(tree, dependencies.sentry.expo, {});
+  addDependenciesToPackageJson(tree, dependencies.sentry.expo, {}, projectPackagePath);
 
-  updateFile(tree, `${projectRoot}/app/_layout.tsx`, (fileContent) => {
-    const updatedLayoutContent = removeExportsKeywordForRootLayout(addRequiredImportsExpo(fileContent));
+  updateFileContent(
+    `${projectRoot}/app/_layout.tsx`,
+    (fileContent) => {
+      const updatedLayoutContent = removeExportsKeywordForRootLayout(addRequiredImportsExpo(fileContent));
 
-    return `${updatedLayoutContent}
-      const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
+      return `${updatedLayoutContent}
+      const navigationIntegration = Sentry.reactNavigationIntegration({
+        enableTimeToInitialDisplay: !isRunningInExpoGo(),
+      });
 
       Sentry.init({
         dsn: Constants.expoConfig?.extra?.sentry?.dsn,
         environment: Constants.expoConfig?.extra?.env,
         debug: false,
-        integrations: [new Sentry.ReactNativeTracing({ routingInstrumentation })],
+        integrations: [navigationIntegration],
+        enableNativeFramesTracking: !isRunningInExpoGo(), // Tracks slow and frozen frames in the application
         enabled: !__DEV__
       });
 
       export default Sentry.wrap(RootLayout);`;
-  });
-
-  updateFile(tree, `${projectRoot}/app.config.ts`, (fileContent) =>
-    updateExtraConfig(addSentryPluginToAppConfig(fileContent), options.dsn),
+    },
+    tree,
   );
 
-  updateFile(tree, `${projectRoot}/metro.config.js`, (fileContent) => updateMetroConfig(fileContent));
+  updateFileContent(
+    `${projectRoot}/app.config.ts`,
+    (fileContent) => updateExtraConfig(addSentryPluginToAppConfig(fileContent), options.dsn),
+    tree,
+  );
+
+  updateFileContent(`${projectRoot}/metro.config.js`, (fileContent) => updateMetroConfig(fileContent), tree);
 }

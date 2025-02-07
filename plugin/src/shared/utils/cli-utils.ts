@@ -100,7 +100,6 @@ export const updateFileContent = (path: string, updater: (fileContent: string) =
   tree.write(path, updater(fileContent || ''));
 };
 
-// TODO: Test this one
 export const appendFileContent = (path: string, endContent: string, tree: Tree): void => {
   updateFileContent(path, (fileContent) => fileContent + endContent, tree);
 };

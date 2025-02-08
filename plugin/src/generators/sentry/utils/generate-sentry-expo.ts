@@ -99,7 +99,7 @@ const updateMetroConfig = (content: string): string => {
   );
 };
 
-export function generateSentryExpo(tree: Tree, options: SentryGeneratorSchema, projectRoot: string) {
+export function generateSentryExpo(tree: Tree, options: SentryGeneratorSchema, projectRoot: string): void {
   const projectPackagePath = `${projectRoot}/package.json`;
 
   addDependenciesToPackageJson(tree, dependencies.sentry.expo, {});

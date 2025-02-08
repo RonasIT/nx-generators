@@ -20,6 +20,8 @@ export const dependencies = {
   },
   'next-app': {
     'next-intl': '^3.17.2',
+    // nx/next 20 adds package that doesn't support eslint 9
+    'eslint-config-next': '^15.1.6',
   },
   'api-client': {
     '@ronas-it/axios-api-client': '^0.1.0',

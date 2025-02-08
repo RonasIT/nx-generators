@@ -3,7 +3,7 @@ import { getAppFrameworkName, selectProject } from '../../shared/utils';
 import { SentryGeneratorSchema } from './schema';
 import { generateSentryNext, generateSentryExpo } from './utils';
 
-export async function sentryGenerator(tree: Tree, options: SentryGeneratorSchema) {
+export async function sentryGenerator(tree: Tree, options: SentryGeneratorSchema): Promise<void> {
   options.directory =
     options.directory || (await selectProject(tree, 'application', 'Select the application: ', true)).path;
 

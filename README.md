@@ -328,5 +328,5 @@ Build results are placed in `dist/nx-generators` directory.
 To publish a dist package to NPM, run the following command:
 
 ```sh
-nx run nx-generators:nx-release-publish
+npx nx run nx-generators:nx-release-publish
 ```

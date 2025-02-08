@@ -94,7 +94,7 @@ const wrapIntoSentryConfig = (content: string): string => {
   );
 };
 
-export function generateSentryNext(tree: Tree, options: SentryGeneratorSchema, projectRoot: string) {
+export function generateSentryNext(tree: Tree, options: SentryGeneratorSchema, projectRoot: string): void {
   addDependenciesToPackageJson(tree, dependencies.sentry.next, {});
 
   updateFileContent(

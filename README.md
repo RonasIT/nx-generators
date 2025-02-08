@@ -289,6 +289,22 @@ Creates an API with related entities in API library. It also updates redux store
 npx nx g entity-api --name=User --baseEndpoint=users
 ```
 
+### 13. `sentry`
+
+Creates [Sentry](https://sentry.io/) integration for Expo/Next application.
+
+#### Options
+
+1. `directory` (optional) - the application directory that uses Sentry
+
+2. `dsn` (optional) - [Data Source Name](https://docs.sentry.io/concepts/key-terms/dsn-explainer/) of your Sentry project
+
+#### Example
+
+```sh
+npx nx g sentry --directory=apps/mobile --dsn=http://your-dsn.ingest.sentry.io/112233
+```
+
 ### Note
 
 Each generator accepts the `--help` argument to see generator instructions.

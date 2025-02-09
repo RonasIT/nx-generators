@@ -325,18 +325,9 @@ Key repository elements:
 
 ### Build
 
-In order to build the package, run:
-
-```sh
-npx nx run nx-generators:build
-```
-
+In order to build the package, run `build` script.\
 Build results are placed in `dist/nx-generators` directory.
 
 ### Publish
 
-To publish a dist package to NPM, run the following command:
-
-```sh
-npx nx run nx-generators:nx-release-publish
-```
+To publish a package distribution to NPM, run `release` script.

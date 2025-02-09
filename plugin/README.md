@@ -58,6 +58,8 @@ npx nx g react-component
 
 ## Generators overview
 
+Note: each generator accepts the `--help` argument to see generator instructions. Example: `npx nx g react-lib --help`.
+
 ### Repository
 
 ### 1. `repo-config`
@@ -289,10 +291,12 @@ Creates an API with related entities in API library. It also updates redux store
 npx nx g entity-api --name=User --baseEndpoint=users
 ```
 
-### Note
+### 13. `sentry`
 
-Each generator accepts the `--help` argument to see generator instructions.
+Creates [Sentry](https://sentry.io/) integration for Expo/Next application.
 
-```sh
-npx nx g react-lib --help
-```
+#### Options
+
+1. `directory` (optional) - the application directory that uses Sentry
+
+2. `dsn` (optional) - [Data Source Name](https://docs.sentry.io/concepts/key-terms/dsn-explainer/) of your Sentry project

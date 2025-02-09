@@ -58,6 +58,8 @@ npx nx g react-component
 
 ## Generators overview
 
+Note: each generator accepts the `--help` argument to see generator instructions. Example: `npx nx g react-lib --help`.
+
 ### Repository
 
 ### 1. `repo-config`
@@ -303,14 +305,6 @@ Creates [Sentry](https://sentry.io/) integration for Expo/Next application.
 
 ```sh
 npx nx g sentry --directory=apps/mobile --dsn=http://your-dsn.ingest.sentry.io/112233
-```
-
-### Note
-
-Each generator accepts the `--help` argument to see generator instructions.
-
-```sh
-npx nx g react-lib --help
 ```
 
 ## Development

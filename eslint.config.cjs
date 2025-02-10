@@ -3,20 +3,18 @@ const baseConfig = require('./eslint.base.cjs');
 
 module.exports = [
   {
-    ignores: ['**/node_modules', '**/*.js', '**/*.cjs', '**/*.mjs', 'apps/*/app.config.ts', 'src/lib/nx-generators.ts'],
+    ignores: ['**/node_modules', '**/dist', '**/*.js', '**/*.cjs', '**/*.mjs', 'apps/*/app.config.ts', 'src/lib/nx-generators.ts'],
   },
   ...baseConfig,
   ...ronasitConfig,
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-
     rules: {
       '@nx/enforce-module-boundaries': [
         'error',
         {
           enforceBuildableLibDependency: true,
           allow: [],
-
           depConstraints: [
             {
               sourceTag: 'app:shared',
@@ -53,7 +51,6 @@ module.exports = [
   },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-
     rules: {
       '@stylistic/array-bracket-newline': 'off',
       '@stylistic/array-bracket-spacing': 'off',

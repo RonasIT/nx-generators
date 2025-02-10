@@ -38,7 +38,10 @@ authListenerMiddleware.startListening({
     });
 
     dispatch(authActions.setIsAppReady(true));
-    isAuthenticated && dispatch(profileApi.endpoints.getProfile.initiate());
+    
+    if (isAuthenticated) {
+      dispatch(profileApi.endpoints.getProfile.initiate());
+    }
   },
 });
 

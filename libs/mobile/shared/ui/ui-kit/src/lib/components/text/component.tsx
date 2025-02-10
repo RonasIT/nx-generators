@@ -1,5 +1,5 @@
 import { Text, TextProps } from '@ui-kitten/components';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
 
 export interface AppTextProps extends TextProps {

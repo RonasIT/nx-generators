@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { StyleProp, TextStyle, View, ViewStyle } from 'react-native';
 import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
 import { AppText, AppTextProps } from '../text';

@@ -1,5 +1,5 @@
 import { AppPressable } from '@ronas-it/react-native-common-modules';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { Icon, IconProps } from '../icon';
 

@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
 import { AppScreen } from '../screen';

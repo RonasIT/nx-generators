@@ -1,5 +1,6 @@
 const ronasitConfig = require('./.eslint.ronasit.cjs');
 const baseConfig = require('./eslint.base.cjs');
+const constraints = require('./eslint.constraints.json');
 
 module.exports = [
   {
@@ -15,36 +16,7 @@ module.exports = [
         {
           enforceBuildableLibDependency: true,
           allow: [],
-          depConstraints: [
-            {
-              sourceTag: 'app:shared',
-              onlyDependOnLibsWithTags: ['app:shared'],
-            },
-            {
-              sourceTag: 'scope:shared',
-              onlyDependOnLibsWithTags: ['scope:*'],
-            },
-            {
-              sourceTag: 'type:app',
-              onlyDependOnLibsWithTags: ['type:features', 'type:ui', 'type:utils', 'type:data-access'],
-            },
-            {
-              sourceTag: 'type:utils',
-              onlyDependOnLibsWithTags: ['type:utils'],
-            },
-            {
-              sourceTag: 'type:data-access',
-              onlyDependOnLibsWithTags: ['type:data-access', 'type:utils'],
-            },
-            {
-              sourceTag: 'type:features',
-              onlyDependOnLibsWithTags: ['type:features', 'type:data-access', 'type:ui', 'type:utils'],
-            },
-            {
-              sourceTag: 'type:ui',
-              onlyDependOnLibsWithTags: ['type:ui', 'type:utils'],
-            },
-          ],
+          depConstraints: constraints,
         },
       ],
     },

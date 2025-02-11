@@ -28,7 +28,6 @@ const getNpmScope = (tree: Tree): string | undefined => {
 };
 
 export const addNxAppTag = (tree: Tree, appDirectory: string): void => {
-  // const { config, path } = readESLintConfig(tree);
   const constraints = readConstraints(tree);
   const doesTagExist = !!constraints.find((constraint) => constraint.sourceTag === `app:${appDirectory}`);
 
@@ -41,12 +40,10 @@ export const addNxAppTag = (tree: Tree, appDirectory: string): void => {
     onlyDependOnLibsWithTags: [`app:${appDirectory}`, 'app:shared'],
   });
 
-  // writeJson(tree, path, config);
   writeConstraints(tree, constraints);
 };
 
 export const addNxScopeTag = (tree: Tree, scope: string): void => {
-  // const { config, path } = readESLintConfig(tree);
   const constraints = readConstraints(tree);
   const doesTagExist = !!constraints.find((constraint) => constraint.sourceTag === `scope:${scope}`);
 
@@ -56,7 +53,6 @@ export const addNxScopeTag = (tree: Tree, scope: string): void => {
 
   constraints.push({ sourceTag: `scope:${scope}`, onlyDependOnLibsWithTags: [`scope:${scope}`, 'scope:shared'] });
 
-  // writeJson(tree, path, config);
   writeConstraints(tree, constraints);
 };
 

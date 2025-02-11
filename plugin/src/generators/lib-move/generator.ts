@@ -11,6 +11,7 @@ import {
   selectProject,
   validateLibraryType,
   getLibDirectoryName,
+  getImportPathPrefix,
 } from '../../shared/utils';
 import { LibMoveGeneratorSchema } from './schema';
 
@@ -45,9 +46,12 @@ export async function libMoveGenerator(tree: Tree, options: LibMoveGeneratorSche
       defaultLibraryName,
     ));
   const libDirectoryName = getLibDirectoryName(libraryName, options.scope);
-  const libPath = `libs/${path.normalize(`${options.app}/${options.scope}/${options.type}/${libDirectoryName}`)}`;
+  const newLibImportPath = `${path.normalize(`${options.app}/${options.scope}/${options.type}/${libDirectoryName}`)}`;
+  const newLibPath = `libs/${newLibImportPath}`;
+  const fullLibraryPath = `${getImportPathPrefix(tree)}/${newLibImportPath}`;
+  const fullLibraryName = newLibImportPath.split('/').join('-');
 
-  execSync(`npx nx g mv --project=${srcLibraryName} --destination=${libPath}`, { stdio: 'inherit' });
+  execSync(`npx nx g mv --projectName=${srcLibraryName} --newProjectName=${fullLibraryName} --destination=${newLibPath} --importPath=${fullLibraryPath}`, { stdio: 'inherit' });
 
   return (): void => {
     execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });

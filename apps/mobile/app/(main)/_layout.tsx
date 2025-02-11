@@ -1,6 +1,6 @@
 import { useTranslation } from '@ronas-it/react-native-common-modules';
 import { Stack } from 'expo-router';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 
 export default function MainNavigation(): ReactElement {
   const translate = useTranslation('APP.MAIN_LAYOUT');

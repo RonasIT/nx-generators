@@ -1,6 +1,6 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { Layout } from '@ui-kitten/components';
-import React, { ReactElement, useMemo } from 'react';
+import { ReactElement, useMemo } from 'react';
 import { ImageBackground, ScrollView, ScrollViewProps, View, ViewProps } from 'react-native';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { commonStyle, createStyles, spacings } from '@ronas-it/mobile/shared/ui/styles';

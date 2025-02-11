@@ -1,5 +1,0 @@
-node_modules
-
-**/*.js
-apps/*/app.config.ts
-src/lib/nx-generators.ts

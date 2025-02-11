@@ -2,7 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from '@ronas-it/react-native-common-modules';
 import Constants from 'expo-constants';
 import { Image } from 'expo-image';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ScrollView, View } from 'react-native';
 import { authApi } from '@ronas-it/mobile/shared/data-access/api';

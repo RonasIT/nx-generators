@@ -1,6 +1,7 @@
 import { execSync } from 'child_process';
+import * as path from 'path';
 import { Tree } from '@nx/devkit';
-import { askQuestion, getLibraryDetailsByName } from '../../shared/utils';
+import { askQuestion, getImportPathPrefix, getLibraryDetailsByName } from '../../shared/utils';
 import { LibRenameGeneratorSchema } from './schema';
 
 export async function libRenameGenerator(tree: Tree, options: LibRenameGeneratorSchema): Promise<void> {
@@ -19,7 +20,11 @@ export async function libRenameGenerator(tree: Tree, options: LibRenameGenerator
   libPathSegments.push(destLibraryName);
 
   const destLibraryPath = `libs/${libPathSegments.join('/')}`;
-  execSync(`npx nx g mv --project=${currentLibraryName} --destination=${destLibraryPath}`, { stdio: 'inherit' });
+  const newLibImportPath = path.normalize(libPathSegments.join('/'));
+  const fullLibraryPath = `${getImportPathPrefix(tree)}/${newLibImportPath}`;
+  const fullLibraryName = newLibImportPath.split('/').join('-');
+
+  execSync(`npx nx g mv --projectName=${currentLibraryName} --newProjectName=${fullLibraryName} --destination=${destLibraryPath} --importPath=${fullLibraryPath}`, { stdio: 'inherit' });
 }
 
 export default libRenameGenerator;

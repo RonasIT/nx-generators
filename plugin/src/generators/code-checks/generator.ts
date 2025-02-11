@@ -39,20 +39,8 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   const gitignoreContent = tree.read('.gitignore')?.toString() + '\n.eslintcache\n';
   tree.write('.gitignore', gitignoreContent);
 
-  // Update .eslintignore
-  const eslintignoreContent = tree.read('.eslintignore')?.toString() + '\n**/*.js\napps/*/app.config.ts\n';
-  tree.write('.eslintignore', eslintignoreContent);
-
-  const configTemplate = require('../../shared/templates/config-template.json');
-
   // Add files
   generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
-
-  // Add rules to .eslintrc.json
-  const esLintConfig = readJson(tree, '.eslintrc.json');
-
-  esLintConfig.overrides.push(configTemplate);
-  writeJson(tree, '.eslintrc.json', esLintConfig);
 
   // Install necessary dependencies
   addDependenciesToPackageJson(tree, {}, devDependencies['code-checks']);

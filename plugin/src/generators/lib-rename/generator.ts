@@ -19,6 +19,8 @@ export async function libRenameGenerator(tree: Tree, options: LibRenameGenerator
   libPathSegments.push(destLibraryName);
 
   const destLibraryPath = `libs/${libPathSegments.join('/')}`;
+
+  // FIX: project alias doesn't update
   execSync(`npx nx g mv --project=${currentLibraryName} --destination=${destLibraryPath}`, { stdio: 'inherit' });
 }
 

@@ -1,4 +1,3 @@
-const { fixupPluginRules } = require('@eslint/compat');
 const js = require('@eslint/js');
 const stylistic = require('@stylistic/eslint-plugin');
 const typescriptEslint = require('@typescript-eslint/eslint-plugin');
@@ -38,8 +37,8 @@ module.exports = [
       '@stylistic': stylistic,
       'unused-imports': unusedImports,
       react,
-      'react-hooks': fixupPluginRules(reactHooks),
-      import: fixupPluginRules(_import),
+      'react-hooks': reactHooks,
+      import: _import,
     },
 
     languageOptions: {

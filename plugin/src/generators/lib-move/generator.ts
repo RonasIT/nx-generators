@@ -47,6 +47,7 @@ export async function libMoveGenerator(tree: Tree, options: LibMoveGeneratorSche
   const libDirectoryName = getLibDirectoryName(libraryName, options.scope);
   const libPath = `libs/${path.normalize(`${options.app}/${options.scope}/${options.type}/${libDirectoryName}`)}`;
 
+  // FIX: project alias doesn't update 
   execSync(`npx nx g mv --project=${srcLibraryName} --destination=${libPath}`, { stdio: 'inherit' });
 
   return (): void => {

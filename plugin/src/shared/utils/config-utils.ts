@@ -67,7 +67,44 @@ export const getImportPathPrefix = (tree: Tree): string => {
 };
 
 export const verifyEsLintConstraintsConfig = (tree: Tree): void => {
-  const constraints = readConstraints(tree);
+  let constraints: Array<Constraint> = [];
+
+  try {
+    constraints = readConstraints(tree);
+  } catch {
+    output.warn({ title: output.bold('ESLint constraints config not found. Generate default rules...') });
+
+    const defaultConstraints = require('../templates/config-template.json') as Array<Constraint>;
+
+    writeConstraints(tree, defaultConstraints);
+
+    output.note({
+      title: 'Configure NX boundaries',
+      bodyLines: [
+        'To complete setup add the following changes in your ESLint config (eslint.config.cjs):',
+        '```',
+        output.bold(`const constraints = require('./eslint.constraints.json');`),
+        '```',
+        'module.exports = [',
+        '```',
+        `  {
+          files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+          rules: {
+            '@nx/enforce-module-boundaries': [
+              'error',
+              {
+                enforceBuildableLibDependency: true,
+                allow: [],
+                depConstraints: ${output.bold('constraints')},
+              },
+            ],
+          },
+        },`,
+        '```'
+      ]
+    })
+  }
+
   const importantTags = [
     'app:shared',
     'scope:shared',

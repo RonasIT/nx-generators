@@ -88,7 +88,6 @@ export const checkApplicationTags = (project: ProjectConfiguration, tree: Tree, 
   const hasTypeTag = tags?.includes('type:app');
 
   if (appTag) {
-    // const appTagRule = context.rules.find((rule) => rule.sourceTag === appTag);
     const appTagRule = readConstraints(tree).find((rule) => rule.sourceTag === appTag);
 
     if (!appTagRule) {

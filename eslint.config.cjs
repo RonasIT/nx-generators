@@ -1,3 +1,4 @@
+const eslintConfigPrettier = require('eslint-config-prettier');
 const ronasitConfig = require('./.eslint.ronasit.cjs');
 const baseConfig = require('./eslint.base.cjs');
 const constraints = require('./eslint.constraints.json');
@@ -192,4 +193,5 @@ module.exports = [
       '@stylistic/jsx/jsx-max-props-per-line': 'off',
     },
   },
+  eslintConfigPrettier
 ];

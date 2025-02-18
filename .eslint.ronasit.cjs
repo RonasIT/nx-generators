@@ -1,36 +1,23 @@
-const js = require('@eslint/js');
-const stylistic = require('@stylistic/eslint-plugin');
 const typescriptEslint = require('@typescript-eslint/eslint-plugin');
-const tsParser = require('@typescript-eslint/parser');
-
+const stylistic = require('@stylistic/eslint-plugin');
 const unusedImports = require('eslint-plugin-unused-imports');
 const react = require('eslint-plugin-react');
 const reactHooks = require('eslint-plugin-react-hooks');
 const _import = require('eslint-plugin-import');
+const tseslint = require('typescript-eslint');
+
 const globals = require('globals');
-
-const { FlatCompat } = require('@eslint/eslintrc');
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
+const tsParser = require('@typescript-eslint/parser');
+const eslint = require('@eslint/js');
 
 module.exports = [
   {
     ignores: ['**/node_modules', '**/*.js', 'apps/*/app.config.ts', 'src/lib/nx-generators.ts'],
   },
-  ...compat.extends(
-    'eslint:recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',
-  ),
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
   react.configs.flat.recommended,
   react.configs.flat['jsx-runtime'],
-  ...compat.extends(
-    'prettier',
-  ),
   {
     plugins: {
       '@typescript-eslint': typescriptEslint,

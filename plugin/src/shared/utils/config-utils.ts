@@ -68,7 +68,7 @@ export const verifyEsLintConstraintsConfig = (tree: Tree): void => {
   try {
     constraints = readConstraints(tree);
   } catch {
-    output.warn({ title: output.bold('ESLint constraints config not found. Generate default rules...') });
+    output.warn({ title: output.bold('ESLint constraints config not found. Generating default rules...') });
 
     const defaultConstraints = require('../templates/config-template.json') as Array<Constraint>;
 
@@ -119,6 +119,6 @@ export const verifyEsLintConstraintsConfig = (tree: Tree): void => {
 
     writeConstraints(tree, defaultConstraints);
 
-    output.warn({ title: output.bold('ESLint constraints config is incorrect. Restore default rules...') });
+    output.warn({ title: output.bold('ESLint constraints config is incorrect. Restoring default rules...') });
   }
 };

@@ -62,7 +62,7 @@ export const getImportPathPrefix = (tree: Tree): string => {
   return npmScope ? `${npmScope === '@' ? '' : '@'}${npmScope}` : '';
 };
 
-export const verifyEsLintConstraintsConfig = (tree: Tree): void => {
+export const verifyESLintConstraintsConfig = (tree: Tree): void => {
   let constraints: Array<Constraint> = [];
 
   try {

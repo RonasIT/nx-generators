@@ -1,6 +1,5 @@
 const typescriptEslint = require('@typescript-eslint/eslint-plugin');
 const stylistic = require('@stylistic/eslint-plugin');
-const eslintConfigPrettier = require('eslint-config-prettier');
 const unusedImports = require('eslint-plugin-unused-imports');
 const react = require('eslint-plugin-react');
 const reactHooks = require('eslint-plugin-react-hooks');
@@ -18,7 +17,6 @@ module.exports = [
   ...tseslint.configs.recommended,
   react.configs.flat.recommended,
   react.configs.flat['jsx-runtime'],
-  eslintConfigPrettier,
   {
     plugins: {
       '@typescript-eslint': typescriptEslint,

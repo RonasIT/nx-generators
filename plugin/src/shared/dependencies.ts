@@ -57,6 +57,8 @@ export const dependencies = {
 
 export const devDependencies = {
   'code-checks': {
+    '@eslint/compat': '^1.2.6',
+    '@eslint/eslintrc': '^3.2.0',
     eslint: '^9.8.0',
     prettier: '^3.3.2',
     'eslint-config-prettier': '^9.1.0',

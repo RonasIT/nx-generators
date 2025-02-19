@@ -26,5 +26,17 @@
   {
     "sourceTag": "type:ui",
     "onlyDependOnLibsWithTags": ["type:ui", "type:utils"]
+  },
+  {
+    "sourceTag": "app:mobile",
+    "onlyDependOnLibsWithTags": ["app:mobile", "app:shared"]
+  },
+  {
+    "sourceTag": "scope:auth",
+    "onlyDependOnLibsWithTags": ["scope:auth", "scope:shared"]
+  },
+  {
+    "sourceTag": "scope:profile",
+    "onlyDependOnLibsWithTags": ["scope:profile", "scope:shared"]
   }
 ]

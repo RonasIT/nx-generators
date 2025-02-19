@@ -7,7 +7,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@ronas-it/axios-api-client": "^0.1.0",
-    "@ronas-it/react-native-common-modules": "0.6.0",
+    "@ronas-it/react-native-common-modules": "^0.6.2",
     "@ronas-it/rtkq-entity-api": "^0.4.3",
     "@ui-kitten/components": "^5.3.1",
     "expo": "^52.0.24",

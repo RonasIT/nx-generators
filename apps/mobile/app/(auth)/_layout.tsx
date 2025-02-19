@@ -1,6 +1,6 @@
 import { useTranslation } from '@ronas-it/react-native-common-modules';
 import { Stack } from 'expo-router/stack';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 
 export default function AuthLayout(): ReactElement {
   const translate = useTranslation('APP.AUTH_LAYOUT');

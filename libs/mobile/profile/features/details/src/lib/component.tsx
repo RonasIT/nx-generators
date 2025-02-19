@@ -1,6 +1,6 @@
 import { useTranslation } from '@ronas-it/react-native-common-modules';
 import { Image } from 'expo-image';
-import React, { Fragment, ReactElement } from 'react';
+import { Fragment, ReactElement } from 'react';
 import { View } from 'react-native';
 import { authApi, profileApi } from '@ronas-it/mobile/shared/data-access/api';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';

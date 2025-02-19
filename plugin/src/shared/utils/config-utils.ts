@@ -1,66 +1,24 @@
 import { Tree, output, readJson, writeJson } from '@nx/devkit';
-import { isEmpty } from 'lodash';
 
-const defaultEsLintConfigPath = '.eslintrc.json';
+const constraintsConfigPath = 'eslint.constraints.json';
 
 export interface Constraint {
   sourceTag: string;
   onlyDependOnLibsWithTags: Array<string>;
 }
 
-const getNxRulesEntry = (config: Record<string, any>): { files: Array<string>; rules: Record<string, any> } =>
-  config.overrides?.find((entry: { rules: { [x: string]: any } }) => !!entry.rules['@nx/enforce-module-boundaries']);
-
-export const getNxRulesEntryOrThrowError = (
-  config: Record<string, any>,
-): { files: Array<string>; rules: Record<string, any> } => {
-  if (!config) {
-    throw new Error('ESLint config not found');
+export const readConstraints = (tree: Tree): Array<Constraint> => {
+  if (!tree.exists(constraintsConfigPath)) {
+    throw new Error(`ESLint constraints config not found: ${constraintsConfigPath}`);
   }
 
-  const entryWithRules = getNxRulesEntry(config);
+  const config = readJson(tree, constraintsConfigPath);
 
-  if (!entryWithRules) {
-    throw new Error(`ESLint: can't find '@nx/enforce-module-boundaries' rule`);
-  }
-
-  return entryWithRules;
+  return config as Array<Constraint>;
 };
 
-export const getNxRulesStatus = (config: Record<string, any>): string => {
-  return getNxRulesEntryOrThrowError(config).rules['@nx/enforce-module-boundaries'][0];
-};
-
-export const getNxRules = (config: Record<string, any>): Array<Constraint> => {
-  return getNxRulesEntryOrThrowError(config).rules['@nx/enforce-module-boundaries'][1].depConstraints;
-};
-
-export const readESLintConfig = (tree: Tree): { config: Record<string, any>; path: string } => {
-  let path = defaultEsLintConfigPath;
-
-  const checkConfigExists = (path: string): void => {
-    if (!tree.exists(path)) {
-      throw new Error(`ESLint config not found: ${path}`);
-    }
-  };
-
-  checkConfigExists(path);
-
-  let config = readJson(tree, path);
-
-  if (getNxRulesEntry(config)) {
-    return { config, path };
-  }
-
-  if (config.extends?.length) {
-    path = config.extends[0];
-
-    checkConfigExists(path);
-
-    config = readJson(tree, config.extends[0]);
-  }
-
-  return { config, path };
+export const writeConstraints = (tree: Tree, constraints: Array<Constraint>): void => {
+  writeJson(tree, constraintsConfigPath, constraints);
 };
 
 const getNpmScope = (tree: Tree): string | undefined => {
@@ -70,8 +28,7 @@ const getNpmScope = (tree: Tree): string | undefined => {
 };
 
 export const addNxAppTag = (tree: Tree, appDirectory: string): void => {
-  const { config, path } = readESLintConfig(tree);
-  const constraints = getNxRules(config);
+  const constraints = readConstraints(tree);
   const doesTagExist = !!constraints.find((constraint) => constraint.sourceTag === `app:${appDirectory}`);
 
   if (doesTagExist) {
@@ -83,12 +40,11 @@ export const addNxAppTag = (tree: Tree, appDirectory: string): void => {
     onlyDependOnLibsWithTags: [`app:${appDirectory}`, 'app:shared'],
   });
 
-  writeJson(tree, path, config);
+  writeConstraints(tree, constraints);
 };
 
 export const addNxScopeTag = (tree: Tree, scope: string): void => {
-  const { config, path } = readESLintConfig(tree);
-  const constraints = getNxRules(config);
+  const constraints = readConstraints(tree);
   const doesTagExist = !!constraints.find((constraint) => constraint.sourceTag === `scope:${scope}`);
 
   if (doesTagExist) {
@@ -97,7 +53,7 @@ export const addNxScopeTag = (tree: Tree, scope: string): void => {
 
   constraints.push({ sourceTag: `scope:${scope}`, onlyDependOnLibsWithTags: [`scope:${scope}`, 'scope:shared'] });
 
-  writeJson(tree, path, config);
+  writeConstraints(tree, constraints);
 };
 
 export const getImportPathPrefix = (tree: Tree): string => {
@@ -106,8 +62,45 @@ export const getImportPathPrefix = (tree: Tree): string => {
   return npmScope ? `${npmScope === '@' ? '' : '@'}${npmScope}` : '';
 };
 
-export const verifyEsLintConfig = (tree: Tree): Record<string, any> => {
-  const { config, path } = readESLintConfig(tree);
+export const verifyESLintConstraintsConfig = (tree: Tree): void => {
+  let constraints: Array<Constraint> = [];
+
+  try {
+    constraints = readConstraints(tree);
+  } catch {
+    output.warn({ title: output.bold('ESLint constraints config not found. Generating default rules...') });
+
+    const defaultConstraints = require('../templates/config-template.json') as Array<Constraint>;
+
+    writeConstraints(tree, defaultConstraints);
+
+    output.note({
+      title: 'Configure NX boundaries',
+      bodyLines: [
+        'To complete setup add the following changes in your ESLint config (eslint.config.cjs):',
+        '```',
+        output.bold(`const constraints = require('./eslint.constraints.json');`),
+        '```',
+        'module.exports = [',
+        '```',
+        `  {
+          files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+          rules: {
+            '@nx/enforce-module-boundaries': [
+              'error',
+              {
+                enforceBuildableLibDependency: true,
+                allow: [],
+                depConstraints: ${output.bold('constraints')},
+              },
+            ],
+          },
+        },`,
+        '```'
+      ]
+    })
+  }
+
   const importantTags = [
     'app:shared',
     'scope:shared',
@@ -118,42 +111,14 @@ export const verifyEsLintConfig = (tree: Tree): Record<string, any> => {
     'type:utils',
   ];
 
-  if (!config || isEmpty(config)) {
-    throw new Error(`Failed to load ESLint config: ${path}`);
+  const tags = constraints.map((rule) => rule.sourceTag);
+  const areRulesBroken = !importantTags.every((tag) => tags.includes(tag));
+
+  if (areRulesBroken) {
+    const defaultConstraints = require('../templates/config-template.json') as Array<Constraint>;
+
+    writeConstraints(tree, defaultConstraints);
+
+    output.warn({ title: output.bold('ESLint constraints config is incorrect. Restoring default rules...') });
   }
-
-  try {
-    const rulesEntry = getNxRulesEntryOrThrowError(config).rules['@nx/enforce-module-boundaries'];
-    const tags = rulesEntry[1].depConstraints.map((rule: Constraint) => rule.sourceTag);
-    const areRulesDisabled = rulesEntry[1].depConstraints.find(
-      (rule: Constraint) => rule.sourceTag === '*' && rule.onlyDependOnLibsWithTags.includes('*'),
-    );
-    const areRulesBroken = !importantTags.every((tag) => tags.includes(tag));
-
-    if (rulesEntry[0] !== 'error') {
-      rulesEntry[0] = 'error';
-    }
-
-    if (areRulesDisabled || areRulesBroken) {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const esLintConfigTemplate = require('../templates/config-template.json');
-      const templateRules = esLintConfigTemplate.rules['@nx/enforce-module-boundaries'];
-
-      rulesEntry[0] = templateRules[0];
-      rulesEntry[1] = templateRules[1];
-
-      writeJson(tree, path, config);
-    }
-    // TODO: use custom errors
-  } catch {
-    output.warn({ title: output.bold('ESLint config has no @nx/enforce-module-boundaries rule. Updating rules...') });
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const esLintConfigRulesTemplate = require('../templates/config-template.json');
-
-    config.overrides.push(esLintConfigRulesTemplate);
-
-    writeJson(tree, path, config);
-  }
-
-  return config;
 };

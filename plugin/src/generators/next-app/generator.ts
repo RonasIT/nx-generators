@@ -10,7 +10,7 @@ import {
   Tree,
   writeJson,
 } from '@nx/devkit';
-import { dependencies } from '../../shared/dependencies';
+import { dependencies, devDependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import {
   runApiClientGenerator,
@@ -95,7 +95,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   addNxAppTag(tree, options.directory);
 
   // Add dependencies
-  addDependenciesToPackageJson(tree, dependencies['next-app'], {});
+  addDependenciesToPackageJson(tree, dependencies['next-app'], devDependencies['next-app']);
 
   await formatFiles(tree);
 

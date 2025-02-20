@@ -20,6 +20,7 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   // Delete files
   tree.delete('.eslintrc.json');
   tree.delete('eslint.config.cjs');
+  tree.delete('eslint.config.mjs');
   tree.delete('.prettierrc');
 
   // Configure pre-commit hook

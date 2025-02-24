@@ -19,7 +19,7 @@ export const dependencies = {
     'react-native-svg-transformer': '^1.4.0',
   },
   'next-app': {
-    'next-intl': '^3.17.2',
+    'next-intl': '^3.26.3',
   },
   'api-client': {
     '@ronas-it/axios-api-client': '^0.1.0',

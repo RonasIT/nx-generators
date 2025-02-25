@@ -116,7 +116,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath,
+    libPath,
     isUIKittenEnabled: shouldGenerateUIKittenLib,
     isStoreEnabled: shouldGenerateStoreLib,
     appDirectory: options.directory,

@@ -1,4 +1,4 @@
-import { appEnv } from '<%= formatDirectory() %>/shared/utils/app-env';
+import { appEnv } from '<%= libPath %>/shared/utils/app-env';
 
 export const configuration = {
   // TODO: Add development, production url, when API will be ready

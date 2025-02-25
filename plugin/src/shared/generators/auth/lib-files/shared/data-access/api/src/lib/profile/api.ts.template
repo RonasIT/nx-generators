@@ -1,6 +1,6 @@
 import { prepareRequestParams } from '@ronas-it/rtkq-entity-api';
 import { plainToInstance } from 'class-transformer';
-import { axiosBaseQuery, createAppApi } from '<%= formatDirectory() %>/shared/data-access/api-client';
+import { axiosBaseQuery, createAppApi } from '<%= libPath %>/shared/data-access/api-client';
 import { User } from '../user';
 import { profileApiConfig } from './config';
 import { GetProfileRequest } from './models';

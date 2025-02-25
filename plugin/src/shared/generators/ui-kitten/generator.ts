@@ -28,7 +28,7 @@ export async function runUIKittenGenerator(tree: Tree, options: { name: string; 
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath,
+    libPath,
   });
 
   // Update styles lib exports

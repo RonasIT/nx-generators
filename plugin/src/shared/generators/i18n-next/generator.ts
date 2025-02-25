@@ -23,7 +23,7 @@ export async function runI18nNextGenerator(tree: Tree, options: { name: string; 
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath,
+    libPath,
   });
 
   await formatFiles(tree);

@@ -97,7 +97,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   generateFiles(tree, path.join(__dirname, 'files'), appRoot, {
     ...options,
     formatName,
-    formatDirectory: () => libPath,
+    libPath,
     hasProviders,
     isStoreEnabled: shouldGenerateStoreLib
   });

@@ -25,7 +25,7 @@ export async function runApiClientGenerator(tree: Tree, options: { name: string;
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath,
+    libPath,
   });
 
   // Add dependencies

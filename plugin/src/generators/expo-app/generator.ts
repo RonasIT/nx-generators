@@ -157,6 +157,8 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
         stdio: 'inherit',
       });
     }
+
+    execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
   };
 }
 

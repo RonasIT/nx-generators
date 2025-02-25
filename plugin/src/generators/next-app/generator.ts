@@ -125,6 +125,8 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
         stdio: 'inherit',
       });
     }
+
+    execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
   };
 }
 

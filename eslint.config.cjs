@@ -28,8 +28,8 @@ module.exports = [
       '@stylistic/array-bracket-newline': 'off',
       '@stylistic/implicit-arrow-linebreak': 'off',
       '@stylistic/indent': 'off',
-      "@stylistic/jsx-indent": "off",
-      "@stylistic/indent-binary-ops": "off"
+      '@stylistic/jsx-indent': 'off',
+      '@stylistic/indent-binary-ops': 'off'
     },
   },
   eslintConfigPrettier

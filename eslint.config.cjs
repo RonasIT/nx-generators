@@ -29,7 +29,8 @@ module.exports = [
       '@stylistic/implicit-arrow-linebreak': 'off',
       '@stylistic/indent': 'off',
       '@stylistic/jsx-indent': 'off',
-      '@stylistic/indent-binary-ops': 'off'
+      '@stylistic/indent-binary-ops': 'off',
+      '@stylistic/newline-per-chained-call': 'off',
     },
   },
   eslintConfigPrettier

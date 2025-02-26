@@ -1,7 +1,9 @@
 export const dependencies = {
   'expo-app': {
+    // TODO: Remove @react-native-async-storage/async-storage when it is deleted from @ronas-it/react-native-common-modules
     '@react-native-async-storage/async-storage': '~1.23.1',
     '@ronas-it/react-native-common-modules': '^0.6.2',
+    'react-native-mmkv': '^3.2.0',
     'expo-constants': '~17.0.3',
     'expo-dev-client': '^5.0.6',
     'expo-router': '~4.0.14',

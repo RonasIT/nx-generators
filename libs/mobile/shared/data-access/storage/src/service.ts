@@ -1,9 +1,7 @@
-import { AsyncStorageItem, SecureStorageItem } from '@ronas-it/react-native-common-modules';
+import { MMKV } from 'react-native-mmkv';
 
-class AppStorageService {
-  public token = new SecureStorageItem('token');
-  public tokenExpiresAt = new AsyncStorageItem('tokenExpiresAt');
-  public isAuthenticated = new AsyncStorageItem('isAuthenticated');
-}
-
-export const appStorageService = new AppStorageService();
+export const storage = new MMKV({
+  id: 'mobile',
+  // If we need more security, we can use EAS secret variables here
+  encryptionKey: 'mobile',
+});

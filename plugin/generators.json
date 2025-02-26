@@ -18,7 +18,7 @@
     "repo-config": {
       "factory": "./src/generators/repo-config/generator",
       "schema": "./src/generators/repo-config/schema.json",
-      "description": "Setups the monorepo structure for development"
+      "description": "Sets up the monorepo structure for development"
     },
     "react-lib": {
       "factory": "./src/generators/react-lib/generator",

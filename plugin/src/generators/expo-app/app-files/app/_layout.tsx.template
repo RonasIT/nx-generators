@@ -1,7 +1,7 @@
-<% if(isStoreEnabled) { %> import { store } from '<%= formatDirectory() %>/shared/data-access/store';<% } %>
+<% if(isStoreEnabled) { %> import { store } from '<%= libPath %>/shared/data-access/store';<% } %>
 import { setLanguage } from '@ronas-it/react-native-common-modules';
 <% if(isUIKittenEnabled) { %>
-import { UserThemeProvider } from '<%= formatDirectory() %>/shared/features/user-theme-provider';
+import { UserThemeProvider } from '<%= libPath %>/shared/features/user-theme-provider';
 <% } %>
 <% if(isStoreEnabled) { %>import { storeActions } from '@ronas-it/rtkq-entity-api';<% } %>
 import { Stack } from 'expo-router';

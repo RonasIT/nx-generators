@@ -7,9 +7,9 @@ import {
 } from '@ronas-it/axios-api-client';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { DateTime } from 'luxon';
-import { authApi, profileApi, LogInResponse } from '<%= formatDirectory() %>/shared/data-access/api';
-import { apiService, configuration } from '<%= formatDirectory() %>/shared/data-access/api-client';
-import { appStorageService } from '<%= formatDirectory() %>/shared/data-access/storage';
+import { authApi, profileApi, LogInResponse } from '<%= libPath %>/shared/data-access/api';
+import { apiService, configuration } from '<%= libPath %>/shared/data-access/api-client';
+import { appStorageService } from '<%= libPath %>/shared/data-access/storage';
 import { authActions, authReducerPath, authSelectors, AuthState } from './slice';
 
 export const authListenerMiddleware = createListenerMiddleware<{ [authReducerPath]: AuthState }>();

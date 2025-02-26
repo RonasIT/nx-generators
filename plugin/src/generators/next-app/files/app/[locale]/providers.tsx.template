@@ -2,7 +2,7 @@
 
 import { ReactElement } from 'react';
 import { Provider } from 'react-redux';
-<% if(isStoreEnabled) { %> import { store } from '<%= formatDirectory() %>/shared/data-access/store';<% } %>
+<% if(isStoreEnabled) { %> import { store } from '<%= libPath %>/shared/data-access/store';<% } %>
 
 export function Providers({ children }: { children: React.ReactNode }): ReactElement {
   return (

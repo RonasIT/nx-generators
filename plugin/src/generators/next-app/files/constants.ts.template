@@ -1,4 +1,4 @@
-import type { Locale } from '<%= formatDirectory() %>/shared/utils/i18n';
+import type { Locale } from '<%= libPath %>/shared/utils/i18n';
 
 interface Constants {
   defaultLocale: Locale;

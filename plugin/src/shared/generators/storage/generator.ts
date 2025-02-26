@@ -20,7 +20,7 @@ export async function runStorageGenerator(tree: Tree, options: { name: string; d
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath,
+    libPath,
   });
 
   await formatFiles(tree);

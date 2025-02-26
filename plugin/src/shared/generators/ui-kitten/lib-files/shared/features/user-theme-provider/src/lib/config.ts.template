@@ -1,4 +1,4 @@
-import { UserTheme } from '<%= formatDirectory() %>/shared/ui/styles';
+import { UserTheme } from '<%= libPath %>/shared/ui/styles';
 
 export const userThemeConfig = {
   defaultUserTheme: 'dark' as UserTheme,

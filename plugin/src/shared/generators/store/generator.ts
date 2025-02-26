@@ -26,7 +26,7 @@ export async function runStoreGenerator(tree: Tree, options: StoreGeneratorSchem
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath,
+    libPath,
   });
 
   // Add dependencies

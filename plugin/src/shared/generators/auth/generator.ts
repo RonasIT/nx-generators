@@ -78,7 +78,7 @@ export async function runAuthGenerator(tree: Tree, options: AuthGeneratorSchema)
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath,
+    libPath,
   });
 
   updateStore(libRoot);

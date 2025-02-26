@@ -3,82 +3,82 @@
     "code-checks": {
       "factory": "./src/generators/code-checks/generator",
       "schema": "./src/generators/code-checks/schema.json",
-      "description": "code-checks generator"
+      "description": "Configures code checks and formatting with pre-commit hook"
     },
     "expo-app": {
       "factory": "./src/generators/expo-app/generator",
       "schema": "./src/generators/expo-app/schema.json",
-      "description": "expo-app generator"
+      "description": "Generates and configures an Expo React Native app"
     },
     "next-app": {
       "factory": "./src/generators/next-app/generator",
       "schema": "./src/generators/next-app/schema.json",
-      "description": "next-app generator"
+      "description": "Generates and configures a Next.js app"
     },
     "repo-config": {
       "factory": "./src/generators/repo-config/generator",
       "schema": "./src/generators/repo-config/schema.json",
-      "description": "repo-config generator"
+      "description": "Setups the monorepo structure for development"
     },
     "react-lib": {
       "factory": "./src/generators/react-lib/generator",
       "schema": "./src/generators/react-lib/schema.json",
-      "description": "react-lib generator"
+      "description": "Generates a library according to NX notation"
     },
     "react-component": {
       "factory": "./src/generators/react-component/generator",
       "schema": "./src/generators/react-component/schema.json",
-      "description": "react-component generator"
+      "description": "Creates a React component in particular library"
     },
     "sentry": {
       "factory": "./src/generators/sentry/generator",
       "schema": "./src/generators/sentry/schema.json",
-      "description": "sentry generator"
+      "description": "Creates Sentry integration for Expo/Next application"
     },
     "ui-kitten": {
       "factory": "./src/shared/generators/ui-kitten/generator",
       "schema": "./src/shared/generators/ui-kitten/schema.json",
-      "description": "UI-Kitten generator for Expo projects"
+      "description": "Installs and configures UI-Kitten for Expo application"
     },
     "entity-api": {
       "factory": "./src/generators/entity-api/generator",
       "schema": "./src/generators/entity-api/schema.json",
-      "description": "entity-api generator"
+      "description": "Creates an API with related entities in API library. It also updates redux store middlewares, reducers"
     },
     "store": {
       "factory": "./src/shared/generators/store/generator",
       "schema": "./src/shared/generators/store/schema.json",
-      "description": "redux store generator"
+      "description": "Installs and configures redux store for Expo/Next application"
     },
     "form": {
       "factory": "./src/generators/form/generator",
       "schema": "./src/generators/form/schema.json",
-      "description": "form generator"
+      "description": "Generates a form schema class and adds its usage to a component or a hook"
     },
     "lib-tags": {
       "factory": "./src/generators/lib-tags/generator",
       "schema": "./src/generators/lib-tags/schema.json",
-      "description": "lib-tags generator"
+      "description": "Checks and configures NX library tags"
     },
     "lib-rename": {
       "factory": "./src/generators/lib-rename/generator",
       "schema": "./src/generators/lib-rename/schema.json",
-      "description": "library rename utility"
+      "description": "Renames an existing library and updates imports"
     },
     "lib-move": {
       "factory": "./src/generators/lib-move/generator",
       "schema": "./src/generators/lib-move/schema.json",
-      "description": "library move utility"
+      "description": "Moves the library to a new destination."
     },
     "lib-remove": {
       "factory": "./src/generators/lib-remove/generator",
       "schema": "./src/generators/lib-remove/schema.json",
-      "description": "library remove utility"
+      "description": "Removes the library. Before deleting a library you must remove all references to it"
     },
     "auth": {
       "factory": "./src/shared/generators/auth/generator",
       "schema": "./src/shared/generators/auth/schema.json",
-      "description": "authentication library for Expo projects"
+      "description": "Creates auth related api libs and configures redux store "
     }
   }
 }

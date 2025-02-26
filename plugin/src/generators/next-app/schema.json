@@ -6,7 +6,7 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "",
+      "description": "Name of the app (e.g: my-app)",
       "$default": {
         "$source": "argv",
         "index": 0
@@ -15,7 +15,7 @@
     },
     "directory": {
       "type": "string",
-      "description": "",
+      "description": "A directory name for the app in the 'apps/' folder (e.g: web)",
       "$default": {
         "$source": "argv",
         "index": 1
@@ -24,6 +24,7 @@
     },
     "withSentry": {
       "type": "boolean",
+      "description": "Add Sentry to the app",
       "default": false,
       "x-prompt": "Do you want to use Sentry in your app?"
     }

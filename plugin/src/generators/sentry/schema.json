@@ -6,12 +6,12 @@
   "properties": {
     "directory": {
       "type": "string",
-      "description": "",
+      "description": "The directory name of the app in the 'apps/' folder",
       "default": ""
     },
     "dsn": {
       "type": "string",
-      "description": "",
+      "description": "Sentry DSN",
       "x-prompt": "What is your Sentry DSN?"
     }
   },

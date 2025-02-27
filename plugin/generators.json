@@ -23,7 +23,7 @@
     "react-lib": {
       "factory": "./src/generators/react-lib/generator",
       "schema": "./src/generators/react-lib/schema.json",
-      "description": "Generates a library according to NX notation"
+      "description": "Generates a library according to Nx notation"
     },
     "react-component": {
       "factory": "./src/generators/react-component/generator",
@@ -58,7 +58,7 @@
     "lib-tags": {
       "factory": "./src/generators/lib-tags/generator",
       "schema": "./src/generators/lib-tags/schema.json",
-      "description": "Checks and configures NX library tags"
+      "description": "Checks and configures Nx library tags"
     },
     "lib-rename": {
       "factory": "./src/generators/lib-rename/generator",

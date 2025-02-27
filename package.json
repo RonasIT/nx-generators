@@ -1,6 +1,6 @@
 {
   "name": "@ronas-it/nx-generators-workspace",
-  "description": "NX generators for Ronas IT projects",
+  "description": "Nx generators for Ronas IT projects",
   "license": "MIT",
   "author": "Ronas IT",
   "scripts": {

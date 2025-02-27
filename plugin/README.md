@@ -1,10 +1,10 @@
-# NX Generators
+# Nx Generators
 
-NX generators for Ronas IT projects.
+Nx generators for Ronas IT projects.
 
 ## Usage
 
-1. Create monorepo with Expo app using [NX Expo preset](https://nx.dev/nx-api/expo) or with Next.js app using [NX Next preset](https://nx.dev/nx-api/next):
+1. Create monorepo with Expo app using [Nx Expo preset](https://nx.dev/nx-api/expo) or with Next.js app using [Nx Next preset](https://nx.dev/nx-api/next):
 
 ```sh
 # For Expo app:
@@ -120,7 +120,7 @@ npx nx g next-app my-app web
 
 ### 5. `react-lib`
 
-Generates a library according to [NX notation](https://nx.dev/concepts/more-concepts/applications-and-libraries).
+Generates a library according to [Nx notation](https://nx.dev/concepts/more-concepts/applications-and-libraries).
 
 #### Options
 
@@ -210,7 +210,7 @@ npx nx g lib-remove --libName="mobile-account-features-profile-settings"
 
 ### 9. `lib-tags`
 
-Checks and configures [NX library tags](https://nx.dev/features/enforce-module-boundaries). If your project does not already use library tags, you can add them using this generator.
+Checks and configures [Nx library tags](https://nx.dev/features/enforce-module-boundaries). If your project does not already use library tags, you can add them using this generator.
 
 #### Options
 

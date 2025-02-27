@@ -1,7 +1,7 @@
 {
   "name": "@ronas-it/nx-generators",
   "version": "0.12.2",
-  "description": "NX generators for Ronas IT projects",
+  "description": "Nx generators for Ronas IT projects",
   "license": "MIT",
   "author": "Ronas IT",
   "bugs": {

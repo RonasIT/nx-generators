@@ -75,7 +75,7 @@ export const verifyESLintConstraintsConfig = (tree: Tree): void => {
     writeConstraints(tree, defaultConstraints);
 
     output.note({
-      title: 'Configure NX boundaries',
+      title: 'Configure Nx boundaries',
       bodyLines: [
         'To complete setup add the following changes in your ESLint config (eslint.config.cjs):',
         '```',
@@ -96,9 +96,9 @@ export const verifyESLintConstraintsConfig = (tree: Tree): void => {
             ],
           },
         },`,
-        '```'
-      ]
-    })
+        '```',
+      ],
+    });
   }
 
   const importantTags = [

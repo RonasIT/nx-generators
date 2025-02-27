@@ -6,12 +6,12 @@
   "properties": {
     "silent": {
       "type": "boolean",
-      "description": "",
+      "description": "Disable log",
       "$default": false
     },
     "skipRepoCheck": {
       "type": "boolean",
-      "description": "",
+      "description": "Disable unstaged changes check",
       "$default": false
     }
   },

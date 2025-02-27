@@ -17,6 +17,7 @@
     "type": {
       "type": "string",
       "description": "Type of the library",
+      "enum": ["features", "ui", "data-access", "utils", ""],
       "default": ""
     },
     "name": {

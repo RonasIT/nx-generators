@@ -4,22 +4,13 @@
   "title": "",
   "type": "object",
   "properties": {
-    "name": {
-      "type": "string",
-      "description": "Name of the app",
-      "default": "",
-      "$default": {
-        "$source": "argv",
-        "index": 0
-      }
-    },
     "directory": {
       "type": "string",
       "description": "Directory of the app (folder inside apps/)",
       "default": "",
       "$default": {
         "$source": "argv",
-        "index": 1
+        "index": 0
       }
     },
     "baseGeneratorType": {
@@ -28,7 +19,7 @@
       "default": "",
       "$default": {
         "$source": "argv",
-        "index": 2
+        "index": 1
       }
     }
   },

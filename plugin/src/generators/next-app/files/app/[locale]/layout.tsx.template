@@ -1,8 +1,11 @@
+import { pick } from 'lodash';
 import { notFound } from 'next/navigation';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { ReactElement, ReactNode } from 'react';
-import { constants, Locale } from '../../constants';
-import { Providers } from './providers';
+import { constants } from '../../constants';
+<% if(hasProviders) { %> import { Providers } from './providers';<% } %>
+import type { Locale } from '<%= libPath %>/shared/utils/i18n';
 
 export const metadata = {
   title: '<%= formatName(name) %>',
@@ -10,7 +13,7 @@ export const metadata = {
 
 export interface RootLayoutProps {
   children: ReactNode;
-  params: { locale: Locale };
+  params: Promise<{ locale: Locale }>;
 }
 
 const locales = constants.locales;
@@ -18,15 +21,16 @@ const locales = constants.locales;
 export const generateStaticParams = (): Array<{ locale: Locale }> =>
   locales.map((locale) => ({ locale }));
 
-export default function RootLayout({
-  children,
-  params: { locale },
-}: RootLayoutProps): ReactElement {
+export default async function RootLayout({ children, params }: RootLayoutProps): Promise<ReactElement> {
+  const { locale } = await params;
+
   if (!locales.includes(locale)) {
     notFound();
   }
 
-  unstable_setRequestLocale(locale);
+  setRequestLocale(locale);
+
+  const messages = await getMessages();
 
   return (
     <html lang={locale}>
@@ -41,7 +45,11 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <% if(hasProviders) { %><Providers><% } %>
+        <NextIntlClientProvider messages={pick(messages, 'web-shared')} locale={locale}>
+          {children}
+        </NextIntlClientProvider>
+        <% if(hasProviders) { %></Providers><% } %>
       </body>
     </html>
   );

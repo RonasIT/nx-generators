@@ -89,7 +89,7 @@ const updateMetroConfig = (content: string): string => {
   const metroConfigContentWithImport = tsquery.replace(
     content,
     'VariableStatement:has(Identifier[name="getDefaultConfig"]):has(CallExpression:has(Identifier[name="require"]))',
-    () => 'const { getSentryExpoConfig } = require(\'@sentry/react-native/metro\');',
+    () => `const { getSentryExpoConfig } = require('@sentry/react-native/metro');`,
   );
 
   return tsquery.replace(

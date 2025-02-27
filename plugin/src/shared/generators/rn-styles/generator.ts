@@ -28,7 +28,7 @@ export async function runRNStylesGenerator(tree: Tree, options: { name: string; 
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath,
+    libPath,
   });
 
   // Add dependencies

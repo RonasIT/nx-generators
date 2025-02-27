@@ -25,7 +25,7 @@ export async function runAppEnvGenerator(
     ...options,
     formatName,
     formatAppIdentifier,
-    formatDirectory: () => libPath,
+    libPath,
     appType,
   });
 

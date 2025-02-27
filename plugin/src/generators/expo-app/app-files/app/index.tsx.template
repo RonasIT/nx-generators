@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { View, Text } from 'react-native';
-import { createStyles } from '<%= formatDirectory() %>/shared/ui/styles';
+import { createStyles } from '<%= libPath %>/shared/ui/styles';
 
 export default function RootScreen(): ReactElement {
   return (

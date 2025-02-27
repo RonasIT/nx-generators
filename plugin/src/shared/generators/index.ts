@@ -6,3 +6,4 @@ export * from './storage';
 export * from './rn-styles';
 export * from './ui-kitten';
 export * from './form-utils';
+export * from './i18n-next';

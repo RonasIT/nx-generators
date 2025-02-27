@@ -54,7 +54,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     updateProjectConfiguration(tree, project.name as string, project);
   } else {
     execSync(
-      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=eslint --unitTestRunner=none --e2eTestRunner=none`,
+      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=none --unitTestRunner=none --e2eTestRunner=none`,
       { stdio: 'inherit' },
     );
   }

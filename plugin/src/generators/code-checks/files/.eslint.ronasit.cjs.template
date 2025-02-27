@@ -89,7 +89,6 @@ module.exports = [
       '@stylistic/arrow-spacing': ['warn', { before: true, after: true }],
       '@stylistic/block-spacing': ['warn', 'always'],
       '@stylistic/brace-style': ['warn', '1tbs'],
-      '@stylistic/comma-dangle': ['warn', 'never'],
       '@stylistic/comma-spacing': ['warn', { before: false, after: true }],
       '@stylistic/eol-last': ['warn', 'always'],
       '@stylistic/func-call-spacing': ['warn', 'never'],

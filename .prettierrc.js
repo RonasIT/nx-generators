@@ -7,5 +7,4 @@ module.exports = {
   jsxSingleQuote: true,
   singleQuote: true,
   useTabs: false,
-  trailingComma: 'none'
 };

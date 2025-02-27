@@ -31,7 +31,9 @@ module.exports = [
       '@stylistic/jsx-indent': 'off',
       '@stylistic/indent-binary-ops': 'off',
       '@stylistic/newline-per-chained-call': 'off',
+      '@stylistic/function-paren-newline': 'off',
+      '@stylistic/function-call-argument-newline': 'off',
     },
   },
-  eslintConfigPrettier
+  eslintConfigPrettier,
 ];

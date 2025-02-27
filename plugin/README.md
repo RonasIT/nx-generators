@@ -64,7 +64,7 @@ Note: each generator accepts the `--help` argument to see generator instructions
 
 ### 1. `repo-config`
 
-Setups the monorepo structure for development.
+Sets up the monorepo structure for development.
 
 ### 2. `code-checks`
 

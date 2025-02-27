@@ -4,21 +4,12 @@
   "title": "",
   "type": "object",
   "properties": {
-    "name": {
+    "directory": {
       "type": "string",
-      "description": "",
+      "description": "The directory name of the app in the 'apps/' folder",
       "$default": {
         "$source": "argv",
         "index": 0
-      },
-      "x-prompt": "Enter the name of the app"
-    },
-    "directory": {
-      "type": "string",
-      "description": "",
-      "$default": {
-        "$source": "argv",
-        "index": 1
       },
       "x-prompt": "Enter the name of the directory in the 'apps/' folder"
     }

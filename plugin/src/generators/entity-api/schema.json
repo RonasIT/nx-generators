@@ -6,11 +6,20 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "Name of the entity",
+      "description": "Name of the entity (e.g. User)",
       "default": "",
       "$default": {
         "$source": "argv",
         "index": 0
+      }
+    },
+    "baseEndpoint": {
+      "type": "string",
+      "description": "Base API endpoint (e.g. /users)",
+      "default": "",
+      "$default": {
+        "$source": "argv",
+        "index": 1
       }
     }
   },

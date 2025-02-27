@@ -5,7 +5,7 @@ import { addDependenciesToPackageJson, formatFiles, generateFiles, Tree } from '
 import { dependencies } from '../../dependencies';
 import { formatName, formatAppIdentifier, getImportPathPrefix, LibraryType } from '../../utils';
 
-export async function runUIKittenGenerator(tree: Tree, options: { name: string; directory: string }): Promise<void> {
+export async function runUIKittenGenerator(tree: Tree, options: { directory: string }): Promise<void> {
   const appRoot = `apps/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;

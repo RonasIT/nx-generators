@@ -147,7 +147,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     execSync('npx expo install --fix', { stdio: 'inherit' });
 
     if (shouldGenerateAuthLibs) {
-      execSync(`npx nx g auth ${options.name} ${options.directory}`, {
+      execSync(`npx nx g auth ${options.directory}`, {
         stdio: 'inherit',
       });
     }

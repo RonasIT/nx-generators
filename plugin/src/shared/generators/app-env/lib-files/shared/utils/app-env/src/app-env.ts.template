@@ -2,4 +2,4 @@ import { AppEnv } from './env';
 
 export type AppEnvName = 'development' | 'production';
 
-export const appEnv = new AppEnv<AppEnvName>(process.env.<%= appType %>_PUBLIC_APP_ENV as AppEnvName);
+export const appEnv = new AppEnv<AppEnvName>((process.env.<%= appType %>_PUBLIC_APP_ENV || 'development') as AppEnvName);

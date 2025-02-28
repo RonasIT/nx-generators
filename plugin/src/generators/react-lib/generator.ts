@@ -58,7 +58,10 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   const tags = [`app:${options.app}`, `scope:${scopeTag}`, `type:${options.type}`];
 
   const libDirectoryName = getLibDirectoryName(options.name, options.scope);
-  const libName = path.normalize(`${options.app}/${options.scope}/${options.type}/${libDirectoryName}`);
+  const libName = path
+    .normalize(`${options.app}/${options.scope}/${options.type}/${libDirectoryName}`)
+    .split(path.sep)
+    .join('/');
   const libPath = `libs/${libName}`;
   const command = `npx nx g @nx/expo:lib --skipPackageJson --unitTestRunner=none --tags="${tags.join(', ')}" --name=${libName} ${libPath} --linter=eslint`;
   const commandWithOptions = options.dryRun ? command + ' --dry-run' : command;

@@ -20,7 +20,10 @@ export async function libRenameGenerator(tree: Tree, options: LibRenameGenerator
   libPathSegments.push(destLibraryName);
 
   const destLibraryPath = `libs/${libPathSegments.join('/')}`;
-  const newLibImportPath = path.normalize(libPathSegments.join('/'));
+  const newLibImportPath = path
+    .normalize(libPathSegments.join('/'))
+    .split(path.sep)
+    .join('/');
   const fullLibraryPath = `${getImportPathPrefix(tree)}/${newLibImportPath}`;
   const fullLibraryName = newLibImportPath.split('/').join('-');
 

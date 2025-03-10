@@ -1,45 +1,29 @@
 import { existsSync } from 'fs';
 import * as path from 'path';
 import { formatFiles, generateFiles, Tree } from '@nx/devkit';
-import { kebabCase } from 'lodash-es';
 import {
   appendFileContent,
-  askQuestion,
-  createCliReadline,
   dynamicImport,
   formatName,
   getNxLibsPaths,
   LibraryType,
-  searchNxLibsPaths,
 } from '../../shared/utils';
 import { ReactComponentGeneratorSchema } from './schema';
 
 export async function reactComponentGenerator(tree: Tree, options: ReactComponentGeneratorSchema): Promise<void> {
-  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
-    'inquirer-autocomplete-standalone',
+  const { AutoComplete } = require('enquirer');
+  const { kebabCase } = await dynamicImport<typeof import('lodash-es')>(
+    'lodash-es',
   );
 
   const nxLibsPaths = getNxLibsPaths([LibraryType.FEATURES, LibraryType.UI]);
 
-  const libPath = await autocomplete({
+  const libPath = await new AutoComplete({
+    name: 'library path',
     message: 'Enter the library path:',
-    source: async (input) => {
-      const filteredNxLibsPaths = searchNxLibsPaths(nxLibsPaths, input as string);
-
-      return filteredNxLibsPaths.map((path) => ({ value: path }));
-    },
-  });
-
-  const cliReadline = createCliReadline();
-  options.name =
-    options.name || (await askQuestion('Enter the name of the component (e.g: AppButton): ', undefined, cliReadline));
-  options.subcomponent =
-    options.subcomponent ||
-    (await askQuestion('Generate component inside components folder? (y/n): ', undefined, cliReadline)) === 'y';
-  options.withForwardRef =
-    options.withForwardRef ||
-    (await askQuestion('Generate component with forwardRef? (y/n): ', undefined, cliReadline)) === 'y';
-  cliReadline.close();
+    limit: 10,
+    choices: nxLibsPaths,
+  }).run();
 
   const libRootPath = `${libPath}/lib`;
   const componentsPath = `${libRootPath}/components`;

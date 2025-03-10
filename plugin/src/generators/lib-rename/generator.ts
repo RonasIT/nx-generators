@@ -13,7 +13,7 @@ export async function libRenameGenerator(tree: Tree, options: LibRenameGenerator
   const libPathSegments = currentLibraryPath.split('/');
   const defaultDestLibraryName = libPathSegments.pop();
   const destLibraryName =
-    options.newLibName || (await askQuestion('Enter a new library name: ', defaultDestLibraryName));
+    options.newLibName || await askQuestion('Enter a new library name: ', defaultDestLibraryName);
 
   // Remove `libs` path fragment
   libPathSegments.shift();

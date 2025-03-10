@@ -1,4 +1,4 @@
 export interface EntityApiGeneratorSchema {
-  name?: string;
-  baseEndpoint?: string;
+  name: string;
+  baseEndpoint: string;
 }

@@ -29,8 +29,7 @@
     "@phenomnomnominal/tsquery": "~5.0.1",
     "lodash-es": "^4.17.21",
     "tslib": "^2.6.3",
-    "ts-morph": "^23.0.0",
-    "inquirer-autocomplete-standalone": "^0.8.1"
+    "ts-morph": "^23.0.0"
   },
   "peerDependencies": {
     "typescript": "^5.3.3"

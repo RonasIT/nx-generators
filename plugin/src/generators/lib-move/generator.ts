@@ -3,22 +3,18 @@ import * as path from 'path';
 import { Tree } from '@nx/devkit';
 import {
   LibraryType,
-  askQuestion,
   constants,
-  dynamicImport,
-  filterSource,
   getLibraryDetailsByName,
   selectProject,
   validateLibraryType,
   getLibDirectoryName,
   getImportPathPrefix,
+  askQuestion,
 } from '../../shared/utils';
 import { LibMoveGeneratorSchema } from './schema';
 
-export async function libMoveGenerator(tree: Tree, options: LibMoveGeneratorSchema) {
-  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
-    'inquirer-autocomplete-standalone',
-  );
+export async function libMoveGenerator(tree: Tree, options: LibMoveGeneratorSchema): Promise<() => void> {
+  const { AutoComplete } = require('enquirer');
 
   const { name: srcLibraryName, path: srcLibraryPath } = await getLibraryDetailsByName(tree, options.srcLibName);
 
@@ -34,10 +30,12 @@ export async function libMoveGenerator(tree: Tree, options: LibMoveGeneratorSche
     (isSharedLib ? '' : await askQuestion(`Enter the scope (e.g: profile) or '${constants.sharedValue}': `));
   options.type = options.type
     ? validateLibraryType(options.type)
-    : await autocomplete({
-        message: 'Select the library type: ',
-        source: (input) => filterSource(input as string, Object.values(LibraryType)),
-      });
+    : await new AutoComplete({
+        name: 'library type',
+        message: 'Select the library type:',
+        limit: 10,
+        choices: Object.values(LibraryType),
+      }).run();
 
   const libraryName =
     options.name ||

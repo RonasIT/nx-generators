@@ -19,15 +19,15 @@ import {
   runStoreGenerator,
   runI18nNextGenerator,
 } from '../../shared/generators';
-import { addNxAppTag, askQuestion, formatName, getImportPathPrefix } from '../../shared/utils';
+import { addNxAppTag, confirm, dynamicImport, formatName, getImportPathPrefix } from '../../shared/utils';
 import { NextAppGeneratorSchema } from './schema';
 
 export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSchema) {
-  const shouldGenerateStoreLib = (await askQuestion('Do you want to create store lib? (y/n): ')) === 'y';
+  const { isBoolean } = await dynamicImport<typeof import('lodash-es')>(
+    'lodash-es',
+  );
   const shouldGenerateApiClientLib =
-    shouldGenerateStoreLib && (await askQuestion('Do you want to create api client lib? (y/n): ')) === 'y';
-  const shouldGenerateFormUtilsLib =
-    (await askQuestion('Do you want to create a lib with the form utils? (y/n): ')) === 'y';
+    options.withStore && !isBoolean(options.withApiClient) && await confirm('Do you want to create api client lib? (y/n): ');
 
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
@@ -55,7 +55,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   await runAppEnvGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });
   await runI18nNextGenerator(tree, options);
 
-  if (shouldGenerateStoreLib) {
+  if (options.withStore) {
     await runStoreGenerator(tree, {
       ...options,
       baseGeneratorType: BaseGeneratorType.NEXT_APP,
@@ -66,11 +66,11 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
     await runApiClientGenerator(tree, options);
   }
 
-  if (shouldGenerateFormUtilsLib) {
+  if (options.withFormUtils) {
     await runFormUtilsGenerator(tree, options);
   }
 
-  const hasProviders = shouldGenerateStoreLib;
+  const hasProviders = options.withStore;
 
   // Remove unnecessary files and files that will be replaced
   tree.delete(`${appRoot}/public/.gitkeep`);
@@ -99,7 +99,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
     formatName,
     libPath,
     hasProviders,
-    isStoreEnabled: shouldGenerateStoreLib
+    isStoreEnabled: options.withStore
   });
 
   if (!hasProviders) {

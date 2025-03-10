@@ -1,25 +1,24 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
 import { formatFiles, generateFiles, output, Tree } from '@nx/devkit';
-import { isBoolean } from 'lodash-es';
 import {
   addNxScopeTag,
-  askQuestion,
   constants,
   dynamicImport,
-  filterSource,
   formatName,
   LibraryType,
   selectProject,
   validateLibraryType,
   getLibDirectoryName,
-  createCliReadline,
+  confirm,
+  askQuestion,
 } from '../../shared/utils';
 import { ReactLibGeneratorSchema } from './schema';
 
 export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema): Promise<void> {
-  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
-    'inquirer-autocomplete-standalone',
+  const { AutoComplete } = require('enquirer');
+  const { isBoolean } = await dynamicImport<typeof import('lodash-es')>(
+    'lodash-es',
   );
 
   options.app = options.app || (await selectProject(tree, 'application', 'Select the application: ')).name;
@@ -31,28 +30,26 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
     (isSharedLib ? '' : await askQuestion(`Enter the scope (e.g: profile) or '${constants.sharedValue}': `));
   options.type = options.type
     ? validateLibraryType(options.type)
-    : await autocomplete({
-        message: 'Select the library type: ',
-        source: (input) => filterSource(input as string, Object.values(LibraryType)),
-      });
+    : await new AutoComplete({
+        name: 'library type',
+        message: 'Select the library type:',
+        limit: 10,
+        choices: Object.values(LibraryType),
+      }).run();
 
-  const cliReadline = createCliReadline();
   options.name =
-    options.name || (await askQuestion('Enter the name of the library (e.g: settings): ', undefined, cliReadline));
+    options.name || await askQuestion('Enter the name of the library (e.g: settings): ');
 
   if (
     [LibraryType.FEATURES, LibraryType.UI].includes(options.type as LibraryType) &&
     !isBoolean(options.withComponent)
   ) {
-    options.withComponent =
-      (await askQuestion('Generate component inside lib folder? (y/n): ', undefined, cliReadline)) === 'y';
+    options.withComponent = await confirm('Generate component inside lib folder?');
 
     if (options.withComponent && !isBoolean(options.withComponentForwardRef)) {
-      options.withComponentForwardRef =
-        (await askQuestion('Generate component with forwardRef? (y/n): ', undefined, cliReadline)) === 'y';
+      options.withComponentForwardRef = await confirm('Generate component with forwardRef?');
     }
   }
-  cliReadline.close();
 
   const scopeTag = options.scope || constants.sharedValue;
   const tags = [`app:${options.app}`, `scope:${scopeTag}`, `type:${options.type}`];

@@ -1,9 +1,8 @@
 import * as fs from 'fs';
 import * as readline from 'readline';
 import { getProjects, ProjectType, Tree } from '@nx/devkit';
-// import { compact } from 'lodash-es';
+import { compact } from 'lodash';
 import { constants } from './constants';
-import { dynamicImport } from './dynamic-import';
 
 export const createCliReadline = (): readline.Interface =>
   readline.createInterface({
@@ -114,9 +113,6 @@ export const selectProject = async (
   applicationsOnly: boolean = false,
 ): Promise<{ name: string; path: string }> => {
   const { AutoComplete } = require('enquirer');
-  const { compact } = await dynamicImport<typeof import('lodash-es')>(
-    'lodash-es',
-  );
   const projects = getProjectsDetails(tree, projectType);
 
   if (!projects.length) {

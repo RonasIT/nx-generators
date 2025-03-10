@@ -1,10 +1,10 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
 import { formatFiles, generateFiles, output, Tree } from '@nx/devkit';
+import { isBoolean } from 'lodash';
 import {
   addNxScopeTag,
   constants,
-  dynamicImport,
   formatName,
   LibraryType,
   selectProject,
@@ -17,9 +17,6 @@ import { ReactLibGeneratorSchema } from './schema';
 
 export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema): Promise<void> {
   const { AutoComplete } = require('enquirer');
-  const { isBoolean } = await dynamicImport<typeof import('lodash-es')>(
-    'lodash-es',
-  );
 
   options.app = options.app || (await selectProject(tree, 'application', 'Select the application: ')).name;
 

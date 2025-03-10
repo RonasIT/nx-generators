@@ -1,9 +1,9 @@
 import { existsSync } from 'fs';
 import * as path from 'path';
 import { formatFiles, generateFiles, Tree } from '@nx/devkit';
+import { kebabCase } from 'lodash';
 import {
   appendFileContent,
-  dynamicImport,
   formatName,
   getNxLibsPaths,
   LibraryType,
@@ -12,9 +12,6 @@ import { ReactComponentGeneratorSchema } from './schema';
 
 export async function reactComponentGenerator(tree: Tree, options: ReactComponentGeneratorSchema): Promise<void> {
   const { AutoComplete } = require('enquirer');
-  const { kebabCase } = await dynamicImport<typeof import('lodash-es')>(
-    'lodash-es',
-  );
 
   const nxLibsPaths = getNxLibsPaths([LibraryType.FEATURES, LibraryType.UI]);
 

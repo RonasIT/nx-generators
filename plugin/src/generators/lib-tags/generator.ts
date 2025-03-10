@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import { Tree, getProjects, ProjectConfiguration, formatFiles, output } from '@nx/devkit';
-// import { noop } from 'lodash-es';
-import { confirm, dynamicImport, verifyESLintConstraintsConfig } from '../../shared/utils';
+import { noop } from 'lodash';
+import { confirm, verifyESLintConstraintsConfig } from '../../shared/utils';
 import { LibTagsContext } from './interfaces';
 import { LibTagsGeneratorSchema } from './schema';
 import { checkApplicationTags, checkLibraryTags } from './utils';
@@ -11,9 +11,6 @@ const context: LibTagsContext = {
 };
 
 export async function libTagsGenerator(tree: Tree, options: LibTagsGeneratorSchema): Promise<void> {
-  const { noop } = await dynamicImport<typeof import('lodash-es')>(
-    'lodash-es',
-  );
   const hasUnstagedChanges = !options.skipRepoCheck && execSync('git status -s').toString('utf8');
 
   if (hasUnstagedChanges) {

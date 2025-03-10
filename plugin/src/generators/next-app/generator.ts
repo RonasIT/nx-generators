@@ -10,6 +10,7 @@ import {
   Tree,
   writeJson,
 } from '@nx/devkit';
+import { isBoolean } from 'lodash';
 import { dependencies, devDependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import {
@@ -19,15 +20,12 @@ import {
   runStoreGenerator,
   runI18nNextGenerator,
 } from '../../shared/generators';
-import { addNxAppTag, confirm, dynamicImport, formatName, getImportPathPrefix } from '../../shared/utils';
+import { addNxAppTag, confirm, formatName, getImportPathPrefix } from '../../shared/utils';
 import { NextAppGeneratorSchema } from './schema';
 
 export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSchema) {
-  const { isBoolean } = await dynamicImport<typeof import('lodash-es')>(
-    'lodash-es',
-  );
   const shouldGenerateApiClientLib =
-    options.withStore && !isBoolean(options.withApiClient) && await confirm('Do you want to create api client lib? (y/n): ');
+    options.withStore && !isBoolean(options.withApiClient) && await confirm('Do you want to create api client lib?');
 
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;

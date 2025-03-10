@@ -1,11 +1,10 @@
 import * as path from 'path';
 import { formatFiles, generateFiles, Tree } from '@nx/devkit';
-// import { camelCase, kebabCase, startCase } from 'lodash-es';
+import { camelCase, kebabCase, startCase } from 'lodash';
 import { IndentationText, Project, QuoteKind, StructureKind, SyntaxKind } from 'ts-morph';
 import {
   addNamedImport,
   appendFileContent,
-  dynamicImport,
   getNxLibsPaths,
   LibraryType,
   searchAliasPath,
@@ -15,9 +14,6 @@ import { EntityApiGeneratorSchema } from './schema';
 
 export async function entityApiGenerator(tree: Tree, options: EntityApiGeneratorSchema): Promise<void> {
   const { AutoComplete } = require('enquirer');
-  const { camelCase, kebabCase, startCase } = await dynamicImport<typeof import('lodash-es')>(
-    'lodash-es',
-  );
 
   const nxLibsPaths = getNxLibsPaths([LibraryType.DATA_ACCESS]);
   const apiLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/api/src', 'endsWith');

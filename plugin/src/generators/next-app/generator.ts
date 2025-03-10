@@ -9,6 +9,7 @@ import {
   readJson,
   Tree,
   writeJson,
+  NX_VERSION
 } from '@nx/devkit';
 import { isBoolean } from 'lodash';
 import { dependencies, devDependencies } from '../../shared/dependencies';
@@ -47,7 +48,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   const hasNxExpo = !!packageJson.devDependencies['@nx/expo'];
 
   if (!hasNxExpo) {
-    execSync('npx nx add @nx/expo', { stdio: 'inherit' });
+    execSync(`npm i --save-dev "@nx/expo@${NX_VERSION}"`, { stdio: 'inherit' });
   }
 
   await runAppEnvGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });

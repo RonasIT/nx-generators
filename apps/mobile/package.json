@@ -52,7 +52,7 @@
     "eas-build-post-install": "cd ../../ && node tools/scripts/eas-build-post-install.mjs . apps/mobile"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.194",
+    "@types/lodash-es": "^4.17.12",
     "@types/luxon": "3.4.2"
   },
   "main": "expo-router/entry"

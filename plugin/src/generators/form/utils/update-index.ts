@@ -1,6 +1,6 @@
 import { existsSync } from 'fs';
 import { Tree } from '@nx/devkit';
-import { kebabCase } from 'lodash';
+import { kebabCase } from 'lodash-es';
 import { appendFileContent } from '../../../shared/utils';
 
 export function updateIndex(formsPath: string, fileName: string, tree: Tree): void {

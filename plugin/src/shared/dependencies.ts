@@ -1,4 +1,7 @@
 export const dependencies = {
+  'repo-config': {
+    'lodash-es': '^4.17.21',
+  },
   'expo-app': {
     '@ronas-it/react-native-common-modules': '^0.6.2',
     'react-native-mmkv': '^3.2.0',
@@ -20,6 +23,7 @@ export const dependencies = {
   },
   'next-app': {
     'next-intl': '^3.26.3',
+    'lodash-es': '^4.17.21',
   },
   'api-client': {
     '@ronas-it/axios-api-client': '^0.1.0',
@@ -73,7 +77,7 @@ export const devDependencies = {
     'tsc-files': '^1.1.4',
   },
   'expo-app': {
-    '@types/lodash': '^4.14.194',
+    '@types/lodash-es': '^4.17.12',
   },
   'expo-app-root': {
     'cross-env': '^7.0.3',
@@ -81,9 +85,11 @@ export const devDependencies = {
   'next-app': {
     // nx/next 20 adds package that doesn't support eslint 9
     'eslint-config-next': '^15.1.6',
+    '@types/lodash-es': '^4.17.12',
   },
   'repo-config': {
     syncpack: '^12.3.2',
+    '@types/lodash-es': '^4.17.12',
   },
   auth: {
     '@types/luxon': '3.4.2',

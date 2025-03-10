@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
 import { formatFiles, generateFiles, output, Tree } from '@nx/devkit';
-import { isBoolean } from 'lodash';
+import { isBoolean } from 'lodash-es';
 import {
   addNxScopeTag,
   askQuestion,

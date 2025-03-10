@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as readline from 'readline';
 import { getProjects, ProjectType, Tree } from '@nx/devkit';
-import { compact } from 'lodash';
+import { compact } from 'lodash-es';
 import { constants } from './constants';
 import { dynamicImport } from './dynamic-import';
 

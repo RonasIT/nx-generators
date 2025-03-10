@@ -8,7 +8,7 @@ import {
   Tree,
   writeJson,
 } from '@nx/devkit';
-import { devDependencies } from '../../shared/dependencies';
+import { dependencies, devDependencies } from '../../shared/dependencies';
 import { formatName, getProjectName } from '../../shared/utils';
 import scripts from './scripts';
 
@@ -32,7 +32,7 @@ export async function repoConfigGenerator(tree: Tree) {
   });
 
   // Add dependencies
-  addDependenciesToPackageJson(tree, {}, devDependencies['repo-config']);
+  addDependenciesToPackageJson(tree, dependencies['repo-config'], devDependencies['repo-config']);
 
   await formatFiles(tree);
 

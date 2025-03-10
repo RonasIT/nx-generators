@@ -1,7 +1,7 @@
 import { existsSync } from 'fs';
 import * as path from 'path';
 import { formatFiles, generateFiles, Tree } from '@nx/devkit';
-import { kebabCase } from 'lodash';
+import { kebabCase } from 'lodash-es';
 import {
   appendFileContent,
   askQuestion,

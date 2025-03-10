@@ -27,7 +27,7 @@
     "@nx/devkit": "^20.2.2",
     "@nx/expo": "^20.2.2",
     "@phenomnomnominal/tsquery": "~5.0.1",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "tslib": "^2.6.3",
     "ts-morph": "^23.0.0",
     "inquirer-autocomplete-standalone": "^0.8.1"

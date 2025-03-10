@@ -2,6 +2,7 @@
 /dist
 /coverage
 /.nx/cache
+/.nx/workspace-data
 
 # Files with custom rules
 **/actions.ts

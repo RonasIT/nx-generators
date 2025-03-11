@@ -29,9 +29,9 @@ import scripts from './scripts';
 
 export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSchema) {
   const shouldGenerateApiClientLib =
-    options.withStore && await confirm('Do you want to create api client lib? (y/n): ');
+    options.withStore && await confirm('Do you want to create api client lib?');
   const shouldGenerateAuthLibs =
-    shouldGenerateApiClientLib && await confirm('Do you want to create auth lib? (y/n): ');
+    shouldGenerateApiClientLib && await confirm('Do you want to create auth lib?');
 
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;

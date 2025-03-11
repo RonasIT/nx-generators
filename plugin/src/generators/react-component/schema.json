@@ -24,7 +24,7 @@
       "type": "boolean",
       "description": "Generate a component with forwardRef",
       "default": false,
-      "x-prompt": "Generate component with forwardRef? (y/n)"
+      "x-prompt": "Generate component with forwardRef?"
     }
   },
   "required": ["name"]

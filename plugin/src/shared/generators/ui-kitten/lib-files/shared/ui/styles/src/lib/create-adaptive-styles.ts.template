@@ -1,4 +1,4 @@
-import { cloneDeep, isFunction } from 'lodash';
+import { cloneDeep, isFunction } from 'lodash-es';
 import { useMemo } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { Theme, useAppTheme } from './eva-theme';

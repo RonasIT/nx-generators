@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import { Tree, getProjects, ProjectConfiguration, formatFiles, output } from '@nx/devkit';
 import { noop } from 'lodash';
-import { askQuestion, verifyESLintConstraintsConfig } from '../../shared/utils';
+import { confirm, verifyESLintConstraintsConfig } from '../../shared/utils';
 import { LibTagsContext } from './interfaces';
 import { LibTagsGeneratorSchema } from './schema';
 import { checkApplicationTags, checkLibraryTags } from './utils';
@@ -14,8 +14,7 @@ export async function libTagsGenerator(tree: Tree, options: LibTagsGeneratorSche
   const hasUnstagedChanges = !options.skipRepoCheck && execSync('git status -s').toString('utf8');
 
   if (hasUnstagedChanges) {
-    const shouldContinue =
-      (await askQuestion('You have unstaged changes. Are you sure you want to continue? (y/n): ')) === 'y';
+    const shouldContinue = await confirm('You have unstaged changes. Are you sure you want to continue?');
 
     if (!shouldContinue) {
       return;

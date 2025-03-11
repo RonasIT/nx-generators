@@ -22,6 +22,18 @@
       },
       "x-prompt": "Enter the name of the directory in the 'apps/' folder (e.g: web)"
     },
+    "withStore": {
+      "type": "boolean",
+      "description": "Add store library to the app",
+      "default": false,
+      "x-prompt": "Do you want to create store lib?"
+    },
+    "withFormUtils": {
+      "type": "boolean",
+      "description": "Add form utils library to the app",
+      "default": false,
+      "x-prompt": "Do you want to create form utils lib?"
+    },
     "withSentry": {
       "type": "boolean",
       "description": "Add Sentry to the app",

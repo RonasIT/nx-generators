@@ -2,8 +2,6 @@ import { Tree } from '@nx/devkit';
 import { runFormUtilsGenerator } from '../../../shared/generators';
 import {
   constants,
-  dynamicImport,
-  filterSource,
   getNxLibsPaths,
   LibraryType,
   searchAliasPath,
@@ -19,10 +17,7 @@ function getFormUtilsPaths(): Array<string> {
 }
 
 export async function getFormUtilsDirectory(tree: Tree, appName: string): Promise<string> {
-  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
-    'inquirer-autocomplete-standalone',
-  );
-
+  const { AutoComplete } = require('enquirer');
   const formUtilsLibsPaths = getFormUtilsPaths();
 
   if (!formUtilsLibsPaths.length) {
@@ -45,14 +40,14 @@ export async function getFormUtilsDirectory(tree: Tree, appName: string): Promis
       return searchAliasPath(path) as string;
     }
 
-    formUtilsLibsPaths[0] = await autocomplete({
-      message: 'Select the path of the library with the form utilities: ',
-      source: (input) =>
-        filterSource(
-          input as string,
-          formUtilsLibsPaths.filter((path) => [appName, constants.sharedValue].includes(getAppName(path))),
-        ),
-    });
+    const availableLibsPaths = formUtilsLibsPaths.filter((path) => [appName, constants.sharedValue].includes(getAppName(path)));
+
+    formUtilsLibsPaths[0] = await new AutoComplete({
+      name: 'library path',
+      message: 'Select the path of the library with the form utilities:',
+      limit: 10,
+      choices: availableLibsPaths,
+    })
   }
 
   return searchAliasPath(formUtilsLibsPaths[0]) as string;

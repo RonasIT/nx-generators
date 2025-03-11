@@ -3,7 +3,6 @@ import * as readline from 'readline';
 import { getProjects, ProjectType, Tree } from '@nx/devkit';
 import { compact } from 'lodash';
 import { constants } from './constants';
-import { dynamicImport } from './dynamic-import';
 
 export const createCliReadline = (): readline.Interface =>
   readline.createInterface({
@@ -11,27 +10,25 @@ export const createCliReadline = (): readline.Interface =>
     output: process.stdout,
   });
 
-export const askQuestion = (
-  question: string,
-  defaultAnswer?: string,
-  cliReadline?: readline.Interface,
-): Promise<string> => {
-  const rl = cliReadline || createCliReadline();
+export const askQuestion = async (question: string, defaultAnswer?: string): Promise<string> => {
+  const { Input } = require('enquirer');
+  const prompt = new Input({
+    message: question,
+    initial: defaultAnswer,
+  });
 
-  if (defaultAnswer) {
-    rl.write(defaultAnswer);
-    // Move cursor to end of the line
-    setTimeout(() => rl.write(null, { ctrl: true, name: 'e' }));
-  }
+  return await prompt.run();
+};
 
-  return new Promise((resolve) =>
-    rl.question(question, (answer) => {
-      if (!cliReadline) {
-        rl.close();
-      }
-      resolve(answer);
-    }),
-  );
+export const confirm = async (confirmationMessage: string): Promise<boolean> => {
+  const { Confirm } = require('enquirer');
+
+  const prompt = new Confirm({
+    name: 'question',
+    message: confirmationMessage,
+  });
+  
+  return await prompt.run();
 };
 
 export enum LibraryType {
@@ -115,33 +112,35 @@ export const selectProject = async (
   message: string,
   applicationsOnly: boolean = false,
 ): Promise<{ name: string; path: string }> => {
-  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
-    'inquirer-autocomplete-standalone',
-  );
+  const { AutoComplete } = require('enquirer');
   const projects = getProjectsDetails(tree, projectType);
 
   if (!projects.length) {
     throw new Error(`No projects of type ${projectType} found.`);
   }
 
-  return autocomplete({
+  const records = compact([
+    ...projects,
+    !applicationsOnly && { name: constants.sharedValue, path: constants.sharedValue },
+  ]).map((project) => ({
+    name: `${project.name} (${project.path})`,
+    value: { ...project, name: projectType === 'application' ? project.path.replace('apps/', '') : project.name },
+  }));
+
+  const selectedProjectName = await new AutoComplete({
+    name: 'project',
     message,
-    source: async (input) => {
-      const entries = compact([
-        ...projects,
-        !applicationsOnly && { name: constants.sharedValue, path: constants.sharedValue },
-      ]).map((project) => ({
-        name: `${project.name} (${project.path})`,
-        value: { ...project, name: projectType === 'application' ? project.path.replace('apps/', '') : project.name },
-      }));
+    limit: 10,
+    choices: records.map((record) => record.name),
+  }).run();
 
-      if (!input) {
-        return entries;
-      }
+  const selectedProject = records.find((record) => record.name === selectedProjectName)?.value;
 
-      return entries.filter((entry) => entry.name.toLowerCase().includes(input.toLowerCase()));
-    },
-  });
+  if (!selectedProject) {
+    throw new Error(`Project ${selectedProjectName} not found.`);
+  }
+
+  return selectedProject;
 };
 
 export const getLibraryDetailsByName = async (

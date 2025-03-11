@@ -23,19 +23,15 @@ import {
   runStoreGenerator,
   runUIKittenGenerator,
 } from '../../shared/generators';
-import { formatName, formatAppIdentifier, addNxAppTag, askQuestion, getImportPathPrefix } from '../../shared/utils';
+import { formatName, formatAppIdentifier, addNxAppTag, getImportPathPrefix, confirm } from '../../shared/utils';
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 
 export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSchema) {
-  const shouldGenerateStoreLib = (await askQuestion('Do you want to create store lib? (y/n): ')) === 'y';
   const shouldGenerateApiClientLib =
-    shouldGenerateStoreLib && (await askQuestion('Do you want to create api client lib? (y/n): ')) === 'y';
+    options.withStore && await confirm('Do you want to create api client lib?');
   const shouldGenerateAuthLibs =
-    shouldGenerateApiClientLib && (await askQuestion('Do you want to create auth lib? (y/n): ')) === 'y';
-  const shouldGenerateFormUtilsLib =
-    (await askQuestion('Do you want to create a lib with the form utils? (y/n): ')) === 'y';
-  const shouldGenerateUIKittenLib = (await askQuestion('Do you want to install @ui-kitten? (y/n): ')) === 'y';
+    shouldGenerateApiClientLib && await confirm('Do you want to create auth lib?');
 
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
@@ -64,7 +60,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   await runStorageGenerator(tree, options);
   await runRNStylesGenerator(tree, options);
 
-  if (shouldGenerateStoreLib) {
+  if (options.withStore) {
     await runStoreGenerator(tree, {
       ...options,
       baseGeneratorType: BaseGeneratorType.EXPO_APP,
@@ -75,11 +71,11 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     await runApiClientGenerator(tree, options);
   }
 
-  if (shouldGenerateFormUtilsLib) {
+  if (options.withFormUtils) {
     await runFormUtilsGenerator(tree, options);
   }
 
-  if (shouldGenerateUIKittenLib) {
+  if (options.withUIKitten) {
     await runUIKittenGenerator(tree, options);
   }
 
@@ -118,8 +114,8 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     formatName,
     formatAppIdentifier,
     libPath,
-    isUIKittenEnabled: shouldGenerateUIKittenLib,
-    isStoreEnabled: shouldGenerateStoreLib,
+    isUIKittenEnabled: options.withUIKitten,
+    isStoreEnabled: options.withStore,
     appDirectory: options.directory,
   });
 

@@ -5,10 +5,6 @@ import { IndentationText, Project, QuoteKind, StructureKind, SyntaxKind } from '
 import {
   addNamedImport,
   appendFileContent,
-  askQuestion,
-  createCliReadline,
-  dynamicImport,
-  filterSource,
   getNxLibsPaths,
   LibraryType,
   searchAliasPath,
@@ -17,9 +13,8 @@ import {
 import { EntityApiGeneratorSchema } from './schema';
 
 export async function entityApiGenerator(tree: Tree, options: EntityApiGeneratorSchema): Promise<void> {
-  const { default: autocomplete } = await dynamicImport<typeof import('inquirer-autocomplete-standalone')>(
-    'inquirer-autocomplete-standalone',
-  );
+  const { AutoComplete } = require('enquirer');
+
   const nxLibsPaths = getNxLibsPaths([LibraryType.DATA_ACCESS]);
   const apiLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/api/src', 'endsWith');
   const apiClientLibsPaths = searchNxLibsPaths(nxLibsPaths, 'data-access/api-client/src', 'endsWith');
@@ -33,17 +28,21 @@ export async function entityApiGenerator(tree: Tree, options: EntityApiGenerator
   }
 
   if (apiClientLibsPaths.length > 1) {
-    apiClientLibsPaths[0] = await autocomplete({
+    apiClientLibsPaths[0] = await new AutoComplete({
+      name: 'library path',
       message: 'Select the api client library path:',
-      source: (input) => filterSource(input as string, apiClientLibsPaths),
-    });
+      limit: 10,
+      choices: apiClientLibsPaths,
+    }).run();
   }
 
   if (apiLibsPaths.length > 1) {
-    apiLibsPaths[0] = await autocomplete({
+    apiLibsPaths[0] = await new AutoComplete({
+      name: 'api library path',
       message: 'Select the api library path:',
-      source: (input) => filterSource(input as string, apiLibsPaths),
-    });
+      limit: 10,
+      choices: apiLibsPaths,
+    }).run();
   }
 
   const apiDirectory = searchAliasPath(apiLibsPaths[0]) as string;
@@ -52,16 +51,7 @@ export async function entityApiGenerator(tree: Tree, options: EntityApiGenerator
   const libPath = apiLibsPaths[0];
   const libRootPath = `${libPath}/lib`;
 
-  const cliReadline = createCliReadline();
-  options.name =
-    options.name || (await askQuestion('Enter the name of the entity (e.g: User): ', undefined, cliReadline));
-
   const apiName = kebabCase(options.name);
-
-  options.baseEndpoint =
-    options.baseEndpoint || (await askQuestion('Enter the base endpoint (e.g: /users): ', `/${apiName}`, cliReadline));
-  cliReadline.close();
-
   const apiPath = `${libRootPath}/${apiName}`;
   const entityName = startCase(camelCase(apiName)).replace(/\s+/g, '');
 
@@ -87,10 +77,12 @@ export async function entityApiGenerator(tree: Tree, options: EntityApiGenerator
   }
 
   if (storeLibsPaths.length > 1) {
-    storeLibsPaths[0] = await autocomplete({
+    storeLibsPaths[0] = await new AutoComplete({
+      name: 'store library path',
       message: 'Select the store library path:',
-      source: (input) => filterSource(input as string, storeLibsPaths),
-    });
+      limit: 10,
+      choices: storeLibsPaths,
+    }).run();
   }
 
   // Update redux store

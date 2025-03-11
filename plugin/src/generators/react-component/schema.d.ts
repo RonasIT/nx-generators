@@ -1,5 +1,5 @@
 export interface ReactComponentGeneratorSchema {
-  name?: string;
+  name: string;
   subcomponent?: boolean;
   withForwardRef?: boolean;
 }

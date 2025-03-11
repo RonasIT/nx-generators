@@ -1,5 +1,5 @@
 import evaDark from '@eva-design/eva/themes/dark';
-import { mapValues } from 'lodash';
+import { mapValues } from 'lodash-es';
 import { colors } from '../variables';
 
 export type Theme = typeof darkTheme;

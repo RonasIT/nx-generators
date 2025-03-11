@@ -11,7 +11,8 @@
       "$default": {
         "$source": "argv",
         "index": 0
-      }
+      },
+      "x-prompt": "Enter the name of the entity (e.g: User):"
     },
     "baseEndpoint": {
       "type": "string",
@@ -20,8 +21,9 @@
       "$default": {
         "$source": "argv",
         "index": 1
-      }
+      },
+      "x-prompt": "Enter the base endpoint (e.g: /users):"
     }
   },
-  "required": []
+  "required": ["name", "baseEndpoint"]
 }

@@ -3,7 +3,7 @@ import * as eva from '@eva-design/eva';
 import { ThemeProvider, DarkTheme } from '@react-navigation/native';
 import { ApplicationProvider } from '@ui-kitten/components';
 import { StatusBar } from 'expo-status-bar';
-import { noop } from 'lodash';
+import { noop } from 'lodash-es';
 import React, { ReactElement, createContext } from 'react';
 import { mapping, theme, UserTheme } from '<%= libPath %>/shared/ui/styles';
 import { userThemeConfig } from './config';

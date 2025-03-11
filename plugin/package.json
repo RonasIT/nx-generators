@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@nx/devkit": "^20.2.2",
-    "@nx/expo": "^20.2.2",
     "@phenomnomnominal/tsquery": "~5.0.1",
     "lodash": "^4.17.21",
     "tslib": "^2.6.3",

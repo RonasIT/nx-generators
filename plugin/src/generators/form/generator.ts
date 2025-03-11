@@ -37,7 +37,7 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
     fileName,
     formUtilsDirectory,
   });
-  await updateIndex(formsPath, fileName, tree);
+  updateIndex(formsPath, fileName, tree);
 
   // Add form usage
   if (placeOfUse) {

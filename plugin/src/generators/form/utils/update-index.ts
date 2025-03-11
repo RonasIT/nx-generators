@@ -3,7 +3,7 @@ import { Tree } from '@nx/devkit';
 import { kebabCase } from 'lodash';
 import { appendFileContent } from '../../../shared/utils';
 
-export async function updateIndex(formsPath: string, fileName: string, tree: Tree): Promise<void> {
+export function updateIndex(formsPath: string, fileName: string, tree: Tree): void {
   const formsIndexFilePath = `${formsPath}/index.ts`;
   const newIndexContent = `export * from './${kebabCase(fileName)}';\n`;
 

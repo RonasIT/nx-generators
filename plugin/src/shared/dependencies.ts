@@ -1,7 +1,4 @@
 export const dependencies = {
-  'repo-config': {
-    'lodash-es': '^4.17.21',
-  },
   'expo-app': {
     '@ronas-it/react-native-common-modules': '^0.6.2',
     'react-native-mmkv': '^3.2.0',
@@ -89,7 +86,6 @@ export const devDependencies = {
   },
   'repo-config': {
     syncpack: '^12.3.2',
-    '@types/lodash-es': '^4.17.12',
   },
   auth: {
     '@types/luxon': '3.4.2',

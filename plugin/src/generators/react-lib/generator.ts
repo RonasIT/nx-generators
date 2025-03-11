@@ -30,7 +30,7 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
     : await new AutoComplete({
         name: 'library type',
         message: 'Select the library type:',
-        limit: 10,
+        limit: Object.values(LibraryType).length,
         choices: Object.values(LibraryType),
       }).run();
 

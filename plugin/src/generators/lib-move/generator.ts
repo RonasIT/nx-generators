@@ -33,7 +33,7 @@ export async function libMoveGenerator(tree: Tree, options: LibMoveGeneratorSche
     : await new AutoComplete({
         name: 'library type',
         message: 'Select the library type:',
-        limit: 10,
+        limit: Object.values(LibraryType).length,
         choices: Object.values(LibraryType),
       }).run();
 

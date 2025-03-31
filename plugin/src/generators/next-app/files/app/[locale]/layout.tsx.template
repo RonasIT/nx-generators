@@ -46,7 +46,7 @@ export default async function RootLayout({ children, params }: RootLayoutProps):
       </head>
       <body>
         <% if(hasProviders) { %><Providers><% } %>
-        <NextIntlClientProvider messages={pick(messages, 'web-shared')} locale={locale}>
+        <NextIntlClientProvider messages={pick(messages, '<%= sharedTranslationsKey %>')} locale={locale}>
           {children}
         </NextIntlClientProvider>
         <% if(hasProviders) { %></Providers><% } %>

@@ -31,6 +31,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   const i18nRoot = `i18n/${options.directory}`;
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
   const tags = [`app:${options.directory}`, 'type:app'];
+  const sharedTranslationsKey = `${options.directory}-shared`;
 
   // Install @nx/next plugin
   execSync('npx nx add @nx/next', { stdio: 'inherit' });
@@ -89,7 +90,8 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
     formatName,
     libPath,
     hasProviders,
-    isStoreEnabled: options.withStore
+    isStoreEnabled: options.withStore,
+    sharedTranslationsKey
   });
 
   if (!hasProviders) {
@@ -99,7 +101,8 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   addNxAppTag(tree, options.directory);
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {
     ...options,
-    formatName
+    formatName,
+    sharedTranslationsKey
   });
 
   // Add dependencies

@@ -309,19 +309,47 @@ npx nx g sentry --directory=apps/mobile --dsn=http://your-dsn.ingest.sentry.io/1
 
 ## Development
 
-### Repository structure
+### Example app
 
-Key repository elements:
+An example React Native application is included in the `apps/mobile` directory and its associated libraries in the `libs` directory. This example:
 
-- `plugin` - contains the publishable package with generators source code;
-- `apps/mobile` and `libs` - an example RN app with libraries that showcases current generators capability, recommended app structure, and examples of libraries usage.
+- Demonstrates the capabilities of all available generators
+- Showcases the recommended repository structure and organization
+- Provides practical examples of library usage and best practices
+- Serves as a testing ground for generator development
+
+To run the example app locally, use:
+
+```sh
+npx nx start example
+```
 
 ### Local development
 
-1. Change or edit source code of generators in the `plugin/src` directory.
-1. You can test work of generators by running them in the repository. Example: `npx nx g expo-app`.
-1. Update generators metadata in `plugin/generators.json` if necessary.
-1. Submit a PR with changes.
+The `plugin` directory contains the source code for all generators in this package. Here's how to contribute:
+
+1. **Modify generator code**
+
+   - Navigate to `plugin/src` directory
+   - Add new or edit the existing generator source code
+   - Follow the existing code style and patterns
+
+2. **Test your changes**
+
+   - Run generators locally to verify functionality
+   - Example: `npx nx g expo-app`
+   - Test with different options and scenarios
+
+3. **Update generator metadata**
+
+   - If you've added new options or changed generator behavior
+   - Update the corresponding entries in `plugin/generators.json`
+   - Ensure all options are properly documented
+
+4. **Submit changes**
+   - Create a pull request with your modifications
+   - Include clear descriptions of changes
+   - Reference any related issues or discussions
 
 ### Build
 

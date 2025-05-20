@@ -1,0 +1,71 @@
+import { ClassConstructor, instanceToPlain, plainToInstance } from 'class-transformer';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useRef } from 'react';
+import { FilteringSearchParams } from '../types';
+
+interface FilteringSearchParamsConfig<TParams> {
+  searchParamsConstructor: ClassConstructor<TParams>;
+}
+
+export const useFilteringSearchParams = <TParams extends FilteringSearchParams>({
+  searchParamsConstructor
+}: FilteringSearchParamsConfig<TParams>): typeof result => {
+  const initialParams = useRef<TParams | null>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const getSearchParams = useCallback((): TParams => {
+    const initialParams = {} as Record<string, any>;
+
+    searchParams.forEach((_, key) => {
+      const actualKey = key.endsWith('[]') ? key.slice(0, -2) : key;
+      const values = Array.from(new Set(searchParams.getAll(key))); // получаем уникальные значения
+
+      if (values.length > 1) {
+        initialParams[actualKey] = values; // сохраняем как массив
+      } else {
+        initialParams[actualKey] = values[0]; // одиночное значение
+      }
+    });
+
+    return plainToInstance(searchParamsConstructor, initialParams, {
+      excludeExtraneousValues: true,
+      exposeUnsetFields: false,
+    });
+  }, [searchParams]);
+
+  const setSearchParams = useCallback(
+    (params: TParams): void => {
+      const newSearchParams = new URLSearchParams();
+      const plainParams: Record<string, any> = instanceToPlain(params, { exposeUnsetFields: false });
+
+      Object.keys(plainParams).forEach((field) => {
+        const value = plainParams[field];
+
+        if (value !== null && value !== undefined) {
+          if (Array.isArray(value)) {
+            value.forEach((v: any) => {
+              newSearchParams.append(field, v.toString());
+            });
+          } else {
+            newSearchParams.set(field, value.toString());
+          }
+        }
+      });
+
+      const newParamsString = newSearchParams.toString();
+      router.replace(`${pathname}${newParamsString ? `?${newParamsString}` : ''}`);
+    },
+    [router.replace, pathname],
+  );
+
+  initialParams.current = getSearchParams();
+
+  const result = {
+    initialSearchParams: initialParams.current,
+    setSearchParams,
+  };
+
+  return result;
+};

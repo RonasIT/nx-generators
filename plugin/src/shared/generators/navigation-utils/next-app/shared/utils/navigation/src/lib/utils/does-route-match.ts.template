@@ -1,0 +1,13 @@
+import { isInteger } from 'lodash-es';
+import type { Route } from '../types/route.ts.template';
+
+export const doesRouteMatch = (pathname: string, route: Route): boolean => {
+  if (typeof route === 'function') {
+    const segments = pathname.split('/');
+    const numericSegment = segments.find((segment) => isInteger(parseInt(segment)));
+
+    return (route as (id: number) => string)(Number(numericSegment)) === pathname;
+  }
+
+  return pathname === route;
+};

@@ -1,0 +1,46 @@
+import { navigationConfig } from '../config';
+import { doesRouteMatch } from './does-route-match';
+import type { Route } from '../types/route.ts.template';
+
+type DeepObjectsOf<T, Obj = Record<string, unknown>> = T extends Obj
+  ? { [K in keyof T]: T[K] extends Obj ? DeepObjectsOf<T[K]> : T }[keyof T]
+  : never;
+
+type RoutesObject = Record<string, Record<string, Route> | Route>;
+
+type Args = {
+  pathname: string;
+} & (
+  | {
+      routesArray: Array<Route>;
+      routesObject?: null;
+    }
+  | {
+      routesObject: DeepObjectsOf<typeof navigationConfig.routes>;
+      routesArray?: null;
+    }
+);
+
+const getRouteList = (routesObject: RoutesObject): Array<Route> => {
+  return Object.values(routesObject).reduce<Array<Route>>((list, currentRoute) => {
+    if (typeof currentRoute === 'object') {
+      return [...list, ...getRouteList(currentRoute as RoutesObject)];
+    }
+
+    return [...list, currentRoute];
+  }, []);
+};
+
+export const doesPageMatchRoutes = ({ pathname, routesArray, routesObject }: Args): boolean => {
+  let routes: Array<Route> = [];
+
+  if (routesObject) {
+    routes = getRouteList(routesObject as RoutesObject);
+  }
+
+  if (routesArray) {
+    routes = routesArray as Array<Route>;
+  }
+
+  return routes.some((route) => doesRouteMatch(pathname, route));
+};

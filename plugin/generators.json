@@ -79,6 +79,11 @@
       "factory": "./src/shared/generators/auth/generator",
       "schema": "./src/shared/generators/auth/schema.json",
       "description": "Creates auth related api libs and configures redux store "
+    },
+    "dockerfile": {
+      "factory": "./src/generators/dockerfile/generator",
+      "schema": "./src/generators/dockerfile/schema.json",
+      "description": "Generates dockerfile"
     }
   }
 }

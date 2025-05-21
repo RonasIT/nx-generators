@@ -1,6 +1,6 @@
 import { navigationConfig } from '../config';
 import { doesRouteMatch } from './does-route-match';
-import type { Route } from '../types/route.ts.template';
+import type { Route } from '../types/route.ts';
 
 type DeepObjectsOf<T, Obj = Record<string, unknown>> = T extends Obj
   ? { [K in keyof T]: T[K] extends Obj ? DeepObjectsOf<T[K]> : T }[keyof T]

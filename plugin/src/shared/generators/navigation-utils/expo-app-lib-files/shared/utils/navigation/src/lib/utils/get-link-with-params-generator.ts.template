@@ -18,16 +18,21 @@ export const getLinkWithParamsGenerator = <TRootParams extends object = never>(
     const resultBasePath = hasIdSlug ? basePath.replace('[id]', String(args.id)) : basePath;
 
     const queryString = Object.entries(args)
-      .map(([key, value]) => {
+      .flatMap(([key, value]) => {
         if (isNil(value) || (hasIdSlug && key === 'id')) {
-          return null;
+          return [];
+        }
+
+        if (Array.isArray(value)) {
+          const uniqueValues = Array.from(new Set(value));
+
+          return uniqueValues.map((value) => `${key}=${encodeURIComponent(String(value))}`);
         }
 
         const encodedValue = encodeURIComponent(String(value));
 
-        return `${key}=${encodedValue}`;
+        return [`${key}=${encodedValue}`];
       })
-      .filter((param) => !isNull(param))
       .join('&');
 
     return `${resultBasePath}?${queryString}`;

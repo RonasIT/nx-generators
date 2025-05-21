@@ -79,6 +79,11 @@
       "factory": "./src/shared/generators/auth/generator",
       "schema": "./src/shared/generators/auth/schema.json",
       "description": "Creates auth related api libs and configures redux store "
+    },
+    "navigationUtils": {
+      "factory": "./src/shared/generators/navigation-utils/generator",
+      "schema": "./src/shared/generators/navigation-utils/schema.json",
+      "description": "Creates basic utilities for navigation"
     }
   }
 }

@@ -1,5 +1,5 @@
 import { isInteger } from 'lodash-es';
-import type { Route } from '../types/route.ts.template';
+import type { Route } from '../types/route.ts';
 
 export const doesRouteMatch = (pathname: string, route: Route): boolean => {
   if (typeof route === 'function') {

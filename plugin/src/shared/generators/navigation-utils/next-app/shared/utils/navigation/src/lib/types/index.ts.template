@@ -1,2 +1,0 @@
-export * from './route.ts.template';
-export * from './search-params.ts.template';

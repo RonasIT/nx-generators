@@ -22,16 +22,15 @@ import {
   runFormUtilsGenerator,
   runStoreGenerator,
   runUIKittenGenerator,
+  runNavigationUtilsGenerator,
 } from '../../shared/generators';
 import { formatName, formatAppIdentifier, addNxAppTag, getImportPathPrefix, confirm } from '../../shared/utils';
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 
 export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSchema) {
-  const shouldGenerateApiClientLib =
-    options.withStore && await confirm('Do you want to create api client lib?');
-  const shouldGenerateAuthLibs =
-    shouldGenerateApiClientLib && await confirm('Do you want to create auth lib?');
+  const shouldGenerateApiClientLib = options.withStore && (await confirm('Do you want to create api client lib?'));
+  const shouldGenerateAuthLibs = shouldGenerateApiClientLib && (await confirm('Do you want to create auth lib?'));
 
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
@@ -59,6 +58,10 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   await runAppEnvGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
   await runStorageGenerator(tree, options);
   await runRNStylesGenerator(tree, options);
+  await runNavigationUtilsGenerator(tree, {
+    appDirectory: options.directory,
+    baseGeneratorType: BaseGeneratorType.EXPO_APP,
+  });
 
   if (options.withStore) {
     await runStoreGenerator(tree, {

@@ -2,7 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from '@ronas-it/react-native-common-modules';
 import Constants from 'expo-constants';
 import { Image } from 'expo-image';
-import { useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ScrollView, View } from 'react-native';
 import { authApi } from '@ronas-it/mobile/shared/data-access/api';
@@ -17,7 +17,7 @@ interface LoginFormProps {
   onLoginSuccess: () => void;
 }
 
-export function LoginForm({ onLoginSuccess }: LoginFormProps): JSX.Element {
+export function LoginForm({ onLoginSuccess }: LoginFormProps): ReactElement {
   const translate = useTranslation('AUTH.LOGIN_FORM');
   const formSchema = new LoginFormSchema();
   const [login, { isLoading, isSuccess, error }] = authApi.useLoginMutation();

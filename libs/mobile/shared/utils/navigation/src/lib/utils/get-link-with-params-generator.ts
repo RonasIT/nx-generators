@@ -1,13 +1,11 @@
 import { isNil } from 'lodash-es';
 
-export type LinkWithOptionalParamsGenerator<
-  TRootParams extends object = never
-> = keyof TRootParams extends never
+export type LinkWithOptionalParamsGenerator<TRootParams extends object = never> = keyof TRootParams extends never
   ? () => string
   : (args?: TRootParams) => string;
 
 export const getLinkWithParamsGenerator = <TRootParams extends object = never>(
-  basePath: string
+  basePath: string,
 ): LinkWithOptionalParamsGenerator<TRootParams> => {
   return ((args?: TRootParams) => {
     if (!args || Object.keys(args).length === 0) {

@@ -1,2 +1,2 @@
-export * from './route.ts';
-export * from './search-params.ts';
+export * from './route';
+export * from './filtering-search-params';

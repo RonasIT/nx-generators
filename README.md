@@ -307,6 +307,10 @@ Creates [Sentry](https://sentry.io/) integration for Expo/Next application.
 npx nx g sentry --directory=apps/mobile --dsn=http://your-dsn.ingest.sentry.io/112233
 ```
 
+### 14. `dockerfile`
+
+Generates a deployment-ready Dockerfile for Next.js applications in the monorepo.
+
 ## Development
 
 ### Example app

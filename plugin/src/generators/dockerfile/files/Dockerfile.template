@@ -1,0 +1,74 @@
+# Builder stage
+FROM node:22-alpine AS builder
+
+ARG CI_COMMIT_REF_SLUG=development
+ARG CI_NX_APP_NAME
+ARG CI_TARGET_BRANCH_NAME
+
+RUN if [ -z "$CI_COMMIT_REF_SLUG" ]; then echo "CI_COMMIT_REF_SLUG is not set"; exit 1; fi
+RUN if [ -z "$CI_NX_APP_NAME" ]; then echo "CI_NX_APP_NAME is not set"; exit 1; fi
+RUN echo "CI_COMMIT_REF_SLUG: $CI_COMMIT_REF_SLUG"
+RUN echo "CI_NX_APP_NAME: $CI_NX_APP_NAME"
+RUN echo "CI_TARGET_BRANCH_NAME: $CI_TARGET_BRANCH_NAME"
+
+ENV CI_COMMIT_REF_SLUG=${CI_COMMIT_REF_SLUG}
+ENV CI_NX_APP_NAME=${CI_NX_APP_NAME}
+ENV NEXT_TELEMETRY_DISABLED=1
+
+WORKDIR /app
+
+# Copy package.json and package-lock.json (if available)
+COPY package*.json ./
+
+# Install all dependencies, including devDependencies
+RUN npm ci
+
+# Copy the rest of the application
+COPY . .
+
+ENV NEXT_SHARP_PATH=/app/node_modules/sharp
+
+RUN if [ "$CI_COMMIT_REF_SLUG" != "production" ]; then \
+      if [ -n "$CI_TARGET_BRANCH_NAME" ] && [ -f "/app/apps/${CI_NX_APP_NAME}/.env.${CI_TARGET_BRANCH_NAME}" ]; then \
+        cp "/app/apps/${CI_NX_APP_NAME}/.env.${CI_TARGET_BRANCH_NAME}" "/app/apps/${CI_NX_APP_NAME}/.env.production"; \
+      elif [ -f "/app/apps/${CI_NX_APP_NAME}/.env.${CI_COMMIT_REF_SLUG}" ]; then \
+        cp "/app/apps/${CI_NX_APP_NAME}/.env.${CI_COMMIT_REF_SLUG}" "/app/apps/${CI_NX_APP_NAME}/.env.production"; \
+      fi \
+    fi
+
+RUN npx nx build ${CI_NX_APP_NAME} -c ${CI_COMMIT_REF_SLUG} --skip-nx-cache
+
+# Runner stage
+FROM node:22-alpine AS runner
+
+ARG CI_COMMIT_REF_SLUG=development
+ARG CI_NX_APP_NAME
+
+RUN if [ -z "$CI_COMMIT_REF_SLUG" ]; then echo "CI_COMMIT_REF_SLUG is not set"; exit 1; fi
+RUN if [ -z "$CI_NX_APP_NAME" ]; then echo "CI_NX_APP_NAME is not set"; exit 1; fi
+RUN echo "CI_COMMIT_REF_SLUG: $CI_COMMIT_REF_SLUG"
+RUN echo "CI_NX_APP_NAME: $CI_NX_APP_NAME"
+
+ENV CI_COMMIT_REF_SLUG=${CI_COMMIT_REF_SLUG}
+ENV CI_NX_APP_NAME=${CI_NX_APP_NAME}
+ENV NODE_ENV=${CI_COMMIT_REF_SLUG}
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+
+WORKDIR /app
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Copy only the built application and necessary files
+COPY --from=builder --chown=nextjs:nodejs /app/apps/${CI_NX_APP_NAME}/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/${CI_NX_APP_NAME}/.next/static ./apps/${CI_NX_APP_NAME}/.next/static/
+COPY --from=builder --chown=nextjs:nodejs /app/apps/${CI_NX_APP_NAME}/public ./apps/${CI_NX_APP_NAME}/public
+
+RUN chown -R nextjs:nodejs ./apps/${CI_NX_APP_NAME}/public
+
+USER nextjs
+
+EXPOSE 3000
+
+CMD ["sh", "-c", "node apps/$CI_NX_APP_NAME/server.js"]

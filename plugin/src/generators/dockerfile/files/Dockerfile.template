@@ -1,5 +1,5 @@
 # Builder stage
-FROM node:20.15-alpine AS builder
+FROM node:22-alpine AS builder
 
 ARG CI_COMMIT_REF_SLUG=development
 ARG CI_NX_APP_NAME
@@ -39,7 +39,7 @@ RUN if [ "$CI_COMMIT_REF_SLUG" != "production" ]; then \
 RUN npx nx build ${CI_NX_APP_NAME} -c ${CI_COMMIT_REF_SLUG} --skip-nx-cache
 
 # Runner stage
-FROM node:20.15-alpine AS runner
+FROM node:22-alpine AS runner
 
 ARG CI_COMMIT_REF_SLUG=development
 ARG CI_NX_APP_NAME

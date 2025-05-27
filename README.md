@@ -70,13 +70,9 @@ Sets up the monorepo structure for development.
 
 Configures code checks and formatting with pre-commit hook.
 
-### 3. `dockerfile`
-
-Generates a Dockerfile.
-
 ### Apps
 
-### 4. `expo-app`
+### 3. `expo-app`
 
 Generates and configures an Expo React Native app.
 
@@ -98,7 +94,7 @@ or
 npx nx g expo-app my-app mobile
 ```
 
-### 5. `next-app`
+### 4. `next-app`
 
 Generates and configures a Next.js app.
 
@@ -122,7 +118,7 @@ npx nx g next-app my-app web
 
 ### Libraries
 
-### 6. `react-lib`
+### 5. `react-lib`
 
 Generates a library according to [Nx notation](https://nx.dev/concepts/more-concepts/applications-and-libraries).
 
@@ -158,7 +154,7 @@ or
 npx nx g react-lib --dryRun
 ```
 
-### 7. `lib-rename`
+### 6. `lib-rename`
 
 Renames an existing library and updates imports
 
@@ -174,7 +170,7 @@ Renames an existing library and updates imports
 npx nx g lib-rename --currentLibName="mobile-account-features-profile-settings" --newLibName="user-settings"
 ```
 
-### 8. `lib-move`
+### 7. `lib-move`
 
 Moves the library to a new destination. This utility also calls `lib-tags` generator.
 
@@ -198,7 +194,7 @@ Moves the library to a new destination. This utility also calls `lib-tags` gener
 npx nx g lib-move --srcLibName="mobile-account-features-profile-settings" --app=mobile --scope=settings --type=features --name="user-settings"
 ```
 
-### 9. `lib-remove`
+### 8. `lib-remove`
 
 Removes the library. Before deleting a library you must remove all references to it.
 
@@ -212,7 +208,7 @@ Removes the library. Before deleting a library you must remove all references to
 npx nx g lib-remove --libName="mobile-account-features-profile-settings"
 ```
 
-### 10. `lib-tags`
+### 9. `lib-tags`
 
 Checks and configures [Nx library tags](https://nx.dev/features/enforce-module-boundaries). If your project does not already use library tags, you can add them using this generator.
 
@@ -230,7 +226,7 @@ npx nx g lib-tags
 
 ### Components
 
-### 11. `react-component`
+### 10. `react-component`
 
 Creates a React component in particular library.
 
@@ -254,7 +250,7 @@ or
 npx nx g react-component AppButton --subcomponent --withForwardRef
 ```
 
-### 12. `form`
+### 11. `form`
 
 Generates a form schema class and adds its usage to a component or a hook.
 
@@ -279,7 +275,7 @@ npx nx g form profile-settings ProfileSettings
 
 ### Services
 
-### 13. `entity-api`
+### 12. `entity-api`
 
 Creates an API with related entities in API library. It also updates redux store middlewares, reducers.
 
@@ -295,7 +291,7 @@ Creates an API with related entities in API library. It also updates redux store
 npx nx g entity-api --name=User --baseEndpoint=users
 ```
 
-### 14. `sentry`
+### 13. `sentry`
 
 Creates [Sentry](https://sentry.io/) integration for Expo/Next application.
 
@@ -310,6 +306,10 @@ Creates [Sentry](https://sentry.io/) integration for Expo/Next application.
 ```sh
 npx nx g sentry --directory=apps/mobile --dsn=http://your-dsn.ingest.sentry.io/112233
 ```
+
+### 14. `dockerfile`
+
+Generates a deployment-ready Dockerfile for Next.js applications in the monorepo.
 
 ## Development
 

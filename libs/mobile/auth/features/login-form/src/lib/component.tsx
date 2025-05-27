@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from '@ronas-it/react-native-common-modules';
 import Constants from 'expo-constants';
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import { ReactElement, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ScrollView, View } from 'react-native';
@@ -11,17 +12,15 @@ import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
 import { AppButton, AppText, ErrorMessage, FormTextInput } from '@ronas-it/mobile/shared/ui/ui-kit';
 import { FormValues } from '@ronas-it/mobile/shared/utils/form';
+import { navigationConfig } from '@ronas-it/mobile/shared/utils/navigation';
 import { LoginFormSchema } from './forms';
 
-interface LoginFormProps {
-  onLoginSuccess: () => void;
-}
-
-export function LoginForm({ onLoginSuccess }: LoginFormProps): ReactElement {
+export function LoginForm(): ReactElement {
   const translate = useTranslation('AUTH.LOGIN_FORM');
   const formSchema = new LoginFormSchema();
   const [login, { isLoading, isSuccess, error }] = authApi.useLoginMutation();
   const appName = Constants?.expoConfig?.name;
+  const router = useRouter();
 
   const onSubmit = (form: FormValues<LoginFormSchema>): void => {
     login(form);
@@ -35,7 +34,7 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps): ReactElement {
 
   useEffect(() => {
     if (isSuccess) {
-      onLoginSuccess();
+      router.replace(navigationConfig.routes.profile);
     }
   }, [isSuccess]);
 

@@ -12,12 +12,13 @@ export const getLinkWithParamsGenerator = <TRootParams extends object = never>(
       return basePath;
     }
 
-    const hasIdSlug = 'id' in args && basePath.includes('[id]');
-    const resultBasePath = hasIdSlug ? basePath.replace('[id]', String(args.id)) : basePath;
+    const resultBasePath = basePath.replace(/\[(\w+)]/g, (match, paramName) => {
+      return paramName in args ? String(args[paramName as keyof TRootParams]) : match;
+    });
 
     const queryString = Object.entries(args)
       .flatMap(([key, value]) => {
-        if (isNil(value) || (hasIdSlug && key === 'id')) {
+        if (isNil(value) || basePath.includes(`[${key}]`)) {
           return [];
         }
 
@@ -33,6 +34,6 @@ export const getLinkWithParamsGenerator = <TRootParams extends object = never>(
       })
       .join('&');
 
-    return `${resultBasePath}?${queryString}`;
+    return `${resultBasePath}${queryString ? `?${queryString}` : ''}`;
   }) as LinkWithOptionalParamsGenerator<TRootParams>;
 };

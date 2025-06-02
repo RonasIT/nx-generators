@@ -1,9 +1,0 @@
-import { navigationConfig } from '../config';
-
-type DeepValuesOf<T> = T extends (...args: Array<unknown>) => unknown
-  ? T
-  : T extends Record<string, unknown>
-    ? { [K in keyof T]: DeepValuesOf<T[K]> }[keyof T]
-    : T;
-
-export type Route = DeepValuesOf<typeof navigationConfig.routes>;

@@ -300,3 +300,7 @@ Creates [Sentry](https://sentry.io/) integration for Expo/Next application.
 1. `directory` (optional) - the application directory that uses Sentry
 
 2. `dsn` (optional) - [Data Source Name](https://docs.sentry.io/concepts/key-terms/dsn-explainer/) of your Sentry project
+
+### 14. `dockerfile`
+
+Generates a deployment-ready Dockerfile for Next.js applications in the monorepo.

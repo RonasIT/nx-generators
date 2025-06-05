@@ -16,23 +16,22 @@ export const getLinkWithParamsGenerator = <TRootParams extends object = never>(
       return paramName in args ? String(args[paramName as keyof TRootParams]) : match;
     });
 
-    const queryString = Object.entries(args)
-      .flatMap(([key, value]) => {
-        if (isNil(value) || basePath.includes(`[${key}]`)) {
-          return [];
-        }
+    const searchParams = new URLSearchParams();
 
-        if (Array.isArray(value)) {
-          const uniqueValues = Array.from(new Set(value));
+    for (const [key, value] of Object.entries(args)) {
+      if (isNil(value) || basePath.includes(`[${key}]`)) {
+        continue;
+      }
 
-          return uniqueValues.map((value) => `${key}=${encodeURIComponent(String(value))}`);
-        }
+      if (Array.isArray(value)) {
+        const uniqueValues = Array.from(new Set(value));
+        uniqueValues.forEach((value) => searchParams.append(key, String(value)));
+      } else {
+        searchParams.append(key, String(value));
+      }
+    }
 
-        const encodedValue = encodeURIComponent(String(value));
-
-        return [`${key}=${encodedValue}`];
-      })
-      .join('&');
+    const queryString = searchParams.toString();
 
     return `${resultBasePath}${queryString ? `?${queryString}` : ''}`;
   }) as LinkWithOptionalParamsGenerator<TRootParams>;

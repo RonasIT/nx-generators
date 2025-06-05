@@ -14,12 +14,12 @@ export default function RootScreen(): ReactElement {
     if (!isAppReady) return;
 
     if (isAuthenticated) {
-      router.replace(navigationConfig.routes.profile);
+      router.replace(`/${navigationConfig.groups.main}`);
 
       return;
     }
 
-    router.replace(navigationConfig.routes.signIn);
+    router.replace(`/${navigationConfig.groups.auth}`);
   }, [isAppReady, isAuthenticated]);
 
   return <AppSplashScreen />;

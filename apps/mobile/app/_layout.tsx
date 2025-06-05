@@ -47,15 +47,15 @@ function App(): ReactElement {
 
   useEffect(() => {
     if (isAppReady && !isAuthenticated) {
-      router.replace(`/${navigationConfig.groups.auth}`);
+      router.replace(navigationConfig.routes.signIn);
     }
   }, [isAppReady, isAuthenticated]);
 
   return (
     <Stack>
       <Stack.Screen name='index' />
-      <Stack.Screen name={navigationConfig.groups.auth} options={{ headerShown: false }} />
-      <Stack.Screen name={navigationConfig.groups.main} options={{ headerShown: false }} />
+      <Stack.Screen name={navigationConfig.routesGroups.auth} options={{ headerShown: false }} />
+      <Stack.Screen name={navigationConfig.routesGroups.main} options={{ headerShown: false }} />
     </Stack>
   );
 }

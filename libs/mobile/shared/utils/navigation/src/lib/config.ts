@@ -1,6 +1,12 @@
+const routesGroups = {
+  auth: '(auth)',
+  main: '(main)',
+};
+
 export const navigationConfig = {
-  groups: {
-    auth: '(auth)',
-    main: '(main)',
+  routesGroups,
+  routes: {
+    signIn: `/${routesGroups.auth}`,
+    profile: `/${routesGroups.main}`,
   },
 };

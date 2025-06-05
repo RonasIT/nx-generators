@@ -1,5 +1,8 @@
 export const navigationConfig = {
-  routes: {
-    // Write app routes here
-  }
+  groups: {
+    // Add app groups here
+  },
+  screens: {
+    // Write screens names here
+  },
 };

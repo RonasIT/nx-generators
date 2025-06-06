@@ -1,2 +1,2 @@
-export * from './get-link-with-params-generator';
+export * from './get-link-builder';
 export * from './get-resource-path';

@@ -47,7 +47,7 @@ export const useFilteringSearchParams = <TParams extends FilteringSearchParams>(
       const newParamsString = newSearchParams.toString();
       router.replace(`${pathname}${newParamsString ? `?${newParamsString}` : ''}`);
     },
-    [router.replace, pathname],
+    [pathname],
   );
 
   initialParams.current = getSearchParams();

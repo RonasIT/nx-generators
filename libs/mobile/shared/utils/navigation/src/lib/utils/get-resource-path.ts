@@ -1,7 +1,7 @@
-import { getLinkWithParamsGenerator, LinkWithOptionalParamsGenerator } from './get-link-with-params-generator';
+import { getLinkBuilder, LinkBuilder } from './get-link-builder';
 
 interface ResourcePaths<TRootParams extends object = never> {
-  list: LinkWithOptionalParamsGenerator<TRootParams>;
+  list: LinkBuilder<TRootParams>;
   create?: string;
   view: (id: number) => string;
   edit?: (id: number) => string;
@@ -12,7 +12,7 @@ export const getResourcePaths = <TRootParams extends object = never>(
   options?: { withCreation?: boolean; withEditing?: boolean },
 ): ResourcePaths<TRootParams> => {
   const paths: ResourcePaths<TRootParams> = {
-    list: getLinkWithParamsGenerator<TRootParams>(basePath),
+    list: getLinkBuilder<TRootParams>(basePath),
     view: (id: number) => `${basePath}/${id}`,
   };
 

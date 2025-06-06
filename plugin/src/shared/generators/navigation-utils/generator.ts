@@ -23,7 +23,7 @@ export async function runNavigationUtilsGenerator(tree: Tree, options: Navigatio
   if (options.baseGeneratorType === BaseGeneratorType.NEXT_APP) {
     generateFiles(tree, path.join(__dirname, '/next-app-lib-files'), libRoot, {});
 
-    const newIndexContent = `export * from './utils';\nexport * from './types';`;
+    const newIndexContent = `export * from './hooks';\nexport * from './types';`;
     appendFileContent(`${libPath}/lib/index.ts`, newIndexContent, tree);
   }
 }

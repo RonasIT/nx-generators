@@ -10,9 +10,9 @@ export async function libRemoveGenerator(tree: Tree, options: LibRemoveGenerator
     throw new Error('No library found!');
   }
 
-  const isConfirmed = await askQuestion(`Are you sure you want to remove ${libraryName}?`);
+  const isConfirmed = await askQuestion(`Are you sure you want to remove ${libraryName}? (y/n)`);
 
-  if (!isConfirmed) {
+  if (!['y', 'yes'].includes(isConfirmed.trim().toLowerCase())) {
     return;
   }
 

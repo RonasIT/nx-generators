@@ -1,4 +1,4 @@
 export interface SentryGeneratorSchema {
-  directory: string;
-  dsn: string;
+  directory?: string;
+  dsn?: string;
 }

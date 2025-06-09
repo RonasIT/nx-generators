@@ -43,6 +43,7 @@ jest.mock('../../shared/generators', () => ({
   runFormUtilsGenerator: jest.fn(),
   runStoreGenerator: jest.fn(),
   runUIKittenGenerator: jest.fn(),
+  runNavigationUtilsGenerator: jest.fn(),
 }));
 
 jest.mock('../../shared/utils', () => ({

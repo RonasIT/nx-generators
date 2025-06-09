@@ -84,6 +84,11 @@
       "factory": "./src/generators/dockerfile/generator",
       "schema": "./src/generators/dockerfile/schema.json",
       "description": "Generates dockerfile"
+    },
+    "navigationUtils": {
+      "factory": "./src/shared/generators/navigation-utils/generator",
+      "schema": "./src/shared/generators/navigation-utils/schema.json",
+      "description": "Creates basic utilities for navigation"
     }
   }
 }

@@ -19,13 +19,14 @@ import {
   runFormUtilsGenerator,
   runStoreGenerator,
   runI18nNextGenerator,
+  runNavigationUtilsGenerator,
 } from '../../shared/generators';
 import { addNxAppTag, confirm, formatName, getImportPathPrefix } from '../../shared/utils';
 import { NextAppGeneratorSchema } from './schema';
 
 export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSchema) {
   const shouldGenerateApiClientLib =
-    options.withStore && !isBoolean(options.withApiClient) && await confirm('Do you want to create api client lib?');
+    options.withStore && !isBoolean(options.withApiClient) && (await confirm('Do you want to create api client lib?'));
 
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
@@ -45,6 +46,10 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
 
   await runAppEnvGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.NEXT_APP });
   await runI18nNextGenerator(tree, options);
+  await runNavigationUtilsGenerator(tree, {
+    appDirectory: options.directory,
+    baseGeneratorType: BaseGeneratorType.NEXT_APP,
+  });
 
   if (options.withStore) {
     await runStoreGenerator(tree, {
@@ -91,7 +96,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
     libPath,
     hasProviders,
     isStoreEnabled: options.withStore,
-    sharedTranslationsKey
+    sharedTranslationsKey,
   });
 
   if (!hasProviders) {
@@ -102,7 +107,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {
     ...options,
     formatName,
-    sharedTranslationsKey
+    sharedTranslationsKey,
   });
 
   // Add dependencies

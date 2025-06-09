@@ -60,6 +60,8 @@ npx nx g react-component
 
 Note: each generator accepts the `--help` argument to see generator instructions. Example: `npx nx g react-lib --help`.
 
+Also, you can run unit tests using `npx nx test nx-generators`
+
 ### Repository
 
 ### 1. `repo-config`

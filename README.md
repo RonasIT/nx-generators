@@ -342,7 +342,7 @@ The `plugin` directory contains the source code for all generators in this packa
 
    - Run generators locally to verify functionality
    - Example: `npx nx g expo-app`
-   - Test with different options and scenarios
+   - Run unit tests using `npx nx test nx-generators`
 
 3. **Update generator metadata**
 

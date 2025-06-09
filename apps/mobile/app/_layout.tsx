@@ -2,6 +2,7 @@ import { authSelectors } from '@ronas-it/mobile/shared/data-access/auth';
 import { store } from '@ronas-it/mobile/shared/data-access/store';
 import { UserThemeProvider } from '@ronas-it/mobile/shared/features/user-theme-provider';
 import { fonts } from '@ronas-it/mobile/shared/ui/styles';
+import { navigationConfig } from '@ronas-it/mobile/shared/utils/navigation';
 import { setLanguage } from '@ronas-it/react-native-common-modules';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { useFonts } from 'expo-font';
@@ -46,15 +47,15 @@ function App(): ReactElement {
 
   useEffect(() => {
     if (isAppReady && !isAuthenticated) {
-      router.replace('/(auth)');
+      router.replace(navigationConfig.routes.signIn);
     }
   }, [isAppReady, isAuthenticated]);
 
   return (
     <Stack>
       <Stack.Screen name='index' />
-      <Stack.Screen name='(auth)' options={{ headerShown: false }} />
-      <Stack.Screen name='(main)' options={{ headerShown: false }} />
+      <Stack.Screen name={navigationConfig.routesGroups.auth} options={{ headerShown: false }} />
+      <Stack.Screen name={navigationConfig.routesGroups.main} options={{ headerShown: false }} />
     </Stack>
   );
 }

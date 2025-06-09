@@ -40,6 +40,7 @@
       "@ronas-it/mobile/shared/ui/ui-kit": ["libs/mobile/shared/ui/ui-kit/src/index.ts"],
       "@ronas-it/mobile/shared/utils/app-env": ["libs/mobile/shared/utils/app-env/src/index.ts"],
       "@ronas-it/mobile/shared/utils/form": ["libs/mobile/shared/utils/form/src/index.ts"],
+      "@ronas-it/mobile/shared/utils/navigation": ["libs/mobile/shared/utils/navigation/src/index.ts"],
       "@ronas-it/nx-generators": ["plugin/src/index.ts"]
     }
   },

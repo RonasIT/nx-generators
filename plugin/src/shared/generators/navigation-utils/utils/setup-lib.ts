@@ -11,5 +11,5 @@ export function setupLib(tree: Tree, appDirectory: string, libName: string): voi
   const libPath = `${libRoot}/shared/utils/${libName}/src`;
   tree.delete(`${libPath}/index.ts`);
 
-  generateFiles(tree, path.join(__dirname, `/${libName}-lib-files`), libRoot, {});
+  generateFiles(tree, path.join(__dirname, `../${libName}-lib-files`), libRoot, {});
 }

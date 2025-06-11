@@ -21,6 +21,7 @@ export const dependencies = {
   'next-app': {
     'next-intl': '^3.26.3',
     'lodash-es': '^4.17.21',
+    'class-transformer': '^0.5.1',
   },
   'api-client': {
     '@ronas-it/axios-api-client': '^0.1.0',

@@ -120,7 +120,7 @@ npx nx g next-app my-app web
 
 ### 5. `react-lib`
 
-Generates a library according to [Nx notation](https://nx.dev/concepts/more-concepts/applications-and-libraries).
+Generates a library according to [Nx notation](https://nx.dev/concepts/decisions/project-dependency-rules).
 
 #### Options
 

@@ -131,7 +131,7 @@ export function generateSentryExpo(tree: Tree, options: SentryGeneratorSchema, p
 
   updateFileContent(
     `${projectRoot}/app.config.ts`,
-    (fileContent) => updateExtraConfig(addSentryPluginToAppConfig(fileContent), options.dsn),
+    (fileContent) => updateExtraConfig(addSentryPluginToAppConfig(fileContent), options.dsn as string),
     tree,
   );
 

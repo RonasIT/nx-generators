@@ -1,6 +1,6 @@
 export const dependencies = {
   'expo-app': {
-    '@ronas-it/react-native-common-modules': '^0.6.2',
+    '@ronas-it/react-native-common-modules': '^7.0.0',
     'react-native-mmkv': '^3.2.0',
     'expo-constants': '~17.0.3',
     'expo-dev-client': '^5.0.6',
@@ -33,7 +33,7 @@ export const dependencies = {
     'react-native-extended-stylesheet': '^0.12.0',
   },
   store: {
-    '@ronas-it/rtkq-entity-api': '^0.4.3',
+    '@ronas-it/rtkq-entity-api': '^0.4.11',
     'react-redux': '^9.1.2',
   },
   'ui-kitten': {

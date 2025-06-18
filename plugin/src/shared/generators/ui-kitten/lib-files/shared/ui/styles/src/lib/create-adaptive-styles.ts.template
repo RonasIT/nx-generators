@@ -23,7 +23,7 @@ export const isTablet = screenWidth <= ViewPortWidthBreakpoints.TABLET;
 
 export function createAdaptiveStyles<T extends EStyleSet = EStyleSet>(
   stylesOrGetter: EStyleSet<T> | ((theme: Theme) => T),
-): typeof useAdaptiveStyles {
+): (theme?: Theme) => StyleSet<T> {
   const useAdaptiveStyles = (theme?: Theme): StyleSet<T> => {
     const { width } = useWindowDimensions();
     const appTheme = useAppTheme();
@@ -36,4 +36,3 @@ export function createAdaptiveStyles<T extends EStyleSet = EStyleSet>(
 
   return useAdaptiveStyles;
 }
-

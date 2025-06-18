@@ -24,7 +24,7 @@ export const profileApi = createAppApi({
           params,
         };
       },
-      transformResponse: (response) => plainToInstance(User, response),
+      transformResponse: (response: object) => plainToInstance(User, response),
       providesTags: [ProfileApiTag.PROFILE],
     }),
     updateProfile: builder.mutation<void, User>({

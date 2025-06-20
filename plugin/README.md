@@ -342,7 +342,7 @@ Library - `navigation`.
 
 #### Parameters
 
-- `basePath` — the initial URL. It may contain placeholders for dynamic substitution (e.g., [id]).
+- `basePath` — the initial URL. It may contain placeholders for dynamic substitution (e.g., `[id]`).
 
 #### Returns
 

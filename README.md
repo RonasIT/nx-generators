@@ -97,6 +97,7 @@ Configures code checks and formatting with pre-commit hook.
 ### 3. `expo-app`
 
 Generates and configures an Expo React Native app.
+Also generates [navigation utilities](#navigation-utilities).
 
 #### Options
 
@@ -119,6 +120,7 @@ npx nx g expo-app my-app mobile
 ### 4. `next-app`
 
 Generates and configures a Next.js app.
+Also generates [navigation utilities](#navigation-utilities).
 
 #### Options
 
@@ -346,7 +348,7 @@ Library - `navigation`.
 
 #### Parameters
 
-- `basePath` — the initial URL. It may contain placeholders for dynamic substitution (e.g., [id]).
+- `basePath` — the initial URL. It may contain placeholders for dynamic substitution (e.g., `[id]`).
 
 #### Returns
 

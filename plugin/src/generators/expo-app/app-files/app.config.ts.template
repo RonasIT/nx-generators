@@ -1,5 +1,4 @@
-import { ExpoConfig } from '@expo/config';
-import { EASConfig } from 'expo-constants/build/Constants.types';
+import { EASConfig, ExpoConfig } from '@expo/config';
 
 const createConfig = (): Omit<ExpoConfig, 'extra'> & { extra: { eas: EASConfig } & typeof extra } => {
   const projectId = '';

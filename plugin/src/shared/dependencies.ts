@@ -1,6 +1,6 @@
 export const dependencies = {
   'expo-app': {
-    '@ronas-it/react-native-common-modules': '^0.6.2',
+    '@ronas-it/react-native-common-modules': '^7.0.0',
     'react-native-mmkv': '^3.2.0',
     'expo-constants': '~17.0.3',
     'expo-dev-client': '^5.0.6',
@@ -21,6 +21,7 @@ export const dependencies = {
   'next-app': {
     'next-intl': '^3.26.3',
     'lodash-es': '^4.17.21',
+    'class-transformer': '^0.5.1',
   },
   'api-client': {
     '@ronas-it/axios-api-client': '^0.1.0',
@@ -32,7 +33,7 @@ export const dependencies = {
     'react-native-extended-stylesheet': '^0.12.0',
   },
   store: {
-    '@ronas-it/rtkq-entity-api': '^0.4.3',
+    '@ronas-it/rtkq-entity-api': '^0.4.11',
     'react-redux': '^9.1.2',
   },
   'ui-kitten': {

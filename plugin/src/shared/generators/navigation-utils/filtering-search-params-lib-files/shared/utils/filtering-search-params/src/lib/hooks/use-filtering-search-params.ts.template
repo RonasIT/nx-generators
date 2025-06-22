@@ -8,7 +8,7 @@ interface FilteringSearchParamsConfig<TParams> {
 }
 
 export const useFilteringSearchParams = <TParams extends FilteringSearchParams>({
-  searchParamsConstructor
+  searchParamsConstructor,
 }: FilteringSearchParamsConfig<TParams>): typeof result => {
   const initialParams = useRef<TParams | null>(null);
   const searchParams = useSearchParams();
@@ -18,16 +18,30 @@ export const useFilteringSearchParams = <TParams extends FilteringSearchParams>(
   const getSearchParams = useCallback((): TParams => {
     const initialParams = {} as Record<string, any>;
     searchParams.forEach((value, key) => {
+      let parsedValue: any;
+
       try {
-        initialParams[key] = JSON.parse(value);
+        parsedValue = JSON.parse(value);
       } catch {
-        initialParams[key] = value;
+        parsedValue = value;
+      }
+
+      if (key in initialParams) {
+        if (Array.isArray(initialParams[key])) {
+          if (!initialParams[key].includes(parsedValue)) {
+            initialParams[key].push(parsedValue);
+          }
+        } else {
+          initialParams[key] = [...new Set([initialParams[key], parsedValue])];
+        }
+      } else {
+        initialParams[key] = parsedValue;
       }
     });
 
     return plainToInstance(searchParamsConstructor, initialParams, {
       excludeExtraneousValues: true,
-      exposeUnsetFields: false
+      exposeUnsetFields: false,
     });
   }, [searchParams]);
 
@@ -39,8 +53,15 @@ export const useFilteringSearchParams = <TParams extends FilteringSearchParams>(
       Object.keys(plainParams).forEach((field) => {
         const value = plainParams[field];
 
-        if (value !== null && value !== undefined && !(Array.isArray(value) && value.length === 0)) {
-          newSearchParams.set(field, JSON.stringify(value));
+        if (value !== null && value !== undefined) {
+          if (Array.isArray(value)) {
+            const uniqueValues = new Set(value);
+            uniqueValues.forEach((item) => {
+              newSearchParams.append(field, JSON.stringify(item));
+            });
+          } else {
+            newSearchParams.set(field, JSON.stringify(value));
+          }
         }
       });
 
@@ -54,7 +75,7 @@ export const useFilteringSearchParams = <TParams extends FilteringSearchParams>(
 
   const result = {
     initialSearchParams: initialParams.current,
-    setSearchParams
+    setSearchParams,
   };
 
   return result;

@@ -1,6 +1,28 @@
 # Nx Generators
 
-Nx generators for Ronas IT projects.
+This package provides a set of [Nx](https://nx.dev/getting-started/intro) generators that help maintain a consistent project structure, enforce best practices, and automate common development tasks. It is designed to streamline and standardize the development workflow for monorepos with React Native and/or Next.js apps.
+
+## Features
+
+- **Automated setup**: Quick setup of new projects with pre-configured [best practices](#best-practices)
+- **Cross-platform support**: Generators for both web (Next.js) and mobile (RN Expo) applications
+- **Code quality tools**: Built-in configuration for ESLint, Prettier, and TypeScript pre-commit checks
+- **Library management**: Tools for creating, moving, renaming, and managing libraries with pre-defined boundaries
+- **Component generation**: Automated creation of components, form interaction, and other utility tools
+- **Data access setup**: State management and API interaction setup using [Redux Toolkit](https://redux-toolkit.js.org/) and [RTKQ Entity API](https://github.com/RonasIT/rtkq-entity-api)
+- **Internationalization**: Built-in support for i18n in both Next.js and RN Expo applications
+
+See full list of generators [below](#generators-overview).
+
+## Best Practices
+
+The generators enforce several best practices according to [Nx concepts](https://nx.dev/concepts/decisions):
+
+- Scalable [monorepo organization](https://nx.dev/concepts/decisions/why-monorepos)
+- Consistent [project structure](https://nx.dev/concepts/decisions/folder-structure)
+- Clear [libraries hierarchy](https://nx.dev/concepts/decisions/project-dependency-rules)
+- Proper [module boundaries](https://nx.dev/features/enforce-module-boundaries)
+- Streamlined [dependency management](https://nx.dev/concepts/decisions/dependency-management)
 
 ## Usage
 
@@ -120,7 +142,7 @@ npx nx g next-app my-app web
 
 ### 5. `react-lib`
 
-Generates a library according to [Nx notation](https://nx.dev/concepts/more-concepts/applications-and-libraries).
+Generates a library according to [Nx notation](https://nx.dev/concepts/decisions/project-dependency-rules).
 
 #### Options
 

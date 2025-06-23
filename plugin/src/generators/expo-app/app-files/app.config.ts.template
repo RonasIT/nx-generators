@@ -39,6 +39,7 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & { extra: { eas: EASConfig }
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#FFFFFF',
       },
+      edgeToEdgeEnabled: true
     },
     plugins: ['expo-router'],
     newArchEnabled: true,

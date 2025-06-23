@@ -5,6 +5,12 @@ export default {
     '*.{ts,tsx,js}': 'eslint --cache --fix',
   },
   tsconfig: {
+    baseUrl: '.',
+    rootDir: '.',
+    sourceMap: true,
+    declaration: false,
+    emitDecoratorMetadata: true,
+    experimentalDecorators: true,
     jsx: 'react-native',
     allowJs: true,
     noEmit: true,
@@ -13,5 +19,6 @@ export default {
     noImplicitAny: true,
     strictPropertyInitialization: false,
     strictNullChecks: true,
+    exclude: ['**/*.cjs', '**/*.mjs', 'node_modules', 'dist'],
   },
 };

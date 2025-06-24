@@ -410,7 +410,7 @@ export class ItemSearchParams {
 
 const navigationConfig = {
   routes: {
-    items: getRecourcePaths<ItemSearchParams>('/items', {
+    items: getResourcePaths<ItemSearchParams>('/items', {
       withCreation: true,
       withEditing: true,
     }),
@@ -431,6 +431,7 @@ const editingLink = navigationConfig.routes.items.edit?.(1); // /items/1/edit
 ### useFilteringSearchParams (web only)
 
 It's a hook, which converts query parameters to and from a specified model for filtering purposes.
+It calls `useSearchParams` from `next/navigation` under the hook.
 Library - `filtering-search-params`
 
 #### Parameters

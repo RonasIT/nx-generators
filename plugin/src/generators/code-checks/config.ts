@@ -19,6 +19,6 @@ export default {
     noImplicitAny: true,
     strictPropertyInitialization: false,
     strictNullChecks: true,
-    exclude: ['**/*.cjs', '**/*.mjs', 'node_modules', 'dist'],
   },
+  tsConfigExclude: ['**/*.cjs', '**/*.mjs', 'node_modules', 'dist'],
 };

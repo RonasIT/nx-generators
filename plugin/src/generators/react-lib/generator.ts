@@ -34,8 +34,7 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
         choices: Object.values(LibraryType),
       }).run();
 
-  options.name =
-    options.name || await askQuestion('Enter the name of the library (e.g: settings): ');
+  options.name = options.name || (await askQuestion('Enter the name of the library (e.g: settings): '));
 
   if (
     [LibraryType.FEATURES, LibraryType.UI].includes(options.type as LibraryType) &&
@@ -57,17 +56,19 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
     .split(path.sep)
     .join('/');
   const libPath = `libs/${libName}`;
-  const command = `npx nx g @nx/react:library --skipPackageJson --unitTestRunner=none --tags="${tags.join(', ')}" --name=${libName} ${libPath} --linter=eslint --component=false --bundler=none --style=scss`
+  const command = `npx nx g @nx/react:library --skipPackageJson --unitTestRunner=none --tags="${tags.join(', ')}" --name=${libName} ${libPath} --linter=eslint --component=false --bundler=none --style=scss`;
   const commandWithOptions = options.dryRun ? command + ' --dry-run' : command;
 
   execSync(commandWithOptions, { stdio: 'inherit' });
 
   if (options.withComponent) {
     const srcPath = `${libPath}/src`;
-
     generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, name: formatName(options.name, true) });
-    tree.write(`${srcPath}/index.ts`, 'export * from \'./lib\';');
+    tree.write(`${srcPath}/index.ts`, "export * from './lib';");
   }
+
+  //Remove unnecessary tsconfig.lib.json
+  tree.delete(`${libPath}/tsconfig.lib.json`);
 
   addNxScopeTag(tree, scopeTag);
 

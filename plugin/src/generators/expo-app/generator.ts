@@ -122,6 +122,9 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     appDirectory: options.directory,
   });
 
+  // Remove unnecessary tsconfig.app.json file
+  tree.delete(`${appRoot}/tsconfig.app.json`);
+
   addNxAppTag(tree, options.directory);
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {});
 

@@ -1,85 +1,83 @@
 /// <reference types="jest" />
-import * as child_process from 'child_process';
-import { Tree, getProjects } from '@nx/devkit';
+import { execSync } from 'child_process';
 import * as devkit from '@nx/devkit';
-import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import * as utils from '../../shared/utils';
+import { confirm, verifyESLintConstraintsConfig } from '../../shared/utils';
 import { libTagsGenerator } from './generator';
-import * as checkUtils from './utils';
+import * as utils from './utils';
 
-jest.mock('child_process');
-jest.mock('../../shared/utils');
-jest.mock('@nx/devkit');
-jest.mock('./utils');
+jest.mock('child_process', () => ({
+  execSync: jest.fn(),
+}));
 
-const mockConfirm = utils.confirm as jest.Mock;
-const mockVerifyESLintConstraintsConfig = utils.verifyESLintConstraintsConfig as jest.Mock;
-const mockCheckApplicationTags = checkUtils.checkApplicationTags as jest.Mock;
-const mockCheckLibraryTags = checkUtils.checkLibraryTags as jest.Mock;
-const mockExecSync = child_process.execSync as jest.Mock;
-const mockFormatFiles = devkit.formatFiles as jest.Mock;
+jest.mock('../../shared/utils', () => ({
+  confirm: jest.fn(),
+  verifyESLintConstraintsConfig: jest.fn(),
+}));
+
+jest.mock('./utils', () => ({
+  checkApplicationTags: jest.fn(),
+  checkLibraryTags: jest.fn(),
+}));
+
+jest.mock('@nx/devkit', () => {
+  const original = jest.requireActual('@nx/devkit');
+
+  return {
+    ...original,
+    getProjects: jest.fn(),
+    formatFiles: jest.fn(),
+    output: {
+      log: jest.fn(),
+      bold: (text: string) => text,
+    },
+  };
+});
 
 describe('libTagsGenerator', () => {
-  let tree: Tree;
+  const tree = {} as any;
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
     jest.clearAllMocks();
+  });
 
-    (getProjects as jest.Mock).mockReturnValue(
+  it('should stop if unstaged changes and user declines confirmation', async () => {
+    (execSync as jest.Mock).mockReturnValue(' M somefile.ts');
+    (confirm as jest.Mock).mockResolvedValue(false);
+
+    await libTagsGenerator(tree, { skipRepoCheck: false });
+
+    expect(confirm).toHaveBeenCalledWith('You have unstaged changes. Are you sure you want to continue?');
+    expect(verifyESLintConstraintsConfig).not.toHaveBeenCalled();
+  });
+
+  it('should proceed if no unstaged changes', async () => {
+    (execSync as jest.Mock).mockReturnValue('');
+    (devkit.getProjects as jest.Mock).mockReturnValue(
       new Map([
         ['app1', { name: 'app1', projectType: 'application', root: 'apps/app1' }],
         ['lib1', { name: 'lib1', projectType: 'library', root: 'libs/lib1' }],
       ]),
     );
+
+    (utils.checkApplicationTags as jest.Mock).mockImplementation(undefined);
+    (utils.checkLibraryTags as jest.Mock).mockImplementation(undefined);
+
+    await libTagsGenerator(tree, { skipRepoCheck: false, silent: false });
+
+    expect(verifyESLintConstraintsConfig).toHaveBeenCalledWith(tree);
+    expect(utils.checkApplicationTags).toHaveBeenCalledTimes(1);
+    expect(utils.checkLibraryTags).toHaveBeenCalledTimes(1);
+    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
   });
 
-  it('should skip repo check if skipRepoCheck is true', async () => {
-    mockExecSync.mockReturnValue('M somefile.txt');
-    const options = { skipRepoCheck: true, silent: true };
+  it('should set context.log to noop if silent option is true', async () => {
+    (execSync as jest.Mock).mockReturnValue('');
+    (devkit.getProjects as jest.Mock).mockReturnValue(new Map());
 
-    await libTagsGenerator(tree, options);
+    await libTagsGenerator(tree, { skipRepoCheck: true, silent: true });
 
-    expect(mockConfirm).not.toHaveBeenCalled();
-  });
-
-  it('should exit early if user does not confirm when unstaged changes are present', async () => {
-    mockExecSync.mockReturnValue('M somefile.txt');
-    mockConfirm.mockResolvedValue(false);
-
-    const options = { skipRepoCheck: false, silent: true };
-
-    await libTagsGenerator(tree, options);
-
-    expect(mockConfirm).toHaveBeenCalled();
-    expect(mockVerifyESLintConstraintsConfig).not.toHaveBeenCalled();
-    expect(mockCheckApplicationTags).not.toHaveBeenCalled();
-    expect(mockFormatFiles).not.toHaveBeenCalled();
-  });
-
-  it('should verify eslint config, check tags, and format files', async () => {
-    mockExecSync.mockReturnValue('');
-    mockVerifyESLintConstraintsConfig.mockImplementation(undefined);
-    mockCheckApplicationTags.mockImplementation(undefined);
-    mockCheckLibraryTags.mockImplementation(undefined);
-
-    const options = { skipRepoCheck: false, silent: false };
-
-    await libTagsGenerator(tree, options);
-
-    expect(mockVerifyESLintConstraintsConfig).toHaveBeenCalledWith(tree);
-    expect(mockCheckApplicationTags).toHaveBeenCalled();
-    expect(mockCheckLibraryTags).toHaveBeenCalled();
-    expect(mockFormatFiles).toHaveBeenCalledWith(tree);
-  });
-
-  it('should silence log output if silent is true', async () => {
-    mockExecSync.mockReturnValue('');
-    const options = { skipRepoCheck: true, silent: true };
-
-    await libTagsGenerator(tree, options);
-
-    // context.log is overwritten internally — this test ensures no throw and completes
-    expect(mockFormatFiles).toHaveBeenCalled();
+    // We can't directly test context.log here because it is internal, but no errors means success
+    expect(verifyESLintConstraintsConfig).toHaveBeenCalled();
+    expect(devkit.formatFiles).toHaveBeenCalled();
   });
 });

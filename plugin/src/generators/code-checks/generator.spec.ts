@@ -1,94 +1,64 @@
 /// <reference types="jest" />
-import { execSync } from 'child_process';
-import * as path from 'path';
-import { Tree } from '@nx/devkit';
-import * as devkit from '@nx/devkit';
-import config from './config';
+import { Tree, readJson } from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import codeChecksGenerator from './generator';
-import scripts from './scripts';
+import { CodeChecksGeneratorSchema } from './schema';
 
-jest.mock('child_process', () => ({
-  execSync: jest.fn(),
-}));
-
-jest.mock('@nx/devkit', () => ({
-  readJson: jest.fn(),
-  writeJson: jest.fn(),
-  generateFiles: jest.fn(),
-  addDependenciesToPackageJson: jest.fn(),
-  formatFiles: jest.fn(),
-  installPackagesTask: jest.fn(),
-}));
-
-describe('codeChecksGenerator', () => {
+describe('codeChecksGenerator (integration)', () => {
   let tree: Tree;
 
   beforeEach(() => {
-    tree = {
-      delete: jest.fn(),
-      read: jest.fn(),
-      write: jest.fn(),
-    } as any;
+    tree = createTreeWithEmptyWorkspace();
 
-    (devkit.readJson as jest.Mock).mockImplementation((_, file) => {
-      if (file === 'package.json') {
-        return { scripts: {} };
-      }
+    // Seed necessary files
+    tree.write('package.json', JSON.stringify({ scripts: { build: 'echo "build"' } }, null, 2));
+    tree.write('tsconfig.base.json', JSON.stringify({ compilerOptions: { target: 'esnext' } }, null, 2));
+    tree.write('.gitignore', 'node_modules\n');
+    tree.write('.prettierignore', 'dist\n');
 
-      if (file === 'tsconfig.base.json') {
-        return { compilerOptions: {} };
-      }
-
-      return {};
-    });
-
-    (tree.read as jest.Mock).mockImplementation((filePath: string) => {
-      if (filePath === '.gitignore') return Buffer.from('node_modules\n');
-      if (filePath === '.prettierignore') return Buffer.from('');
-
-      return null;
-    });
+    // Files to be deleted
+    tree.write('.eslintrc.json', '{}');
+    tree.write('.prettierrc', '{}');
+    tree.write('eslint.config.cjs', '');
   });
 
-  it('should update configs and generate files', async () => {
-    const options = { tmpl: '', name: '' };
+  it('should modify and generate files as expected', async () => {
+    const options: CodeChecksGeneratorSchema = { name: 'my-app' };
+    const installFn = await codeChecksGenerator(tree, options);
 
-    const result = await codeChecksGenerator(tree, options);
+    // Deleted legacy config files
+    expect(tree.exists('.eslintrc.json')).toBe(false);
+    expect(tree.exists('.prettierrc')).toBe(false);
+    expect(tree.exists('eslint.config.cjs')).toBe(false);
 
-    expect(tree.delete).toHaveBeenCalledWith('.eslintrc.json');
-    expect(tree.delete).toHaveBeenCalledWith('eslint.config.cjs');
-    expect(tree.delete).toHaveBeenCalledWith('eslint.config.mjs');
-    expect(tree.delete).toHaveBeenCalledWith('.prettierrc');
+    // Updated package.json
+    const pkg = readJson(tree, 'package.json');
+    expect(pkg.scripts.lint).toBeDefined();
+    expect(pkg['lint-staged']).toBeDefined();
 
-    expect(execSync).toHaveBeenCalledWith('npx mrm@2 lint-staged', { stdio: 'inherit' });
+    // Updated tsconfig.base.json
+    const tsconfig = readJson(tree, 'tsconfig.base.json');
+    expect(tsconfig.compilerOptions.noFallthroughCasesInSwitch).toBe(true);
 
-    expect(devkit.writeJson).toHaveBeenCalledWith(
-      tree,
-      'package.json',
-      expect.objectContaining({
-        'lint-staged': config['lint-staged'],
-        scripts: expect.objectContaining(scripts),
-      }),
-    );
+    // .gitignore should include .eslintcache
+    const gitignore = tree.read('.gitignore')?.toString();
+    expect(gitignore).toContain('.eslintcache');
 
-    expect(devkit.writeJson).toHaveBeenCalledWith(
-      tree,
-      'tsconfig.base.json',
-      expect.objectContaining({
-        compilerOptions: expect.objectContaining(config.tsconfig),
-      }),
-    );
+    // .prettierignore should include comment and ignored files
+    const prettierignore = tree.read('.prettierignore')?.toString();
+    expect(prettierignore).toContain('**/actions.ts');
+    expect(prettierignore).toContain('**/epics.ts');
+    expect(prettierignore).toContain('**/selectors.ts');
 
-    expect(tree.write).toHaveBeenCalledWith('.gitignore', expect.stringContaining('.eslintcache'));
-    expect(tree.write).toHaveBeenCalledWith('.prettierignore', expect.stringContaining('**/actions.ts'));
+    // New config files
+    expect(tree.exists('.eslint.ronasit.cjs')).toBe(true);
+    expect(tree.exists('.prettierrc.js')).toBe(true);
+    expect(tree.exists('eslint.config.cjs')).toBe(true);
+    expect(tree.exists('eslint.constraints.json')).toBe(true);
+    expect(tree.exists('tsconfig.json')).toBe(true);
+    expect(tree.exists('types.d.ts')).toBe(true);
 
-    expect(devkit.generateFiles).toHaveBeenCalledWith(tree, path.join(__dirname, 'files'), '.', options);
-
-    expect(devkit.addDependenciesToPackageJson).toHaveBeenCalled();
-
-    expect(devkit.formatFiles).toHaveBeenCalled();
-
-    result();
-    expect(devkit.installPackagesTask).toHaveBeenCalledWith(tree);
+    // Callback should be a function
+    expect(typeof installFn).toBe('function');
   });
 });

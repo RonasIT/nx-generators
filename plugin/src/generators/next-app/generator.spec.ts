@@ -1,84 +1,166 @@
 /// <reference types="jest" />
+import { execSync } from 'child_process';
 import * as fs from 'fs';
-import { Tree } from '@nx/devkit';
 import * as devkit from '@nx/devkit';
-import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { BaseGeneratorType } from '../../shared/enums';
-import * as sharedGenerators from '../../shared/generators';
-import * as utils from '../../shared/utils';
+import {
+  runAppEnvGenerator,
+  runApiClientGenerator,
+  runStoreGenerator,
+  runI18nNextGenerator,
+  runNavigationUtilsGenerator,
+} from '../../shared/generators';
+import { confirm } from '../../shared/utils';
 import { nextAppGenerator } from './generator';
 
-jest.mock('fs');
-jest.mock('child_process');
-jest.mock('@nx/devkit', () => ({
-  ...jest.requireActual('@nx/devkit'),
-  readJson: jest.fn(),
-  writeJson: jest.fn(),
-  generateFiles: jest.fn(),
-  formatFiles: jest.fn(),
-  installPackagesTask: jest.fn(),
-  addDependenciesToPackageJson: jest.fn(),
+jest.mock('child_process', () => ({
+  execSync: jest.fn(),
 }));
-jest.mock('../../shared/generators');
-jest.mock('../../shared/utils');
+
+jest.mock('fs', () => ({
+  existsSync: jest.fn(),
+}));
+
+jest.mock('../../shared/generators', () => ({
+  runAppEnvGenerator: jest.fn(),
+  runApiClientGenerator: jest.fn(),
+  runFormUtilsGenerator: jest.fn(),
+  runStoreGenerator: jest.fn(),
+  runI18nNextGenerator: jest.fn(),
+  runNavigationUtilsGenerator: jest.fn(),
+}));
+
+jest.mock('../../shared/utils', () => ({
+  confirm: jest.fn(),
+  formatName: jest.fn((name) => name),
+  getImportPathPrefix: jest.fn(() => '@myorg'),
+  addNxAppTag: jest.fn(),
+}));
+
+jest.mock('@nx/devkit', () => {
+  const original = jest.requireActual('@nx/devkit');
+
+  return {
+    ...original,
+    readJson: jest.fn(),
+    writeJson: jest.fn(),
+    generateFiles: jest.fn(),
+    formatFiles: jest.fn(),
+    addDependenciesToPackageJson: jest.fn(),
+    installPackagesTask: jest.fn(),
+  };
+});
 
 describe('nextAppGenerator', () => {
-  let tree: Tree;
-
-  const options = {
-    name: 'test-app',
-    directory: 'test-app',
+  const tree = {} as any;
+  const optionsBase = {
+    name: 'testapp',
+    directory: 'testapp',
     withStore: true,
-    withFormUtils: true,
+    withApiClient: undefined,
+    withFormUtils: false,
     withSentry: false,
   };
 
   beforeEach(() => {
-    tree = createTreeWithEmptyWorkspace();
-
-    jest.spyOn(utils, 'confirm').mockResolvedValue(true);
-    jest.spyOn(utils, 'getImportPathPrefix').mockReturnValue('@myorg');
-    jest.spyOn(fs, 'existsSync').mockReturnValue(false);
-    jest.spyOn(devkit, 'readJson').mockReturnValue({ include: [] });
-
-    jest.spyOn(tree, 'delete').mockImplementation(undefined);
-    jest.spyOn(tree, 'write').mockImplementation(undefined);
+    jest.clearAllMocks();
   });
 
-  it('should call required generators and utilities', async () => {
+  it('should install @nx/next plugin and generate app if app folder does not exist', async () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(false);
+    (confirm as jest.Mock).mockResolvedValue(true);
+    (devkit.readJson as jest.Mock).mockReturnValue({ include: [] });
+
+    await nextAppGenerator(tree, optionsBase);
+
+    expect(execSync).toHaveBeenCalledWith('npx nx add @nx/next', { stdio: 'inherit' });
+    expect(execSync).toHaveBeenCalledWith(expect.stringContaining(`npx nx g @nx/next:app ${optionsBase.name}`), {
+      stdio: 'inherit',
+    });
+    expect(runAppEnvGenerator).toHaveBeenCalled();
+    expect(runI18nNextGenerator).toHaveBeenCalled();
+    expect(runNavigationUtilsGenerator).toHaveBeenCalled();
+    expect(runStoreGenerator).toHaveBeenCalled();
+  });
+
+  it('should ask to create api client lib if withStore true and withApiClient undefined', async () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+    (confirm as jest.Mock).mockResolvedValue(true);
+    (devkit.readJson as jest.Mock).mockReturnValue({ include: [] });
+
+    const options = { ...optionsBase, withApiClient: undefined };
     await nextAppGenerator(tree, options);
 
-    expect(sharedGenerators.runAppEnvGenerator).toHaveBeenCalledWith(
-      tree,
-      expect.objectContaining({
-        baseGeneratorType: BaseGeneratorType.NEXT_APP,
-      }),
-    );
+    expect(confirm).toHaveBeenCalledWith('Do you want to create api client lib?');
+    expect(runApiClientGenerator).toHaveBeenCalled();
+  });
 
-    expect(sharedGenerators.runI18nNextGenerator).toHaveBeenCalled();
-    expect(sharedGenerators.runStoreGenerator).toHaveBeenCalled();
-    expect(sharedGenerators.runApiClientGenerator).toHaveBeenCalled();
+  it('should not ask to create api client lib if withApiClient boolean', async () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+    (devkit.readJson as jest.Mock).mockReturnValue({ include: [] });
 
-    expect(devkit.generateFiles).toHaveBeenCalled();
+    const options = { ...optionsBase, withApiClient: false };
+    await nextAppGenerator(tree, options);
+
+    expect(confirm).not.toHaveBeenCalled();
+    expect(runApiClientGenerator).not.toHaveBeenCalled();
+  });
+
+  it('should delete unnecessary files and update tsconfig.json include', async () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+    (devkit.readJson as jest.Mock).mockReturnValue({ include: [] });
+
+    await nextAppGenerator(tree, optionsBase);
+
+    const appRoot = `apps/${optionsBase.directory}`;
+
+    expect(tree.delete).toHaveBeenCalledWith(`${appRoot}/public/.gitkeep`);
+    expect(tree.delete).toHaveBeenCalledWith(`${appRoot}/app/api`);
+    expect(tree.delete).toHaveBeenCalledWith(`${appRoot}/app/page.tsx`);
+    expect(tree.delete).toHaveBeenCalledWith(`${appRoot}/specs`);
     expect(devkit.writeJson).toHaveBeenCalledWith(
-      tree,
-      expect.stringContaining('tsconfig.json'),
+      expect.anything(),
+      `${appRoot}/tsconfig.json`,
       expect.objectContaining({
         include: expect.arrayContaining(['.next/types/**/*.ts']),
       }),
     );
   });
 
-  it('should delete default files', async () => {
-    await nextAppGenerator(tree, options);
+  it('should add files and dependencies and run formatFiles', async () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+    (devkit.readJson as jest.Mock).mockReturnValue({ include: ['.next/types/**/*.ts'] });
 
-    expect(tree.delete).toHaveBeenCalledWith(expect.stringContaining('public/.gitkeep'));
-    expect(tree.delete).toHaveBeenCalledWith(expect.stringContaining('page.tsx'));
+    await nextAppGenerator(tree, optionsBase);
+
+    expect(devkit.generateFiles).toHaveBeenCalled();
+    expect(devkit.addDependenciesToPackageJson).toHaveBeenCalledWith(
+      tree,
+      expect.objectContaining({}),
+      expect.any(Object),
+    );
+    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
   });
 
-  it('should install dependencies', async () => {
-    await nextAppGenerator(tree, options);
+  it('should run installPackagesTask and sentry & lib-tags generators after completion', async () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+    (devkit.readJson as jest.Mock).mockReturnValue({ include: ['.next/types/**/*.ts'] });
 
-    expect(devkit.addDependenciesToPackageJson).toHaveBeenCalled();
+    const post = await nextAppGenerator(tree, optionsBase);
+
+    post?.();
+
+    expect(devkit.installPackagesTask).toHaveBeenCalledWith(tree);
+    expect(execSync).not.toHaveBeenCalledWith(expect.stringContaining('sentry'));
+    expect(execSync).toHaveBeenCalledWith('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
+
+    const optionsWithSentry = { ...optionsBase, withSentry: true };
+    const postWithSentry = await nextAppGenerator(tree, optionsWithSentry);
+
+    postWithSentry?.();
+
+    expect(execSync).toHaveBeenCalledWith(
+      expect.stringContaining('npx nx g sentry'),
+      expect.objectContaining({ stdio: 'inherit' }),
+    );
   });
 });

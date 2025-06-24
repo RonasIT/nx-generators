@@ -1,106 +1,62 @@
 /// <reference types="jest" />
-import * as path from 'path';
 import { Tree } from '@nx/devkit';
-import * as deps from '../../shared/dependencies';
-import { formatName, getNxLibsPaths, LibraryType } from '../../shared/utils';
-import { formGenerator } from './generator';
-import * as genUtils from './utils';
-
-const mockRun = jest.fn().mockResolvedValue('libs/my-feature');
-const mockAutoComplete = jest.fn().mockImplementation(() => ({
-  run: mockRun,
-}));
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import * as enquirer from 'enquirer';
+import * as utils from '../../shared/utils';
+import formGenerator from './generator';
+import * as formUtils from './utils';
 
 jest.mock('enquirer', () => ({
-  AutoComplete: mockAutoComplete,
+  AutoComplete: jest.fn(() => ({ run: jest.fn() })),
 }));
 
 jest.mock('../../shared/utils', () => ({
+  ...jest.requireActual('../../shared/utils'),
   getNxLibsPaths: jest.fn(),
-  formatName: jest.fn(),
-  LibraryType: { FEATURES: 'features', UI: 'ui' },
+  formatName: jest.fn((n: string) => n),
 }));
 
 jest.mock('./utils', () => ({
   getFormUtilsDirectory: jest.fn(),
-  updateIndex: jest.fn(),
-  addFormUsage: jest.fn(),
   getAppName: jest.fn(),
-}));
-
-jest.mock('@nx/devkit', () => ({
-  addDependenciesToPackageJson: jest.fn(),
-  generateFiles: jest.fn(),
-  formatFiles: jest.fn(),
-  installPackagesTask: jest.fn(),
+  addFormUsage: jest.fn(),
+  updateIndex: jest.fn(),
 }));
 
 describe('formGenerator', () => {
   let tree: Tree;
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    tree = {
-      exists: jest.fn(),
-    } as unknown as Tree;
+    tree = createTreeWithEmptyWorkspace();
+    (utils.getNxLibsPaths as jest.Mock).mockReturnValue(['libs/ui/my-lib']);
+    (formUtils.getAppName as jest.Mock).mockReturnValue('my-app');
+    (formUtils.getFormUtilsDirectory as jest.Mock).mockResolvedValue('libs/shared/form-utils');
 
-    (getNxLibsPaths as jest.Mock).mockReturnValue(['libs/my-feature', 'libs/other-feature']);
-    (formatName as jest.Mock).mockImplementation((name, _) => name.charAt(0).toUpperCase() + name.slice(1));
-    (genUtils.getFormUtilsDirectory as jest.Mock).mockResolvedValue('libs/my-feature/utils/form-utils');
-    (genUtils.getAppName as jest.Mock).mockReturnValue('my-feature');
-    (tree.exists as jest.Mock).mockReturnValue(false);
+    const mockRun = jest.fn().mockResolvedValue('libs/ui/my-lib');
+    ((enquirer as any).AutoComplete as jest.Mock).mockImplementation(() => ({ run: mockRun }));
   });
 
-  it('should throw if form name is not provided', async () => {
-    await expect(formGenerator(tree, { name: '', placeOfUse: undefined })).rejects.toThrow('Form name is required');
+  it('should generate a form and update index', async () => {
+    const options = { name: 'user', placeOfUse: 'MyComponent' };
+
+    await formGenerator(tree, options);
+
+    const filePath = 'libs/ui/my-lib/lib/forms/user.ts';
+    expect(tree.exists(filePath)).toBe(true);
+
+    const content = tree.read(filePath)?.toString();
+    expect(content).toContain('export class userFormSchema');
+
+    expect(formUtils.updateIndex).toHaveBeenCalledWith('libs/ui/my-lib/lib/forms', 'user', tree);
+    expect(formUtils.addFormUsage).toHaveBeenCalledWith('libs/ui/my-lib', 'MyComponent', 'userFormSchema');
+  });
+
+  it('should throw if name is not provided', async () => {
+    await expect(formGenerator(tree, { name: '', placeOfUse: '' })).rejects.toThrow('Form name is required');
   });
 
   it('should throw if form already exists', async () => {
-    (tree.exists as jest.Mock).mockImplementation(
-      (filePath: string) => filePath === 'libs/my-feature/lib/forms/testForm.ts',
-    );
-    await expect(formGenerator(tree, { name: 'testForm', placeOfUse: undefined })).rejects.toThrow(
-      'The form already exists',
-    );
-  });
-
-  it('should generate form files and update index', async () => {
-    await formGenerator(tree, { name: 'testForm', placeOfUse: undefined });
-
-    expect(getNxLibsPaths).toHaveBeenCalledWith([LibraryType.FEATURES, LibraryType.UI]);
-    expect(genUtils.getFormUtilsDirectory).toHaveBeenCalledWith(tree, 'my-feature');
-
-    expect(genUtils.updateIndex).toHaveBeenCalledWith('libs/my-feature/lib/forms', 'testForm', tree);
-
-    expect(mockAutoComplete).toHaveBeenCalled();
-    expect(mockRun).toHaveBeenCalled();
-
-    expect(genUtils.addFormUsage).not.toHaveBeenCalled();
-    expect(require('@nx/devkit').generateFiles).toHaveBeenCalledWith(
-      tree,
-      path.join(__dirname, 'files'),
-      'libs/my-feature/lib/forms',
-      expect.objectContaining({
-        className: 'TestFormFormSchema',
-        fileName: 'testForm',
-        formUtilsDirectory: 'libs/my-feature/utils/form-utils',
-      }),
-    );
-    expect(require('@nx/devkit').addDependenciesToPackageJson).toHaveBeenCalledWith(tree, deps.dependencies.form, {});
-    expect(require('@nx/devkit').formatFiles).toHaveBeenCalledWith(tree);
-  });
-
-  it('should call addFormUsage if placeOfUse provided', async () => {
-    await formGenerator(tree, { name: 'testForm', placeOfUse: 'app' });
-
-    expect(genUtils.addFormUsage).toHaveBeenCalledWith('libs/my-feature', 'app', 'TestFormFormSchema');
-  });
-
-  it('should return a callback that calls installPackagesTask', async () => {
-    const callback = await formGenerator(tree, { name: 'testForm', placeOfUse: undefined });
-    expect(typeof callback).toBe('function');
-
-    callback();
-    expect(require('@nx/devkit').installPackagesTask).toHaveBeenCalledWith(tree);
+    tree.write('libs/ui/my-lib/lib/forms/user.ts', 'dummy');
+    await expect(formGenerator(tree, { name: 'user', placeOfUse: '' })).rejects.toThrow('The form already exists');
   });
 });

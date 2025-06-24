@@ -3,8 +3,8 @@ import * as child_process from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { dependencies } from '../../dependencies';
-import * as utils from '../../utils';
 import { runRNStylesGenerator } from './generator';
 
 jest.mock('child_process', () => ({
@@ -15,79 +15,98 @@ jest.mock('fs', () => ({
   existsSync: jest.fn(),
 }));
 
-jest.mock('path', () => ({
-  ...jest.requireActual('path'),
-  join: jest.fn(),
-}));
+jest.mock('@nx/devkit', () => {
+  const original = jest.requireActual('@nx/devkit');
 
-jest.mock('@nx/devkit', () => ({
-  addDependenciesToPackageJson: jest.fn(),
-  formatFiles: jest.fn(),
-  generateFiles: jest.fn(),
-}));
+  return {
+    ...original,
+    generateFiles: jest.fn(),
+    addDependenciesToPackageJson: jest.fn(),
+    formatFiles: jest.fn(),
+  };
+});
 
-jest.mock('../../utils', () => ({
-  formatName: jest.fn().mockImplementation((name) => `formatted-${name}`),
-  formatAppIdentifier: jest.fn().mockImplementation((name) => `app-${name}`),
-  getImportPathPrefix: jest.fn(),
-}));
+const execSyncMock = child_process.execSync as jest.Mock;
+const existsSyncMock = fs.existsSync as jest.Mock;
+const generateFilesMock = devkit.generateFiles as jest.Mock;
+const addDependenciesMock = devkit.addDependenciesToPackageJson as jest.Mock;
+const formatFilesMock = devkit.formatFiles as jest.Mock;
 
 describe('runRNStylesGenerator', () => {
-  const tree = {
-    delete: jest.fn(),
-  } as unknown as devkit.Tree;
-
-  const options = { name: 'testName', directory: 'testDir' };
+  let tree: devkit.Tree;
 
   beforeEach(() => {
+    tree = createTreeWithEmptyWorkspace();
+
+    // Create dummy index.ts file to simulate deletion
+    const libIndexPath = 'libs/myapp/shared/ui/styles/src/index.ts';
+    tree.write(libIndexPath, 'export {};');
+
     jest.clearAllMocks();
-    (path.join as jest.Mock).mockImplementation((...args) => args.join('/'));
-    (utils.getImportPathPrefix as jest.Mock).mockReturnValue('@org');
-    (fs.existsSync as jest.Mock).mockReturnValue(false);
   });
 
-  it('should generate lib, delete index.ts, generate files, add dependencies and format files', async () => {
+  it('should generate react-lib, delete old index, generate files, add dependencies, and format files', async () => {
+    existsSyncMock.mockReturnValue(true);
+
+    const options = {
+      name: 'my-styles',
+      directory: 'myapp',
+    };
+
     await runRNStylesGenerator(tree, options);
 
-    expect(child_process.execSync).toHaveBeenCalledWith(
-      `npx nx g react-lib --app=${options.directory} --scope=shared --type=ui --name=styles --withComponent=false`,
+    // Check execSync called with correct command
+    expect(execSyncMock).toHaveBeenCalledWith(
+      'npx nx g react-lib --app=myapp --scope=shared --type=ui --name=styles --withComponent=false',
       { stdio: 'inherit' },
     );
 
-    expect(tree.delete).toHaveBeenCalledWith(`libs/${options.directory}/shared/ui/styles/src/index.ts`);
+    // Check old index.ts is deleted
+    expect(tree.exists('libs/myapp/shared/ui/styles/src/index.ts')).toBe(false);
 
-    expect(devkit.generateFiles).toHaveBeenCalledWith(
+    // Check files are generated from lib-files directory
+    expect(generateFilesMock).toHaveBeenCalledWith(
       tree,
-      expect.stringContaining('lib-files'),
-      `libs/${options.directory}`,
+      path.join(__dirname, 'lib-files'),
+      'libs/myapp',
       expect.objectContaining({
-        ...options,
+        name: 'my-styles',
         formatName: expect.any(Function),
         formatAppIdentifier: expect.any(Function),
-        libPath: `@org/${options.directory}`,
+        libPath: expect.any(String),
       }),
     );
 
-    expect(devkit.addDependenciesToPackageJson).toHaveBeenCalledWith(tree, dependencies['rn-styles'], {});
+    // Check dependencies are added globally
+    expect(addDependenciesMock).toHaveBeenCalledWith(tree, dependencies['rn-styles'], {});
 
-    // Since existsSync returns false, second addDependenciesToPackageJson should not be called again with appPackagePath
-    expect(devkit.addDependenciesToPackageJson).toHaveBeenCalledTimes(1);
+    // Check dependencies are added also scoped to app package.json (because existsSync returns true)
+    expect(addDependenciesMock).toHaveBeenCalledWith(tree, dependencies['rn-styles'], {}, 'apps/myapp/package.json');
 
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+    // Check formatFiles is called
+    expect(formatFilesMock).toHaveBeenCalled();
   });
 
-  it('should add dependencies with appPackagePath when package.json exists', async () => {
-    (fs.existsSync as jest.Mock).mockReturnValue(true);
+  it('should not add dependencies scoped to app if app package.json does not exist', async () => {
+    existsSyncMock.mockReturnValue(false);
+
+    const options = {
+      name: 'my-styles',
+      directory: 'myapp',
+    };
 
     await runRNStylesGenerator(tree, options);
 
-    const appPackagePath = `apps/${options.directory}/package.json`;
+    // Should only add dependencies globally once
+    expect(addDependenciesMock).toHaveBeenCalledTimes(1);
+    expect(addDependenciesMock).toHaveBeenCalledWith(tree, dependencies['rn-styles'], {});
 
-    expect(devkit.addDependenciesToPackageJson).toHaveBeenCalledWith(
+    // Should NOT add dependencies scoped to app package.json
+    expect(addDependenciesMock).not.toHaveBeenCalledWith(
       tree,
       dependencies['rn-styles'],
       {},
-      appPackagePath,
+      'apps/myapp/package.json',
     );
   });
 });

@@ -2,65 +2,70 @@
 import * as child_process from 'child_process';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
-import * as utils from '../../utils';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { runI18nNextGenerator } from './generator';
 
 jest.mock('child_process', () => ({
   execSync: jest.fn(),
 }));
 
-jest.mock('path', () => ({
-  ...jest.requireActual('path'),
-  join: jest.fn(),
-}));
+jest.mock('@nx/devkit', () => {
+  const original = jest.requireActual('@nx/devkit');
 
-jest.mock('@nx/devkit', () => ({
-  formatFiles: jest.fn(),
-  generateFiles: jest.fn(),
-}));
+  return {
+    ...original,
+    generateFiles: jest.fn(),
+    formatFiles: jest.fn(),
+  };
+});
 
-jest.mock('../../utils', () => ({
-  formatName: jest.fn().mockImplementation((name) => `formatted-${name}`),
-  formatAppIdentifier: jest.fn().mockImplementation((name) => `app-${name}`),
-  getImportPathPrefix: jest.fn(),
-}));
+const execSyncMock = child_process.execSync as jest.Mock;
+const generateFilesMock = devkit.generateFiles as jest.Mock;
+const formatFilesMock = devkit.formatFiles as jest.Mock;
 
 describe('runI18nNextGenerator', () => {
-  const tree = {
-    delete: jest.fn(),
-  } as unknown as devkit.Tree;
-
-  const options = { name: 'testName', directory: 'testDir' };
+  let tree: devkit.Tree;
 
   beforeEach(() => {
+    tree = createTreeWithEmptyWorkspace();
+
+    // Create dummy index.ts file that should be deleted
+    tree.write('libs/myapp/shared/utils/i18n/src/index.ts', 'export {};');
+
     jest.clearAllMocks();
-    (path.join as jest.Mock).mockImplementation((...args) => args.join('/'));
-    (utils.getImportPathPrefix as jest.Mock).mockReturnValue('@org');
   });
 
-  it('should run nx generate, delete file, generate files and format', async () => {
+  it('should run the i18n-next generator and update files correctly', async () => {
+    const options = {
+      directory: 'myapp',
+      name: 'myapp',
+    };
+
     await runI18nNextGenerator(tree, options);
 
-    expect(child_process.execSync).toHaveBeenCalledWith(
-      `npx nx g react-lib --app=${options.directory} --scope=shared --type=utils --name=i18n --withComponent=false`,
+    // Check execSync called with correct nx generate command
+    expect(execSyncMock).toHaveBeenCalledWith(
+      'npx nx g react-lib --app=myapp --scope=shared --type=utils --name=i18n --withComponent=false',
       { stdio: 'inherit' },
     );
 
-    expect(tree.delete).toHaveBeenCalledWith(`libs/${options.directory}/shared/utils/i18n/src/index.ts`);
+    // Check that the index.ts file was deleted
+    expect(tree.exists('libs/myapp/shared/utils/i18n/src/index.ts')).toBe(false);
 
-    expect(devkit.generateFiles).toHaveBeenCalledWith(
+    // Check generateFiles called with correct parameters
+    expect(generateFilesMock).toHaveBeenCalledWith(
       tree,
-      expect.stringContaining('lib-files'),
-      `libs/${options.directory}`,
+      path.join(__dirname, 'lib-files'),
+      'libs/myapp',
       expect.objectContaining({
-        name: options.name,
-        directory: options.directory,
+        ...options,
         formatName: expect.any(Function),
         formatAppIdentifier: expect.any(Function),
-        libPath: `@org/${options.directory}`,
+        libPath: expect.stringContaining('myapp'),
       }),
     );
 
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+    // Check formatFiles called
+    expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 });

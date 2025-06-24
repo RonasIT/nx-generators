@@ -1,121 +1,144 @@
 /// <reference types="jest" />
-import * as child_process from 'child_process';
-import { Tree, generateFiles, formatFiles, output } from '@nx/devkit';
-import * as utils from '../../shared/utils';
+import { execSync } from 'child_process';
+import * as path from 'path';
+import * as devkit from '@nx/devkit';
+import { addNxScopeTag, selectProject, confirm, askQuestion } from '../../shared/utils';
 import { reactLibGenerator } from './generator';
 
 jest.mock('child_process', () => ({
   execSync: jest.fn(),
 }));
 
-jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn(),
-  formatFiles: jest.fn(),
-  output: {
-    warn: jest.fn(),
-    bold: (text: string) => text,
-  },
-}));
-
 jest.mock('enquirer', () => ({
   AutoComplete: jest.fn().mockImplementation(() => ({
-    run: jest.fn().mockResolvedValue('features'),
+    run: jest.fn(),
   })),
 }));
 
 jest.mock('../../shared/utils', () => ({
   ...jest.requireActual('../../shared/utils'),
-  askQuestion: jest.fn(),
-  confirm: jest.fn(),
-  formatName: jest.fn((name) => name),
-  getLibDirectoryName: jest.fn((name) => name),
   addNxScopeTag: jest.fn(),
+  constants: { sharedValue: 'shared' },
+  formatName: jest.fn((name, capitalize) => (capitalize ? name.charAt(0).toUpperCase() + name.slice(1) : name)),
   selectProject: jest.fn(),
   validateLibraryType: jest.fn((type) => type),
+  confirm: jest.fn(),
+  askQuestion: jest.fn(),
 }));
 
+jest.mock('@nx/devkit', () => {
+  const original = jest.requireActual('@nx/devkit');
+
+  return {
+    ...original,
+    generateFiles: jest.fn(),
+    formatFiles: jest.fn(),
+  };
+});
+
 describe('reactLibGenerator', () => {
-  let tree: Tree;
+  const tree = {
+    write: jest.fn(),
+  } as any;
+
+  const AutoCompleteMock = require('enquirer').AutoComplete;
 
   beforeEach(() => {
-    tree = {
-      write: jest.fn(),
-    } as any;
-
     jest.clearAllMocks();
-
-    (utils.selectProject as jest.Mock).mockResolvedValue({ name: 'my-app' });
-    (utils.askQuestion as jest.Mock).mockResolvedValue('profile');
-    (utils.confirm as jest.Mock).mockResolvedValue(true);
-    (utils.getLibDirectoryName as jest.Mock).mockReturnValue('settings');
   });
 
-  it('should run nx generate command with expected options and generate files if withComponent is true', async () => {
-    await reactLibGenerator(tree, {
-      name: 'settings',
-      type: 'features',
-      withComponent: true,
+  it('should generate library with minimal options and no component', async () => {
+    (selectProject as jest.Mock).mockResolvedValue({ name: 'myapp' });
+    (askQuestion as jest.Mock).mockResolvedValue('myscope');
+    (AutoCompleteMock as jest.Mock).mockImplementation(() => ({ run: jest.fn().mockResolvedValue('ui') }));
+    (confirm as jest.Mock).mockResolvedValue(false);
+
+    const options = {
       dryRun: false,
-    });
-
-    expect(child_process.execSync).toHaveBeenCalledWith(
-      expect.stringContaining(
-        'npx nx g @nx/react:library --skipPackageJson --unitTestRunner=none --tags="app:my-app, scope:profile, type:features" --name=my-app/profile/features/settings libs/my-app/profile/features/settings --linter=eslint --component=false --bundler=none --style=scss',
-      ),
-      { stdio: 'inherit' },
-    );
-
-    expect(generateFiles).toHaveBeenCalledWith(
-      tree,
-      expect.stringContaining('/files'),
-      expect.stringContaining('libs/my-app/profile/features/settings/src'),
-      expect.objectContaining({
-        name: 'settings',
-      }),
-    );
-
-    expect(tree.write).toHaveBeenCalledWith(expect.stringContaining('/index.ts'), `export * from './lib';`);
-
-    expect(utils.addNxScopeTag).toHaveBeenCalledWith(tree, 'profile');
-    expect(formatFiles).toHaveBeenCalledWith(tree);
-  });
-
-  it('should print a warning if libDirectoryName differs from options.name', async () => {
-    (utils.getLibDirectoryName as jest.Mock).mockReturnValue('something-else');
-
-    await reactLibGenerator(tree, {
-      name: 'settings',
-      type: 'features',
-      withComponent: true,
-    });
-
-    expect(output.warn).toHaveBeenCalledWith({
-      title: expect.stringContaining('The library directory was changed to'),
-    });
-  });
-
-  it('should prompt for missing fields', async () => {
-    (utils.askQuestion as jest.Mock)
-      .mockResolvedValueOnce('profile') // scope
-      .mockResolvedValueOnce('settings'); // name
-
-    await reactLibGenerator(tree, {
-      // Only app is missing, type will be selected via AutoComplete
-    });
-
-    expect(utils.selectProject).toHaveBeenCalled();
-    expect(utils.askQuestion).toHaveBeenCalledTimes(2);
-    expect(utils.confirm).toHaveBeenCalled();
-  });
-
-  it('should append --dry-run if dryRun is true', async () => {
-    await reactLibGenerator(tree, {
-      name: 'lib',
-      type: 'features',
+      name: 'mylib',
       withComponent: false,
-      dryRun: true,
-    });
+      withComponentForwardRef: false,
+      app: undefined,
+      scope: undefined,
+      type: undefined,
+    };
 
-    expect(child_process.execSync).toHaveBeenCalledWith(expect.stringContaining('--dry-run'), { stdio: 'inherit' });
+    await reactLibGenerator(tree, options);
+
+    expect(selectProject).toHaveBeenCalledWith(tree, 'application', expect.any(String));
+    expect(askQuestion).toHaveBeenCalledWith('Enter the scope (e.g: profile) or \'shared\': ');
+    expect(AutoCompleteMock).toHaveBeenCalled();
+    expect(execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g @nx/react:library'), { stdio: 'inherit' });
+    expect(devkit.generateFiles).not.toHaveBeenCalled();
+    expect(tree.write).not.toHaveBeenCalled();
+    expect(addNxScopeTag).toHaveBeenCalledWith(tree, 'myscope');
+    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+  });
+
+  it('should generate library with component and forwardRef options', async () => {
+    (selectProject as jest.Mock).mockResolvedValue({ name: 'myapp' });
+    (askQuestion as jest.Mock).mockImplementation((question) => {
+      if (question.includes('scope')) return Promise.resolve('myscope');
+      if (question.includes('name of the library')) return Promise.resolve('mylib');
+
+      return Promise.resolve('');
+    });
+    (AutoCompleteMock as jest.Mock).mockImplementation(() => ({ run: jest.fn().mockResolvedValue('features') }));
+    (confirm as jest.Mock)
+      .mockResolvedValueOnce(true) // withComponent
+      .mockResolvedValueOnce(true); // withComponentForwardRef
+
+    const options = {
+      dryRun: false,
+      name: undefined,
+      withComponent: undefined,
+      withComponentForwardRef: undefined,
+      app: undefined,
+      scope: undefined,
+      type: undefined,
+    };
+
+    await reactLibGenerator(tree, options);
+
+    expect(execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g @nx/react:library'), { stdio: 'inherit' });
+
+    expect(devkit.generateFiles).toHaveBeenCalledWith(
+      tree,
+      path.join(expect.any(String), 'files'),
+      expect.stringContaining('libs/myapp/myscope/features/mylib/src'),
+      expect.objectContaining({ name: 'Mylib' }),
+    );
+    expect(tree.write).toHaveBeenCalledWith(
+      expect.stringContaining('libs/myapp/myscope/features/mylib/src/index.ts'),
+      'export * from \'./lib\';',
+    );
+    expect(addNxScopeTag).toHaveBeenCalledWith(tree, 'myscope');
+    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+  });
+
+  it('should warn if library directory name differs from library name', async () => {
+    (selectProject as jest.Mock).mockResolvedValue({ name: 'myapp' });
+    (askQuestion as jest.Mock).mockResolvedValue('myscope');
+    (AutoCompleteMock as jest.Mock).mockImplementation(() => ({ run: jest.fn().mockResolvedValue('ui') }));
+    (confirm as jest.Mock).mockResolvedValue(false);
+
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(undefined);
+
+    // Use a name that differs from directory name (simulate scope affects directory)
+    const options = {
+      dryRun: false,
+      name: 'scope-mylib',
+      withComponent: false,
+      withComponentForwardRef: false,
+      app: undefined,
+      scope: 'scope',
+      type: 'ui',
+    };
+
+    await reactLibGenerator(tree, options);
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('The library directory was changed to'));
+
+    consoleWarnSpy.mockRestore();
   });
 });

@@ -1,9 +1,13 @@
 /// <reference types="jest" />
-import { Tree } from '@nx/devkit';
-import * as devkit from '@nx/devkit';
-import * as sharedUtils from '../../shared/utils';
-import sentryGenerator from './generator';
-import * as utils from './utils';
+import { formatFiles, installPackagesTask } from '@nx/devkit';
+import * as utils from '../../shared/utils';
+import { sentryGenerator } from './generator';
+import * as sentryUtils from './utils';
+
+jest.mock('@nx/devkit', () => ({
+  formatFiles: jest.fn(),
+  installPackagesTask: jest.fn(),
+}));
 
 jest.mock('../../shared/utils', () => ({
   selectProject: jest.fn(),
@@ -15,50 +19,59 @@ jest.mock('./utils', () => ({
   generateSentryExpo: jest.fn(),
 }));
 
-jest.mock('@nx/devkit', () => ({
-  formatFiles: jest.fn(),
-  installPackagesTask: jest.fn(),
-}));
-
-describe('generator', () => {
-  let tree: Tree;
-  const mockTree = {} as unknown as Tree;
+describe('sentryGenerator', () => {
+  const tree = {} as any;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    tree = mockTree;
   });
 
-  it('should use provided directory and generate for next.js', async () => {
-    (sharedUtils.getAppFrameworkName as jest.Mock).mockReturnValue('next');
+  it('should select project directory if not provided', async () => {
+    (utils.selectProject as jest.Mock).mockResolvedValue({ path: 'apps/my-app' });
+    (utils.getAppFrameworkName as jest.Mock).mockReturnValue('next');
 
-    const options = { directory: 'apps/my-app', dsn: '' };
-    const result = await sentryGenerator(tree, options);
+    const callback = await sentryGenerator(tree, { directory: undefined });
 
-    expect(sharedUtils.getAppFrameworkName).toHaveBeenCalledWith(tree, 'apps/my-app');
-    expect(utils.generateSentryNext).toHaveBeenCalledWith(tree, options, 'apps/my-app');
-    expect(utils.generateSentryExpo).not.toHaveBeenCalled();
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+    expect(utils.selectProject).toHaveBeenCalledWith(tree, 'application', 'Select the application: ', true);
+    expect(utils.getAppFrameworkName).toHaveBeenCalledWith(tree, 'apps/my-app');
+    expect(sentryUtils.generateSentryNext).toHaveBeenCalledWith(tree, { directory: 'apps/my-app' }, 'apps/my-app');
+    expect(sentryUtils.generateSentryExpo).not.toHaveBeenCalled();
+    expect(formatFiles).toHaveBeenCalledWith(tree);
 
-    // Execute returned task
-    result();
-    expect(devkit.installPackagesTask).toHaveBeenCalledWith(tree);
+    callback();
+    expect(installPackagesTask).toHaveBeenCalledWith(tree);
   });
 
-  it('should prompt for directory and generate for expo', async () => {
-    (sharedUtils.selectProject as jest.Mock).mockResolvedValue({ path: 'apps/awesome-app' });
-    (sharedUtils.getAppFrameworkName as jest.Mock).mockReturnValue('expo');
+  it('should call generateSentryNext when framework is next', async () => {
+    (utils.selectProject as jest.Mock).mockResolvedValue({ path: 'apps/my-app' });
+    (utils.getAppFrameworkName as jest.Mock).mockReturnValue('next');
 
-    const options = {};
-    const result = await sentryGenerator(tree, options);
+    await sentryGenerator(tree, { directory: 'apps/my-app' });
 
-    expect(sharedUtils.selectProject).toHaveBeenCalledWith(tree, 'application', 'Select the application: ', true);
-    expect(sharedUtils.getAppFrameworkName).toHaveBeenCalledWith(tree, 'apps/awesome-app');
-    expect(utils.generateSentryExpo).toHaveBeenCalledWith(tree, options, 'apps/awesome-app');
-    expect(utils.generateSentryNext).not.toHaveBeenCalled();
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+    expect(sentryUtils.generateSentryNext).toHaveBeenCalledWith(tree, { directory: 'apps/my-app' }, 'apps/my-app');
+    expect(sentryUtils.generateSentryExpo).not.toHaveBeenCalled();
+  });
 
-    result();
-    expect(devkit.installPackagesTask).toHaveBeenCalledWith(tree);
+  it('should call generateSentryExpo when framework is expo', async () => {
+    (utils.getAppFrameworkName as jest.Mock).mockReturnValue('expo');
+
+    await sentryGenerator(tree, { directory: 'apps/my-expo-app' });
+
+    expect(sentryUtils.generateSentryExpo).toHaveBeenCalledWith(
+      tree,
+      { directory: 'apps/my-expo-app' },
+      'apps/my-expo-app',
+    );
+    expect(sentryUtils.generateSentryNext).not.toHaveBeenCalled();
+  });
+
+  it('should do nothing if framework is unknown', async () => {
+    (utils.getAppFrameworkName as jest.Mock).mockReturnValue('unknown');
+
+    await sentryGenerator(tree, { directory: 'apps/unknown' });
+
+    expect(sentryUtils.generateSentryNext).not.toHaveBeenCalled();
+    expect(sentryUtils.generateSentryExpo).not.toHaveBeenCalled();
+    expect(formatFiles).toHaveBeenCalledWith(tree);
   });
 });

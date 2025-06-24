@@ -1,7 +1,8 @@
 /// <reference types="jest" />
-import * as child_process from 'child_process';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { vol } from 'memfs';
 import { BaseGeneratorType } from '../../enums';
 import { runAppEnvGenerator } from './generator';
 
@@ -9,61 +10,75 @@ jest.mock('child_process', () => ({
   execSync: jest.fn(),
 }));
 
-jest.mock('path', () => ({
-  ...jest.requireActual('path'),
-  join: jest.fn(),
-}));
+jest.mock('@nx/devkit', () => {
+  const original = jest.requireActual('@nx/devkit');
 
-jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn(),
-  formatFiles: jest.fn(),
-}));
+  return {
+    ...original,
+    generateFiles: jest.fn(),
+    formatFiles: jest.fn(),
+  };
+});
 
 jest.mock('../../utils', () => ({
-  formatName: jest.fn((name) => `formatted-${name}`),
-  formatAppIdentifier: jest.fn((id) => `appId-${id}`),
-  getImportPathPrefix: jest.fn(() => '@prefix'),
+  formatName: jest.fn((name: string) => `Formatted${name}`),
+  formatAppIdentifier: jest.fn((name: string) => `AppId${name}`),
+  getImportPathPrefix: jest.fn(() => '@org'),
 }));
 
-describe('runAppEnvGenerator', () => {
-  const tree = {
-    delete: jest.fn(),
-  } as unknown as devkit.Tree;
+const execSyncMock = require('child_process').execSync;
 
-  const options = {
-    name: 'MyApp',
-    directory: 'my-app',
-    baseGeneratorType: BaseGeneratorType.EXPO_APP,
-  };
+const generateFilesMock = devkit.generateFiles as jest.Mock;
+const formatFilesMock = devkit.formatFiles as jest.Mock;
+
+describe('runAppEnvGenerator', () => {
+  let tree: devkit.Tree;
 
   beforeEach(() => {
+    vol.reset();
+    tree = createTreeWithEmptyWorkspace();
+
+    // Setup a dummy file that will be deleted
+    tree.write('libs/myapp/shared/utils/app-env/src/index.ts', 'export {}');
+
     jest.clearAllMocks();
-    (path.join as jest.Mock).mockImplementation((...args) => args.join('/'));
   });
 
-  it('should run nx generate command, delete file, generate files, and format files', async () => {
+  it('should generate app-env lib, delete default index.ts and generate custom files', async () => {
+    const options = {
+      name: 'myapp',
+      directory: 'myapp',
+      baseGeneratorType: BaseGeneratorType.EXPO_APP,
+    };
+
     await runAppEnvGenerator(tree, options);
 
-    expect(child_process.execSync).toHaveBeenCalledWith(
-      `npx nx g react-lib --app=${options.directory} --scope=shared --type=utils --name=app-env`,
+    // Check execSync called with expected nx generate command
+    expect(execSyncMock).toHaveBeenCalledWith(
+      'npx nx g react-lib --app=myapp --scope=shared --type=utils --name=app-env',
       { stdio: 'inherit' },
     );
 
-    expect(tree.delete).toHaveBeenCalledWith(`libs/${options.directory}/shared/utils/app-env/src/index.ts`);
+    // Check the default index.ts was deleted
+    expect(tree.exists('libs/myapp/shared/utils/app-env/src/index.ts')).toBe(false);
 
-    expect(devkit.generateFiles).toHaveBeenCalledWith(
+    // Check generateFiles called with correct arguments
+    expect(generateFilesMock).toHaveBeenCalledWith(
       tree,
-      expect.stringContaining('lib-files'),
-      `libs/${options.directory}`,
+      path.join(__dirname, 'lib-files'),
+      'libs/myapp',
       expect.objectContaining({
-        ...options,
+        name: 'myapp',
+        directory: 'myapp',
+        baseGeneratorType: 'expo-app',
+        libPath: '@org/myapp',
+        appType: 'EXPO',
         formatName: expect.any(Function),
         formatAppIdentifier: expect.any(Function),
-        libPath: '@prefix/my-app',
-        appType: BaseGeneratorType.EXPO_APP.split('-')[0].toUpperCase(),
       }),
     );
 
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+    // Check formatFiles was called
+    expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 });

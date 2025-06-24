@@ -1,47 +1,54 @@
 /// <reference types="jest" />
+import * as fs from 'fs';
 import * as path from 'path';
 import { Tree } from '@nx/devkit';
-import * as devkit from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import generator from './generator';
 
-jest.mock('@nx/devkit', () => ({
-  ...jest.requireActual('@nx/devkit'),
-  generateFiles: jest.fn(),
-  formatFiles: jest.fn(),
-  installPackagesTask: jest.fn(),
-}));
-
-describe('generator', () => {
+describe('dockerfile generator (integration)', () => {
   let tree: Tree;
-
+  const templateDir = path.join(__dirname, 'files');
   beforeEach(() => {
-    tree = {
-      exists: jest.fn(),
-      delete: jest.fn(),
-    } as any;
+    tree = createTreeWithEmptyWorkspace();
+
+    // Add dummy Dockerfile to simulate overwrite scenario
+    tree.write('Dockerfile', 'FROM scratch');
+    // Simulate existing .gitignore
+    tree.write('.gitignore', 'node_modules\n');
   });
 
-  it('should delete existing Dockerfile', async () => {
-    (tree.exists as jest.Mock).mockReturnValue(true);
+  it('should delete existing Dockerfile and generate new Dockerfile from template', async () => {
+    // Load template content manually for comparison
+    const dockerfileTemplate = fs.readFileSync(path.join(templateDir, 'Dockerfile.template'), 'utf-8');
 
-    const result = await generator(tree);
+    const callback = await generator(tree);
 
-    expect(tree.exists).toHaveBeenCalledWith('Dockerfile');
-    expect(tree.delete).toHaveBeenCalledWith('Dockerfile');
-    expect(devkit.generateFiles).toHaveBeenCalledWith(tree, path.join(__dirname, 'files'), '.', { tmpl: '' });
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+    // File was deleted
+    expect(tree.read('Dockerfile')?.toString()).not.toContain('FROM scratch');
 
-    result();
-    expect(devkit.installPackagesTask).toHaveBeenCalledWith(tree);
+    // Generated content matches template
+    expect(tree.read('Dockerfile')?.toString()).toBe(dockerfileTemplate);
+
+    // Other expected files from template dir
+    const expectedFiles = fs.readdirSync(templateDir).map((f) => f.replace('.template', ''));
+
+    for (const file of expectedFiles) {
+      expect(tree.exists(file)).toBe(true);
+    }
+
+    // Gitignore should not be cleared
+    expect(tree.read('.gitignore')?.toString()).toContain('node_modules');
+
+    // Install callback
+    expect(typeof callback).toBe('function');
   });
 
-  it('should not delete Dockerfile if it does not exist', async () => {
-    (tree.exists as jest.Mock).mockReturnValue(false);
+  it('should work when no existing Dockerfile is present', async () => {
+    tree.delete('Dockerfile');
 
-    await generator(tree);
+    const callback = await generator(tree);
 
-    expect(tree.delete).not.toHaveBeenCalled();
-    expect(devkit.generateFiles).toHaveBeenCalled();
-    expect(devkit.formatFiles).toHaveBeenCalled();
+    expect(tree.exists('Dockerfile')).toBe(true);
+    expect(typeof callback).toBe('function');
   });
 });

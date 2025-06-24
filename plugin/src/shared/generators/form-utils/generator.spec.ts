@@ -2,51 +2,59 @@
 import * as child_process from 'child_process';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { runFormUtilsGenerator } from './generator';
 
 jest.mock('child_process', () => ({
   execSync: jest.fn(),
 }));
 
-jest.mock('path', () => ({
-  ...jest.requireActual('path'),
-  join: jest.fn(),
-}));
+jest.mock('@nx/devkit', () => {
+  const original = jest.requireActual('@nx/devkit');
 
-jest.mock('@nx/devkit', () => ({
-  formatFiles: jest.fn(),
-  generateFiles: jest.fn(),
-}));
+  return {
+    ...original,
+    generateFiles: jest.fn(),
+    formatFiles: jest.fn(),
+  };
+});
+
+const execSyncMock = child_process.execSync as jest.Mock;
+const generateFilesMock = devkit.generateFiles as jest.Mock;
+const formatFilesMock = devkit.formatFiles as jest.Mock;
 
 describe('runFormUtilsGenerator', () => {
-  const tree = {
-    delete: jest.fn(),
-  } as unknown as devkit.Tree;
-
-  const options = { directory: 'my-app' };
+  let tree: devkit.Tree;
 
   beforeEach(() => {
+    tree = createTreeWithEmptyWorkspace();
+
+    // Create dummy index.ts file that will be deleted
+    tree.write('libs/myapp/shared/utils/form/src/index.ts', 'export {};');
+
     jest.clearAllMocks();
-    (path.join as jest.Mock).mockImplementation((...args) => args.join('/'));
   });
 
-  it('should run nx generate, delete files, generate files, and format files', async () => {
+  it('should run the form utils generator and update files correctly', async () => {
+    const options = {
+      directory: 'myapp',
+    };
+
     await runFormUtilsGenerator(tree, options);
 
-    expect(child_process.execSync).toHaveBeenCalledWith(
-      `npx nx g react-lib --app=${options.directory} --scope=shared --type=utils --name=form`,
+    // Check execSync called with correct nx command
+    expect(execSyncMock).toHaveBeenCalledWith(
+      'npx nx g react-lib --app=myapp --scope=shared --type=utils --name=form',
       { stdio: 'inherit' },
     );
 
-    expect(tree.delete).toHaveBeenCalledWith(`libs/${options.directory}/shared/utils/form/src/index.ts`);
+    // Check the index.ts file was deleted
+    expect(tree.exists('libs/myapp/shared/utils/form/src/index.ts')).toBe(false);
 
-    expect(devkit.generateFiles).toHaveBeenCalledWith(
-      tree,
-      expect.stringContaining('/lib-files'),
-      `libs/${options.directory}`,
-      {},
-    );
+    // Check generateFiles called with correct parameters
+    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, '/lib-files'), 'libs/myapp', {});
 
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+    // Check formatFiles called
+    expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 });

@@ -1,95 +1,79 @@
 /// <reference types="jest" />
 import * as path from 'path';
-import {
-  Tree,
-  formatFiles,
-  installPackagesTask,
-  generateFiles,
-  readJson,
-  writeJson,
-  addDependenciesToPackageJson,
-} from '@nx/devkit';
+import * as devkit from '@nx/devkit';
 import { devDependencies } from '../../shared/dependencies';
-import * as sharedUtils from '../../shared/utils';
 import { repoConfigGenerator } from './generator';
 
-jest.mock('@nx/devkit');
+jest.mock('@nx/devkit', () => {
+  const original = jest.requireActual('@nx/devkit');
+
+  return {
+    ...original,
+    readJson: jest.fn(),
+    writeJson: jest.fn(),
+    generateFiles: jest.fn(),
+    addDependenciesToPackageJson: jest.fn(),
+    formatFiles: jest.fn(),
+    installPackagesTask: jest.fn(),
+  };
+});
+
 jest.mock('../../shared/utils', () => ({
-  getProjectName: jest.fn(),
-  formatName: jest.fn(),
+  formatName: jest.fn((name) => name.toUpperCase()),
+  getProjectName: jest.fn((pkgName) => pkgName.split('/').pop()),
 }));
 
 describe('repoConfigGenerator', () => {
-  let tree: Tree;
+  const tree = {
+    delete: jest.fn(),
+  } as any;
 
   beforeEach(() => {
-    tree = {
-      delete: jest.fn(),
-      read: jest.fn(),
-      write: jest.fn(),
-    } as any;
-
-    (readJson as jest.Mock).mockReturnValue({
-      name: 'repo-name',
-      scripts: { existing: 'echo existing' },
-    });
-
-    (sharedUtils.getProjectName as jest.Mock).mockReturnValue('RepoName');
+    jest.clearAllMocks();
   });
 
-  it('should delete README.md', async () => {
-    await repoConfigGenerator(tree);
-    expect(tree.delete).toHaveBeenCalledWith('README.md');
-  });
-
-  it('should update package.json with workspaces and merged scripts', async () => {
-    await repoConfigGenerator(tree);
-
-    expect(readJson).toHaveBeenCalledWith(tree, 'package.json');
-
-    expect(writeJson).toHaveBeenCalledWith(tree, 'package.json', {
-      name: 'repo-name',
+  it('should delete README.md, update package.json, generate files, add dependencies, format files and return install callback', async () => {
+    const mockPackageJson = {
+      name: '@myorg/my-project',
       scripts: {
-        ...require('./scripts').default,
-        existing: 'echo existing',
+        oldScript: 'echo old',
       },
-      workspaces: ['apps/*'],
-    });
-  });
+    };
+    (devkit.readJson as jest.Mock).mockReturnValue(mockPackageJson);
 
-  it('should generate files with formatName and project name', async () => {
-    await repoConfigGenerator(tree);
+    const callback = await repoConfigGenerator(tree);
 
-    expect(sharedUtils.getProjectName).toHaveBeenCalledWith('repo-name');
+    expect(tree.delete).toHaveBeenCalledWith('README.md');
 
-    expect(generateFiles).toHaveBeenCalledWith(
+    expect(devkit.readJson).toHaveBeenCalledWith(tree, 'package.json');
+
+    expect(devkit.writeJson).toHaveBeenCalledWith(
       tree,
-      path.join(__dirname, 'files'),
+      'package.json',
+      expect.objectContaining({
+        workspaces: ['apps/*'],
+        scripts: expect.objectContaining({
+          oldScript: 'echo old',
+        }),
+      }),
+    );
+
+    expect(devkit.generateFiles).toHaveBeenCalledWith(
+      tree,
+      path.join(expect.any(String), 'files'),
       '.',
       expect.objectContaining({
-        name: 'RepoName',
+        name: 'my-project',
         formatName: expect.any(Function),
       }),
     );
-  });
 
-  it('should add repo-config devDependencies', async () => {
-    await repoConfigGenerator(tree);
+    expect(devkit.addDependenciesToPackageJson).toHaveBeenCalledWith(tree, {}, devDependencies['repo-config']);
 
-    expect(addDependenciesToPackageJson).toHaveBeenCalledWith(tree, {}, devDependencies['repo-config']);
-  });
+    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
 
-  it('should call formatFiles and return installPackagesTask', async () => {
-    const formatFilesMock = formatFiles as jest.Mock;
-    const installPackagesTaskMock = installPackagesTask as jest.Mock;
-
-    formatFilesMock.mockResolvedValue(undefined);
-    installPackagesTaskMock.mockImplementation(() => 'install-task');
-
-    const result = await repoConfigGenerator(tree);
-    expect(formatFilesMock).toHaveBeenCalledWith(tree);
-
-    result();
-    expect(installPackagesTaskMock).toHaveBeenCalledWith(tree);
+    // The returned callback runs installPackagesTask
+    callback();
+    expect(devkit.installPackagesTask).toHaveBeenCalledWith(tree);
   });
 });

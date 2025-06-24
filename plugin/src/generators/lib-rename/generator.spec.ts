@@ -1,68 +1,60 @@
 /// <reference types="jest" />
-import * as child_process from 'child_process';
-import { Tree } from '@nx/devkit';
+import { execSync } from 'child_process';
 import * as utils from '../../shared/utils';
 import { libRenameGenerator } from './generator';
 
-jest.mock('child_process');
-jest.mock('../../shared/utils');
+jest.mock('child_process', () => ({
+  execSync: jest.fn(),
+}));
 
-const mockExecSync = jest.spyOn(child_process, 'execSync');
-const mockGetLibraryDetailsByName = jest.spyOn(utils, 'getLibraryDetailsByName');
-const mockAskQuestion = jest.spyOn(utils, 'askQuestion');
-const mockGetImportPathPrefix = jest.spyOn(utils, 'getImportPathPrefix');
+jest.mock('../../shared/utils', () => ({
+  getLibraryDetailsByName: jest.fn(),
+  askQuestion: jest.fn(),
+  getImportPathPrefix: jest.fn(() => 'libs'),
+}));
 
 describe('libRenameGenerator', () => {
-  let tree: Tree;
+  const tree = {} as any;
 
   beforeEach(() => {
-    tree = {} as Tree;
-
-    mockExecSync.mockClear();
-    mockGetLibraryDetailsByName.mockReset();
-    mockAskQuestion.mockReset();
-    mockGetImportPathPrefix.mockReset();
+    jest.clearAllMocks();
   });
 
-  it('should rename a library with given newLibName', async () => {
-    mockGetLibraryDetailsByName.mockResolvedValue({
-      name: 'old-lib-name',
-      path: 'libs/app/scope/type/old-lib-name',
+  it('should rename using provided newLibName option without prompting', async () => {
+    (utils.getLibraryDetailsByName as jest.Mock).mockResolvedValue({
+      name: 'old-lib',
+      path: 'libs/app/scope/type/old-lib',
     });
-    mockGetImportPathPrefix.mockReturnValue('@my-org');
+    (utils.askQuestion as jest.Mock).mockResolvedValue('should not be used');
+    (utils.getImportPathPrefix as jest.Mock).mockReturnValue('libs');
 
-    await libRenameGenerator(tree, {
-      currentLibName: 'old-lib-name',
-      newLibName: 'new-lib-name',
-    });
+    await libRenameGenerator(tree, { currentLibName: 'old-lib', newLibName: 'new-lib' });
 
-    expect(mockExecSync).toHaveBeenCalledWith(
+    expect(execSync).toHaveBeenCalledWith(
       expect.stringContaining(
-        'npx nx g mv --projectName=old-lib-name --newProjectName=app-scope-type-new-lib-name --destination=libs/app/scope/type/new-lib-name --importPath=@my-org/app/scope/type/new-lib-name',
+        '--projectName=old-lib --newProjectName=app-scope-type-new-lib --destination=libs/app/scope/type/new-lib --importPath=libs/app/scope/type/new-lib',
       ),
       { stdio: 'inherit' },
     );
+    expect(utils.askQuestion).not.toHaveBeenCalled();
   });
 
-  it('should prompt for new library name if not provided', async () => {
-    mockGetLibraryDetailsByName.mockResolvedValue({
-      name: 'old-lib-name',
-      path: 'libs/app/scope/type/old-lib-name',
+  it('should prompt for newLibName if not provided', async () => {
+    (utils.getLibraryDetailsByName as jest.Mock).mockResolvedValue({
+      name: 'old-lib',
+      path: 'libs/app/scope/type/old-lib',
     });
-    mockAskQuestion.mockResolvedValue('renamed-lib');
-    mockGetImportPathPrefix.mockReturnValue('@my-org');
+    (utils.askQuestion as jest.Mock).mockResolvedValue('my-new-lib');
+    (utils.getImportPathPrefix as jest.Mock).mockReturnValue('libs');
 
-    await libRenameGenerator(tree, {
-      currentLibName: 'old-lib-name',
-    });
+    await libRenameGenerator(tree, { currentLibName: 'old-lib' });
 
-    expect(mockAskQuestion).toHaveBeenCalledWith('Enter a new library name: ', 'old-lib-name');
-
-    expect(mockExecSync).toHaveBeenCalledWith(
+    expect(execSync).toHaveBeenCalledWith(
       expect.stringContaining(
-        'npx nx g mv --projectName=old-lib-name --newProjectName=app-scope-type-renamed-lib --destination=libs/app/scope/type/renamed-lib --importPath=@my-org/app/scope/type/renamed-lib',
+        '--projectName=old-lib --newProjectName=app-scope-type-my-new-lib --destination=libs/app/scope/type/my-new-lib --importPath=libs/app/scope/type/my-new-lib',
       ),
       { stdio: 'inherit' },
     );
+    expect(utils.askQuestion).toHaveBeenCalledWith('Enter a new library name: ', 'old-lib');
   });
 });

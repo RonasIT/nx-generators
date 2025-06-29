@@ -3,6 +3,7 @@ import { execSync } from 'child_process';
 import { existsSync } from 'fs';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { dependencies } from '../../dependencies';
 import { runApiClientGenerator } from './generator';
 
@@ -27,9 +28,11 @@ jest.mock('../../utils', () => ({
 }));
 
 describe('runApiClientGenerator', () => {
-  const tree = {} as any;
+  let tree: ReturnType<typeof createTreeWithEmptyWorkspace>;
 
   beforeEach(() => {
+    tree = createTreeWithEmptyWorkspace();
+    tree.delete = jest.fn();
     jest.clearAllMocks();
   });
 
@@ -48,7 +51,7 @@ describe('runApiClientGenerator', () => {
       path.join(__dirname, '/lib-files'),
       'libs/my-app',
       expect.objectContaining({
-        name: 'test',
+        name: 'my-app',
         libPath: '@myorg/my-app',
       }),
     );

@@ -1,6 +1,5 @@
 /// <reference types="jest" />
 import { execSync } from 'child_process';
-import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { addNxScopeTag, selectProject, confirm, askQuestion } from '../../shared/utils';
 import { reactLibGenerator } from './generator';
@@ -26,15 +25,22 @@ jest.mock('../../shared/utils', () => ({
   askQuestion: jest.fn(),
 }));
 
-jest.mock('@nx/devkit', () => {
-  const original = jest.requireActual('@nx/devkit');
-
-  return {
-    ...original,
-    generateFiles: jest.fn(),
-    formatFiles: jest.fn(),
-  };
-});
+jest.mock('@nx/devkit', () => ({
+  generateFiles: jest.fn(),
+  formatFiles: jest.fn(),
+  output: {
+    log: jest.fn(),
+    warn: jest.fn(),
+    bold: (text: string) => text,
+  },
+  readJson: jest.fn(),
+  writeJson: jest.fn(),
+  addDependenciesToPackageJson: jest.fn(),
+  installPackagesTask: jest.fn(),
+  readProjectConfiguration: jest.fn(() => ({ name: 'myapp', tags: [] })),
+  getProjects: jest.fn(),
+  Tree: jest.fn(), // only if used
+}));
 
 describe('reactLibGenerator', () => {
   const tree = {
@@ -66,7 +72,7 @@ describe('reactLibGenerator', () => {
     await reactLibGenerator(tree, options);
 
     expect(selectProject).toHaveBeenCalledWith(tree, 'application', expect.any(String));
-    expect(askQuestion).toHaveBeenCalledWith('Enter the scope (e.g: profile) or \'shared\': ');
+    expect(askQuestion).toHaveBeenCalledWith("Enter the scope (e.g: profile) or 'shared': ");
     expect(AutoCompleteMock).toHaveBeenCalled();
     expect(execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g @nx/react:library'), { stdio: 'inherit' });
     expect(devkit.generateFiles).not.toHaveBeenCalled();
@@ -104,13 +110,13 @@ describe('reactLibGenerator', () => {
 
     expect(devkit.generateFiles).toHaveBeenCalledWith(
       tree,
-      path.join(expect.any(String), 'files'),
+      expect.stringContaining('files'),
       expect.stringContaining('libs/myapp/myscope/features/mylib/src'),
       expect.objectContaining({ name: 'Mylib' }),
     );
     expect(tree.write).toHaveBeenCalledWith(
       expect.stringContaining('libs/myapp/myscope/features/mylib/src/index.ts'),
-      'export * from \'./lib\';',
+      "export * from './lib';",
     );
     expect(addNxScopeTag).toHaveBeenCalledWith(tree, 'myscope');
     expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
@@ -122,9 +128,8 @@ describe('reactLibGenerator', () => {
     (AutoCompleteMock as jest.Mock).mockImplementation(() => ({ run: jest.fn().mockResolvedValue('ui') }));
     (confirm as jest.Mock).mockResolvedValue(false);
 
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(undefined);
+    const outputWarnSpy = jest.spyOn(devkit.output, 'warn');
 
-    // Use a name that differs from directory name (simulate scope affects directory)
     const options = {
       dryRun: false,
       name: 'scope-mylib',
@@ -137,8 +142,12 @@ describe('reactLibGenerator', () => {
 
     await reactLibGenerator(tree, options);
 
-    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('The library directory was changed to'));
+    expect(outputWarnSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: expect.stringContaining('The library directory was changed to'),
+      }),
+    );
 
-    consoleWarnSpy.mockRestore();
+    outputWarnSpy.mockRestore();
   });
 });

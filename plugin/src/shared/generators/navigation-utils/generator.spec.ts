@@ -11,14 +11,9 @@ jest.mock('child_process', () => ({
   execSync: jest.fn(),
 }));
 
-jest.mock('@nx/devkit', () => {
-  const original = jest.requireActual('@nx/devkit');
-
-  return {
-    ...original,
-    generateFiles: jest.fn(),
-  };
-});
+jest.mock('@nx/devkit', () => ({
+  generateFiles: jest.fn(),
+}));
 
 jest.mock('../../utils', () => ({
   appendFileContent: jest.fn(),
@@ -44,7 +39,7 @@ describe('runNavigationUtilsGenerator', () => {
   it('should run react-lib generation and generate common files', async () => {
     const options = {
       appDirectory: 'myapp',
-      baseGeneratorType: BaseGeneratorType.NEXT_APP,
+      baseGeneratorType: BaseGeneratorType.EXPO_APP,
     };
 
     await runNavigationUtilsGenerator(tree, options);

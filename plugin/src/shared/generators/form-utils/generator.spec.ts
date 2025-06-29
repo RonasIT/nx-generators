@@ -9,15 +9,10 @@ jest.mock('child_process', () => ({
   execSync: jest.fn(),
 }));
 
-jest.mock('@nx/devkit', () => {
-  const original = jest.requireActual('@nx/devkit');
-
-  return {
-    ...original,
-    generateFiles: jest.fn(),
-    formatFiles: jest.fn(),
-  };
-});
+jest.mock('@nx/devkit', () => ({
+  generateFiles: jest.fn(),
+  formatFiles: jest.fn(),
+}));
 
 const execSyncMock = child_process.execSync as jest.Mock;
 const generateFilesMock = devkit.generateFiles as jest.Mock;

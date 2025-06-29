@@ -9,19 +9,16 @@ jest.mock('child_process', () => ({
   execSync: jest.fn(),
 }));
 
-jest.mock('@nx/devkit', () => {
-  const original = jest.requireActual('@nx/devkit');
-
-  return {
-    ...original,
-    generateFiles: jest.fn(),
-    formatFiles: jest.fn(),
-  };
-});
+jest.mock('@nx/devkit', () => ({
+  generateFiles: jest.fn(),
+  formatFiles: jest.fn(),
+  readJson: jest.fn(),
+}));
 
 const execSyncMock = child_process.execSync as jest.Mock;
 const generateFilesMock = devkit.generateFiles as jest.Mock;
 const formatFilesMock = devkit.formatFiles as jest.Mock;
+const readJsonMock = devkit.readJson as jest.Mock;
 
 describe('runI18nNextGenerator', () => {
   let tree: devkit.Tree;
@@ -31,6 +28,14 @@ describe('runI18nNextGenerator', () => {
 
     // Create dummy index.ts file that should be deleted
     tree.write('libs/myapp/shared/utils/i18n/src/index.ts', 'export {};');
+
+    readJsonMock.mockImplementation((tree, path) => {
+      if (path === 'package.json') {
+        return { name: '@org/myapp' }; // <- mocked name for getImportPathPrefix
+      }
+
+      return {};
+    });
 
     jest.clearAllMocks();
   });

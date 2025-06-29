@@ -19,19 +19,14 @@ jest.mock('./utils', () => ({
   checkLibraryTags: jest.fn(),
 }));
 
-jest.mock('@nx/devkit', () => {
-  const original = jest.requireActual('@nx/devkit');
-
-  return {
-    ...original,
-    getProjects: jest.fn(),
-    formatFiles: jest.fn(),
-    output: {
-      log: jest.fn(),
-      bold: (text: string) => text,
-    },
-  };
-});
+jest.mock('@nx/devkit', () => ({
+  getProjects: jest.fn(),
+  formatFiles: jest.fn(),
+  output: {
+    log: jest.fn(),
+    bold: (t: string) => t,
+  },
+}));
 
 describe('libTagsGenerator', () => {
   const tree = {} as any;
@@ -76,7 +71,6 @@ describe('libTagsGenerator', () => {
 
     await libTagsGenerator(tree, { skipRepoCheck: true, silent: true });
 
-    // We can't directly test context.log here because it is internal, but no errors means success
     expect(verifyESLintConstraintsConfig).toHaveBeenCalled();
     expect(devkit.formatFiles).toHaveBeenCalled();
   });

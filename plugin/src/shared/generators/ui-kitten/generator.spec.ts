@@ -10,16 +10,12 @@ jest.mock('child_process', () => ({
   execSync: jest.fn(),
 }));
 
-jest.mock('@nx/devkit', () => {
-  const original = jest.requireActual('@nx/devkit');
-
-  return {
-    ...original,
-    generateFiles: jest.fn(),
-    formatFiles: jest.fn(),
-    addDependenciesToPackageJson: jest.fn(),
-  };
-});
+jest.mock('@nx/devkit', () => ({
+  generateFiles: jest.fn(),
+  formatFiles: jest.fn(),
+  addDependenciesToPackageJson: jest.fn(),
+  readJson: jest.fn(),
+}));
 
 jest.mock('fs', () => ({
   existsSync: jest.fn(),
@@ -28,6 +24,7 @@ jest.mock('fs', () => ({
 const execSyncMock = child_process.execSync as jest.Mock;
 const generateFilesMock = devkit.generateFiles as jest.Mock;
 const formatFilesMock = devkit.formatFiles as jest.Mock;
+const readJsonMock = devkit.readJson as jest.Mock;
 const addDependenciesMock = devkit.addDependenciesToPackageJson as jest.Mock;
 const existsSyncMock = fs.existsSync as jest.Mock;
 
@@ -39,6 +36,14 @@ describe('runUIKittenGenerator', () => {
 
     // Setup initial styles index file
     tree.write('libs/myapp/shared/ui/styles/src/lib/index.ts', 'initial styles content\n');
+
+    readJsonMock.mockImplementation((path) => {
+      if (path === 'package.json') {
+        return { name: '@org/myapp' }; // <- mocked name for getImportPathPrefix
+      }
+
+      return {};
+    });
 
     jest.clearAllMocks();
   });

@@ -1,5 +1,4 @@
 /// <reference types="jest" />
-import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { devDependencies } from '../../shared/dependencies';
 import { repoConfigGenerator } from './generator';
@@ -58,15 +57,18 @@ describe('repoConfigGenerator', () => {
       }),
     );
 
-    expect(devkit.generateFiles).toHaveBeenCalledWith(
-      tree,
-      path.join(expect.any(String), 'files'),
-      '.',
-      expect.objectContaining({
-        name: 'my-project',
-        formatName: expect.any(Function),
-      }),
-    );
+    const [calledTree, calledTemplatePath, calledTargetPath, calledTemplateOptions] = (
+      devkit.generateFiles as jest.Mock
+    ).mock.calls[0];
+
+    expect(calledTree).toBe(tree);
+    expect(typeof calledTemplatePath).toBe('string');
+    expect(calledTemplatePath).toContain('files');
+    expect(calledTargetPath).toBe('.');
+    expect(calledTemplateOptions).toMatchObject({
+      name: 'my-project',
+      formatName: expect.any(Function),
+    });
 
     expect(devkit.addDependenciesToPackageJson).toHaveBeenCalledWith(tree, {}, devDependencies['repo-config']);
 

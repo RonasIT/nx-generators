@@ -32,7 +32,8 @@ describe('libRenameGenerator', () => {
 
     expect(execSync).toHaveBeenCalledWith(
       expect.stringContaining(
-        '--projectName=old-lib --newProjectName=app-scope-type-new-lib --destination=libs/app/scope/type/new-lib --importPath=libs/app/scope/type/new-lib',
+        '--projectName=old-lib --newProjectName=app-scope-type-new-lib --destination=libs/app/scope/type/new-lib' +
+          ' --importPath=libs/app/scope/type/new-lib',
       ),
       { stdio: 'inherit' },
     );

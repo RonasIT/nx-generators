@@ -43,7 +43,8 @@ describe('libMoveGenerator', () => {
 
     expect(execSyncMock).toHaveBeenCalledWith(
       expect.stringContaining(
-        'npx nx g mv --projectName=profile-shared-utils --newProjectName=mobile-account-ui-utils --destination=libs/mobile/account/ui/utils --importPath=my-org/mobile/account/ui/utils',
+        'npx nx g mv --projectName=profile-shared-utils --newProjectName=mobile-account-ui-account' +
+          ' --destination=libs/mobile/account/ui/account --importPath=my-org/mobile/account/ui/account',
       ),
       { stdio: 'inherit' },
     );

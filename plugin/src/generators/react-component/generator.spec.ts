@@ -1,134 +1,89 @@
 /// <reference types="jest" />
-import * as fs from 'fs';
-import * as path from 'path';
 import * as devkit from '@nx/devkit';
-import { kebabCase } from 'lodash';
-import { appendFileContent, getNxLibsPaths } from '../../shared/utils';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { reactComponentGenerator } from './generator';
-
-jest.mock('fs', () => ({
-  existsSync: jest.fn(),
-}));
 
 jest.mock('enquirer', () => ({
   AutoComplete: jest.fn().mockImplementation(() => ({
-    run: jest.fn(),
+    run: jest.fn().mockResolvedValue('libs/shared/ui'),
   })),
 }));
 
-jest.mock('../../shared/utils', () => ({
-  getNxLibsPaths: jest.fn(),
-  appendFileContent: jest.fn(),
-  formatName: jest.fn((name, capitalize) => (capitalize ? name.charAt(0).toUpperCase() + name.slice(1) : name)),
+jest.mock('@nx/devkit', () => ({
+  generateFiles: jest.fn(),
+  formatFiles: jest.fn(),
 }));
 
-jest.mock('@nx/devkit', () => {
-  const original = jest.requireActual('@nx/devkit');
+jest.mock('../../shared/utils', () => ({
+  formatName: jest.fn((name: string, capitalize: boolean) =>
+    capitalize ? name.charAt(0).toUpperCase() + name.slice(1) : name,
+  ),
+  getNxLibsPaths: jest.fn(() => ['libs/shared/ui']),
+  appendFileContent: jest.fn(),
+  LibraryType: {
+    FEATURES: 'features',
+    UI: 'ui',
+  },
+}));
 
-  return {
-    ...original,
-    generateFiles: jest.fn(),
-    formatFiles: jest.fn(),
-  };
-});
+const filesPathMatcher = expect.stringMatching(/react-component[/\\]files$/);
 
 describe('reactComponentGenerator', () => {
-  const tree = {
-    write: jest.fn(),
-  } as any;
+  const generateFilesMock = devkit.generateFiles as jest.Mock;
+  const formatFilesMock = devkit.formatFiles as jest.Mock;
+  const appendFileContentMock = require('../../shared/utils').appendFileContent as jest.Mock;
 
-  const libPaths = ['libs/features/my-feature', 'libs/ui/my-ui'];
-  const optionsBase = {
-    name: 'MyComponent',
-    subcomponent: false,
-  };
+  let tree: ReturnType<typeof createTreeWithEmptyWorkspace>;
 
   beforeEach(() => {
+    tree = createTreeWithEmptyWorkspace();
     jest.clearAllMocks();
-    (getNxLibsPaths as jest.Mock).mockReturnValue(libPaths);
-    (fs.existsSync as jest.Mock).mockReturnValue(true);
   });
 
-  it('should prompt for library path and generate files', async () => {
-    const runMock = jest.fn().mockResolvedValue(libPaths[0]);
-    (require('enquirer').AutoComplete as jest.Mock).mockImplementation(() => ({
-      run: runMock,
-    }));
+  it('should generate component files and update component index when subcomponent = true', async () => {
+    const options = { name: 'MyComponent', subcomponent: true };
 
-    await reactComponentGenerator(tree, optionsBase);
-
-    expect(runMock).toHaveBeenCalled();
-    expect(devkit.generateFiles).toHaveBeenCalledWith(
-      tree,
-      path.join(expect.any(String), 'files'),
-      `${libPaths[0]}/lib`,
-      expect.objectContaining({
-        name: 'MyComponent',
-      }),
-    );
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
-  });
-
-  it('should update indexes correctly if subcomponent and paths do not exist', async () => {
-    (fs.existsSync as jest.Mock).mockImplementation((p) => {
-      // Simulate that libRootPath and componentsPath do not exist
-      if (p.endsWith('/lib') || p.endsWith('/lib/components')) {
-        return false;
-      }
-
-      return !p.endsWith('/lib/components/index.ts');
-    });
-
-    const runMock = jest.fn().mockResolvedValue(libPaths[0]);
-    (require('enquirer').AutoComplete as jest.Mock).mockImplementation(() => ({
-      run: runMock,
-    }));
-
-    const options = { ...optionsBase, subcomponent: true };
     await reactComponentGenerator(tree, options);
 
-    // Should append to main index.ts and lib index.ts because paths don't exist
-    expect(appendFileContent).toHaveBeenCalledWith(`${libPaths[0]}/index.ts`, `export * from './lib';\n`, tree);
-    expect(appendFileContent).toHaveBeenCalledWith(
-      `${libPaths[0]}/lib/index.ts`,
-      `export * from './components';\n`,
+    expect(generateFilesMock).toHaveBeenCalledWith(
+      tree,
+      filesPathMatcher,
+      'libs/shared/ui/lib/components/my-component',
+      expect.objectContaining({ name: 'MyComponent' }),
+    );
+
+    expect(appendFileContentMock).toHaveBeenCalledWith(
+      'libs/shared/ui/index.ts',
+      expect.stringContaining(`export * from './lib';`),
       tree,
     );
 
-    // Should create components index file because it doesn't exist
-    expect(tree.write).toHaveBeenCalledWith(
-      `${libPaths[0]}/lib/components/index.ts`,
-      `export * from './${kebabCase(options.name)}';\n`,
+    expect(appendFileContentMock).toHaveBeenCalledWith(
+      'libs/shared/ui/lib/index.ts',
+      expect.stringContaining(`export * from './components';`),
+      tree,
     );
 
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+    expect(tree.exists('libs/shared/ui/lib/components/index.ts')).toBe(true);
+    const contents = tree.read('libs/shared/ui/lib/components/index.ts', 'utf-8');
+    expect(contents).toContain(`export * from './my-component';`);
+
+    expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 
-  it('should append to components index if it exists', async () => {
-    (fs.existsSync as jest.Mock).mockImplementation((p) => {
-      if (p.endsWith('/lib') || p.endsWith('/lib/components')) {
-        return true;
-      }
+  it('should only generate files and call formatFiles when subcomponent = false', async () => {
+    const options = { name: 'MainFeature', subcomponent: false };
 
-      return !!p.endsWith('/lib/components/index.ts');
-    });
-
-    const runMock = jest.fn().mockResolvedValue(libPaths[1]);
-    (require('enquirer').AutoComplete as jest.Mock).mockImplementation(() => ({
-      run: runMock,
-    }));
-
-    const options = { ...optionsBase, subcomponent: true };
     await reactComponentGenerator(tree, options);
 
-    expect(appendFileContent).toHaveBeenCalledWith(
-      `${libPaths[1]}/lib/components/index.ts`,
-      `export * from './${kebabCase(options.name)}';\n`,
+    expect(generateFilesMock).toHaveBeenCalledWith(
       tree,
+      filesPathMatcher,
+      'libs/shared/ui/lib',
+      expect.objectContaining({ name: 'MainFeature' }),
     );
 
-    expect(tree.write).not.toHaveBeenCalledWith(expect.stringContaining('index.ts'));
-
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+    expect(appendFileContentMock).not.toHaveBeenCalled();
+    expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 });

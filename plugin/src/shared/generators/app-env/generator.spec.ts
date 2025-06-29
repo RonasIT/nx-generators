@@ -10,15 +10,10 @@ jest.mock('child_process', () => ({
   execSync: jest.fn(),
 }));
 
-jest.mock('@nx/devkit', () => {
-  const original = jest.requireActual('@nx/devkit');
-
-  return {
-    ...original,
-    generateFiles: jest.fn(),
-    formatFiles: jest.fn(),
-  };
-});
+jest.mock('@nx/devkit', () => ({
+  generateFiles: jest.fn(),
+  formatFiles: jest.fn(),
+}));
 
 jest.mock('../../utils', () => ({
   formatName: jest.fn((name: string) => `Formatted${name}`),
@@ -26,13 +21,13 @@ jest.mock('../../utils', () => ({
   getImportPathPrefix: jest.fn(() => '@org'),
 }));
 
-const execSyncMock = require('child_process').execSync;
+const execSyncMock = require('child_process').execSync as jest.Mock;
 
 const generateFilesMock = devkit.generateFiles as jest.Mock;
 const formatFilesMock = devkit.formatFiles as jest.Mock;
 
 describe('runAppEnvGenerator', () => {
-  let tree: devkit.Tree;
+  let tree: ReturnType<typeof createTreeWithEmptyWorkspace>;
 
   beforeEach(() => {
     vol.reset();
@@ -78,7 +73,6 @@ describe('runAppEnvGenerator', () => {
       }),
     );
 
-    // Check formatFiles was called
     expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 });

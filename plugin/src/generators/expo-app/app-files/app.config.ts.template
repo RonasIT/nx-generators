@@ -41,7 +41,10 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & { extra: { eas: EASConfig }
       },
       edgeToEdgeEnabled: true
     },
-    plugins: ['expo-router'],
+    plugins: [
+      'expo-router',
+      'expo-localization'
+    ],
     newArchEnabled: true,
     extra,
   };

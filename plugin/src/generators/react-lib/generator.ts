@@ -64,11 +64,8 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   if (options.withComponent) {
     const srcPath = `${libPath}/src`;
     generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, name: formatName(options.name, true) });
-    tree.write(`${srcPath}/index.ts`, "export * from './lib';");
+    tree.write(`${srcPath}/index.ts`, 'export * from \'./lib\';');
   }
-
-  //Remove unnecessary tsconfig.lib.json
-  tree.delete(`${libPath}/tsconfig.lib.json`);
 
   addNxScopeTag(tree, scopeTag);
 

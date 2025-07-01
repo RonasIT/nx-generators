@@ -1,20 +1,24 @@
 export const dependencies = {
   'expo-app': {
-    '@ronas-it/react-native-common-modules': '^1.0.0',
-    'react-native-mmkv': '^3.2.0',
-    'expo-constants': '17.1.6',
-    'expo-dev-client': '^5.2.0',
+    '@ronas-it/react-native-common-modules': '~1.0.0',
+    'react-native-mmkv': '~3.2.0',
+    'expo-constants': '~17.1.6',
+    'expo-dev-client': '~5.2.0',
     'expo-router': '~5.1.0',
-    'react-native-safe-area-context': '^5.4.0',
+    'react-native-safe-area-context': '~5.4.0',
     'react-native-screens': '~4.11.1',
+    expo: '~53.0.1',
     'expo-linking': '~7.1.5',
-    'expo-status-bar': '^2.2.3',
-    'expo-updates': '^0.28.14',
+    'expo-status-bar': '~2.2.3',
+    'expo-updates': '~0.28.14',
     'expo-insights': '~0.9.3',
+    'expo-localization': '~16.1.6',
+    'i18n-js': '~4.5.1',
     'lodash-es': '^4.17.21',
-  },
-  'expo-app-root': {
-    'react-native-svg-transformer': '^1.5.1',
+    react: '~19.0.0',
+    'react-native': '~0.79.0',
+    'react-native-svg': '~15.11.2',
+    'react-native-svg-transformer': '~1.5.1',
   },
   'next-app': {
     'next-intl': '^4.1.0',
@@ -74,9 +78,9 @@ export const devDependencies = {
   },
   'expo-app': {
     '@types/lodash-es': '^4.17.12',
-  },
-  'expo-app-root': {
-    'cross-env': '^7.0.3',
+    '@expo/cli': '~0.24.16',
+    'reactotron-react-native': '~5.1.14',
+    'reactotron-redux': '~3.2.0',
   },
   'next-app': {
     // nx/next 20 adds package that doesn't support eslint 9
@@ -85,6 +89,7 @@ export const devDependencies = {
   },
   'repo-config': {
     syncpack: '^13.0.4',
+    'cross-env': '^7.0.3',
   },
   auth: {
     '@types/luxon': '3.6.2',

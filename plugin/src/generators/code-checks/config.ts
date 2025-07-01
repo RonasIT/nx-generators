@@ -8,7 +8,6 @@ export default {
     baseUrl: '.',
     rootDir: '.',
     sourceMap: true,
-    declaration: false,
     emitDecoratorMetadata: true,
     experimentalDecorators: true,
     jsx: 'react-native',

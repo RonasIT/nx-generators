@@ -28,12 +28,16 @@ The generators enforce several best practices according to [Nx concepts](https:/
 
 1. Create monorepo with Expo app using [Nx Expo preset](https://nx.dev/nx-api/expo) or with Next.js app using [Nx Next preset](https://nx.dev/nx-api/next):
 
-```sh
-# For Expo app:
-npx create-nx-workspace@latest my-project --preset=expo --appName=my-app --e2eTestRunner=none --ci=skip
+**Expo app:**
 
-# For Next.js app:
-npx create-nx-workspace@latest my-project --preset=next --appName=my-app --nextAppDir=true --nextSrcDir=false --style=scss --e2eTestRunner=none --ci=skip
+```sh
+npx create-nx-workspace@latest my-project --preset=expo --appName=my-app --e2eTestRunner=none --unitTestRunner=none --formatter=prettier --linter=eslint --ci=skip
+```
+
+**Next.js app:**
+
+```sh
+npx create-nx-workspace@latest my-project --preset=next --appName=my-app --nextAppDir=true --unitTestRunner=none --formatter=prettier --linter=eslint --nextSrcDir=false --style=scss --e2eTestRunner=none --ci=skip
 ```
 
 2. Install this package:
@@ -44,31 +48,24 @@ npm i @ronas-it/nx-generators --save-dev
 
 3. Run generators:
 
-```sh
-npx nx g repo-config
-npx nx g code-checks
+Configure workspace:
 
-# For Expo app:
+```sh
+npx nx g repo-config && npx nx g code-checks
+```
+
+Then run app generators:
+
+**Expo app:**
+
+```sh
 npx nx g expo-app
+```
 
-# For Next.js app:
+**Next.js app:**
+
+```sh
 npx nx g next-app
-```
-
-Or run all generators at once:
-
-```sh
-# For Expo app:
-npx nx g repo-config && npx nx g code-checks && npx nx g expo-app
-
-# For Next.js app:
-npx nx g repo-config && npx nx g code-checks && npx nx g next-app
-```
-
-4. Start the app:
-
-```sh
-npx nx start my-app
 ```
 
 5. Continue developing your app by generating libraries and components:

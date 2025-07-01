@@ -1,4 +1,6 @@
 /// <reference types="jest" />
+import * as fs from 'fs';
+import * as path from 'path';
 import { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import * as utils from '../../shared/utils';
@@ -49,6 +51,7 @@ jest.mock('ts-morph', () => {
 
 describe('entityApiGenerator', () => {
   let tree: Tree;
+  const templateDir = path.join(__dirname, 'files');
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
@@ -60,14 +63,26 @@ describe('entityApiGenerator', () => {
       baseEndpoint: '/users',
     });
 
-    // Check file creation
     const entityPath = 'libs/my-app/shared/data-access/api/lib/user';
-    const files = tree.children(entityPath);
-    expect(files).toContain('models');
-    expect(files).toContain('api.ts');
-    expect(tree.exists(`${entityPath}/models/user.ts`)).toBe(true);
+    const modelFilePath = `${entityPath}/models/user.ts`;
+    const apiFilePath = `${entityPath}/api.ts`;
 
-    // Check that appendFileContent was called
+    expect(tree.exists(modelFilePath)).toBe(true);
+    expect(tree.exists(apiFilePath)).toBe(true);
+
+    // Get first lines of generated files
+    const modelFirstLine = tree.read(modelFilePath)?.toString().split('\n')[0];
+    const apiFirstLine = tree.read(apiFilePath)?.toString().split('\n')[0];
+
+    // Get first lines from template files
+    const templateModelFirstLine = fs
+      .readFileSync(path.join(templateDir, 'models', '__entityFileName__.ts.template'), 'utf-8')
+      .split('\n')[0];
+    const templateApiFirstLine = fs.readFileSync(path.join(templateDir, 'api.ts.template'), 'utf-8').split('\n')[0];
+
+    expect(modelFirstLine).toBe(templateModelFirstLine);
+    expect(apiFirstLine).toBe(templateApiFirstLine);
+
     expect(utils.appendFileContent).toHaveBeenCalledWith(
       expect.stringContaining('index.ts'),
       expect.stringContaining(`export * from './user';`),

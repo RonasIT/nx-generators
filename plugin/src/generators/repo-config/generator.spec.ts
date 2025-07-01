@@ -1,16 +1,41 @@
 /// <reference types="jest" />
+import * as fs from 'fs';
+import * as path from 'path';
 import * as devkit from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { devDependencies } from '../../shared/dependencies';
 import { repoConfigGenerator } from './generator';
 
 jest.mock('@nx/devkit', () => {
-  const original = jest.requireActual('@nx/devkit');
+  const actual = jest.requireActual('@nx/devkit');
 
   return {
-    ...original,
+    ...actual,
     readJson: jest.fn(),
     writeJson: jest.fn(),
-    generateFiles: jest.fn(),
+    generateFiles: jest.fn((tree, src, dest, substitutions) => {
+      const copyRecursive = (srcDir: string, destDir: string) => {
+        const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+
+        for (const entry of entries) {
+          const srcPath = path.join(srcDir, entry.name);
+
+          if (entry.isDirectory()) {
+            copyRecursive(srcPath, path.join(destDir, entry.name));
+          } else {
+            const content = fs.readFileSync(srcPath, 'utf8');
+            const rendered = content.replace(/__name__/g, substitutions.name ?? ''); // optionally render variables
+            const targetPath = path
+              .join(destDir, entry.name.replace(/\.template$/, ''))
+              .split(path.sep)
+              .join('/');
+            tree.write(targetPath, rendered); // use the real virtual tree
+          }
+        }
+      };
+
+      copyRecursive(src, dest);
+    }),
     addDependenciesToPackageJson: jest.fn(),
     formatFiles: jest.fn(),
     installPackagesTask: jest.fn(),
@@ -23,15 +48,40 @@ jest.mock('../../shared/utils', () => ({
 }));
 
 describe('repoConfigGenerator', () => {
-  const tree = {
-    delete: jest.fn(),
-  } as any;
+  let tree: devkit.Tree;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    tree = createTreeWithEmptyWorkspace();
   });
 
-  it('should delete README.md, update package.json, generate files, add dependencies, format files and return install callback', async () => {
+  function verifyGeneratedFilesFirstLine(templatesDir: string, targetDir: string): void {
+    const entries = fs.readdirSync(templatesDir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const templatePath = path.join(templatesDir, entry.name);
+
+      if (entry.isDirectory()) {
+        verifyGeneratedFilesFirstLine(templatePath, path.join(targetDir, entry.name));
+      } else {
+        const expectedFirstLine = fs.readFileSync(templatePath, 'utf8').split('\n')[0].trim();
+        const targetPath = path
+          .join(targetDir, entry.name.replace(/\.template$/, ''))
+          .split(path.sep)
+          .join('/');
+        const generatedContent = tree.read(targetPath)?.toString();
+
+        if (!generatedContent) {
+          throw new Error(`Expected file not found in virtual tree: ${targetPath}`);
+        }
+
+        const actualFirstLine = generatedContent.split('\n')[0].trim();
+        expect(actualFirstLine).toBe(expectedFirstLine);
+      }
+    }
+  }
+
+  it('should update package.json, generate files, add dependencies, format files and return install callback', async () => {
     const mockPackageJson = {
       name: '@myorg/my-project',
       scripts: {
@@ -41,8 +91,6 @@ describe('repoConfigGenerator', () => {
     (devkit.readJson as jest.Mock).mockReturnValue(mockPackageJson);
 
     const callback = await repoConfigGenerator(tree);
-
-    expect(tree.delete).toHaveBeenCalledWith('README.md');
 
     expect(devkit.readJson).toHaveBeenCalledWith(tree, 'package.json');
 
@@ -57,24 +105,23 @@ describe('repoConfigGenerator', () => {
       }),
     );
 
-    const [calledTree, calledTemplatePath, calledTargetPath, calledTemplateOptions] = (
-      devkit.generateFiles as jest.Mock
-    ).mock.calls[0];
+    expect(devkit.generateFiles).toHaveBeenCalledWith(
+      tree,
+      expect.stringContaining('files'),
+      '.',
+      expect.objectContaining({
+        name: 'my-project',
+        formatName: expect.any(Function),
+      }),
+    );
 
-    expect(calledTree).toBe(tree);
-    expect(typeof calledTemplatePath).toBe('string');
-    expect(calledTemplatePath).toContain('files');
-    expect(calledTargetPath).toBe('.');
-    expect(calledTemplateOptions).toMatchObject({
-      name: 'my-project',
-      formatName: expect.any(Function),
-    });
+    // Assert generated file contents match templates
+    const templatePath = path.join(__dirname, 'files');
+    verifyGeneratedFilesFirstLine(templatePath, '.');
 
     expect(devkit.addDependenciesToPackageJson).toHaveBeenCalledWith(tree, {}, devDependencies['repo-config']);
-
     expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
 
-    // The returned callback runs installPackagesTask
     callback();
     expect(devkit.installPackagesTask).toHaveBeenCalledWith(tree);
   });

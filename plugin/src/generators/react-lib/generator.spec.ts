@@ -1,6 +1,9 @@
 /// <reference types="jest" />
 import { execSync } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 import * as devkit from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { addNxScopeTag, selectProject, confirm, askQuestion } from '../../shared/utils';
 import { reactLibGenerator } from './generator';
 
@@ -26,7 +29,25 @@ jest.mock('../../shared/utils', () => ({
 }));
 
 jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn(),
+  generateFiles: jest.fn((tree, src, dest) => {
+    function copyRecursive(srcDir: string, destDir: string): void {
+      const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const srcPath = path.join(srcDir, entry.name);
+
+        if (entry.isDirectory()) {
+          copyRecursive(srcPath, path.join(destDir, entry.name));
+        } else {
+          const filename = entry.name.replace(/\.template$/, '');
+          const destPath = path.join(destDir, filename).split(path.sep).join('/');
+          const content = fs.readFileSync(srcPath, 'utf8');
+          tree.write(destPath, content);
+        }
+      }
+    }
+    copyRecursive(src, dest.split(path.sep).join('/'));
+  }),
   formatFiles: jest.fn(),
   output: {
     log: jest.fn(),
@@ -39,19 +60,44 @@ jest.mock('@nx/devkit', () => ({
   installPackagesTask: jest.fn(),
   readProjectConfiguration: jest.fn(() => ({ name: 'myapp', tags: [] })),
   getProjects: jest.fn(),
-  Tree: jest.fn(), // only if used
+  Tree: jest.fn(),
 }));
 
 describe('reactLibGenerator', () => {
-  const tree = {
-    write: jest.fn(),
-  } as any;
+  let tree: devkit.Tree;
 
   const AutoCompleteMock = require('enquirer').AutoComplete;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    tree = createTreeWithEmptyWorkspace();
+    jest.spyOn(tree, 'write');
   });
+
+  function assertFirstLine(sourceDir: string, targetDir: string) {
+    const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const srcPath = path.join(sourceDir, entry.name);
+
+      if (entry.isDirectory()) {
+        assertFirstLine(srcPath, path.join(targetDir, entry.name));
+      } else {
+        const targetFile = path
+          .join(targetDir, entry.name.replace(/\.template$/, ''))
+          .split(path.sep)
+          .join('/');
+        const expectedFirstLine = fs.readFileSync(srcPath, 'utf8').split('\n')[0].trim();
+        const generatedContent = tree.read(targetFile)?.toString();
+
+        if (!generatedContent) {
+          throw new Error(`Expected file not found in virtual tree: ${targetFile}`);
+        }
+        const actualFirstLine = generatedContent.split('\n')[0].trim();
+        expect(actualFirstLine).toBe(expectedFirstLine);
+      }
+    }
+  }
 
   it('should generate library with minimal options and no component', async () => {
     (selectProject as jest.Mock).mockResolvedValue({ name: 'myapp' });
@@ -149,5 +195,48 @@ describe('reactLibGenerator', () => {
     );
 
     outputWarnSpy.mockRestore();
+  });
+
+  it('should generate library with component and forwardRef options', async () => {
+    (selectProject as jest.Mock).mockResolvedValue({ name: 'myapp' });
+    (askQuestion as jest.Mock).mockImplementation((question) => {
+      if (question.includes('scope')) return Promise.resolve('shared');
+      if (question.includes('name of the library')) return Promise.resolve('mylib');
+
+      return Promise.resolve('');
+    });
+    (AutoCompleteMock as jest.Mock).mockImplementation(() => ({ run: jest.fn().mockResolvedValue('features') }));
+    (confirm as jest.Mock)
+      .mockResolvedValueOnce(true) // withComponent
+      .mockResolvedValueOnce(true); // withComponentForwardRef
+
+    await reactLibGenerator(tree, {
+      name: 'mylib',
+      withComponent: true,
+      withComponentForwardRef: true,
+      app: 'myapp',
+      scope: 'shared',
+    });
+
+    expect(devkit.generateFiles).toHaveBeenCalledWith(
+      tree,
+      expect.stringMatching(/files$/),
+      expect.stringContaining('libs/myapp/shared/features/mylib/src'),
+      expect.objectContaining({ name: 'Mylib' }),
+    );
+
+    // Assert that component index file is written
+    expect(tree.write).toHaveBeenCalledWith(
+      expect.stringContaining('libs/myapp/shared/features/mylib/src/index.ts'),
+      "export * from './lib';",
+    );
+
+    expect(addNxScopeTag).toHaveBeenCalledWith(tree, 'shared');
+    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+
+    // Verify generated files first line against templates
+    const templatesDir = path.join(__dirname, 'files');
+    const targetDir = 'libs/myapp/shared/features/mylib/src';
+    assertFirstLine(templatesDir, targetDir);
   });
 });

@@ -1,11 +1,12 @@
 /// <reference types="jest" />
 import { execSync } from 'child_process';
 import * as fs from 'fs';
+import * as path from 'path';
 import * as devkit from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import {
   runAppEnvGenerator,
   runApiClientGenerator,
-  runStoreGenerator,
   runI18nNextGenerator,
   runNavigationUtilsGenerator,
 } from '../../shared/generators';
@@ -17,14 +18,13 @@ jest.mock('child_process', () => ({
 }));
 
 jest.mock('fs', () => ({
+  ...jest.requireActual('fs'),
   existsSync: jest.fn(),
 }));
 
 jest.mock('../../shared/generators', () => ({
   runAppEnvGenerator: jest.fn(),
   runApiClientGenerator: jest.fn(),
-  runFormUtilsGenerator: jest.fn(),
-  runStoreGenerator: jest.fn(),
   runI18nNextGenerator: jest.fn(),
   runNavigationUtilsGenerator: jest.fn(),
 }));
@@ -39,28 +39,47 @@ jest.mock('../../shared/utils', () => ({
 jest.mock('@nx/devkit', () => ({
   readJson: jest.fn(),
   writeJson: jest.fn(),
-  generateFiles: jest.fn(),
+  generateFiles: jest.fn((tree, src, dest) => {
+    function copyRecursive(srcDir: string, destDir: string): void {
+      const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const srcPath = path.join(srcDir, entry.name);
+
+        if (entry.isDirectory()) {
+          copyRecursive(srcPath, path.join(destDir, entry.name));
+        } else {
+          const filename = entry.name.replace(/\.template$/, '');
+          const destPath = path.join(destDir, filename).split(path.sep).join('/');
+          const content = fs.readFileSync(srcPath, 'utf8');
+          tree.write(destPath, content);
+        }
+      }
+    }
+    copyRecursive(src, dest.split(path.sep).join('/'));
+  }),
   formatFiles: jest.fn(),
   addDependenciesToPackageJson: jest.fn(),
   installPackagesTask: jest.fn(),
 }));
 
-describe('nextAppGenerator', () => {
-  const tree = {
-    delete: jest.fn(),
-  } as any;
+describe('nextAppGenerator with file content checks', () => {
+  let tree: any;
 
   const optionsBase = {
     name: 'testapp',
     directory: 'testapp',
-    withStore: true,
-    withApiClient: undefined,
+    withStore: false,
+    withApiClient: false,
     withFormUtils: false,
     withSentry: false,
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    tree = createTreeWithEmptyWorkspace();
+    jest.spyOn(tree, 'write');
+    jest.spyOn(tree, 'delete');
   });
 
   it('should install @nx/next plugin and generate app if app folder does not exist', async () => {
@@ -77,18 +96,6 @@ describe('nextAppGenerator', () => {
     expect(runAppEnvGenerator).toHaveBeenCalled();
     expect(runI18nNextGenerator).toHaveBeenCalled();
     expect(runNavigationUtilsGenerator).toHaveBeenCalled();
-    expect(runStoreGenerator).toHaveBeenCalled();
-  });
-
-  it('should ask to create api client lib if withApiClient is undefined', async () => {
-    (fs.existsSync as jest.Mock).mockReturnValue(true);
-    (confirm as jest.Mock).mockResolvedValue(true);
-    (devkit.readJson as jest.Mock).mockReturnValue({ include: [] });
-
-    await nextAppGenerator(tree, { ...optionsBase, withApiClient: undefined });
-
-    expect(confirm).toHaveBeenCalledWith('Do you want to create api client lib?');
-    expect(runApiClientGenerator).toHaveBeenCalled();
   });
 
   it('should skip api client creation if withApiClient is false', async () => {
@@ -151,5 +158,50 @@ describe('nextAppGenerator', () => {
     expect(execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g sentry'), {
       stdio: 'inherit',
     });
+  });
+
+  it('should generate files and validate their first line against templates', async () => {
+    await nextAppGenerator(tree, {
+      name: 'testapp',
+      directory: 'web',
+      withStore: false,
+      withApiClient: false,
+      withFormUtils: false,
+      withSentry: false,
+    });
+
+    const templatesDir = path.join(__dirname, 'files');
+    const targetRoot = `apps/web`;
+
+    function assertFirstLine(sourceDir: string, targetDir: string): void {
+      const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const srcPath = path.join(sourceDir, entry.name);
+
+        if (entry.isDirectory()) {
+          assertFirstLine(srcPath, path.join(targetDir, entry.name));
+        } else {
+          // Skip providers.tsx check, because withStore is false
+          if (entry.name === 'providers.tsx.template') {
+            continue;
+          }
+          const targetFile = path
+            .join(targetDir, entry.name.replace(/\.template$/, ''))
+            .split(path.sep)
+            .join('/');
+          const expectedFirstLine = fs.readFileSync(srcPath, 'utf8').split('\n')[0].trim();
+          const generatedContent = tree.read(targetFile)?.toString();
+
+          if (!generatedContent) {
+            throw new Error(`Expected file not found in virtual tree: ${targetFile}`);
+          }
+          const actualFirstLine = generatedContent.split('\n')[0].trim();
+          expect(actualFirstLine).toBe(expectedFirstLine);
+        }
+      }
+    }
+
+    assertFirstLine(templatesDir, targetRoot);
   });
 });

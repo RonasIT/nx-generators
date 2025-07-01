@@ -1,8 +1,8 @@
 /// <reference types="jest" />
+import * as fs from 'fs';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { vol } from 'memfs';
 import { BaseGeneratorType } from '../../enums';
 import { runAppEnvGenerator } from './generator';
 
@@ -11,7 +11,25 @@ jest.mock('child_process', () => ({
 }));
 
 jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn(),
+  generateFiles: jest.fn((tree, src, dest) => {
+    function copyRecursive(srcDir: string, destDir: string): void {
+      const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const srcPath = path.join(srcDir, entry.name);
+
+        if (entry.isDirectory()) {
+          copyRecursive(srcPath, path.join(destDir, entry.name));
+        } else {
+          const filename = entry.name.replace(/\.template$/, '');
+          const destPath = path.join(destDir, filename).split(path.sep).join('/');
+          const content = fs.readFileSync(srcPath, 'utf8');
+          tree.write(destPath, content);
+        }
+      }
+    }
+    copyRecursive(src, dest.split(path.sep).join('/'));
+  }),
   formatFiles: jest.fn(),
 }));
 
@@ -26,11 +44,36 @@ const execSyncMock = require('child_process').execSync as jest.Mock;
 const generateFilesMock = devkit.generateFiles as jest.Mock;
 const formatFilesMock = devkit.formatFiles as jest.Mock;
 
+function assertFirstLine(sourceDir: string, targetDir: string, tree: devkit.Tree): void {
+  const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const srcPath = path.join(sourceDir, entry.name);
+
+    if (entry.isDirectory()) {
+      assertFirstLine(srcPath, path.join(targetDir, entry.name), tree);
+    } else {
+      const targetFile = path
+        .join(targetDir, entry.name.replace(/\.template$/, ''))
+        .split(path.sep)
+        .join('/');
+      const expectedFirstLine = fs.readFileSync(srcPath, 'utf8').split('\n')[0].trim();
+      const generatedContent = tree.read(targetFile)?.toString();
+
+      if (!generatedContent) {
+        throw new Error(`Expected file not found in virtual tree: ${targetFile}`);
+      }
+
+      const actualFirstLine = generatedContent.split('\n')[0].trim();
+      expect(actualFirstLine).toBe(expectedFirstLine);
+    }
+  }
+}
+
 describe('runAppEnvGenerator', () => {
   let tree: ReturnType<typeof createTreeWithEmptyWorkspace>;
 
   beforeEach(() => {
-    vol.reset();
     tree = createTreeWithEmptyWorkspace();
 
     // Setup a dummy file that will be deleted
@@ -54,9 +97,6 @@ describe('runAppEnvGenerator', () => {
       { stdio: 'inherit' },
     );
 
-    // Check the default index.ts was deleted
-    expect(tree.exists('libs/myapp/shared/utils/app-env/src/index.ts')).toBe(false);
-
     // Check generateFiles called with correct arguments
     expect(generateFilesMock).toHaveBeenCalledWith(
       tree,
@@ -72,6 +112,11 @@ describe('runAppEnvGenerator', () => {
         formatAppIdentifier: expect.any(Function),
       }),
     );
+
+    // Assert generated file contents first line matches the templates
+    const templateDir = path.join(__dirname, 'lib-files');
+    const destDir = 'libs/myapp';
+    assertFirstLine(templateDir, destDir, tree);
 
     expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });

@@ -13,25 +13,35 @@ jest.mock('enquirer', () => ({
 
 jest.mock('@nx/devkit', () => ({
   generateFiles: jest.fn(),
+  getProjects: jest.fn(),
   formatFiles: jest.fn(),
   addDependenciesToPackageJson: jest.fn(),
   installPackagesTask: jest.fn(),
+  writeJson: jest.fn(),
 }));
 
-jest.mock('../../shared/utils', () => ({
-  ...jest.requireActual('../../shared/utils'),
-  getNxLibsPaths: jest.fn(),
-  formatName: jest.fn((name: string) => name),
-}));
+// mock getNxLibsPaths to have deterministic libs path
+jest.mock('../../shared/utils', () => {
+  const actual = jest.requireActual('../../shared/utils');
 
-jest.mock('./utils', () => ({
-  getFormUtilsDirectory: jest.fn(),
-  getAppName: jest.fn(),
-  addFormUsage: jest.fn(),
-  updateIndex: jest.fn(),
-}));
+  return {
+    ...actual,
+    getNxLibsPaths: jest.fn(() => ['libs/ui/my-lib']),
+  };
+});
 
-// Mock generateFiles to simulate copying files recursively from templates
+jest.mock('./utils', () => {
+  const original = jest.requireActual('./utils');
+
+  return {
+    ...original,
+    addFormUsage: jest.fn(),
+    // mock getFormUtilsDirectory partially to avoid prompts:
+    getFormUtilsDirectory: jest.fn(async () => 'libs/shared/form-utils'),
+  };
+});
+
+// Mock generateFiles to actually copy files to the Nx virtual FS
 (devkit.generateFiles as jest.Mock).mockImplementation((tree, srcDir, destDir, templateVars) => {
   function copyRecursive(src: string, dest: string): void {
     const entries = fs.readdirSync(src, { withFileTypes: true });
@@ -56,7 +66,6 @@ jest.mock('./utils', () => ({
         const destPath = path.join(dest, fileName).split(path.sep).join('/');
         let content = fs.readFileSync(srcPath, 'utf8');
 
-        // also replace placeholders inside file content
         if (templateVars) {
           Object.entries(templateVars).forEach(([key, value]) => {
             if (typeof value === 'string') {
@@ -94,7 +103,6 @@ describe('formGenerator', () => {
       } else {
         let fileName = entry.name.replace(/\.template$/, '');
 
-        // Replace placeholders like __fileName__ in file names
         Object.entries(placeholders).forEach(([key, value]) => {
           fileName = fileName.replace(new RegExp(`__${key}__`, 'g'), value);
         });
@@ -118,14 +126,22 @@ describe('formGenerator', () => {
 
     tree = createTreeWithEmptyWorkspace();
 
-    // Mock AutoComplete prompt to return a fixed lib path
-    autoCompleteRunMock = jest.fn().mockResolvedValue('libs/ui/my-lib');
+    // Add dummy library project to the tree
+    devkit.writeJson(tree, 'workspace.json', {
+      version: 2,
+      projects: {
+        'shared-form-utils': {
+          root: 'libs/shared/form-utils',
+          projectType: 'library',
+          targets: {},
+        },
+      },
+    });
+
+    autoCompleteRunMock = jest.fn().mockResolvedValue('libs/shared/form-utils');
     (AutoComplete as jest.Mock).mockImplementation(() => ({ run: autoCompleteRunMock }));
 
     (sharedUtils.getNxLibsPaths as jest.Mock).mockReturnValue(['libs/ui/my-lib']);
-    (formUtils.getAppName as jest.Mock).mockReturnValue('my-app');
-    (formUtils.getFormUtilsDirectory as jest.Mock).mockResolvedValue('libs/shared/form-utils');
-    (formUtils.updateIndex as jest.Mock).mockResolvedValue(undefined);
     (formUtils.addFormUsage as jest.Mock).mockResolvedValue(undefined);
   });
 
@@ -134,7 +150,7 @@ describe('formGenerator', () => {
     await formGenerator(tree, options);
 
     const templatesPath = path.join(__dirname, 'files');
-    const targetPath = 'libs/ui/my-lib/lib/forms';
+    const targetPath = 'libs/shared/form-utils/lib/forms';
 
     assertFirstLine(templatesPath, targetPath, tree, { fileName: 'user' });
   });
@@ -144,8 +160,7 @@ describe('formGenerator', () => {
   });
 
   it('should throw if form already exists', async () => {
-    // Prepare form file already existing in the tree
-    tree.write('libs/ui/my-lib/lib/forms/user.ts', 'dummy content');
+    tree.write('libs/shared/form-utils/lib/forms/user.ts', 'dummy content');
 
     await expect(formGenerator(tree, { name: 'user', placeOfUse: '' })).rejects.toThrow('The form already exists');
   });

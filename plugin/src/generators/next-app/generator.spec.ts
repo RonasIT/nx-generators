@@ -1,67 +1,71 @@
 /// <reference types="jest" />
-import { execSync } from 'child_process';
+import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import {
-  runAppEnvGenerator,
-  runApiClientGenerator,
-  runI18nNextGenerator,
-  runNavigationUtilsGenerator,
-} from '../../shared/generators';
-import { confirm } from '../../shared/utils';
+import * as sharedGenerators from '../../shared/generators';
+import * as sharedUtils from '../../shared/utils';
 import { nextAppGenerator } from './generator';
 
-jest.mock('child_process', () => ({
-  execSync: jest.fn(),
-}));
-
+jest.mock('child_process');
 jest.mock('fs', () => ({
   ...jest.requireActual('fs'),
   existsSync: jest.fn(),
 }));
 
-jest.mock('../../shared/generators', () => ({
-  runAppEnvGenerator: jest.fn(),
-  runApiClientGenerator: jest.fn(),
-  runI18nNextGenerator: jest.fn(),
-  runNavigationUtilsGenerator: jest.fn(),
-}));
+jest.mock('../../shared/generators', () => {
+  const actual = jest.requireActual('../../shared/generators');
 
-jest.mock('../../shared/utils', () => ({
-  confirm: jest.fn(),
-  formatName: jest.fn((name) => name),
-  getImportPathPrefix: jest.fn(() => '@myorg'),
-  addNxAppTag: jest.fn(),
-}));
+  return {
+    ...actual,
+    runAppEnvGenerator: jest.fn(),
+    runApiClientGenerator: jest.fn(),
+    runI18nNextGenerator: jest.fn(),
+    runNavigationUtilsGenerator: jest.fn(),
+  };
+});
 
-jest.mock('@nx/devkit', () => ({
-  readJson: jest.fn(),
-  writeJson: jest.fn(),
-  generateFiles: jest.fn((tree, src, dest) => {
-    function copyRecursive(srcDir: string, destDir: string): void {
-      const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+jest.mock('../../shared/utils', () => {
+  const actual = jest.requireActual('../../shared/utils');
 
-      for (const entry of entries) {
-        const srcPath = path.join(srcDir, entry.name);
+  return {
+    ...actual,
+    confirm: jest.fn(),
+  };
+});
 
-        if (entry.isDirectory()) {
-          copyRecursive(srcPath, path.join(destDir, entry.name));
-        } else {
-          const filename = entry.name.replace(/\.template$/, '');
-          const destPath = path.join(destDir, filename).split(path.sep).join('/');
-          const content = fs.readFileSync(srcPath, 'utf8');
-          tree.write(destPath, content);
+jest.mock('@nx/devkit', () => {
+  const actual = jest.requireActual('@nx/devkit');
+
+  return {
+    ...actual,
+    readJson: jest.fn(),
+    writeJson: jest.fn(),
+    generateFiles: jest.fn((tree, src, dest) => {
+      function copyRecursive(srcDir: string, destDir: string): void {
+        const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+
+        for (const entry of entries) {
+          const srcPath = path.join(srcDir, entry.name);
+
+          if (entry.isDirectory()) {
+            copyRecursive(srcPath, path.join(destDir, entry.name));
+          } else {
+            const filename = entry.name.replace(/\.template$/, '');
+            const destPath = path.join(destDir, filename).split(path.sep).join('/');
+            const content = fs.readFileSync(srcPath, 'utf8');
+            tree.write(destPath, content);
+          }
         }
       }
-    }
-    copyRecursive(src, dest.split(path.sep).join('/'));
-  }),
-  formatFiles: jest.fn(),
-  addDependenciesToPackageJson: jest.fn(),
-  installPackagesTask: jest.fn(),
-}));
+      copyRecursive(src, dest.split(path.sep).join('/'));
+    }),
+    formatFiles: jest.fn(),
+    addDependenciesToPackageJson: jest.fn(),
+    installPackagesTask: jest.fn(),
+  };
+});
 
 describe('nextAppGenerator with file content checks', () => {
   let tree: any;
@@ -80,37 +84,58 @@ describe('nextAppGenerator with file content checks', () => {
     tree = createTreeWithEmptyWorkspace();
     jest.spyOn(tree, 'write');
     jest.spyOn(tree, 'delete');
+    tree.write(
+      'eslint.constraints.json',
+      JSON.stringify(
+        [
+          { sourceTag: 'app:shared', onlyDependOnLibsWithTags: ['app:shared'] },
+          { sourceTag: 'scope:shared', onlyDependOnLibsWithTags: ['scope:shared'] },
+        ],
+        null,
+        2,
+      ),
+    );
+    (devkit.readJson as jest.Mock).mockImplementation((tree, filePath) => {
+      if (filePath.endsWith('eslint.constraints.json')) {
+        const content = tree.read(filePath)?.toString();
+
+        return content ? JSON.parse(content) : [];
+      }
+
+      if (filePath.endsWith('tsconfig.json')) {
+        return { include: [] };
+      }
+
+      return {};
+    });
   });
 
   it('should install @nx/next plugin and generate app if app folder does not exist', async () => {
     (fs.existsSync as jest.Mock).mockReturnValue(false);
-    (confirm as jest.Mock).mockResolvedValue(true);
-    (devkit.readJson as jest.Mock).mockReturnValue({ include: [] });
+    (sharedUtils.confirm as jest.Mock).mockResolvedValue(true);
 
     await nextAppGenerator(tree, optionsBase);
 
-    expect(execSync).toHaveBeenCalledWith('npx nx add @nx/next', { stdio: 'inherit' });
-    expect(execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g @nx/next:app testapp'), {
+    expect(childProcess.execSync).toHaveBeenCalledWith('npx nx add @nx/next', { stdio: 'inherit' });
+    expect(childProcess.execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g @nx/next:app testapp'), {
       stdio: 'inherit',
     });
-    expect(runAppEnvGenerator).toHaveBeenCalled();
-    expect(runI18nNextGenerator).toHaveBeenCalled();
-    expect(runNavigationUtilsGenerator).toHaveBeenCalled();
+    expect(sharedGenerators.runAppEnvGenerator).toHaveBeenCalled();
+    expect(sharedGenerators.runI18nNextGenerator).toHaveBeenCalled();
+    expect(sharedGenerators.runNavigationUtilsGenerator).toHaveBeenCalled();
   });
 
   it('should skip api client creation if withApiClient is false', async () => {
     (fs.existsSync as jest.Mock).mockReturnValue(true);
-    (devkit.readJson as jest.Mock).mockReturnValue({ include: [] });
 
     await nextAppGenerator(tree, { ...optionsBase, withApiClient: false });
 
-    expect(confirm).not.toHaveBeenCalled();
-    expect(runApiClientGenerator).not.toHaveBeenCalled();
+    expect(sharedUtils.confirm).not.toHaveBeenCalled();
+    expect(sharedGenerators.runApiClientGenerator).not.toHaveBeenCalled();
   });
 
   it('should delete files and update tsconfig include', async () => {
     (fs.existsSync as jest.Mock).mockReturnValue(true);
-    (devkit.readJson as jest.Mock).mockReturnValue({ include: [] });
 
     await nextAppGenerator(tree, optionsBase);
 
@@ -132,7 +157,6 @@ describe('nextAppGenerator with file content checks', () => {
 
   it('should generate files, add dependencies, and run formatFiles', async () => {
     (fs.existsSync as jest.Mock).mockReturnValue(true);
-    (devkit.readJson as jest.Mock).mockReturnValue({ include: ['.next/types/**/*.ts'] });
 
     await nextAppGenerator(tree, optionsBase);
 
@@ -143,19 +167,18 @@ describe('nextAppGenerator with file content checks', () => {
 
   it('should run post install tasks correctly', async () => {
     (fs.existsSync as jest.Mock).mockReturnValue(true);
-    (devkit.readJson as jest.Mock).mockReturnValue({ include: ['.next/types/**/*.ts'] });
 
     const post = await nextAppGenerator(tree, optionsBase);
     post?.();
 
     expect(devkit.installPackagesTask).toHaveBeenCalledWith(tree);
-    expect(execSync).toHaveBeenCalledWith('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
+    expect(childProcess.execSync).toHaveBeenCalledWith('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
 
     const optionsWithSentry = { ...optionsBase, withSentry: true };
     const postWithSentry = await nextAppGenerator(tree, optionsWithSentry);
     postWithSentry?.();
 
-    expect(execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g sentry'), {
+    expect(childProcess.execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g sentry'), {
       stdio: 'inherit',
     });
   });
@@ -182,9 +205,8 @@ describe('nextAppGenerator with file content checks', () => {
         if (entry.isDirectory()) {
           assertFirstLine(srcPath, path.join(targetDir, entry.name));
         } else {
-          // Skip providers.tsx check, because withStore is false
           if (entry.name === 'providers.tsx.template') {
-            continue;
+            continue; // skip conditional file
           }
           const targetFile = path
             .join(targetDir, entry.name.replace(/\.template$/, ''))

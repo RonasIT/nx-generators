@@ -6,7 +6,17 @@ import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import expoAppGenerator from './generator';
 
 jest.mock('@nx/devkit', () => ({
-  readJson: jest.fn(() => ({ scripts: { dev: 'old-dev' } })),
+  readJson: jest.fn((_tree, filePath) => {
+    if (filePath.endsWith('package.json')) {
+      return { scripts: { dev: 'old-dev' } };
+    }
+
+    if (filePath.endsWith('eslint.constraints.json')) {
+      return [{ sourceTag: 'app:myapp' }];
+    }
+
+    return {};
+  }),
   writeJson: jest.fn(),
   readProjectConfiguration: jest.fn(() => ({ name: 'myapp', tags: [] })),
   updateProjectConfiguration: jest.fn(),
@@ -28,7 +38,6 @@ jest.mock('@nx/devkit', () => ({
           const outputFilename = entry.name.replace(/\.template$/, '');
           const destPath = path.join(destDir, outputFilename);
           const content = fs.readFileSync(srcPath, 'utf8');
-          // Normalize paths to forward slashes for Nx virtual FS:
           const virtualPath = destPath.split(path.sep).join('/');
 
           tree.write(virtualPath, content);
@@ -42,19 +51,15 @@ jest.mock('@nx/devkit', () => ({
 }));
 
 jest.mock('child_process', () => ({ execSync: jest.fn() }));
-jest.mock('fs', () => ({
-  ...jest.requireActual('fs'),
-  existsSync: jest.fn(() => true),
-  rmSync: jest.fn(),
-}));
 
-jest.mock('../../shared/utils', () => ({
-  confirm: jest.fn(() => Promise.resolve(true)),
-  getImportPathPrefix: jest.fn(() => 'libs'),
-  addNxAppTag: jest.fn(),
-  formatName: jest.fn((v) => v),
-  formatAppIdentifier: jest.fn(() => 'my-app-id'),
-}));
+jest.mock('../../shared/utils', () => {
+  const actualUtils = jest.requireActual('../../shared/utils');
+
+  return {
+    ...actualUtils,
+    confirm: jest.fn(() => Promise.resolve(true)), // Confirm mocked to avoid prompt
+  };
+});
 
 describe('expoAppGenerator integration with file content checks', () => {
   let tree: Tree;
@@ -62,6 +67,17 @@ describe('expoAppGenerator integration with file content checks', () => {
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
     jest.clearAllMocks();
+    tree.write(
+      'eslint.constraints.json',
+      JSON.stringify(
+        [
+          { sourceTag: 'app:shared', onlyDependOnLibsWithTags: ['app:shared'] },
+          { sourceTag: 'scope:shared', onlyDependOnLibsWithTags: ['scope:shared'] },
+        ],
+        null,
+        2,
+      ),
+    );
   });
 
   it('should generate files and validate their first line', async () => {
@@ -77,7 +93,7 @@ describe('expoAppGenerator integration with file content checks', () => {
     const appFilesDir = path.join(__dirname, 'app-files');
     const i18nDir = path.join(__dirname, 'i18n');
 
-    const assertFirstLine = (sourceDir: string, targetRoot: string) => {
+    const assertFirstLine = (sourceDir: string, targetRoot: string): void => {
       const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
 
       for (const entry of entries) {

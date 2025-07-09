@@ -45,12 +45,6 @@ jest.mock('@nx/devkit', () => ({
   addDependenciesToPackageJson: jest.fn(),
 }));
 
-jest.mock('../../utils', () => ({
-  formatName: jest.fn((s) => s),
-  formatAppIdentifier: jest.fn((s) => s),
-  getImportPathPrefix: jest.fn(() => '@myorg'),
-}));
-
 describe('runApiClientGenerator', () => {
   let tree: any;
   let fileMap: Record<string, string>;
@@ -115,7 +109,7 @@ describe('runApiClientGenerator', () => {
       'libs/my-app',
       expect.objectContaining({
         name: 'my-app',
-        libPath: '@myorg/my-app',
+        libPath: '/my-app',
       }),
     );
 

@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import * as utils from '../../shared/utils';
 import { entityApiGenerator } from './generator';
 
 jest.mock('enquirer', () => ({
@@ -12,24 +11,22 @@ jest.mock('enquirer', () => ({
   })),
 }));
 
-jest.mock('../../shared/utils', () => ({
-  ...jest.requireActual('../../shared/utils'),
-  getNxLibsPaths: jest.fn(() => ['libs/my-app/shared/data-access/api']),
-  searchNxLibsPaths: jest.fn((paths) => paths.filter((p: string) => p.endsWith('api'))),
-  searchAliasPath: jest.fn(() => '@libs/shared/data-access/api'),
-  appendFileContent: jest.fn(),
-  addNamedImport: jest.fn(),
-}));
-
 jest.mock('ts-morph', () => {
   const addProperty = jest.fn();
   const addElement = jest.fn();
+  const getNamedImports = jest.fn(() => []);
+  const addNamedImport = jest.fn();
+
   const storeMock = {
     getVariableDeclarationOrThrow: jest.fn(() => ({
       getInitializerIfKindOrThrow: jest.fn(() => ({
         addProperty,
         addElement,
       })),
+    })),
+    getImportDeclaration: jest.fn(() => ({
+      getNamedImports,
+      addNamedImport,
     })),
     addImportDeclaration: jest.fn(),
   };
@@ -55,6 +52,18 @@ describe('entityApiGenerator', () => {
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
+
+    // Provide a realistic tsconfig.base.json so utils can find libs
+    tree.write(
+      'tsconfig.base.json',
+      JSON.stringify({
+        compilerOptions: {
+          paths: {
+            '@libs/shared/data-access/api': ['libs/mobile/shared/data-access/api/src/index.ts'],
+          },
+        },
+      }),
+    );
   });
 
   it('should generate entity files and update redux store', async () => {
@@ -63,7 +72,7 @@ describe('entityApiGenerator', () => {
       baseEndpoint: '/users',
     });
 
-    const entityPath = 'libs/my-app/shared/data-access/api/lib/user';
+    const entityPath = 'libs/mobile/shared/data-access/api/src/lib/user';
     const modelFilePath = `${entityPath}/models/user.ts`;
     const apiFilePath = `${entityPath}/api.ts`;
 
@@ -83,10 +92,8 @@ describe('entityApiGenerator', () => {
     expect(modelFirstLine).toBe(templateModelFirstLine);
     expect(apiFirstLine).toBe(templateApiFirstLine);
 
-    expect(utils.appendFileContent).toHaveBeenCalledWith(
-      expect.stringContaining('index.ts'),
-      expect.stringContaining(`export * from './user';`),
-      tree,
-    );
+    // check that index.ts now contains export for the entity
+    const indexContent = tree.read('libs/mobile/shared/data-access/api/src/lib/index.ts')?.toString();
+    expect(indexContent).toContain(`export * from './user';`);
   });
 });

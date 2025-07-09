@@ -112,7 +112,7 @@ describe('runStorageGenerator', () => {
       libPath: expect.any(String),
     });
 
-    // Now assert the generated file first lines match the template files
+    // Assert the generated file first lines match the template files
     assertFirstLine(calledSourcePath, calledDestPath, tree);
   });
 

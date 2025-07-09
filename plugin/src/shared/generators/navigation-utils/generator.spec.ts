@@ -35,6 +35,7 @@ jest.mock('@nx/devkit', () => ({
 }));
 
 jest.mock('../../utils', () => ({
+  ...jest.requireActual('../../utils'),
   appendFileContent: jest.fn(),
 }));
 
@@ -95,7 +96,6 @@ describe('runNavigationUtilsGenerator', () => {
   });
 
   it('should validate first lines of generated files against templates', async () => {
-    // Actually run the generator to populate the virtual tree with files
     const options = {
       appDirectory: 'myapp',
       baseGeneratorType: BaseGeneratorType.NEXT_APP,

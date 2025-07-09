@@ -9,15 +9,25 @@ jest.mock('child_process', () => ({
   execSync: jest.fn(),
 }));
 
-jest.mock('../../shared/utils', () => ({
-  confirm: jest.fn(),
-  verifyESLintConstraintsConfig: jest.fn(),
-}));
+jest.mock('../../shared/utils', () => {
+  const actual = jest.requireActual('../../shared/utils');
 
-jest.mock('./utils', () => ({
-  checkApplicationTags: jest.fn(),
-  checkLibraryTags: jest.fn(),
-}));
+  return {
+    ...actual,
+    confirm: jest.fn(),
+    verifyESLintConstraintsConfig: jest.fn(),
+  };
+});
+
+jest.mock('./utils', () => {
+  const actual = jest.requireActual('./utils');
+
+  return {
+    ...actual,
+    checkApplicationTags: jest.fn(),
+    checkLibraryTags: jest.fn(),
+  };
+});
 
 jest.mock('@nx/devkit', () => ({
   getProjects: jest.fn(),

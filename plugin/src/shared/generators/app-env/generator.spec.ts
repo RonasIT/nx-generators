@@ -31,12 +31,7 @@ jest.mock('@nx/devkit', () => ({
     copyRecursive(src, dest.split(path.sep).join('/'));
   }),
   formatFiles: jest.fn(),
-}));
-
-jest.mock('../../utils', () => ({
-  formatName: jest.fn((name: string) => `Formatted${name}`),
-  formatAppIdentifier: jest.fn((name: string) => `AppId${name}`),
-  getImportPathPrefix: jest.fn(() => '@org'),
+  readJson: jest.fn(),
 }));
 
 const execSyncMock = require('child_process').execSync as jest.Mock;
@@ -76,8 +71,16 @@ describe('runAppEnvGenerator', () => {
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
 
-    // Setup a dummy file that will be deleted
     tree.write('libs/myapp/shared/utils/app-env/src/index.ts', 'export {}');
+    tree.write('package.json', JSON.stringify({ name: '@org/workspace' }, null, 2));
+
+    (devkit.readJson as jest.Mock).mockImplementation((tree, path) => {
+      if (path === 'package.json') {
+        return { name: '@org/workspace' };
+      }
+
+      return {};
+    });
 
     jest.clearAllMocks();
   });

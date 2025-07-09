@@ -6,15 +6,16 @@ import * as utils from '../../shared/utils';
 import { libMoveGenerator } from './generator';
 
 jest.mock('child_process');
-jest.mock('../../shared/utils', () => ({
-  ...jest.requireActual('../../shared/utils'),
-  getLibraryDetailsByName: jest.fn(),
-  selectProject: jest.fn(),
-  validateLibraryType: jest.fn((val) => val),
-  getLibDirectoryName: jest.fn((name) => name),
-  getImportPathPrefix: jest.fn(() => 'my-org'),
-  askQuestion: jest.fn(),
-}));
+jest.mock('../../shared/utils', () => {
+  const actual = jest.requireActual('../../shared/utils');
+
+  return {
+    ...actual,
+    getLibraryDetailsByName: jest.fn(),
+    selectProject: jest.fn(),
+    askQuestion: jest.fn(),
+  };
+});
 
 describe('libMoveGenerator', () => {
   let tree: Tree;
@@ -44,7 +45,7 @@ describe('libMoveGenerator', () => {
     expect(execSyncMock).toHaveBeenCalledWith(
       expect.stringContaining(
         'npx nx g mv --projectName=profile-shared-utils --newProjectName=mobile-account-ui-account' +
-          ' --destination=libs/mobile/account/ui/account --importPath=my-org/mobile/account/ui/account',
+          ' --destination=libs/mobile/account/ui/account --importPath=@proj/mobile/account/ui/account',
       ),
       { stdio: 'inherit' },
     );

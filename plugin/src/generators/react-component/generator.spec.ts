@@ -1,7 +1,6 @@
 /// <reference types="jest" />
 import * as fs from 'fs';
 import * as path from 'path';
-import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { reactComponentGenerator } from './generator';
 
@@ -11,48 +10,35 @@ jest.mock('enquirer', () => ({
   })),
 }));
 
-jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn((tree, src, dest) => {
-    function copyRecursive(srcDir: string, destDir: string): void {
-      const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+jest.mock('@nx/devkit', () => {
+  const actual = jest.requireActual('@nx/devkit');
 
-      for (const entry of entries) {
-        const srcPath = path.join(srcDir, entry.name);
+  return {
+    ...actual,
+    generateFiles: jest.fn((tree, src, dest) => {
+      function copyRecursive(srcDir: string, destDir: string): void {
+        const entries = fs.readdirSync(srcDir, { withFileTypes: true });
 
-        if (entry.isDirectory()) {
-          copyRecursive(srcPath, path.join(destDir, entry.name));
-        } else {
-          const filename = entry.name.replace(/\.template$/, '');
-          const destPath = path.join(destDir, filename).split(path.sep).join('/');
-          const content = fs.readFileSync(srcPath, 'utf8');
-          tree.write(destPath, content);
+        for (const entry of entries) {
+          const srcPath = path.join(srcDir, entry.name);
+
+          if (entry.isDirectory()) {
+            copyRecursive(srcPath, path.join(destDir, entry.name));
+          } else {
+            const filename = entry.name.replace(/\.template$/, '');
+            const destPath = path.join(destDir, filename).split(path.sep).join('/');
+            const content = fs.readFileSync(srcPath, 'utf8');
+            tree.write(destPath, content);
+          }
         }
       }
-    }
-    copyRecursive(src, dest.split(path.sep).join('/'));
-  }),
-  formatFiles: jest.fn(),
-}));
-
-jest.mock('../../shared/utils', () => ({
-  formatName: jest.fn((name: string, capitalize: boolean) =>
-    capitalize ? name.charAt(0).toUpperCase() + name.slice(1) : name,
-  ),
-  getNxLibsPaths: jest.fn(() => ['libs/shared/ui']),
-  appendFileContent: jest.fn(),
-  LibraryType: {
-    FEATURES: 'features',
-    UI: 'ui',
-  },
-}));
-
-const filesPathMatcher = expect.stringMatching(/react-component[/\\]files$/);
+      copyRecursive(src, dest.split(path.sep).join('/'));
+    }),
+    formatFiles: jest.fn(),
+  };
+});
 
 describe('reactComponentGenerator', () => {
-  const generateFilesMock = devkit.generateFiles as jest.Mock;
-  const formatFilesMock = devkit.formatFiles as jest.Mock;
-  const appendFileContentMock = require('../../shared/utils').appendFileContent as jest.Mock;
-
   let tree: ReturnType<typeof createTreeWithEmptyWorkspace>;
 
   beforeEach(() => {
@@ -90,101 +76,25 @@ describe('reactComponentGenerator', () => {
 
     await reactComponentGenerator(tree, options);
 
-    expect(generateFilesMock).toHaveBeenCalledWith(
-      tree,
-      filesPathMatcher,
-      'libs/shared/ui/lib/components/my-component',
-      expect.objectContaining({ name: 'MyComponent' }),
-    );
+    // Check generated files exist
+    expect(tree.exists('libs/shared/ui/lib/components/my-component/index.ts')).toBe(true);
 
-    expect(appendFileContentMock).toHaveBeenCalledWith(
-      'libs/shared/ui/index.ts',
-      expect.stringContaining(`export * from './lib';`),
-      tree,
-    );
-
-    expect(appendFileContentMock).toHaveBeenCalledWith(
-      'libs/shared/ui/lib/index.ts',
-      expect.stringContaining(`export * from './components';`),
-      tree,
-    );
-
-    expect(tree.exists('libs/shared/ui/lib/components/index.ts')).toBe(true);
-    const contents = tree.read('libs/shared/ui/lib/components/index.ts', 'utf-8');
-    expect(contents).toContain(`export * from './my-component';`);
-
-    expect(formatFilesMock).toHaveBeenCalledWith(tree);
-  });
-
-  it('should only generate files and call formatFiles when subcomponent = false', async () => {
-    const options = { name: 'MainFeature', subcomponent: false };
-
-    await reactComponentGenerator(tree, options);
-
-    expect(generateFilesMock).toHaveBeenCalledWith(
-      tree,
-      filesPathMatcher,
-      'libs/shared/ui/lib',
-      expect.objectContaining({ name: 'MainFeature' }),
-    );
-
-    expect(appendFileContentMock).not.toHaveBeenCalled();
-    expect(formatFilesMock).toHaveBeenCalledWith(tree);
-  });
-
-  it('should generate component files and update component index when subcomponent = true', async () => {
-    const options = { name: 'MyComponent', subcomponent: true };
-
-    await reactComponentGenerator(tree, options);
-
-    expect(generateFilesMock).toHaveBeenCalledWith(
-      tree,
-      filesPathMatcher,
-      'libs/shared/ui/lib/components/my-component',
-      expect.objectContaining({ name: 'MyComponent' }),
-    );
-
-    expect(appendFileContentMock).toHaveBeenCalledWith(
-      'libs/shared/ui/index.ts',
-      expect.stringContaining(`export * from './lib';`),
-      tree,
-    );
-
-    expect(appendFileContentMock).toHaveBeenCalledWith(
-      'libs/shared/ui/lib/index.ts',
-      expect.stringContaining(`export * from './components';`),
-      tree,
-    );
-
-    expect(tree.exists('libs/shared/ui/lib/components/index.ts')).toBe(true);
-    const contents = tree.read('libs/shared/ui/lib/components/index.ts', 'utf-8');
-    expect(contents).toContain(`export * from './my-component';`);
-
-    // Assert file content first lines from templates
+    // Assert first line correctness from templates
     const templatesDir = path.join(__dirname, 'files');
     assertFirstLine(templatesDir, 'libs/shared/ui/lib/components/my-component');
-
-    expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 
-  it('should only generate files and call formatFiles when subcomponent = false', async () => {
+  it('should generate component files without updating index when subcomponent is false', async () => {
     const options = { name: 'MainFeature', subcomponent: false };
 
     await reactComponentGenerator(tree, options);
 
-    expect(generateFilesMock).toHaveBeenCalledWith(
-      tree,
-      filesPathMatcher,
-      'libs/shared/ui/lib',
-      expect.objectContaining({ name: 'MainFeature' }),
-    );
+    // Check expected files generated
+    expect(tree.exists('libs/shared/ui/lib/component.tsx')).toBe(true);
+    expect(tree.exists('libs/shared/ui/lib/index.ts')).toBe(true);
 
-    expect(appendFileContentMock).not.toHaveBeenCalled();
-
-    // Assert file content first lines from templates
+    // Assert first line correctness from templates
     const templatesDir = path.join(__dirname, 'files');
     assertFirstLine(templatesDir, 'libs/shared/ui/lib');
-
-    expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 });

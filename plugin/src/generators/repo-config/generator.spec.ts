@@ -14,7 +14,7 @@ jest.mock('@nx/devkit', () => {
     readJson: jest.fn(),
     writeJson: jest.fn(),
     generateFiles: jest.fn((tree, src, dest, substitutions) => {
-      const copyRecursive = (srcDir: string, destDir: string) => {
+      const copyRecursive = (srcDir: string, destDir: string): void => {
         const entries = fs.readdirSync(srcDir, { withFileTypes: true });
 
         for (const entry of entries) {
@@ -41,11 +41,6 @@ jest.mock('@nx/devkit', () => {
     installPackagesTask: jest.fn(),
   };
 });
-
-jest.mock('../../shared/utils', () => ({
-  formatName: jest.fn((name) => name.toUpperCase()),
-  getProjectName: jest.fn((pkgName) => pkgName.split('/').pop()),
-}));
 
 describe('repoConfigGenerator', () => {
   let tree: devkit.Tree;
@@ -110,7 +105,7 @@ describe('repoConfigGenerator', () => {
       expect.stringContaining('files'),
       '.',
       expect.objectContaining({
-        name: 'my-project',
+        name: 'myorg',
         formatName: expect.any(Function),
       }),
     );

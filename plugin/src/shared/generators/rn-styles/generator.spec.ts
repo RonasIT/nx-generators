@@ -58,7 +58,7 @@ describe('runRNStylesGenerator', () => {
 
     tree.write('libs/myapp/shared/ui/styles/src/index.ts', 'export {};');
 
-    readJsonMock.mockImplementation((tree, path) => {
+    readJsonMock.mockImplementation((_tree, path) => {
       if (path === 'package.json') {
         return { name: '@org/myapp' };
       }

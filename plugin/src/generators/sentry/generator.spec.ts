@@ -12,10 +12,15 @@ jest.mock('@nx/devkit', () => ({
   installPackagesTask: jest.fn(),
 }));
 
-jest.mock('../../shared/utils', () => ({
-  selectProject: jest.fn(),
-  getAppFrameworkName: jest.fn(),
-}));
+jest.mock('../../shared/utils', () => {
+  const actual = jest.requireActual('../../shared/utils');
+
+  return {
+    ...actual,
+    selectProject: jest.fn(),
+    getAppFrameworkName: jest.fn(),
+  };
+});
 
 jest.mock('./utils', () => ({
   generateSentryNext: jest.fn(),

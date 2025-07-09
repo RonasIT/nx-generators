@@ -17,16 +17,16 @@ jest.mock('enquirer', () => ({
   })),
 }));
 
-jest.mock('../../shared/utils', () => ({
-  ...jest.requireActual('../../shared/utils'),
-  addNxScopeTag: jest.fn(),
-  constants: { sharedValue: 'shared' },
-  formatName: jest.fn((name, capitalize) => (capitalize ? name.charAt(0).toUpperCase() + name.slice(1) : name)),
-  selectProject: jest.fn(),
-  validateLibraryType: jest.fn((type) => type),
-  confirm: jest.fn(),
-  askQuestion: jest.fn(),
-}));
+jest.mock('../../shared/utils', () => {
+  const actualUtils = jest.requireActual('../../shared/utils');
+
+  return {
+    ...actualUtils,
+    confirm: jest.fn(),
+    askQuestion: jest.fn(),
+    selectProject: jest.fn(),
+  };
+});
 
 jest.mock('@nx/devkit', () => ({
   generateFiles: jest.fn((tree, src, dest) => {
@@ -72,9 +72,37 @@ describe('reactLibGenerator', () => {
     jest.clearAllMocks();
     tree = createTreeWithEmptyWorkspace();
     jest.spyOn(tree, 'write');
+    tree.write(
+      'eslint.constraints.json',
+      JSON.stringify(
+        [
+          { sourceTag: 'app:shared', onlyDependOnLibsWithTags: ['app:shared'] },
+          { sourceTag: 'scope:shared', onlyDependOnLibsWithTags: ['scope:shared'] },
+        ],
+        null,
+        2,
+      ),
+    );
+    (devkit.readJson as jest.Mock).mockImplementation((tree, filePath) => {
+      if (filePath.endsWith('eslint.constraints.json')) {
+        const content = tree.read(filePath)?.toString();
+
+        return content ? JSON.parse(content) : [];
+      }
+
+      if (filePath.endsWith('tsconfig.json')) {
+        return { include: [] };
+      }
+
+      return {};
+    });
+    // Reset write spy here so test only sees writes after setup
+    (tree.write as jest.Mock).mockClear();
+
+    jest.spyOn(require('../../shared/utils'), 'addNxScopeTag');
   });
 
-  function assertFirstLine(sourceDir: string, targetDir: string) {
+  function assertFirstLine(sourceDir: string, targetDir: string): void {
     const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
 
     for (const entry of entries) {

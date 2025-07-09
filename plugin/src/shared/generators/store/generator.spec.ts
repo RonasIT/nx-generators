@@ -83,7 +83,7 @@ describe('runStoreGenerator', () => {
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
-    readJsonMock.mockImplementation((tree, path) => {
+    readJsonMock.mockImplementation((_tree, path) => {
       if (path === 'package.json') {
         return { name: '@org/myapp' }; // <- mocked name for getImportPathPrefix
       }
@@ -119,7 +119,7 @@ describe('runStoreGenerator', () => {
 
     await runStoreGenerator(tree, options);
 
-    // ✅ Check that the file was replaced (exists + has expected content)
+    // Check that the file was replaced (exists + has expected content)
     expect(tree.exists(indexPath)).toBe(true);
 
     const content = tree.read(indexPath)?.toString();

@@ -167,6 +167,7 @@ describe('reactLibGenerator', () => {
     (confirm as jest.Mock)
       .mockResolvedValueOnce(true) // withComponent
       .mockResolvedValueOnce(true); // withComponentForwardRef
+    const featureRoot = 'libs/myapp/myscope/features/mylib/src';
 
     const options = {
       dryRun: false,
@@ -185,11 +186,11 @@ describe('reactLibGenerator', () => {
     expect(devkit.generateFiles).toHaveBeenCalledWith(
       tree,
       expect.stringContaining('files'),
-      expect.stringContaining('libs/myapp/myscope/features/mylib/src'),
+      expect.stringContaining(featureRoot),
       expect.objectContaining({ name: 'Mylib' }),
     );
     expect(tree.write).toHaveBeenCalledWith(
-      expect.stringContaining('libs/myapp/myscope/features/mylib/src/index.ts'),
+      expect.stringContaining(`${featureRoot}/index.ts`),
       "export * from './lib';",
     );
     expect(addNxScopeTag).toHaveBeenCalledWith(tree, 'myscope');
@@ -226,6 +227,7 @@ describe('reactLibGenerator', () => {
   });
 
   it('should generate library with component and forwardRef options', async () => {
+    const featureRoot = 'libs/myapp/shared/features/mylib/src';
     (selectProject as jest.Mock).mockResolvedValue({ name: 'myapp' });
     (askQuestion as jest.Mock).mockImplementation((question) => {
       if (question.includes('scope')) return Promise.resolve('shared');
@@ -249,13 +251,13 @@ describe('reactLibGenerator', () => {
     expect(devkit.generateFiles).toHaveBeenCalledWith(
       tree,
       expect.stringMatching(/files$/),
-      expect.stringContaining('libs/myapp/shared/features/mylib/src'),
+      expect.stringContaining(featureRoot),
       expect.objectContaining({ name: 'Mylib' }),
     );
 
     // Assert that component index file is written
     expect(tree.write).toHaveBeenCalledWith(
-      expect.stringContaining('libs/myapp/shared/features/mylib/src/index.ts'),
+      expect.stringContaining(`${featureRoot}/index.ts`),
       "export * from './lib';",
     );
 
@@ -264,7 +266,6 @@ describe('reactLibGenerator', () => {
 
     // Verify generated files first line against templates
     const templatesDir = path.join(__dirname, 'files');
-    const targetDir = 'libs/myapp/shared/features/mylib/src';
-    assertFirstLine(templatesDir, targetDir);
+    assertFirstLine(templatesDir, featureRoot);
   });
 });

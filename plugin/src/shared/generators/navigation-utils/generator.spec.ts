@@ -45,48 +45,46 @@ const appendFileContentMock = utils.appendFileContent as jest.Mock;
 
 describe('runNavigationUtilsGenerator', () => {
   let tree: devkit.Tree;
+  const libsPath = 'libs/myapp';
+  const commonLibFiles = 'common-lib-files';
+  const nextAppLibFiles = 'next-app-lib-files';
+  const indexFilePath = 'libs/myapp/shared/utils/navigation/src/index.ts';
+  const appDirectory = 'myapp';
+  const createOptions = (type: BaseGeneratorType): { appDirectory: string; baseGeneratorType: BaseGeneratorType } => ({
+    appDirectory: 'myapp',
+    baseGeneratorType: type,
+  });
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
 
     // Create dummy index.ts file that should be deleted
-    const libPath = 'libs/myapp/shared/utils/navigation/src/index.ts';
-    tree.write(libPath, 'export {};');
+    tree.write(indexFilePath, 'export {};');
 
     jest.clearAllMocks();
   });
 
   it('should run react-lib generation and generate common files', async () => {
-    const options = {
-      appDirectory: 'myapp',
-      baseGeneratorType: BaseGeneratorType.EXPO_APP,
-    };
-
-    await runNavigationUtilsGenerator(tree, options);
+    await runNavigationUtilsGenerator(tree, createOptions(BaseGeneratorType.EXPO_APP));
 
     expect(execSyncMock).toHaveBeenCalledWith(
-      'npx nx g react-lib --app=myapp --scope=shared --type=utils --name=navigation',
+      `npx nx g react-lib --app=${appDirectory} --scope=shared --type=utils --name=navigation`,
       { stdio: 'inherit' },
     );
 
     // generateFiles should be called once for common-lib-files
-    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, '/common-lib-files'), 'libs/myapp', {});
+    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, `/${commonLibFiles}`), libsPath, {});
 
     // appendFileContent should NOT be called for non NEXT_APP
     expect(appendFileContentMock).not.toHaveBeenCalled();
   });
 
   it('should generate additional next-app files and append content for NEXT_APP type', async () => {
-    const options = {
-      appDirectory: 'myapp',
-      baseGeneratorType: BaseGeneratorType.NEXT_APP,
-    };
+    await runNavigationUtilsGenerator(tree, createOptions(BaseGeneratorType.NEXT_APP));
 
-    await runNavigationUtilsGenerator(tree, options);
+    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, `/${commonLibFiles}`), libsPath, {});
 
-    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, '/common-lib-files'), 'libs/myapp', {});
-
-    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, '/next-app-lib-files'), 'libs/myapp', {});
+    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, `/${nextAppLibFiles}`), libsPath, {});
 
     expect(appendFileContentMock).toHaveBeenCalledWith(
       'libs/myapp/shared/utils/navigation/src/lib/index.ts',
@@ -96,12 +94,7 @@ describe('runNavigationUtilsGenerator', () => {
   });
 
   it('should validate first lines of generated files against templates', async () => {
-    const options = {
-      appDirectory: 'myapp',
-      baseGeneratorType: BaseGeneratorType.NEXT_APP,
-    };
-
-    await runNavigationUtilsGenerator(tree, options);
+    await runNavigationUtilsGenerator(tree, createOptions(BaseGeneratorType.NEXT_APP));
 
     function assertFirstLine(sourceDir: string, targetDir: string): void {
       const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
@@ -130,9 +123,9 @@ describe('runNavigationUtilsGenerator', () => {
     }
 
     // Assert for common-lib-files
-    assertFirstLine(path.join(__dirname, 'common-lib-files'), 'libs/myapp');
+    assertFirstLine(path.join(__dirname, commonLibFiles), libsPath);
 
     // Assert for next-app-lib-files
-    assertFirstLine(path.join(__dirname, 'next-app-lib-files'), 'libs/myapp');
+    assertFirstLine(path.join(__dirname, nextAppLibFiles), libsPath);
   });
 });

@@ -38,16 +38,23 @@ jest.mock('@nx/devkit', () => ({
   },
 }));
 
+const asMock = <T extends (...args: Array<any>) => any>(fn: T): jest.MockedFunction<T> => fn as jest.MockedFunction<T>;
+
 describe('libTagsGenerator', () => {
-  const tree = {} as any;
+  let tree: any;
+  let execSyncMock: jest.MockedFunction<typeof execSync>;
+  const appName = 'app1';
+  const libName = 'lib1';
 
   beforeEach(() => {
+    tree = {} as any;
+    execSyncMock = asMock(execSync);
     jest.clearAllMocks();
   });
 
-  it('should stop if unstaged changes and user declines confirmation', async () => {
-    (execSync as jest.Mock).mockReturnValue(' M somefile.ts');
-    (confirm as jest.Mock).mockResolvedValue(false);
+  it('stops if there are unstaged changes and user declines confirmation', async () => {
+    execSyncMock.mockReturnValue(' M somefile.ts');
+    asMock(confirm).mockResolvedValue(false);
 
     await libTagsGenerator(tree, { skipRepoCheck: false });
 
@@ -55,17 +62,17 @@ describe('libTagsGenerator', () => {
     expect(verifyESLintConstraintsConfig).not.toHaveBeenCalled();
   });
 
-  it('should proceed if no unstaged changes', async () => {
-    (execSync as jest.Mock).mockReturnValue('');
-    (devkit.getProjects as jest.Mock).mockReturnValue(
+  it('proceeds if no unstaged changes', async () => {
+    execSyncMock.mockReturnValue('');
+    asMock(devkit.getProjects).mockReturnValue(
       new Map([
-        ['app1', { name: 'app1', projectType: 'application', root: 'apps/app1' }],
-        ['lib1', { name: 'lib1', projectType: 'library', root: 'libs/lib1' }],
+        [appName, { name: appName, projectType: 'application', root: `apps/${appName}` }],
+        [libName, { name: libName, projectType: 'library', root: `libs/${libName}` }],
       ]),
     );
 
-    (utils.checkApplicationTags as jest.Mock).mockImplementation(undefined);
-    (utils.checkLibraryTags as jest.Mock).mockImplementation(undefined);
+    asMock(utils.checkApplicationTags).mockImplementation(undefined);
+    asMock(utils.checkLibraryTags).mockImplementation(undefined);
 
     await libTagsGenerator(tree, { skipRepoCheck: false, silent: false });
 
@@ -75,9 +82,9 @@ describe('libTagsGenerator', () => {
     expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
   });
 
-  it('should set context.log to noop if silent option is true', async () => {
-    (execSync as jest.Mock).mockReturnValue('');
-    (devkit.getProjects as jest.Mock).mockReturnValue(new Map());
+  it('sets context.log to noop if silent option is true', async () => {
+    execSyncMock.mockReturnValue('');
+    asMock(devkit.getProjects).mockReturnValue(new Map());
 
     await libTagsGenerator(tree, { skipRepoCheck: true, silent: true });
 

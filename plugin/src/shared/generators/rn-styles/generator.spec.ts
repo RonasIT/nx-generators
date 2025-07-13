@@ -52,6 +52,11 @@ const readJsonMock = devkit.readJson as jest.Mock;
 
 describe('runRNStylesGenerator', () => {
   let tree: devkit.Tree;
+  const options = {
+    name: 'my-styles',
+    directory: 'myapp',
+  };
+  const stylesDependencies = dependencies['rn-styles'];
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
@@ -95,12 +100,6 @@ describe('runRNStylesGenerator', () => {
 
   it('should generate lib, delete old index, create files, and match first lines', async () => {
     existsSyncMock.mockReturnValue(true);
-
-    const options = {
-      name: 'my-styles',
-      directory: 'myapp',
-    };
-
     await runRNStylesGenerator(tree, options);
 
     expect(execSyncMock).toHaveBeenCalledWith(
@@ -112,25 +111,24 @@ describe('runRNStylesGenerator', () => {
 
     // Assert content of generated files matches templates
     const templateDir = path.join(__dirname, 'lib-files');
-    const targetDir = 'libs/myapp';
+    const targetDir = `libs/${options.directory}`;
     assertFirstLine(templateDir, targetDir, tree);
 
-    expect(addDependenciesMock).toHaveBeenCalledWith(tree, dependencies['rn-styles'], {});
-    expect(addDependenciesMock).toHaveBeenCalledWith(tree, dependencies['rn-styles'], {}, 'apps/myapp/package.json');
+    expect(addDependenciesMock).toHaveBeenCalledWith(tree, stylesDependencies, {});
+    expect(addDependenciesMock).toHaveBeenCalledWith(
+      tree,
+      stylesDependencies,
+      {},
+      `apps/${options.directory}/package.json`,
+    );
     expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 
   it('should skip app package dependency if package.json missing', async () => {
     existsSyncMock.mockReturnValue(false);
-
-    const options = {
-      name: 'my-styles',
-      directory: 'myapp',
-    };
-
     await runRNStylesGenerator(tree, options);
 
     expect(addDependenciesMock).toHaveBeenCalledTimes(1);
-    expect(addDependenciesMock).toHaveBeenCalledWith(tree, dependencies['rn-styles'], {});
+    expect(addDependenciesMock).toHaveBeenCalledWith(tree, stylesDependencies, {});
   });
 });

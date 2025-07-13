@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import * as sharedUtils from '../../shared/utils';
 import formGenerator from './generator';
 import * as formUtils from './utils';
 
@@ -20,15 +19,7 @@ jest.mock('@nx/devkit', () => ({
   writeJson: jest.fn(),
 }));
 
-// mock getNxLibsPaths to have deterministic libs path
-jest.mock('../../shared/utils', () => {
-  const actual = jest.requireActual('../../shared/utils');
-
-  return {
-    ...actual,
-    getNxLibsPaths: jest.fn(() => ['libs/ui/my-lib']),
-  };
-});
+const utilsLibFormsRoot = 'libs/shared/form-utils';
 
 jest.mock('./utils', () => {
   const original = jest.requireActual('./utils');
@@ -37,7 +28,7 @@ jest.mock('./utils', () => {
     ...original,
     addFormUsage: jest.fn(),
     // mock getFormUtilsDirectory partially to avoid prompts:
-    getFormUtilsDirectory: jest.fn(async () => 'libs/shared/form-utils'),
+    getFormUtilsDirectory: jest.fn(async () => utilsLibFormsRoot),
   };
 });
 
@@ -86,6 +77,7 @@ describe('formGenerator', () => {
   let tree: devkit.Tree;
   let autoCompleteRunMock: jest.Mock;
   const { AutoComplete } = require('enquirer');
+  const targetPath = `${utilsLibFormsRoot}/lib/forms`;
 
   function assertFirstLine(
     sourceDir: string,
@@ -131,17 +123,15 @@ describe('formGenerator', () => {
       version: 2,
       projects: {
         'shared-form-utils': {
-          root: 'libs/shared/form-utils',
+          root: utilsLibFormsRoot,
           projectType: 'library',
           targets: {},
         },
       },
     });
 
-    autoCompleteRunMock = jest.fn().mockResolvedValue('libs/shared/form-utils');
+    autoCompleteRunMock = jest.fn().mockResolvedValue(utilsLibFormsRoot);
     (AutoComplete as jest.Mock).mockImplementation(() => ({ run: autoCompleteRunMock }));
-
-    (sharedUtils.getNxLibsPaths as jest.Mock).mockReturnValue(['libs/ui/my-lib']);
     (formUtils.addFormUsage as jest.Mock).mockResolvedValue(undefined);
   });
 
@@ -150,7 +140,6 @@ describe('formGenerator', () => {
     await formGenerator(tree, options);
 
     const templatesPath = path.join(__dirname, 'files');
-    const targetPath = 'libs/shared/form-utils/lib/forms';
 
     assertFirstLine(templatesPath, targetPath, tree, { fileName: 'user' });
   });
@@ -160,7 +149,7 @@ describe('formGenerator', () => {
   });
 
   it('should throw if form already exists', async () => {
-    tree.write('libs/shared/form-utils/lib/forms/user.ts', 'dummy content');
+    tree.write(`${targetPath}/user.ts`, 'dummy content');
 
     await expect(formGenerator(tree, { name: 'user', placeOfUse: '' })).rejects.toThrow('The form already exists');
   });

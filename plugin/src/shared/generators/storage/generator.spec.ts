@@ -67,11 +67,12 @@ function assertFirstLine(sourceDir: string, targetDir: string, tree: devkit.Tree
 
 describe('runStorageGenerator', () => {
   let tree: devkit.Tree;
+  const options = { name: 'my-storage', directory: 'myapp' };
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
 
-    readJsonMock.mockImplementation((tree, path) => {
+    readJsonMock.mockImplementation((_tree, path) => {
       if (path === 'package.json') {
         return { name: '@org/myapp' };
       }
@@ -83,18 +84,15 @@ describe('runStorageGenerator', () => {
   });
 
   it('should call execSync to generate react-lib', async () => {
-    const options = { name: 'my-storage', directory: 'myapp' };
     await runStorageGenerator(tree, options);
 
     expect(execSyncMock).toHaveBeenCalledWith(
-      'npx nx g react-lib --app=myapp --scope=shared --type=data-access --name=storage',
+      `npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=storage`,
       { stdio: 'inherit' },
     );
   });
 
   it('should generate files with correct parameters and verify generated content', async () => {
-    const options = { name: 'my-storage', directory: 'myapp' };
-
     await runStorageGenerator(tree, options);
 
     expect(generateFilesMock).toHaveBeenCalledTimes(1);
@@ -117,7 +115,6 @@ describe('runStorageGenerator', () => {
   });
 
   it('should call formatFiles once', async () => {
-    const options = { name: 'my-storage', directory: 'myapp' };
     await runStorageGenerator(tree, options);
 
     expect(formatFilesMock).toHaveBeenCalledTimes(1);

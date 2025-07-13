@@ -26,14 +26,15 @@ describe('runI18nNextGenerator', () => {
 
   const templatesDir = path.join(__dirname, 'lib-files');
   const targetDir = 'libs/myapp';
+  const indexFilePath = 'libs/myapp/shared/utils/i18n/src/index.ts';
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
 
     // Create dummy index.ts file that will be deleted
-    tree.write('libs/myapp/shared/utils/i18n/src/index.ts', 'export {};');
+    tree.write(indexFilePath, 'export {};');
 
-    readJsonMock.mockImplementation((treeParam, pathParam) => {
+    readJsonMock.mockImplementation((_treeParam, pathParam) => {
       if (pathParam === 'package.json') {
         return { name: '@org/myapp' }; // mocked for getImportPathPrefix
       }
@@ -78,13 +79,13 @@ describe('runI18nNextGenerator', () => {
     );
 
     // Verify index.ts was deleted
-    expect(tree.exists('libs/myapp/shared/utils/i18n/src/index.ts')).toBe(false);
+    expect(tree.exists(indexFilePath)).toBe(false);
 
     // Verify generateFiles called correctly
     expect(generateFilesMock).toHaveBeenCalledWith(
       tree,
       path.join(__dirname, 'lib-files'),
-      'libs/myapp',
+      targetDir,
       expect.objectContaining({
         ...options,
         formatName: expect.any(Function),

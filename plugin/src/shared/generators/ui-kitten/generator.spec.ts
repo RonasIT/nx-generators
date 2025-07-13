@@ -45,14 +45,15 @@ const readJsonMock = devkit.readJson as jest.Mock;
 
 describe('runUIKittenGenerator', () => {
   let tree: devkit.Tree;
+  const appDirectory = 'myapp';
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
-    tree.write('libs/myapp/shared/ui/styles/src/lib/index.ts', 'initial styles content\n');
+    tree.write(`libs/${appDirectory}/shared/ui/styles/src/lib/index.ts`, 'initial styles content\n');
 
     readJsonMock.mockImplementation((path) => {
       if (path === 'package.json') {
-        return { name: '@org/myapp' };
+        return { name: `@org/${appDirectory}` };
       }
 
       return {};
@@ -86,12 +87,12 @@ describe('runUIKittenGenerator', () => {
   }
 
   it('should generate files and match first lines with templates', async () => {
-    const options = { directory: 'myapp' };
+    const options = { directory: appDirectory };
 
     await runUIKittenGenerator(tree, options);
 
     const templateDir = path.join(__dirname, 'lib-files');
-    const targetDir = 'libs/myapp';
+    const targetDir = `libs/${appDirectory}`;
 
     assertFirstLine(templateDir, targetDir, tree);
   });

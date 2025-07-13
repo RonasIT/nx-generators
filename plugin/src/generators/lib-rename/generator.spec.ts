@@ -13,49 +13,67 @@ jest.mock('../../shared/utils', () => ({
   getImportPathPrefix: jest.fn(() => 'libs'),
 }));
 
+const asMock = <T extends (...args: Array<any>) => any>(fn: T): jest.MockedFunction<T> => fn as jest.MockedFunction<T>;
+
 describe('libRenameGenerator', () => {
-  const tree = {} as any;
+  let tree: any;
+  let execSyncMock: jest.MockedFunction<typeof execSync>;
+
+  const libraryDetails = {
+    name: 'old-lib',
+    path: 'libs/app/scope/type/old-lib',
+  };
+
+  const newLibName = 'new-lib';
+  const newProjectName = 'app-scope-type-';
+  const destination = 'libs/app/scope/type/';
+  const importPath = 'libs/app/scope/type/';
 
   beforeEach(() => {
+    tree = {} as any;
+    execSyncMock = asMock(execSync);
     jest.clearAllMocks();
+
+    asMock(utils.getImportPathPrefix).mockReturnValue('libs');
+    asMock(utils.getLibraryDetailsByName).mockResolvedValue(libraryDetails);
   });
 
-  it('should rename using provided newLibName option without prompting', async () => {
-    (utils.getLibraryDetailsByName as jest.Mock).mockResolvedValue({
-      name: 'old-lib',
-      path: 'libs/app/scope/type/old-lib',
+  it('renames using provided newLibName without prompting', async () => {
+    asMock(utils.askQuestion).mockResolvedValue('should-not-be-used');
+
+    await libRenameGenerator(tree, {
+      currentLibName: libraryDetails.name,
+      newLibName,
     });
-    (utils.askQuestion as jest.Mock).mockResolvedValue('should not be used');
-    (utils.getImportPathPrefix as jest.Mock).mockReturnValue('libs');
 
-    await libRenameGenerator(tree, { currentLibName: 'old-lib', newLibName: 'new-lib' });
-
-    expect(execSync).toHaveBeenCalledWith(
+    expect(execSyncMock).toHaveBeenCalledWith(
       expect.stringContaining(
-        '--projectName=old-lib --newProjectName=app-scope-type-new-lib --destination=libs/app/scope/type/new-lib' +
-          ' --importPath=libs/app/scope/type/new-lib',
+        '--projectName=old-lib ' +
+          `--newProjectName=${newProjectName}${newLibName} ` +
+          `--destination=${destination}${newLibName} ` +
+          `--importPath=${importPath}${newLibName}`,
       ),
       { stdio: 'inherit' },
     );
     expect(utils.askQuestion).not.toHaveBeenCalled();
   });
 
-  it('should prompt for newLibName if not provided', async () => {
-    (utils.getLibraryDetailsByName as jest.Mock).mockResolvedValue({
-      name: 'old-lib',
-      path: 'libs/app/scope/type/old-lib',
+  it('prompts for newLibName if not provided', async () => {
+    asMock(utils.askQuestion).mockResolvedValue(newLibName);
+
+    await libRenameGenerator(tree, {
+      currentLibName: libraryDetails.name,
     });
-    (utils.askQuestion as jest.Mock).mockResolvedValue('my-new-lib');
-    (utils.getImportPathPrefix as jest.Mock).mockReturnValue('libs');
 
-    await libRenameGenerator(tree, { currentLibName: 'old-lib' });
-
-    expect(execSync).toHaveBeenCalledWith(
+    expect(utils.askQuestion).toHaveBeenCalledWith('Enter a new library name: ', libraryDetails.name);
+    expect(execSyncMock).toHaveBeenCalledWith(
       expect.stringContaining(
-        '--projectName=old-lib --newProjectName=app-scope-type-my-new-lib --destination=libs/app/scope/type/my-new-lib --importPath=libs/app/scope/type/my-new-lib',
+        `--projectName=${libraryDetails.name} ` +
+          `--newProjectName=${newProjectName}${newLibName} ` +
+          `--destination=${destination}${newLibName} ` +
+          `--importPath=${importPath}${newLibName}`,
       ),
       { stdio: 'inherit' },
     );
-    expect(utils.askQuestion).toHaveBeenCalledWith('Enter a new library name: ', 'old-lib');
   });
 });

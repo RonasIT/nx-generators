@@ -73,28 +73,30 @@ describe('reactComponentGenerator', () => {
 
   it('should generate component files and update component index when subcomponent = true', async () => {
     const options = { name: 'MyComponent', subcomponent: true };
+    const componentRoot = 'libs/shared/ui/lib/components/my-component';
 
     await reactComponentGenerator(tree, options);
 
     // Check generated files exist
-    expect(tree.exists('libs/shared/ui/lib/components/my-component/index.ts')).toBe(true);
+    expect(tree.exists(`${componentRoot}/index.ts`)).toBe(true);
 
     // Assert first line correctness from templates
     const templatesDir = path.join(__dirname, 'files');
-    assertFirstLine(templatesDir, 'libs/shared/ui/lib/components/my-component');
+    assertFirstLine(templatesDir, componentRoot);
   });
 
   it('should generate component files without updating index when subcomponent is false', async () => {
     const options = { name: 'MainFeature', subcomponent: false };
+    const libRoot = 'libs/shared/ui/lib';
 
     await reactComponentGenerator(tree, options);
 
     // Check expected files generated
-    expect(tree.exists('libs/shared/ui/lib/component.tsx')).toBe(true);
-    expect(tree.exists('libs/shared/ui/lib/index.ts')).toBe(true);
+    expect(tree.exists(`${libRoot}/component.tsx`)).toBe(true);
+    expect(tree.exists(`${libRoot}/index.ts`)).toBe(true);
 
     // Assert first line correctness from templates
     const templatesDir = path.join(__dirname, 'files');
-    assertFirstLine(templatesDir, 'libs/shared/ui/lib');
+    assertFirstLine(templatesDir, libRoot);
   });
 });

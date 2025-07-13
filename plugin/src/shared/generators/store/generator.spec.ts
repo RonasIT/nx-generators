@@ -80,6 +80,11 @@ function assertFirstLine(sourceDir: string, targetDir: string, tree: devkit.Tree
 
 describe('runStoreGenerator', () => {
   let tree: devkit.Tree;
+  const appDirectory = 'myapp';
+  const optionsNext = {
+    directory: appDirectory,
+    baseGeneratorType: BaseGeneratorType.NEXT_APP,
+  };
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
@@ -94,30 +99,22 @@ describe('runStoreGenerator', () => {
   });
 
   it('should call execSync to generate react-lib', async () => {
-    const options = {
-      directory: 'myapp',
-      baseGeneratorType: BaseGeneratorType.NEXT_APP,
-    };
-    await runStoreGenerator(tree, options);
+    await runStoreGenerator(tree, optionsNext);
 
     expect(execSyncMock).toHaveBeenCalledWith(
-      'npx nx g react-lib --app=myapp --scope=shared --type=data-access --name=store',
+      `npx nx g react-lib --app=${appDirectory} --scope=shared --type=data-access --name=store`,
       { stdio: 'inherit' },
     );
   });
 
   it('should replace index.ts file with content from template', async () => {
-    const options = {
-      directory: 'myapp',
-      baseGeneratorType: BaseGeneratorType.NEXT_APP,
-    };
-    const indexPath = `libs/myapp/shared/data-access/store/src/index.ts`;
+    const indexPath = `libs/${appDirectory}/shared/data-access/store/src/index.ts`;
 
     // Write dummy content to simulate previous file
     tree.write(indexPath, '// old index file');
     expect(tree.exists(indexPath)).toBe(true);
 
-    await runStoreGenerator(tree, options);
+    await runStoreGenerator(tree, optionsNext);
 
     // Check that the file was replaced (exists + has expected content)
     expect(tree.exists(indexPath)).toBe(true);
@@ -133,23 +130,18 @@ describe('runStoreGenerator', () => {
   });
 
   it('should call generateFiles with correct arguments', async () => {
-    const options = {
-      directory: 'myapp',
-      baseGeneratorType: BaseGeneratorType.NEXT_APP,
-    };
-
-    await runStoreGenerator(tree, options);
+    await runStoreGenerator(tree, optionsNext);
 
     expect(generateFilesMock).toHaveBeenCalledTimes(1);
     const [calledTree, calledSourcePath, calledDestPath, calledVars] = generateFilesMock.mock.calls[0];
 
     expect(calledTree).toBe(tree);
-    expect(calledSourcePath).toBe(path.join(__dirname, `${options.baseGeneratorType}/lib-files`));
-    expect(calledDestPath).toBe(`libs/${options.directory}`);
+    expect(calledSourcePath).toBe(path.join(__dirname, `${optionsNext.baseGeneratorType}/lib-files`));
+    expect(calledDestPath).toBe(`libs/${optionsNext.directory}`);
 
     expect(calledVars).toMatchObject({
-      directory: options.directory,
-      baseGeneratorType: options.baseGeneratorType,
+      directory: optionsNext.directory,
+      baseGeneratorType: optionsNext.baseGeneratorType,
       formatName: expect.any(Function),
       formatAppIdentifier: expect.any(Function),
       libPath: expect.any(String),
@@ -158,12 +150,7 @@ describe('runStoreGenerator', () => {
 
   it('should add dependencies', async () => {
     existsSyncMock.mockReturnValue(false);
-
-    const options = {
-      directory: 'myapp',
-      baseGeneratorType: BaseGeneratorType.NEXT_APP,
-    };
-    await runStoreGenerator(tree, options);
+    await runStoreGenerator(tree, optionsNext);
 
     expect(addDependenciesMock).toHaveBeenCalledWith(tree, expect.any(Object), {});
     expect(addDependenciesMock).toHaveBeenCalledTimes(1);
@@ -171,22 +158,13 @@ describe('runStoreGenerator', () => {
 
   it('should add dependencies to app package.json if exists', async () => {
     existsSyncMock.mockReturnValue(true);
+    await runStoreGenerator(tree, optionsNext);
 
-    const options = {
-      directory: 'myapp',
-      baseGeneratorType: BaseGeneratorType.NEXT_APP,
-    };
-    await runStoreGenerator(tree, options);
-
-    expect(addDependenciesMock).toHaveBeenCalledWith(tree, expect.any(Object), {}, `apps/myapp/package.json`);
+    expect(addDependenciesMock).toHaveBeenCalledWith(tree, expect.any(Object), {}, `apps/${appDirectory}/package.json`);
   });
 
   it('should call formatFiles once', async () => {
-    const options = {
-      directory: 'myapp',
-      baseGeneratorType: BaseGeneratorType.NEXT_APP,
-    };
-    await runStoreGenerator(tree, options);
+    await runStoreGenerator(tree, optionsNext);
     expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 
@@ -195,7 +173,7 @@ describe('runStoreGenerator', () => {
   generatorTypes.forEach((baseGeneratorType) => {
     it(`should match first lines of generated files with templates for baseGeneratorType=${baseGeneratorType}`, async () => {
       const options = {
-        directory: 'myapp',
+        directory: appDirectory,
         baseGeneratorType,
       };
 

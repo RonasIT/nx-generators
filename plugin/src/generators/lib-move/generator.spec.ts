@@ -19,52 +19,50 @@ jest.mock('../../shared/utils', () => {
 
 describe('libMoveGenerator', () => {
   let tree: Tree;
+  let execSyncMock: jest.Mock;
+
+  const libraryDetails = {
+    name: 'profile-shared-utils',
+    path: 'libs/profile/shared/utils',
+  };
+
+  const selectedProject = { name: 'mobile' };
+  const answer = 'account';
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
     jest.clearAllMocks();
+
+    (utils.getLibraryDetailsByName as jest.Mock).mockResolvedValue(libraryDetails);
+    (utils.selectProject as jest.Mock).mockResolvedValue(selectedProject);
+    (utils.askQuestion as jest.Mock).mockResolvedValue(answer);
+
+    execSyncMock = childProcess.execSync as jest.Mock;
   });
 
   it('should call nx mv with correct arguments', async () => {
-    (utils.getLibraryDetailsByName as jest.Mock).mockResolvedValue({
-      name: 'profile-shared-utils',
-      path: 'libs/profile/shared/utils',
-    });
-    (utils.selectProject as jest.Mock).mockResolvedValue({
-      name: 'mobile',
-    });
-    (utils.askQuestion as jest.Mock).mockResolvedValue('account');
-
-    const execSyncMock = childProcess.execSync as jest.Mock;
-
     await libMoveGenerator(tree, {
-      srcLibName: 'profile-shared-utils',
+      srcLibName: libraryDetails.name,
       type: 'ui',
     });
 
     expect(execSyncMock).toHaveBeenCalledWith(
       expect.stringContaining(
-        'npx nx g mv --projectName=profile-shared-utils --newProjectName=mobile-account-ui-account' +
-          ' --destination=libs/mobile/account/ui/account --importPath=@proj/mobile/account/ui/account',
+        [
+          'npx nx g mv',
+          '--projectName=profile-shared-utils',
+          '--newProjectName=mobile-account-ui-account',
+          '--destination=libs/mobile/account/ui/account',
+          '--importPath=@proj/mobile/account/ui/account',
+        ].join(' '),
       ),
       { stdio: 'inherit' },
     );
   });
 
   it('should run lib-tags after move', async () => {
-    (utils.getLibraryDetailsByName as jest.Mock).mockResolvedValue({
-      name: 'profile-shared-utils',
-      path: 'libs/profile/shared/utils',
-    });
-    (utils.selectProject as jest.Mock).mockResolvedValue({
-      name: 'mobile',
-    });
-    (utils.askQuestion as jest.Mock).mockResolvedValue('account');
-
-    const execSyncMock = childProcess.execSync as jest.Mock;
-
     const callback = await libMoveGenerator(tree, {
-      srcLibName: 'profile-shared-utils',
+      srcLibName: libraryDetails.name,
       type: 'ui',
     });
 

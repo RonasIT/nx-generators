@@ -24,12 +24,13 @@ describe('runFormUtilsGenerator', () => {
 
   const templatesDir = path.join(__dirname, 'lib-files');
   const targetDir = 'libs/myapp';
+  const indexFilePath = 'libs/myapp/shared/utils/form/src/index.ts';
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
 
     // Create dummy index.ts file that will be deleted by generator
-    tree.write('libs/myapp/shared/utils/form/src/index.ts', 'export {};');
+    tree.write(indexFilePath, 'export {};');
 
     jest.clearAllMocks();
 
@@ -64,15 +65,15 @@ describe('runFormUtilsGenerator', () => {
 
     // Verify execSync called with correct nx generate command
     expect(execSyncMock).toHaveBeenCalledWith(
-      'npx nx g react-lib --app=myapp --scope=shared --type=utils --name=form',
+      `npx nx g react-lib --app=${options.directory} --scope=shared --type=utils --name=form`,
       { stdio: 'inherit' },
     );
 
     // Verify index.ts was deleted
-    expect(tree.exists('libs/myapp/shared/utils/form/src/index.ts')).toBe(false);
+    expect(tree.exists(indexFilePath)).toBe(false);
 
     // Verify generateFiles called correctly
-    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, '/lib-files'), 'libs/myapp', {});
+    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, '/lib-files'), targetDir, {});
 
     expect(formatFilesMock).toHaveBeenCalledWith(tree);
 

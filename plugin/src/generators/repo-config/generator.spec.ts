@@ -77,10 +77,11 @@ describe('repoConfigGenerator', () => {
   }
 
   it('should update package.json, generate files, add dependencies, format files and return install callback', async () => {
+    const oldScript = 'echo old';
     const mockPackageJson = {
       name: '@myorg/my-project',
       scripts: {
-        oldScript: 'echo old',
+        oldScript: oldScript,
       },
     };
     (devkit.readJson as jest.Mock).mockReturnValue(mockPackageJson);
@@ -95,7 +96,7 @@ describe('repoConfigGenerator', () => {
       expect.objectContaining({
         workspaces: ['apps/*'],
         scripts: expect.objectContaining({
-          oldScript: 'echo old',
+          oldScript: oldScript,
         }),
       }),
     );

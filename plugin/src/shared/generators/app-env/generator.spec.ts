@@ -86,9 +86,11 @@ describe('runAppEnvGenerator', () => {
   });
 
   it('should generate app-env lib, delete default index.ts and generate custom files', async () => {
+    const appName = 'myapp';
+    const destDir = 'libs/myapp';
     const options = {
-      name: 'myapp',
-      directory: 'myapp',
+      name: appName,
+      directory: appName,
       baseGeneratorType: BaseGeneratorType.EXPO_APP,
     };
 
@@ -96,7 +98,7 @@ describe('runAppEnvGenerator', () => {
 
     // Check execSync called with expected nx generate command
     expect(execSyncMock).toHaveBeenCalledWith(
-      'npx nx g react-lib --app=myapp --scope=shared --type=utils --name=app-env',
+      `npx nx g react-lib --app=${appName} --scope=shared --type=utils --name=app-env`,
       { stdio: 'inherit' },
     );
 
@@ -104,12 +106,12 @@ describe('runAppEnvGenerator', () => {
     expect(generateFilesMock).toHaveBeenCalledWith(
       tree,
       path.join(__dirname, 'lib-files'),
-      'libs/myapp',
+      destDir,
       expect.objectContaining({
-        name: 'myapp',
-        directory: 'myapp',
-        baseGeneratorType: 'expo-app',
-        libPath: '@org/myapp',
+        name: appName,
+        directory: appName,
+        baseGeneratorType: BaseGeneratorType.EXPO_APP,
+        libPath: `@org/${appName}`,
         appType: 'EXPO',
         formatName: expect.any(Function),
         formatAppIdentifier: expect.any(Function),
@@ -118,7 +120,6 @@ describe('runAppEnvGenerator', () => {
 
     // Assert generated file contents first line matches the templates
     const templateDir = path.join(__dirname, 'lib-files');
-    const destDir = 'libs/myapp';
     assertFirstLine(templateDir, destDir, tree);
 
     expect(formatFilesMock).toHaveBeenCalledWith(tree);

@@ -25,7 +25,6 @@ describe('libMoveGenerator', () => {
     name: 'profile-shared-utils',
     path: 'libs/profile/shared/utils',
   };
-
   const selectedProject = { name: 'mobile' };
   const answer = 'account';
 
@@ -40,11 +39,11 @@ describe('libMoveGenerator', () => {
     execSyncMock = childProcess.execSync as jest.Mock;
   });
 
-  it('should call nx mv with correct arguments', async () => {
-    await libMoveGenerator(tree, {
-      srcLibName: libraryDetails.name,
-      type: 'ui',
-    });
+  const runGenerator = async (): Promise<() => void> =>
+    libMoveGenerator(tree, { srcLibName: libraryDetails.name, type: 'ui' });
+
+  it('calls nx mv with correct args', async () => {
+    await runGenerator();
 
     expect(execSyncMock).toHaveBeenCalledWith(
       expect.stringContaining(
@@ -60,13 +59,10 @@ describe('libMoveGenerator', () => {
     );
   });
 
-  it('should run lib-tags after move', async () => {
-    const callback = await libMoveGenerator(tree, {
-      srcLibName: libraryDetails.name,
-      type: 'ui',
-    });
+  it('runs lib-tags after move', async () => {
+    const postMoveCallback = await runGenerator();
 
-    callback();
+    postMoveCallback();
 
     expect(execSyncMock).toHaveBeenCalledWith('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
   });

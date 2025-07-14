@@ -1,9 +1,9 @@
 /// <reference types="jest" />
-import * as fs from 'fs';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { devDependencies } from '../../shared/dependencies';
+import { assertFirstLine, mockGenerateFiles } from '../../shared/utils';
 import { repoConfigGenerator } from './generator';
 
 jest.mock('@nx/devkit', () => {
@@ -13,28 +13,8 @@ jest.mock('@nx/devkit', () => {
     ...actual,
     readJson: jest.fn(),
     writeJson: jest.fn(),
-    generateFiles: jest.fn((tree, src, dest, substitutions) => {
-      const copyRecursive = (srcDir: string, destDir: string): void => {
-        const entries = fs.readdirSync(srcDir, { withFileTypes: true });
-
-        for (const entry of entries) {
-          const srcPath = path.join(srcDir, entry.name);
-
-          if (entry.isDirectory()) {
-            copyRecursive(srcPath, path.join(destDir, entry.name));
-          } else {
-            const content = fs.readFileSync(srcPath, 'utf8');
-            const rendered = content.replace(/__name__/g, substitutions.name ?? ''); // optionally render variables
-            const targetPath = path
-              .join(destDir, entry.name.replace(/\.template$/, ''))
-              .split(path.sep)
-              .join('/');
-            tree.write(targetPath, rendered); // use the real virtual tree
-          }
-        }
-      };
-
-      copyRecursive(src, dest);
+    generateFiles: jest.fn((tree, src, dest, vars) => {
+      mockGenerateFiles(tree, src, dest, vars);
     }),
     addDependenciesToPackageJson: jest.fn(),
     formatFiles: jest.fn(),
@@ -49,32 +29,6 @@ describe('repoConfigGenerator', () => {
     jest.clearAllMocks();
     tree = createTreeWithEmptyWorkspace();
   });
-
-  function verifyGeneratedFilesFirstLine(templatesDir: string, targetDir: string): void {
-    const entries = fs.readdirSync(templatesDir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const templatePath = path.join(templatesDir, entry.name);
-
-      if (entry.isDirectory()) {
-        verifyGeneratedFilesFirstLine(templatePath, path.join(targetDir, entry.name));
-      } else {
-        const expectedFirstLine = fs.readFileSync(templatePath, 'utf8').split('\n')[0].trim();
-        const targetPath = path
-          .join(targetDir, entry.name.replace(/\.template$/, ''))
-          .split(path.sep)
-          .join('/');
-        const generatedContent = tree.read(targetPath)?.toString();
-
-        if (!generatedContent) {
-          throw new Error(`Expected file not found in virtual tree: ${targetPath}`);
-        }
-
-        const actualFirstLine = generatedContent.split('\n')[0].trim();
-        expect(actualFirstLine).toBe(expectedFirstLine);
-      }
-    }
-  }
 
   it('should update package.json, generate files, add dependencies, format files and return install callback', async () => {
     const oldScript = 'echo old';
@@ -111,9 +65,10 @@ describe('repoConfigGenerator', () => {
       }),
     );
 
-    // Assert generated file contents match templates
-    const templatePath = path.join(__dirname, 'files');
-    verifyGeneratedFilesFirstLine(templatePath, '.');
+    const templatesDir = path.join(__dirname, 'files');
+    assertFirstLine(templatesDir, '.', tree, {
+      placeholders: { name: 'myorg' },
+    });
 
     expect(devkit.addDependenciesToPackageJson).toHaveBeenCalledWith(tree, {}, devDependencies['repo-config']);
     expect(devkit.formatFiles).toHaveBeenCalledWith(tree);

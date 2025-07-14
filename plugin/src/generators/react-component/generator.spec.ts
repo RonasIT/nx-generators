@@ -1,7 +1,7 @@
 /// <reference types="jest" />
-import * as fs from 'fs';
 import * as path from 'path';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { assertFirstLine, mockGenerateFiles } from '../../shared/utils';
 import { reactComponentGenerator } from './generator';
 
 jest.mock('enquirer', () => ({
@@ -15,24 +15,8 @@ jest.mock('@nx/devkit', () => {
 
   return {
     ...actual,
-    generateFiles: jest.fn((tree, src, dest) => {
-      function copyRecursive(srcDir: string, destDir: string): void {
-        const entries = fs.readdirSync(srcDir, { withFileTypes: true });
-
-        for (const entry of entries) {
-          const srcPath = path.join(srcDir, entry.name);
-
-          if (entry.isDirectory()) {
-            copyRecursive(srcPath, path.join(destDir, entry.name));
-          } else {
-            const filename = entry.name.replace(/\.template$/, '');
-            const destPath = path.join(destDir, filename).split(path.sep).join('/');
-            const content = fs.readFileSync(srcPath, 'utf8');
-            tree.write(destPath, content);
-          }
-        }
-      }
-      copyRecursive(src, dest.split(path.sep).join('/'));
+    generateFiles: jest.fn((tree, src, dest, vars) => {
+      mockGenerateFiles(tree, src, dest, vars);
     }),
     formatFiles: jest.fn(),
   };
@@ -46,31 +30,6 @@ describe('reactComponentGenerator', () => {
     jest.clearAllMocks();
   });
 
-  function assertFirstLine(sourceDir: string, targetDir: string): void {
-    const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const srcPath = path.join(sourceDir, entry.name);
-
-      if (entry.isDirectory()) {
-        assertFirstLine(srcPath, path.join(targetDir, entry.name));
-      } else {
-        const targetFile = path
-          .join(targetDir, entry.name.replace(/\.template$/, ''))
-          .split(path.sep)
-          .join('/');
-        const expectedFirstLine = fs.readFileSync(srcPath, 'utf8').split('\n')[0].trim();
-        const generatedContent = tree.read(targetFile)?.toString();
-
-        if (!generatedContent) {
-          throw new Error(`Expected file not found in virtual tree: ${targetFile}`);
-        }
-        const actualFirstLine = generatedContent.split('\n')[0].trim();
-        expect(actualFirstLine).toBe(expectedFirstLine);
-      }
-    }
-  }
-
   it('should generate component files and update component index when subcomponent = true', async () => {
     const options = { name: 'MyComponent', subcomponent: true };
     const componentRoot = 'libs/shared/ui/lib/components/my-component';
@@ -80,9 +39,11 @@ describe('reactComponentGenerator', () => {
     // Check generated files exist
     expect(tree.exists(`${componentRoot}/index.ts`)).toBe(true);
 
-    // Assert first line correctness from templates
+    // Assert first line correctness from templates with placeholders
     const templatesDir = path.join(__dirname, 'files');
-    assertFirstLine(templatesDir, componentRoot);
+    assertFirstLine(templatesDir, componentRoot, tree, {
+      placeholders: { fileName: 'my-component' },
+    });
   });
 
   it('should generate component files without updating index when subcomponent is false', async () => {
@@ -95,8 +56,10 @@ describe('reactComponentGenerator', () => {
     expect(tree.exists(`${libRoot}/component.tsx`)).toBe(true);
     expect(tree.exists(`${libRoot}/index.ts`)).toBe(true);
 
-    // Assert first line correctness from templates
+    // Assert first line correctness from templates with placeholders
     const templatesDir = path.join(__dirname, 'files');
-    assertFirstLine(templatesDir, libRoot);
+    assertFirstLine(templatesDir, libRoot, tree, {
+      placeholders: { fileName: 'main-feature' },
+    });
   });
 });

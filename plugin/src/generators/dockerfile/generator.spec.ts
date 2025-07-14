@@ -8,13 +8,16 @@ import generator from './generator';
 describe('dockerfile generator (integration)', () => {
   let tree: Tree;
   const templateDir = path.join(__dirname, 'files');
+  const dummyDockerfileText = 'FROM scratch';
+  const existingGitignoreText = 'node_modules\n';
+
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
 
     // Add dummy Dockerfile to simulate overwrite scenario
-    tree.write('Dockerfile', 'FROM scratch');
+    tree.write('Dockerfile', dummyDockerfileText);
     // Simulate existing .gitignore
-    tree.write('.gitignore', 'node_modules\n');
+    tree.write('.gitignore', existingGitignoreText);
   });
 
   it('should delete existing Dockerfile and generate new Dockerfile from template', async () => {
@@ -24,7 +27,7 @@ describe('dockerfile generator (integration)', () => {
     const callback = await generator(tree);
 
     // File was deleted
-    expect(tree.read('Dockerfile')?.toString()).not.toContain('FROM scratch');
+    expect(tree.read('Dockerfile')?.toString()).not.toContain(dummyDockerfileText);
 
     // Generated content matches template
     expect(tree.read('Dockerfile')?.toString()).toBe(dockerfileTemplate);
@@ -37,7 +40,7 @@ describe('dockerfile generator (integration)', () => {
     }
 
     // Gitignore should not be cleared
-    expect(tree.read('.gitignore')?.toString()).toContain('node_modules');
+    expect(tree.read('.gitignore')?.toString()).toContain(existingGitignoreText);
 
     // Install callback
     expect(typeof callback).toBe('function');

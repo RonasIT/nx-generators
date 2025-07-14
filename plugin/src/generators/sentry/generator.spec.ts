@@ -1,9 +1,10 @@
 /// <reference types="jest" />
 import * as fs from 'fs';
 import * as path from 'path';
-import { formatFiles, installPackagesTask, Tree } from '@nx/devkit';
+import { formatFiles, installPackagesTask } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import * as utils from '../../shared/utils';
+import { assertFirstLine } from '../../shared/utils';
 import { sentryGenerator } from './generator';
 import * as sentryUtils from './utils';
 
@@ -30,13 +31,18 @@ jest.mock('./utils', () => ({
 describe('sentryGenerator', () => {
   let tree: ReturnType<typeof createTreeWithEmptyWorkspace>;
   const directory = 'apps/my-app';
+  const templatesDir = path.join(__dirname, 'files');
 
   beforeEach(() => {
     jest.clearAllMocks();
     tree = createTreeWithEmptyWorkspace();
   });
 
-  const simulateGenerateFiles = (tree: Tree, templateDir: string, targetDir: string): void => {
+  const simulateGenerateFiles = (
+    tree: ReturnType<typeof createTreeWithEmptyWorkspace>,
+    templateDir: string,
+    targetDir: string,
+  ): void => {
     const entries = fs.readdirSync(templateDir, { withFileTypes: true });
 
     for (const entry of entries) {
@@ -48,26 +54,6 @@ describe('sentryGenerator', () => {
       } else {
         const content = fs.readFileSync(templatePath, 'utf8');
         tree.write(targetPath, content);
-      }
-    }
-  };
-
-  const verifyGeneratedFilesFirstLine = (tree: Tree, templatesDir: string, targetDir: string): void => {
-    const entries = fs.readdirSync(templatesDir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const templatePath = path.join(templatesDir, entry.name);
-
-      if (entry.isDirectory()) {
-        verifyGeneratedFilesFirstLine(tree, templatePath, path.join(targetDir, entry.name));
-      } else if (entry.isFile()) {
-        const expectedFirstLine = fs.readFileSync(templatePath, 'utf8').split('\n')[0].trim();
-        const targetPath = path.join(targetDir, entry.name.replace(/\.template$/, '')).replace(/\\/g, '/');
-        const actualContent = tree.read(targetPath)?.toString();
-
-        expect(actualContent).toBeDefined();
-        const actualFirstLine = actualContent?.split('\n')[0].trim();
-        expect(actualFirstLine).toBe(expectedFirstLine);
       }
     }
   };
@@ -88,7 +74,7 @@ describe('sentryGenerator', () => {
     expect(sentryUtils.generateSentryExpo).not.toHaveBeenCalled();
     expect(formatFiles).toHaveBeenCalledWith(tree);
 
-    verifyGeneratedFilesFirstLine(tree, path.join(__dirname, 'files'), directory);
+    assertFirstLine(templatesDir, directory, tree);
 
     callback();
     expect(installPackagesTask).toHaveBeenCalledWith(tree);
@@ -106,7 +92,7 @@ describe('sentryGenerator', () => {
     expect(sentryUtils.generateSentryNext).toHaveBeenCalledWith(tree, { directory }, directory);
     expect(sentryUtils.generateSentryExpo).not.toHaveBeenCalled();
 
-    verifyGeneratedFilesFirstLine(tree, path.join(__dirname, 'files'), directory);
+    assertFirstLine(templatesDir, directory, tree);
   });
 
   it('should call generateSentryExpo when framework is expo', async () => {
@@ -122,7 +108,7 @@ describe('sentryGenerator', () => {
     expect(sentryUtils.generateSentryExpo).toHaveBeenCalledWith(tree, { directory: expoDirectory }, expoDirectory);
     expect(sentryUtils.generateSentryNext).not.toHaveBeenCalled();
 
-    verifyGeneratedFilesFirstLine(tree, path.join(__dirname, 'files'), expoDirectory);
+    assertFirstLine(templatesDir, expoDirectory, tree);
   });
 
   it('should do nothing if framework is unknown', async () => {

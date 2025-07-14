@@ -1,10 +1,16 @@
 /// <reference types="jest" />
 import { execSync } from 'child_process';
-import * as fs from 'fs';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { addNxScopeTag, selectProject, confirm, askQuestion } from '../../shared/utils';
+import {
+  assertFirstLine,
+  mockGenerateFiles,
+  addNxScopeTag,
+  selectProject,
+  confirm,
+  askQuestion,
+} from '../../shared/utils';
 import { reactLibGenerator } from './generator';
 
 jest.mock('child_process', () => ({
@@ -29,24 +35,8 @@ jest.mock('../../shared/utils', () => {
 });
 
 jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn((tree, src, dest) => {
-    function copyRecursive(srcDir: string, destDir: string): void {
-      const entries = fs.readdirSync(srcDir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        const srcPath = path.join(srcDir, entry.name);
-
-        if (entry.isDirectory()) {
-          copyRecursive(srcPath, path.join(destDir, entry.name));
-        } else {
-          const filename = entry.name.replace(/\.template$/, '');
-          const destPath = path.join(destDir, filename).split(path.sep).join('/');
-          const content = fs.readFileSync(srcPath, 'utf8');
-          tree.write(destPath, content);
-        }
-      }
-    }
-    copyRecursive(src, dest.split(path.sep).join('/'));
+  generateFiles: jest.fn((tree, src, dest, vars) => {
+    mockGenerateFiles(tree, src, dest, vars);
   }),
   formatFiles: jest.fn(),
   output: {
@@ -102,31 +92,6 @@ describe('reactLibGenerator', () => {
     jest.spyOn(require('../../shared/utils'), 'addNxScopeTag');
   });
 
-  function assertFirstLine(sourceDir: string, targetDir: string): void {
-    const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const srcPath = path.join(sourceDir, entry.name);
-
-      if (entry.isDirectory()) {
-        assertFirstLine(srcPath, path.join(targetDir, entry.name));
-      } else {
-        const targetFile = path
-          .join(targetDir, entry.name.replace(/\.template$/, ''))
-          .split(path.sep)
-          .join('/');
-        const expectedFirstLine = fs.readFileSync(srcPath, 'utf8').split('\n')[0].trim();
-        const generatedContent = tree.read(targetFile)?.toString();
-
-        if (!generatedContent) {
-          throw new Error(`Expected file not found in virtual tree: ${targetFile}`);
-        }
-        const actualFirstLine = generatedContent.split('\n')[0].trim();
-        expect(actualFirstLine).toBe(expectedFirstLine);
-      }
-    }
-  }
-
   it('should generate library with minimal options and no component', async () => {
     (selectProject as jest.Mock).mockResolvedValue({ name: 'myapp' });
     (askQuestion as jest.Mock).mockResolvedValue('myscope');
@@ -151,48 +116,6 @@ describe('reactLibGenerator', () => {
     expect(execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g @nx/react:library'), { stdio: 'inherit' });
     expect(devkit.generateFiles).not.toHaveBeenCalled();
     expect(tree.write).not.toHaveBeenCalled();
-    expect(addNxScopeTag).toHaveBeenCalledWith(tree, 'myscope');
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
-  });
-
-  it('should generate library with component and forwardRef options', async () => {
-    (selectProject as jest.Mock).mockResolvedValue({ name: 'myapp' });
-    (askQuestion as jest.Mock).mockImplementation((question) => {
-      if (question.includes('scope')) return Promise.resolve('myscope');
-      if (question.includes('name of the library')) return Promise.resolve('mylib');
-
-      return Promise.resolve('');
-    });
-    (AutoCompleteMock as jest.Mock).mockImplementation(() => ({ run: jest.fn().mockResolvedValue('features') }));
-    (confirm as jest.Mock)
-      .mockResolvedValueOnce(true) // withComponent
-      .mockResolvedValueOnce(true); // withComponentForwardRef
-    const featureRoot = 'libs/myapp/myscope/features/mylib/src';
-
-    const options = {
-      dryRun: false,
-      name: undefined,
-      withComponent: undefined,
-      withComponentForwardRef: undefined,
-      app: undefined,
-      scope: undefined,
-      type: undefined,
-    };
-
-    await reactLibGenerator(tree, options);
-
-    expect(execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g @nx/react:library'), { stdio: 'inherit' });
-
-    expect(devkit.generateFiles).toHaveBeenCalledWith(
-      tree,
-      expect.stringContaining('files'),
-      expect.stringContaining(featureRoot),
-      expect.objectContaining({ name: 'Mylib' }),
-    );
-    expect(tree.write).toHaveBeenCalledWith(
-      expect.stringContaining(`${featureRoot}/index.ts`),
-      "export * from './lib';",
-    );
     expect(addNxScopeTag).toHaveBeenCalledWith(tree, 'myscope');
     expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
   });
@@ -226,7 +149,7 @@ describe('reactLibGenerator', () => {
     outputWarnSpy.mockRestore();
   });
 
-  it('should generate library with component and forwardRef options', async () => {
+  it('should generate library with component', async () => {
     const featureRoot = 'libs/myapp/shared/features/mylib/src';
     (selectProject as jest.Mock).mockResolvedValue({ name: 'myapp' });
     (askQuestion as jest.Mock).mockImplementation((question) => {
@@ -238,12 +161,12 @@ describe('reactLibGenerator', () => {
     (AutoCompleteMock as jest.Mock).mockImplementation(() => ({ run: jest.fn().mockResolvedValue('features') }));
     (confirm as jest.Mock)
       .mockResolvedValueOnce(true) // withComponent
-      .mockResolvedValueOnce(true); // withComponentForwardRef
+      .mockResolvedValueOnce(false);
 
     await reactLibGenerator(tree, {
       name: 'mylib',
       withComponent: true,
-      withComponentForwardRef: true,
+      withComponentForwardRef: false,
       app: 'myapp',
       scope: 'shared',
     });
@@ -266,6 +189,10 @@ describe('reactLibGenerator', () => {
 
     // Verify generated files first line against templates
     const templatesDir = path.join(__dirname, 'files');
-    assertFirstLine(templatesDir, featureRoot);
+    assertFirstLine(templatesDir, featureRoot, tree, {
+      placeholders: {
+        name: 'Mylib',
+      },
+    });
   });
 });

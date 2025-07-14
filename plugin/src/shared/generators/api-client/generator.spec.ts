@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { dependencies } from '../../dependencies';
+import { assertFirstLine, mockGenerateFiles } from '../../utils';
 import { runApiClientGenerator } from './generator';
 
 jest.mock('child_process', () => ({
@@ -17,24 +18,8 @@ jest.mock('fs', () => ({
 }));
 
 jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn((tree, src, dest) => {
-    function copyRecursive(srcDir: string, destDir: string): void {
-      const entries = fs.readdirSync(srcDir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        const srcPath = path.join(srcDir, entry.name);
-
-        if (entry.isDirectory()) {
-          copyRecursive(srcPath, path.join(destDir, entry.name));
-        } else {
-          const filename = entry.name.replace(/\.template$/, '');
-          const destPath = path.join(destDir, filename).split(path.sep).join('/');
-          const content = fs.readFileSync(srcPath, 'utf8');
-          tree.write(destPath, content);
-        }
-      }
-    }
-    copyRecursive(src, dest.split(path.sep).join('/'));
+  generateFiles: jest.fn((tree, src, dest, vars) => {
+    mockGenerateFiles(tree, src, dest, vars);
   }),
   formatFiles: jest.fn(),
   output: {
@@ -75,26 +60,6 @@ describe('runApiClientGenerator', () => {
     jest.clearAllMocks();
   });
 
-  function verifyGeneratedFilesFirstLine(templateDir: string, targetDir: string): void {
-    const entries = fs.readdirSync(templateDir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const templatePath = path.join(templateDir, entry.name);
-
-      if (entry.isDirectory()) {
-        verifyGeneratedFilesFirstLine(templatePath, path.join(targetDir, entry.name));
-      } else {
-        const expectedFirstLine = fs.readFileSync(templatePath, 'utf8').split('\n')[0].trim();
-        const targetFile = path.join(targetDir, entry.name.replace(/\.template$/, '')).replace(/\\/g, '/');
-        const generatedContent = tree.read(targetFile)?.toString();
-
-        expect(generatedContent).toBeDefined();
-        const actualFirstLine = generatedContent?.split('\n')[0].trim();
-        expect(actualFirstLine).toBe(expectedFirstLine);
-      }
-    }
-  }
-
   it('should generate the react-lib and delete index.ts', async () => {
     (fs.existsSync as jest.Mock).mockReturnValue(true);
     const appLibs = `libs/${appName}`;
@@ -121,7 +86,12 @@ describe('runApiClientGenerator', () => {
 
     expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
 
-    verifyGeneratedFilesFirstLine(path.join(__dirname, 'lib-files'), appLibs);
+    assertFirstLine(path.join(__dirname, 'lib-files'), appLibs, tree, {
+      placeholders: {
+        libPath: `/${appName}`,
+        name: appName,
+      },
+    });
   });
 
   it('should not add app package.json dependencies if package.json does not exist', async () => {

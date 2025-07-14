@@ -1,9 +1,12 @@
 /// <reference types="jest" />
-import * as fs from 'fs';
 import * as path from 'path';
 import { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { assertFirstLine, mockGenerateFiles } from '../../shared/utils';
 import expoAppGenerator from './generator';
+
+const appName = 'myapp';
+const directory = 'mobile';
 
 jest.mock('@nx/devkit', () => ({
   readJson: jest.fn((_tree, filePath) => {
@@ -12,40 +15,18 @@ jest.mock('@nx/devkit', () => ({
     }
 
     if (filePath.endsWith('eslint.constraints.json')) {
-      return [{ sourceTag: 'app:myapp' }];
+      return [{ sourceTag: `app:${appName}` }];
     }
 
     return {};
   }),
   writeJson: jest.fn(),
-  readProjectConfiguration: jest.fn(() => ({ name: 'myapp', tags: [] })),
+  readProjectConfiguration: jest.fn(() => ({ name: appName, tags: [] })),
   updateProjectConfiguration: jest.fn(),
   addDependenciesToPackageJson: jest.fn(),
   formatFiles: jest.fn(),
-  generateFiles: jest.fn((tree: Tree, src: string, dest: string) => {
-    const fs = require('fs');
-    const path = require('path');
-
-    function copyRecursive(srcDir: string, destDir: string): void {
-      const entries = fs.readdirSync(srcDir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        const srcPath = path.join(srcDir, entry.name);
-
-        if (entry.isDirectory()) {
-          copyRecursive(srcPath, path.join(destDir, entry.name));
-        } else {
-          const outputFilename = entry.name.replace(/\.template$/, '');
-          const destPath = path.join(destDir, outputFilename);
-          const content = fs.readFileSync(srcPath, 'utf8');
-          const virtualPath = destPath.split(path.sep).join('/');
-
-          tree.write(virtualPath, content);
-        }
-      }
-    }
-
-    copyRecursive(src, dest.split(path.sep).join('/'));
+  generateFiles: jest.fn((tree, src, dest, vars) => {
+    mockGenerateFiles(tree, src, dest, vars);
   }),
   installPackagesTask: jest.fn(),
 }));
@@ -82,8 +63,8 @@ describe('expoAppGenerator integration with file content checks', () => {
 
   it('should generate files and validate their first line', async () => {
     const callback = await expoAppGenerator(tree, {
-      name: 'MyApp',
-      directory: 'myapp',
+      name: appName,
+      directory: directory,
       withStore: false,
       withFormUtils: false,
       withUIKitten: false,
@@ -93,29 +74,13 @@ describe('expoAppGenerator integration with file content checks', () => {
     const appFilesDir = path.join(__dirname, 'app-files');
     const i18nDir = path.join(__dirname, 'i18n');
 
-    const assertFirstLine = (sourceDir: string, targetRoot: string): void => {
-      const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        if (entry.isDirectory()) continue;
-        const templatePath = path.join(sourceDir, entry.name);
-        const expectedFirstLine = fs.readFileSync(templatePath, 'utf8').split('\n')[0].trim();
-
-        const targetPath = path.join(targetRoot, entry.name.replace(/\.template$/, ''));
-        const generatedContent = tree.read(targetPath)?.toString();
-
-        if (!generatedContent) {
-          throw new Error(`Expected file not found in virtual tree: ${targetPath}`);
-        }
-        expect(generatedContent).toBeDefined();
-        const actualFirstLine = generatedContent?.split('\n')[0].trim();
-        expect(actualFirstLine).toBe(expectedFirstLine);
-      }
-    };
-
-    assertFirstLine(appFilesDir, 'apps/myapp');
-    assertFirstLine(path.join(i18nDir, 'app'), 'i18n/myapp/app');
-    assertFirstLine(path.join(i18nDir, 'shared'), 'i18n/myapp/shared');
+    assertFirstLine(appFilesDir, `apps/${directory}`, tree, {
+      placeholders: {
+        libPath: `/${directory}`,
+      },
+    });
+    assertFirstLine(path.join(i18nDir, 'app'), `i18n/${directory}/app`, tree);
+    assertFirstLine(path.join(i18nDir, 'shared'), `i18n/${directory}/shared`, tree);
 
     expect(callback).toBeInstanceOf(Function);
   });

@@ -1,8 +1,8 @@
 /// <reference types="jest" />
-import * as fs from 'fs';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { assertFirstLine, mockGenerateFiles } from '../../shared/utils';
 import formGenerator from './generator';
 import * as formUtils from './utils';
 
@@ -11,7 +11,9 @@ jest.mock('enquirer', () => ({
 }));
 
 jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn(),
+  generateFiles: jest.fn((tree, src, dest, vars) => {
+    mockGenerateFiles(tree, src, dest, vars);
+  }),
   getProjects: jest.fn(),
   formatFiles: jest.fn(),
   addDependenciesToPackageJson: jest.fn(),
@@ -32,86 +34,11 @@ jest.mock('./utils', () => {
   };
 });
 
-// Mock generateFiles to actually copy files to the Nx virtual FS
-(devkit.generateFiles as jest.Mock).mockImplementation((tree, srcDir, destDir, templateVars) => {
-  function copyRecursive(src: string, dest: string): void {
-    const entries = fs.readdirSync(src, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const srcPath = path.join(src, entry.name);
-
-      if (entry.isDirectory()) {
-        copyRecursive(srcPath, path.join(dest, entry.name));
-      } else {
-        // Replace placeholders in filename like __fileName__ using templateVars
-        let fileName = entry.name.replace(/\.template$/, '');
-
-        if (templateVars) {
-          Object.entries(templateVars).forEach(([key, value]) => {
-            if (typeof value === 'string') {
-              fileName = fileName.replace(new RegExp(`__${key}__`, 'g'), value);
-            }
-          });
-        }
-
-        const destPath = path.join(dest, fileName).split(path.sep).join('/');
-        let content = fs.readFileSync(srcPath, 'utf8');
-
-        if (templateVars) {
-          Object.entries(templateVars).forEach(([key, value]) => {
-            if (typeof value === 'string') {
-              const regex = new RegExp(`__${key}__`, 'g');
-              content = content.replace(regex, value);
-            }
-          });
-        }
-
-        tree.write(destPath, content);
-      }
-    }
-  }
-  copyRecursive(srcDir, destDir.split(path.sep).join('/'));
-});
-
 describe('formGenerator', () => {
   let tree: devkit.Tree;
   let autoCompleteRunMock: jest.Mock;
   const { AutoComplete } = require('enquirer');
   const targetPath = `${utilsLibFormsRoot}/lib/forms`;
-
-  function assertFirstLine(
-    sourceDir: string,
-    targetDir: string,
-    tree: devkit.Tree,
-    placeholders: Record<string, string> = {},
-  ): void {
-    const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const srcPath = path.join(sourceDir, entry.name);
-
-      if (entry.isDirectory()) {
-        assertFirstLine(srcPath, path.join(targetDir, entry.name), tree, placeholders);
-      } else {
-        let fileName = entry.name.replace(/\.template$/, '');
-
-        Object.entries(placeholders).forEach(([key, value]) => {
-          fileName = fileName.replace(new RegExp(`__${key}__`, 'g'), value);
-        });
-
-        const targetFile = path.join(targetDir, fileName).split(path.sep).join('/');
-
-        const expectedFirstLine = fs.readFileSync(srcPath, 'utf8').split('\n')[0].trim();
-        const generatedContent = tree.read(targetFile)?.toString();
-
-        if (!generatedContent) {
-          throw new Error(`Expected file not found in virtual tree: ${targetFile}`);
-        }
-        const actualFirstLine = generatedContent.split('\n')[0].trim();
-        expect(actualFirstLine).toBe(expectedFirstLine);
-      }
-    }
-  }
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -141,7 +68,12 @@ describe('formGenerator', () => {
 
     const templatesPath = path.join(__dirname, 'files');
 
-    assertFirstLine(templatesPath, targetPath, tree, { fileName: 'user' });
+    assertFirstLine(templatesPath, targetPath, tree, {
+      placeholders: {
+        fileName: 'user',
+        placeOfUse: 'MyComponent',
+      },
+    });
   });
 
   it('should throw if form name is missing', async () => {

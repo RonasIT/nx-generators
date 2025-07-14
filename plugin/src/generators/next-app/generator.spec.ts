@@ -6,6 +6,7 @@ import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import * as sharedGenerators from '../../shared/generators';
 import * as sharedUtils from '../../shared/utils';
+import { assertFirstLine, mockGenerateFiles } from '../../shared/utils';
 import { nextAppGenerator } from './generator';
 
 jest.mock('child_process');
@@ -42,24 +43,8 @@ jest.mock('@nx/devkit', () => {
     ...actual,
     readJson: jest.fn(),
     writeJson: jest.fn(),
-    generateFiles: jest.fn((tree, src, dest) => {
-      function copyRecursive(srcDir: string, destDir: string): void {
-        const entries = fs.readdirSync(srcDir, { withFileTypes: true });
-
-        for (const entry of entries) {
-          const srcPath = path.join(srcDir, entry.name);
-
-          if (entry.isDirectory()) {
-            copyRecursive(srcPath, path.join(destDir, entry.name));
-          } else {
-            const filename = entry.name.replace(/\.template$/, '');
-            const destPath = path.join(destDir, filename).split(path.sep).join('/');
-            const content = fs.readFileSync(srcPath, 'utf8');
-            tree.write(destPath, content);
-          }
-        }
-      }
-      copyRecursive(src, dest.split(path.sep).join('/'));
+    generateFiles: jest.fn((tree, src, dest, vars) => {
+      mockGenerateFiles(tree, src, dest, vars);
     }),
     formatFiles: jest.fn(),
     addDependenciesToPackageJson: jest.fn(),
@@ -72,7 +57,7 @@ describe('nextAppGenerator with file content checks', () => {
 
   const optionsBase = {
     name: 'testapp',
-    directory: 'testapp',
+    directory: 'web',
     withStore: false,
     withApiClient: false,
     withFormUtils: false,
@@ -117,9 +102,15 @@ describe('nextAppGenerator with file content checks', () => {
     await nextAppGenerator(tree, optionsBase);
 
     expect(childProcess.execSync).toHaveBeenCalledWith('npx nx add @nx/next', { stdio: 'inherit' });
-    expect(childProcess.execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g @nx/next:app testapp'), {
-      stdio: 'inherit',
-    });
+    const tags = `app:${optionsBase.directory}, type:app`;
+    const expectedCommand =
+      `npx nx g @nx/next:app ${optionsBase.name} ` +
+      `--directory=apps/${optionsBase.directory} ` +
+      `--tags="${tags}" ` +
+      `--linter=none --appDir=true --style=scss --src=false ` +
+      `--unitTestRunner=none --e2eTestRunner=none`;
+
+    expect(childProcess.execSync).toHaveBeenCalledWith(expectedCommand, { stdio: 'inherit' });
     expect(sharedGenerators.runAppEnvGenerator).toHaveBeenCalled();
     expect(sharedGenerators.runI18nNextGenerator).toHaveBeenCalled();
     expect(sharedGenerators.runNavigationUtilsGenerator).toHaveBeenCalled();
@@ -185,8 +176,8 @@ describe('nextAppGenerator with file content checks', () => {
 
   it('should generate files and validate their first line against templates', async () => {
     await nextAppGenerator(tree, {
-      name: 'testapp',
-      directory: 'web',
+      name: optionsBase.name,
+      directory: optionsBase.directory,
       withStore: false,
       withApiClient: false,
       withFormUtils: false,
@@ -194,36 +185,13 @@ describe('nextAppGenerator with file content checks', () => {
     });
 
     const templatesDir = path.join(__dirname, 'files');
-    const targetRoot = `apps/web`;
+    const targetRoot = `apps/${optionsBase.directory}`;
 
-    function assertFirstLine(sourceDir: string, targetDir: string): void {
-      const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        const srcPath = path.join(sourceDir, entry.name);
-
-        if (entry.isDirectory()) {
-          assertFirstLine(srcPath, path.join(targetDir, entry.name));
-        } else {
-          if (entry.name === 'providers.tsx.template') {
-            continue; // skip conditional file
-          }
-          const targetFile = path
-            .join(targetDir, entry.name.replace(/\.template$/, ''))
-            .split(path.sep)
-            .join('/');
-          const expectedFirstLine = fs.readFileSync(srcPath, 'utf8').split('\n')[0].trim();
-          const generatedContent = tree.read(targetFile)?.toString();
-
-          if (!generatedContent) {
-            throw new Error(`Expected file not found in virtual tree: ${targetFile}`);
-          }
-          const actualFirstLine = generatedContent.split('\n')[0].trim();
-          expect(actualFirstLine).toBe(expectedFirstLine);
-        }
-      }
-    }
-
-    assertFirstLine(templatesDir, targetRoot);
+    assertFirstLine(templatesDir, targetRoot, tree, {
+      ignoreFiles: ['providers.tsx.template'],
+      placeholders: {
+        libPath: `/${optionsBase.directory}`,
+      },
+    });
   });
 });

@@ -158,15 +158,12 @@ Generates a library according to [Nx notation](https://nx.dev/concepts/decisions
 1. `withComponent` (optional) - generate the library with `lib/component.tsx` file.
    This option is for `features` or `ui` library.
 
-1. `withComponentForwardRef` (optional) - generate a component with `forwardRef` in `lib/component.tsx` file.
-   This option works if `withComponent` is `true`.
-
 1. `dryRun` (optional) - generate the library without creating files
 
 #### Example
 
 ```sh
-npx nx g react-lib --app=mobile --scope=account --type=features --name=profile-settings --withComponent --withComponentForwardRef --dryRun
+npx nx g react-lib --app=mobile --scope=account --type=features --name=profile-settings --withComponent --dryRun
 ```
 
 or
@@ -257,18 +254,16 @@ Creates a React component in particular library.
 
 2. `subcomponent` (optional) - generate a folder for components
 
-3. `withForwardRef` (optional) - generate a component with forwardRef
-
 #### Example
 
 ```sh
-npx nx g react-component --name=AppButton --subcomponent --withForwardRef
+npx nx g react-component --name=AppButton --subcomponent
 ```
 
 or
 
 ```sh
-npx nx g react-component AppButton --subcomponent --withForwardRef
+npx nx g react-component AppButton --subcomponent
 ```
 
 ### 11. `form`

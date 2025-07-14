@@ -1,21 +1,10 @@
-import React, {<% if (withForwardRef) { %> useRefCallback,<% } %> Fragment, ReactElement} from 'react';
+import React, {Fragment, ReactElement} from 'react';
 
 interface <%= name %>Props {
   // TODO: Describe props
-  <% if (withForwardRef) { %>
-  forwardedRef?: React.Ref<any>;
-  <% } %>
 }
 
-<% if (withForwardRef) { %>
-export function <%= name %>(props: <%= name %>Props): ReactElement {
-  const refCallback = useRefCallback(props.forwardedRef);
-  // TODO: Implement component
-  return <Fragment ref={refCallback} />;
-}
-<% } else { %>
 export function <%= name %>(props: <%= name %>Props): ReactElement {
   // TODO: Implement component
   return <Fragment />;
 }
-<% } %>

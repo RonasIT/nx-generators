@@ -41,10 +41,6 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
     !isBoolean(options.withComponent)
   ) {
     options.withComponent = await confirm('Generate component inside lib folder?');
-
-    if (options.withComponent && !isBoolean(options.withComponentForwardRef)) {
-      options.withComponentForwardRef = await confirm('Generate component with forwardRef?');
-    }
   }
 
   const scopeTag = options.scope || constants.sharedValue;
@@ -64,7 +60,7 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   if (options.withComponent) {
     const srcPath = `${libPath}/src`;
     generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, name: formatName(options.name, true) });
-    tree.write(`${srcPath}/index.ts`, 'export * from \'./lib\';');
+    tree.write(`${srcPath}/index.ts`, "export * from './lib';");
   }
 
   addNxScopeTag(tree, scopeTag);

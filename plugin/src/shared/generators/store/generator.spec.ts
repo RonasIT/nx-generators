@@ -1,41 +1,19 @@
 /// <reference types="jest" />
-import * as child_process from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { BaseGeneratorType } from '../../enums';
-import { assertFirstLine, mockGenerateFiles } from '../../utils';
+import {
+  addDependenciesMock,
+  assertFirstLine,
+  execSyncMock,
+  existsSyncMock,
+  formatFilesMock,
+  generateFilesMock,
+  readJsonMock,
+} from '../../utils';
 import { runStoreGenerator } from './generator';
-
-jest.mock('child_process', () => ({
-  execSync: jest.fn(),
-}));
-
-jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn((tree, src, dest, vars) => {
-    mockGenerateFiles(tree, src, dest, vars);
-  }),
-  formatFiles: jest.fn(),
-  addDependenciesToPackageJson: jest.fn(),
-  readJson: jest.fn(),
-}));
-
-jest.mock('fs', () => {
-  const actualFs = jest.requireActual('fs');
-
-  return {
-    ...actualFs,
-    existsSync: jest.fn(),
-  };
-});
-
-const execSyncMock = child_process.execSync as jest.Mock;
-const generateFilesMock = devkit.generateFiles as jest.Mock;
-const formatFilesMock = devkit.formatFiles as jest.Mock;
-const addDependenciesMock = devkit.addDependenciesToPackageJson as jest.Mock;
-const existsSyncMock = fs.existsSync as jest.Mock;
-const readJsonMock = devkit.readJson as jest.Mock;
 
 describe('runStoreGenerator', () => {
   let tree: devkit.Tree;

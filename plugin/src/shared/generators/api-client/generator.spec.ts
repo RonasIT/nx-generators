@@ -1,34 +1,16 @@
 /// <reference types="jest" />
-import { execSync } from 'child_process';
-import * as fs from 'fs';
 import * as path from 'path';
-import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { dependencies } from '../../dependencies';
-import { assertFirstLine, mockGenerateFiles } from '../../utils';
+import {
+  addDependenciesMock,
+  assertFirstLine,
+  execSyncMock,
+  existsSyncMock,
+  formatFilesMock,
+  generateFilesMock,
+} from '../../utils';
 import { runApiClientGenerator } from './generator';
-
-jest.mock('child_process', () => ({
-  execSync: jest.fn(),
-}));
-
-jest.mock('fs', () => ({
-  ...jest.requireActual('fs'),
-  existsSync: jest.fn(),
-}));
-
-jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn((tree, src, dest, vars) => {
-    mockGenerateFiles(tree, src, dest, vars);
-  }),
-  formatFiles: jest.fn(),
-  output: {
-    log: jest.fn(),
-    warn: jest.fn(),
-    bold: (text: string) => text,
-  },
-  addDependenciesToPackageJson: jest.fn(),
-}));
 
 describe('runApiClientGenerator', () => {
   let tree: any;
@@ -61,17 +43,17 @@ describe('runApiClientGenerator', () => {
   });
 
   it('should generate the react-lib and delete index.ts', async () => {
-    (fs.existsSync as jest.Mock).mockReturnValue(true);
+    existsSyncMock.mockReturnValue(true);
     const appLibs = `libs/${appName}`;
 
     await runApiClientGenerator(tree, { name: appName, directory: appName });
 
-    expect(execSync).toHaveBeenCalledWith(
+    expect(execSyncMock).toHaveBeenCalledWith(
       `npx nx g react-lib --app=${appName} --scope=shared --type=data-access --name=api-client`,
       { stdio: 'inherit' },
     );
 
-    expect(devkit.generateFiles).toHaveBeenCalledWith(
+    expect(generateFilesMock).toHaveBeenCalledWith(
       tree,
       path.join(__dirname, '/lib-files'),
       appLibs,
@@ -81,10 +63,10 @@ describe('runApiClientGenerator', () => {
       }),
     );
 
-    expect(devkit.addDependenciesToPackageJson).toHaveBeenCalledWith(tree, deps, {});
-    expect(devkit.addDependenciesToPackageJson).toHaveBeenCalledWith(tree, deps, {}, `apps/${appName}/package.json`);
+    expect(addDependenciesMock).toHaveBeenCalledWith(tree, deps, {});
+    expect(addDependenciesMock).toHaveBeenCalledWith(tree, deps, {}, `apps/${appName}/package.json`);
 
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+    expect(formatFilesMock).toHaveBeenCalledWith(tree);
 
     assertFirstLine(path.join(__dirname, 'lib-files'), appLibs, tree, {
       placeholders: {
@@ -95,11 +77,11 @@ describe('runApiClientGenerator', () => {
   });
 
   it('should not add app package.json dependencies if package.json does not exist', async () => {
-    (fs.existsSync as jest.Mock).mockReturnValue(false);
+    existsSyncMock.mockReturnValue(false);
 
     await runApiClientGenerator(tree, { name: 'test', directory: appName });
 
-    expect(devkit.addDependenciesToPackageJson).toHaveBeenCalledWith(tree, deps, {});
-    expect(devkit.addDependenciesToPackageJson).not.toHaveBeenCalledWith(tree, deps, {}, expect.any(String));
+    expect(addDependenciesMock).toHaveBeenCalledWith(tree, deps, {});
+    expect(addDependenciesMock).not.toHaveBeenCalledWith(tree, deps, {}, expect.any(String));
   });
 });

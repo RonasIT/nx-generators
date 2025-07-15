@@ -1,26 +1,8 @@
 /// <reference types="jest" />
 import * as path from 'path';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { assertFirstLine, mockGenerateFiles } from '../../shared/utils';
+import { assertFirstLine } from '../../shared/utils';
 import { reactComponentGenerator } from './generator';
-
-jest.mock('enquirer', () => ({
-  AutoComplete: jest.fn().mockImplementation(() => ({
-    run: jest.fn().mockResolvedValue('libs/shared/ui'),
-  })),
-}));
-
-jest.mock('@nx/devkit', () => {
-  const actual = jest.requireActual('@nx/devkit');
-
-  return {
-    ...actual,
-    generateFiles: jest.fn((tree, src, dest, vars) => {
-      mockGenerateFiles(tree, src, dest, vars);
-    }),
-    formatFiles: jest.fn(),
-  };
-});
 
 describe('reactComponentGenerator', () => {
   let tree: ReturnType<typeof createTreeWithEmptyWorkspace>;

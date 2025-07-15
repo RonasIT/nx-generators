@@ -1,27 +1,9 @@
 /// <reference types="jest" />
-import * as child_process from 'child_process';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { assertFirstLine, mockGenerateFiles } from '../../utils';
+import { assertFirstLine, execSyncMock, formatFilesMock, generateFilesMock, readJsonMock } from '../../utils';
 import { runStorageGenerator } from './generator';
-
-jest.mock('child_process', () => ({
-  execSync: jest.fn(),
-}));
-
-jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn((tree, src, dest, vars) => {
-    mockGenerateFiles(tree, src, dest, vars);
-  }),
-  formatFiles: jest.fn(),
-  readJson: jest.fn(),
-}));
-
-const execSyncMock = child_process.execSync as jest.Mock;
-const generateFilesMock = devkit.generateFiles as jest.Mock;
-const formatFilesMock = devkit.formatFiles as jest.Mock;
-const readJsonMock = devkit.readJson as jest.Mock;
 
 describe('runStorageGenerator', () => {
   let tree: devkit.Tree;

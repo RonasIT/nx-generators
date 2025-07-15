@@ -1,21 +1,15 @@
 /// <reference types="jest" />
-import * as childProcess from 'child_process';
 import { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import * as utils from '../../shared/utils';
 import { libMoveGenerator } from './generator';
 
-jest.mock('child_process');
-jest.mock('../../shared/utils', () => {
-  const actual = jest.requireActual('../../shared/utils');
-
-  return {
-    ...actual,
-    getLibraryDetailsByName: jest.fn(),
-    selectProject: jest.fn(),
-    askQuestion: jest.fn(),
-  };
-});
+jest.mock('../../shared/utils', () => ({
+  ...jest.requireActual('../../shared/utils'),
+  getLibraryDetailsByName: jest.fn(),
+  selectProject: jest.fn(),
+  askQuestion: jest.fn(),
+}));
 
 describe('libMoveGenerator', () => {
   let tree: Tree;
@@ -36,13 +30,13 @@ describe('libMoveGenerator', () => {
     (utils.selectProject as jest.Mock).mockResolvedValue(selectedProject);
     (utils.askQuestion as jest.Mock).mockResolvedValue(answer);
 
-    execSyncMock = childProcess.execSync as jest.Mock;
+    execSyncMock = require('child_process').execSync as jest.Mock;
   });
 
   const runGenerator = async (): Promise<() => void> =>
     libMoveGenerator(tree, { srcLibName: libraryDetails.name, type: 'ui' });
 
-  it('calls nx mv with correct args', async () => {
+  it('should call nx mv with correct args', async () => {
     await runGenerator();
 
     expect(execSyncMock).toHaveBeenCalledWith(
@@ -59,7 +53,7 @@ describe('libMoveGenerator', () => {
     );
   });
 
-  it('runs lib-tags after move', async () => {
+  it('should run lib-tags after move', async () => {
     const postMoveCallback = await runGenerator();
 
     postMoveCallback();

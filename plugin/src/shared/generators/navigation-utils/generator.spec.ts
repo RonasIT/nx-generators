@@ -1,30 +1,17 @@
 /// <reference types="jest" />
-import * as child_process from 'child_process';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { BaseGeneratorType } from '../../enums';
 import * as utils from '../../utils';
-import { assertFirstLine, mockGenerateFiles } from '../../utils';
+import { assertFirstLine, execSyncMock, generateFilesMock } from '../../utils';
 import { runNavigationUtilsGenerator } from './generator';
-
-jest.mock('child_process', () => ({
-  execSync: jest.fn(),
-}));
-
-jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn((tree, src, dest, vars) => {
-    mockGenerateFiles(tree, src, dest, vars);
-  }),
-}));
 
 jest.mock('../../utils', () => ({
   ...jest.requireActual('../../utils'),
   appendFileContent: jest.fn(),
 }));
 
-const execSyncMock = child_process.execSync as jest.Mock;
-const generateFilesMock = devkit.generateFiles as jest.Mock;
 const appendFileContentMock = utils.appendFileContent as jest.Mock;
 
 describe('runNavigationUtilsGenerator', () => {

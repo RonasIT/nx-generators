@@ -1,33 +1,53 @@
 /// <reference types="jest" />
-import * as childProcess from 'child_process';
-import { execSync } from 'child_process';
 import { Tree } from '@nx/devkit';
-import { askQuestion, selectProject } from '../../shared/utils';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { askQuestion, execSyncMock, selectProject } from '../../shared/utils';
 import { libRemoveGenerator } from './generator';
 
-jest.mock('child_process', () => ({
-  execSync: jest.fn(),
-}));
+jest.mock('../../shared/utils', () => {
+  const actual = jest.requireActual('../../shared/utils');
 
-jest.mock('../../shared/utils', () => ({
-  askQuestion: jest.fn(),
-  selectProject: jest.fn(),
-}));
+  return {
+    ...actual,
+    askQuestion: jest.fn(),
+    selectProject: jest.fn(),
+  };
+});
 
 const asMock = <T extends (...args: Array<any>) => any>(fn: T): jest.MockedFunction<T> => fn as jest.MockedFunction<T>;
+
 const libName = 'my-lib';
+const libPath = `libs/${libName}`;
 
 describe('libRemoveGenerator', () => {
   let tree: Tree;
-  let execSyncMock: jest.MockedFunction<typeof execSync>;
 
   beforeEach(() => {
-    tree = {} as Tree;
-    execSyncMock = asMock(childProcess.execSync);
     jest.clearAllMocks();
+    tree = createTreeWithEmptyWorkspace();
+
+    // Add a dummy library project to the workspace
+    tree.write(
+      'workspace.json',
+      JSON.stringify(
+        {
+          version: 2,
+          projects: {
+            [libName]: {
+              root: `libs/${libName}`,
+              sourceRoot: `libs/${libName}/src`,
+              projectType: 'library',
+              targets: {},
+            },
+          },
+        },
+        null,
+        2,
+      ),
+    );
   });
 
-  it('removes a provided library name if user confirms', async () => {
+  it('should remove a provided library name if user confirms', async () => {
     asMock(askQuestion).mockResolvedValue('y');
 
     await libRemoveGenerator(tree, { libName });
@@ -36,8 +56,8 @@ describe('libRemoveGenerator', () => {
     expect(execSyncMock).toHaveBeenCalledWith(`npx nx g rm --project=${libName}`, { stdio: 'inherit' });
   });
 
-  it('prompts for library name if not provided and removes after confirmation', async () => {
-    asMock(selectProject as jest.Mock).mockResolvedValue({ name: libName });
+  it('should prompt for library name if not provided and removes after confirmation', async () => {
+    asMock(selectProject).mockResolvedValue({ name: libName, path: libPath });
     asMock(askQuestion).mockResolvedValue('yes');
 
     await libRemoveGenerator(tree, {});
@@ -46,8 +66,8 @@ describe('libRemoveGenerator', () => {
     expect(execSyncMock).toHaveBeenCalledWith(`npx nx g rm --project=${libName}`, { stdio: 'inherit' });
   });
 
-  it('does not remove library if user declines', async () => {
-    asMock(selectProject as jest.Mock).mockResolvedValue({ name: libName });
+  it('should not remove library if user declines', async () => {
+    asMock(selectProject).mockResolvedValue({ name: libName, path: libPath });
     asMock(askQuestion).mockResolvedValue('n');
 
     await libRemoveGenerator(tree, {});
@@ -55,8 +75,8 @@ describe('libRemoveGenerator', () => {
     expect(execSyncMock).not.toHaveBeenCalled();
   });
 
-  it('throws an error if no library is selected or provided', async () => {
-    asMock(selectProject as jest.Mock).mockResolvedValue({ name: '' });
+  it('should throw an error if no library is selected or provided', async () => {
+    asMock(selectProject).mockResolvedValue({ name: '', path: libPath });
 
     await expect(libRemoveGenerator(tree, {})).rejects.toThrow('No library found!');
   });

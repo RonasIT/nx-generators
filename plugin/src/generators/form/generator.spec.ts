@@ -1,27 +1,16 @@
 /// <reference types="jest" />
 import * as path from 'path';
-import * as devkit from '@nx/devkit';
+import { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { assertFirstLine, mockGenerateFiles } from '../../shared/utils';
+import {
+  writeJsonMock,
+  generateFilesMock,
+  formatFilesMock,
+  installPackagesTaskMock,
+  assertFirstLine,
+} from '../../shared/utils';
 import formGenerator from './generator';
 import * as formUtils from './utils';
-
-jest.mock('enquirer', () => ({
-  AutoComplete: jest.fn(),
-}));
-
-jest.mock('@nx/devkit', () => ({
-  generateFiles: jest.fn((tree, src, dest, vars) => {
-    mockGenerateFiles(tree, src, dest, vars);
-  }),
-  getProjects: jest.fn(),
-  formatFiles: jest.fn(),
-  addDependenciesToPackageJson: jest.fn(),
-  installPackagesTask: jest.fn(),
-  writeJson: jest.fn(),
-}));
-
-const utilsLibFormsRoot = 'libs/shared/form-utils';
 
 jest.mock('./utils', () => {
   const original = jest.requireActual('./utils');
@@ -29,42 +18,55 @@ jest.mock('./utils', () => {
   return {
     ...original,
     addFormUsage: jest.fn(),
-    // mock getFormUtilsDirectory partially to avoid prompts:
-    getFormUtilsDirectory: jest.fn(async () => utilsLibFormsRoot),
+    getFormUtilsDirectory: jest.fn(),
   };
 });
 
+const utilsLibFormsRoot = 'libs/shared/form-utils';
+const targetPath = `${utilsLibFormsRoot}/lib/forms`;
+
 describe('formGenerator', () => {
-  let tree: devkit.Tree;
+  let tree: Tree;
   let autoCompleteRunMock: jest.Mock;
-  const { AutoComplete } = require('enquirer');
-  const targetPath = `${utilsLibFormsRoot}/lib/forms`;
 
   beforeEach(() => {
     jest.clearAllMocks();
-
     tree = createTreeWithEmptyWorkspace();
+    const { AutoComplete } = require('enquirer');
 
     // Add dummy library project to the tree
-    devkit.writeJson(tree, 'workspace.json', {
-      version: 2,
-      projects: {
-        'shared-form-utils': {
-          root: utilsLibFormsRoot,
-          projectType: 'library',
-          targets: {},
-        },
-      },
+    writeJsonMock.mockClear();
+    writeJsonMock.mockImplementation((tree, path, json) => {
+      tree.write(path, JSON.stringify(json, null, 2));
     });
+    tree.write(
+      'workspace.json',
+      JSON.stringify(
+        {
+          version: 2,
+          projects: {
+            'shared-form-utils': {
+              root: utilsLibFormsRoot,
+              projectType: 'library',
+              targets: {},
+            },
+          },
+        },
+        null,
+        2,
+      ),
+    );
 
     autoCompleteRunMock = jest.fn().mockResolvedValue(utilsLibFormsRoot);
     (AutoComplete as jest.Mock).mockImplementation(() => ({ run: autoCompleteRunMock }));
+
     (formUtils.addFormUsage as jest.Mock).mockResolvedValue(undefined);
+    (formUtils.getFormUtilsDirectory as jest.Mock).mockResolvedValue(utilsLibFormsRoot);
   });
 
   it('should generate files with matching first lines', async () => {
     const options = { name: 'user', placeOfUse: 'MyComponent' };
-    await formGenerator(tree, options);
+    const callback = await formGenerator(tree, options);
 
     const templatesPath = path.join(__dirname, 'files');
 
@@ -74,6 +76,11 @@ describe('formGenerator', () => {
         placeOfUse: 'MyComponent',
       },
     });
+
+    expect(generateFilesMock).toHaveBeenCalled();
+    expect(formatFilesMock).toHaveBeenCalled();
+    callback();
+    expect(installPackagesTaskMock).toHaveBeenCalled();
   });
 
   it('should throw if form name is missing', async () => {

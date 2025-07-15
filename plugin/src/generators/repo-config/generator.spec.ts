@@ -3,24 +3,16 @@ import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { devDependencies } from '../../shared/dependencies';
-import { assertFirstLine, mockGenerateFiles } from '../../shared/utils';
+import {
+  addDependenciesMock,
+  assertFirstLine,
+  formatFilesMock,
+  generateFilesMock,
+  installPackagesTaskMock,
+  readJsonMock,
+  writeJsonMock,
+} from '../../shared/utils';
 import { repoConfigGenerator } from './generator';
-
-jest.mock('@nx/devkit', () => {
-  const actual = jest.requireActual('@nx/devkit');
-
-  return {
-    ...actual,
-    readJson: jest.fn(),
-    writeJson: jest.fn(),
-    generateFiles: jest.fn((tree, src, dest, vars) => {
-      mockGenerateFiles(tree, src, dest, vars);
-    }),
-    addDependenciesToPackageJson: jest.fn(),
-    formatFiles: jest.fn(),
-    installPackagesTask: jest.fn(),
-  };
-});
 
 describe('repoConfigGenerator', () => {
   let tree: devkit.Tree;
@@ -38,13 +30,13 @@ describe('repoConfigGenerator', () => {
         oldScript: oldScript,
       },
     };
-    (devkit.readJson as jest.Mock).mockReturnValue(mockPackageJson);
+    readJsonMock.mockReturnValue(mockPackageJson);
 
     const callback = await repoConfigGenerator(tree);
 
-    expect(devkit.readJson).toHaveBeenCalledWith(tree, 'package.json');
+    expect(readJsonMock).toHaveBeenCalledWith(tree, 'package.json');
 
-    expect(devkit.writeJson).toHaveBeenCalledWith(
+    expect(writeJsonMock).toHaveBeenCalledWith(
       tree,
       'package.json',
       expect.objectContaining({
@@ -55,7 +47,7 @@ describe('repoConfigGenerator', () => {
       }),
     );
 
-    expect(devkit.generateFiles).toHaveBeenCalledWith(
+    expect(generateFilesMock).toHaveBeenCalledWith(
       tree,
       expect.stringContaining('files'),
       '.',
@@ -70,10 +62,10 @@ describe('repoConfigGenerator', () => {
       placeholders: { name: 'myorg' },
     });
 
-    expect(devkit.addDependenciesToPackageJson).toHaveBeenCalledWith(tree, {}, devDependencies['repo-config']);
-    expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
+    expect(addDependenciesMock).toHaveBeenCalledWith(tree, {}, devDependencies['repo-config']);
+    expect(formatFilesMock).toHaveBeenCalledWith(tree);
 
     callback();
-    expect(devkit.installPackagesTask).toHaveBeenCalledWith(tree);
+    expect(installPackagesTaskMock).toHaveBeenCalledWith(tree);
   });
 });

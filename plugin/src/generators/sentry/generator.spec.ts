@@ -1,17 +1,11 @@
 /// <reference types="jest" />
 import * as fs from 'fs';
 import * as path from 'path';
-import { formatFiles, installPackagesTask } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import * as utils from '../../shared/utils';
-import { assertFirstLine } from '../../shared/utils';
+import { assertFirstLine, formatFilesMock, installPackagesTaskMock } from '../../shared/utils';
 import { sentryGenerator } from './generator';
 import * as sentryUtils from './utils';
-
-jest.mock('@nx/devkit', () => ({
-  formatFiles: jest.fn(),
-  installPackagesTask: jest.fn(),
-}));
 
 jest.mock('../../shared/utils', () => {
   const actual = jest.requireActual('../../shared/utils');
@@ -72,12 +66,12 @@ describe('sentryGenerator', () => {
     expect(utils.getAppFrameworkName).toHaveBeenCalledWith(tree, directory);
     expect(sentryUtils.generateSentryNext).toHaveBeenCalledWith(tree, { directory }, directory);
     expect(sentryUtils.generateSentryExpo).not.toHaveBeenCalled();
-    expect(formatFiles).toHaveBeenCalledWith(tree);
+    expect(formatFilesMock).toHaveBeenCalledWith(tree);
 
     assertFirstLine(templatesDir, directory, tree);
 
     callback();
-    expect(installPackagesTask).toHaveBeenCalledWith(tree);
+    expect(installPackagesTaskMock).toHaveBeenCalledWith(tree);
   });
 
   it('should call generateSentryNext when framework is next', async () => {
@@ -118,6 +112,6 @@ describe('sentryGenerator', () => {
 
     expect(sentryUtils.generateSentryNext).not.toHaveBeenCalled();
     expect(sentryUtils.generateSentryExpo).not.toHaveBeenCalled();
-    expect(formatFiles).toHaveBeenCalledWith(tree);
+    expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 });

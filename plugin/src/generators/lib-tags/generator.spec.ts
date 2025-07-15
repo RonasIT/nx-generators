@@ -51,7 +51,7 @@ describe('libTagsGenerator', () => {
     expect(verifyESLintConstraintsConfig).not.toHaveBeenCalled();
   });
 
-  it('should proceed if no unstaged changes', async () => {
+  it('should proceed if there are no unstaged changes', async () => {
     execSyncMock.mockReturnValue('');
     asMock(getProjectsMock).mockReturnValue(
       new Map([

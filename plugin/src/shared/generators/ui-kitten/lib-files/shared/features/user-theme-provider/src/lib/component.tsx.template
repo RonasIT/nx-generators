@@ -30,7 +30,6 @@ export function UserThemeProvider({ children }: UserThemeProviderProps): ReactEl
   return (
     <ApplicationProvider {...eva} theme={theme['dark']} customMapping={mapping as CustomSchemaType}>
       <ThemeProvider value={DarkTheme}>
-        {/* eslint-disable-next-line react/style-prop-object */}
         <StatusBar style={'light'} />
         {children}
       </ThemeProvider>

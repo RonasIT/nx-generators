@@ -20,4 +20,5 @@ export default {
     strictNullChecks: true,
   },
   tsConfigExclude: ['**/*.cjs', '**/*.mjs', 'node_modules', 'dist'],
+  gitIgnore: ['.eslintcache', '*.tsbuildinfo'],
 };

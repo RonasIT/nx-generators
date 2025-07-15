@@ -38,7 +38,7 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   writeJson(tree, 'tsconfig.base.json', tsconfigJson);
 
   // Update .gitignore
-  const gitignoreContent = tree.read('.gitignore')?.toString() + '\n.eslintcache\n';
+  const gitignoreContent = tree.read('.gitignore')?.toString() + '\n' + config.gitIgnore.join('\n');
   tree.write('.gitignore', gitignoreContent);
 
   // Update .prettierignore

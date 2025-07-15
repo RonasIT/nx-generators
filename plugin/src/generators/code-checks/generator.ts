@@ -33,7 +33,7 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
 
   // Update tsconfig.base.json
   const tsconfigJson = readJson(tree, 'tsconfig.base.json');
-  tsconfigJson.compilerOptions = { ...config.tsconfig, ...tsconfigJson.compilerOptions };
+  tsconfigJson.compilerOptions = { ...tsconfigJson.compilerOptions, ...config.tsconfig };
   tsconfigJson.exclude = [...config.tsConfigExclude];
   writeJson(tree, 'tsconfig.base.json', tsconfigJson);
 

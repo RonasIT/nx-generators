@@ -81,6 +81,8 @@ export const devDependencies = {
     '@expo/cli': '~0.24.16',
     'reactotron-react-native': '~5.1.14',
     'reactotron-redux': '~3.2.0',
+    metro: '^0.82.0',
+    'metro-config': '^0.82.0',
   },
   'next-app': {
     // nx/next 20 adds package that doesn't support eslint 9

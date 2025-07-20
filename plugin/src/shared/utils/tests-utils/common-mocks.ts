@@ -44,6 +44,9 @@ jest.mock('@nx/devkit', () => ({
 
 // Mock enquirer AutoComplete used in some generators
 jest.mock('enquirer', () => ({
+  Confirm: jest.fn().mockImplementation(() => ({
+    run: jest.fn().mockResolvedValue(true), // simulate user confirmed "yes"
+  })),
   AutoComplete: jest.fn().mockImplementation(() => ({
     run: jest.fn().mockResolvedValue('libs/shared/ui'),
   })),

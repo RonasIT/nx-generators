@@ -1,6 +1,7 @@
 /// <reference types="jest" />
 import * as path from 'path';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { BaseGeneratorType } from '../../shared/enums';
 import * as sharedGenerators from '../../shared/generators';
 import {
   addDependenciesMock,
@@ -25,6 +26,8 @@ jest.mock('../../shared/generators', () => {
     runApiClientGenerator: jest.fn(),
     runI18nNextGenerator: jest.fn(),
     runNavigationUtilsGenerator: jest.fn(),
+    runStoreGenerator: jest.fn(),
+    runFormUtilsGenerator: jest.fn(),
   };
 });
 
@@ -169,5 +172,54 @@ describe('nextAppGenerator with file content checks', () => {
         libPath: `@proj/${optionsBase.directory}`,
       },
     });
+  });
+
+  it('should call all shared generators with correct arguments when all features enabled', async () => {
+    existsSyncMock.mockReturnValue(false);
+    confirmMock.mockResolvedValue(true); // for api client prompt
+
+    const options = {
+      name: 'testapp',
+      directory: 'web',
+      withStore: true,
+      withApiClient: undefined, // triggers prompt
+      withFormUtils: true,
+      withSentry: true,
+    };
+
+    await nextAppGenerator(tree, options);
+
+    // Check that runAppEnvGenerator is called with tree + extended options
+    expect(sharedGenerators.runAppEnvGenerator).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        ...options,
+        baseGeneratorType: BaseGeneratorType.NEXT_APP,
+      }),
+    );
+
+    // Check that runI18nNextGenerator is called with tree + options
+    expect(sharedGenerators.runI18nNextGenerator).toHaveBeenCalledWith(expect.anything(), options);
+
+    // Check that runNavigationUtilsGenerator is called with correct appDirectory and baseGeneratorType
+    expect(sharedGenerators.runNavigationUtilsGenerator).toHaveBeenCalledWith(expect.anything(), {
+      appDirectory: options.directory,
+      baseGeneratorType: BaseGeneratorType.NEXT_APP,
+    });
+
+    // Check runStoreGenerator called with extended options (only if withStore)
+    expect(sharedGenerators.runStoreGenerator).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        ...options,
+        baseGeneratorType: BaseGeneratorType.NEXT_APP,
+      }),
+    );
+
+    // Confirm runApiClientGenerator called (prompt triggered)
+    expect(sharedGenerators.runApiClientGenerator).toHaveBeenCalledWith(expect.anything(), options);
+
+    // Confirm runFormUtilsGenerator called (because withFormUtils: true)
+    expect(sharedGenerators.runFormUtilsGenerator).toHaveBeenCalledWith(expect.anything(), options);
   });
 });

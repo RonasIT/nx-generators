@@ -110,4 +110,84 @@ describe('expoAppGenerator integration with file content checks', () => {
 
     expect(callback).toBeInstanceOf(Function);
   });
+
+  it('should call expected sub-generators and CLI commands when all options are true', async () => {
+    existsSyncMock.mockReturnValue(false);
+
+    const callback = await expoAppGenerator(tree, {
+      name: appName,
+      directory: directory,
+      withStore: true,
+      withFormUtils: true,
+      withUIKitten: true,
+      withSentry: true,
+    });
+
+    // Verify nx expo app generator was called
+    expect(execSyncMock).toHaveBeenCalledWith(
+      expect.stringContaining(
+        `npx nx g @nx/expo:app ${appName} --directory=apps/${directory} --tags="app:${directory}, type:app"`,
+      ),
+      { stdio: 'inherit' },
+    );
+
+    // Verify all shared generators CLI commands were called
+    expect(execSyncMock).toHaveBeenCalledWith(
+      expect.stringContaining(`npx nx g react-lib --app=${directory} --scope=shared --type=utils --name=app-env`),
+      { stdio: 'inherit' },
+    );
+
+    expect(execSyncMock).toHaveBeenCalledWith(
+      expect.stringContaining(`npx nx g react-lib --app=${directory} --scope=shared --type=data-access --name=store`),
+      { stdio: 'inherit' },
+    );
+
+    expect(execSyncMock).toHaveBeenCalledWith(
+      expect.stringContaining(
+        `npx nx g react-lib --app=${directory} --scope=shared --type=data-access --name=api-client`,
+      ),
+      { stdio: 'inherit' },
+    );
+
+    expect(execSyncMock).toHaveBeenCalledWith(
+      expect.stringContaining(`npx nx g react-lib --app=${directory} --scope=shared --type=utils --name=form`),
+      { stdio: 'inherit' },
+    );
+
+    expect(execSyncMock).toHaveBeenCalledWith(
+      expect.stringContaining(
+        `npx nx g react-lib --app=${directory} --scope=shared --type=features --name=user-theme-provider --withComponent=false`,
+      ),
+      { stdio: 'inherit' },
+    );
+
+    expect(execSyncMock).toHaveBeenCalledWith(
+      expect.stringContaining(`npx nx g react-lib --app=${directory} --scope=shared --type=utils --name=navigation`),
+      { stdio: 'inherit' },
+    );
+
+    expect(execSyncMock).toHaveBeenCalledWith(
+      expect.stringContaining(
+        `npx nx g react-lib --app=${directory} --scope=shared --type=ui --name=styles --withComponent=false`,
+      ),
+      { stdio: 'inherit' },
+    );
+
+    expect(execSyncMock).toHaveBeenCalledWith(
+      expect.stringContaining(`npx nx g react-lib --app=${directory} --scope=shared --type=data-access --name=storage`),
+      { stdio: 'inherit' },
+    );
+
+    // Callback returned should be a function
+    expect(callback).toEqual(expect.any(Function));
+
+    // Run the returned callback to trigger final commands
+    callback();
+
+    // Check Sentry CLI generation command was called on callback
+    expect(execSyncMock).toHaveBeenCalledWith(
+      expect.stringContaining(`npx nx g sentry --directory=apps/${directory}`),
+      { stdio: 'inherit' },
+    );
+  });
 });

@@ -3,7 +3,7 @@ import { store } from '@ronas-it/mobile/shared/data-access/store';
 import { UserThemeProvider } from '@ronas-it/mobile/shared/features/user-theme-provider';
 import { fonts } from '@ronas-it/mobile/shared/ui/styles';
 import { navigationConfig } from '@ronas-it/mobile/shared/utils/navigation';
-import { setLanguage } from '@ronas-it/react-native-common-modules';
+import { setLanguage } from '@ronas-it/react-native-common-modules/i18n';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter } from 'expo-router';

@@ -11,5 +11,7 @@ export interface IconProps extends SvgProps {
 const defaultColor = colors.textPrimary;
 
 export function Icon({ name, color = defaultColor, style, ...restProps }: IconProps): ReactNode {
-  return name in Icons ? Icons[name]({ color, style, ...restProps }) : null;
+  const IconComponent = Icons[name];
+
+  return IconComponent ? <IconComponent color={color} style={style} {...restProps} /> : null;
 }

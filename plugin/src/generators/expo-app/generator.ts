@@ -100,7 +100,6 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   tree.delete(`${appRoot}/eas.json`);
   tree.delete(`${appRoot}/metro.config.js`);
   tree.delete(`${appRoot}/jest.config.ts`);
-  tree.delete(`${appRoot}/tsconfig.app.json`);
 
   // Update app package.json
   const appPackageJson = readJson(tree, appPackagePath);
@@ -122,21 +121,13 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     appDirectory: options.directory,
   });
 
+  tree.delete(`${appRoot}/tsconfig.app.json`);
+
   addNxAppTag(tree, options.directory);
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {});
 
   // Add dependencies
-  addDependenciesToPackageJson(
-    tree,
-    {
-      ...dependencies['expo-app'],
-      ...dependencies['expo-app-root'],
-    },
-    {
-      ...devDependencies['expo-app'],
-      ...devDependencies['expo-app-root'],
-    },
-  );
+  addDependenciesToPackageJson(tree, dependencies['expo-app'], devDependencies['expo-app']);
 
   addDependenciesToPackageJson(tree, dependencies['expo-app'], devDependencies['expo-app'], appPackagePath);
 

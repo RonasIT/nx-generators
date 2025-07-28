@@ -23,7 +23,7 @@ export const authApi = createAppApi({
           data: request,
         };
       },
-      transformResponse: (response) => plainToInstance(LogInResponse, response),
+      transformResponse: (response: object) => plainToInstance(LogInResponse, response),
       transformErrorResponse: (response) => ({ ...response, skipToast: true }),
     }),
     register: builder.mutation<LogInResponse, RegisterRequest>({
@@ -36,7 +36,7 @@ export const authApi = createAppApi({
           data: request,
         };
       },
-      transformResponse: (response) => plainToInstance(LogInResponse, response),
+      transformResponse: (response: object) => plainToInstance(LogInResponse, response),
       transformErrorResponse: (response) => ({ ...response, skipToast: true }),
     }),
     refreshToken: builder.mutation<RefreshTokenResponse, void>({

@@ -1,5 +1,5 @@
 <% if(isStoreEnabled) { %> import { store } from '<%= libPath %>/shared/data-access/store';<% } %>
-import { setLanguage } from '@ronas-it/react-native-common-modules';
+import { setLanguage } from '@ronas-it/react-native-common-modules/i18n';
 <% if(isUIKittenEnabled) { %>
 import { UserThemeProvider } from '<%= libPath %>/shared/features/user-theme-provider';
 <% } %>

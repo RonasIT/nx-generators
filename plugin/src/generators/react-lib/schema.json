@@ -29,10 +29,6 @@
       "type": "boolean",
       "description": "Generate the library with 'lib/component.tsx' file"
     },
-    "withComponentForwardRef": {
-      "type": "boolean",
-      "description": "Generate a component with forwardRef in 'lib/component.tsx' file"
-    },
     "dryRun": {
       "type": "boolean",
       "description": "Generate the library without creating files",

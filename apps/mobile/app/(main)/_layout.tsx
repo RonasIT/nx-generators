@@ -1,4 +1,4 @@
-import { useTranslation } from '@ronas-it/react-native-common-modules';
+import { useTranslation } from '@ronas-it/react-native-common-modules/i18n';
 import { Stack } from 'expo-router';
 import { ReactElement } from 'react';
 

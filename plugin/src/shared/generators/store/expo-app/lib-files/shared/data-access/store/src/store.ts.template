@@ -1,5 +1,5 @@
 import { Middleware, Reducer } from '@reduxjs/toolkit';
-import { setupReactotron } from '@ronas-it/react-native-common-modules';
+import { setupReactotron } from '@ronas-it/react-native-common-modules/reactotron';
 import {
   AppStateFromRootReducer,
   createStoreInitializer,

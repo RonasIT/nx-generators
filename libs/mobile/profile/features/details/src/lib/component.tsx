@@ -1,4 +1,4 @@
-import { useTranslation } from '@ronas-it/react-native-common-modules';
+import { useTranslation } from '@ronas-it/react-native-common-modules/i18n';
 import { Image } from 'expo-image';
 import { Fragment, ReactElement } from 'react';
 import { View } from 'react-native';

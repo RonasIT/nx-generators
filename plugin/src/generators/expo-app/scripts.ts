@@ -9,4 +9,6 @@ export default {
   'update:prod': 'cross-env EXPO_PUBLIC_APP_ENV=production eas update --branch production',
   'submit:dev': 'cross-env EXPO_PUBLIC_APP_ENV=development eas submit --no-wait --profile=development',
   'submit:prod': 'cross-env EXPO_PUBLIC_APP_ENV=production eas submit --no-wait --profile=production',
+  android: 'npx expo run:android',
+  ios: 'npx expo run:ios',
 };

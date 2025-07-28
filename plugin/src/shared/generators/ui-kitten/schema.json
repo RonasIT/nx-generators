@@ -14,5 +14,5 @@
       "x-prompt": "Enter the name of the directory in the 'apps/' folder"
     }
   },
-  "required": ["name", "directory"]
+  "required": ["directory"]
 }

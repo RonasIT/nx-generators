@@ -78,6 +78,8 @@ describe('expoAppGenerator integration with file content checks', () => {
       placeholders: {
         libPath: `@proj/${directory}`,
       },
+      //generator deletes tsconfig.app
+      ignoreFiles: ['tsconfig.app.json.template'],
     });
     assertFirstLine(path.join(i18nDir, 'app'), `i18n/${directory}/app`, tree);
     assertFirstLine(path.join(i18nDir, 'shared'), `i18n/${directory}/shared`, tree);

@@ -17,8 +17,8 @@ const appendFileContentMock = utils.appendFileContent as jest.Mock;
 describe('runNavigationUtilsGenerator', () => {
   let tree: devkit.Tree;
   const libsPath = 'libs/myapp';
-  const commonLibFiles = 'common-lib-files';
-  const nextAppLibFiles = 'next-app-lib-files';
+  const navigationLibFiles = 'navigation-lib-files';
+  const filteringSearchParamsLibFiles = 'filtering-search-params-lib-files';
   const indexFilePath = 'libs/myapp/shared/utils/navigation/src/index.ts';
   const appDirectory = 'myapp';
   const createOptions = (type: BaseGeneratorType): { appDirectory: string; baseGeneratorType: BaseGeneratorType } => ({
@@ -43,29 +43,26 @@ describe('runNavigationUtilsGenerator', () => {
       { stdio: 'inherit' },
     );
 
-    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, `/${commonLibFiles}`), libsPath, {});
-
+    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, `/${navigationLibFiles}`), libsPath, {});
     expect(appendFileContentMock).not.toHaveBeenCalled();
   });
 
   it('should generate additional next-app files and append content for NEXT_APP type', async () => {
     await runNavigationUtilsGenerator(tree, createOptions(BaseGeneratorType.NEXT_APP));
 
-    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, `/${commonLibFiles}`), libsPath, {});
-
-    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, `/${nextAppLibFiles}`), libsPath, {});
-
-    expect(appendFileContentMock).toHaveBeenCalledWith(
-      'libs/myapp/shared/utils/navigation/src/lib/index.ts',
-      `export * from './hooks';\nexport * from './types';`,
+    expect(generateFilesMock).toHaveBeenCalledWith(tree, path.join(__dirname, `/${navigationLibFiles}`), libsPath, {});
+    expect(generateFilesMock).toHaveBeenCalledWith(
       tree,
+      path.join(__dirname, `/${filteringSearchParamsLibFiles}`),
+      libsPath,
+      {},
     );
   });
 
   it('should validate first lines of generated files against templates', async () => {
     await runNavigationUtilsGenerator(tree, createOptions(BaseGeneratorType.NEXT_APP));
 
-    assertFirstLine(path.join(__dirname, commonLibFiles), libsPath, tree);
-    assertFirstLine(path.join(__dirname, nextAppLibFiles), libsPath, tree);
+    assertFirstLine(path.join(__dirname, navigationLibFiles), libsPath, tree);
+    assertFirstLine(path.join(__dirname, filteringSearchParamsLibFiles), libsPath, tree);
   });
 });

@@ -102,7 +102,6 @@ describe('reactLibGenerator', () => {
       dryRun: false,
       name: 'mylib',
       withComponent: false,
-      withComponentForwardRef: false,
       app: undefined,
       scope: undefined,
       type: undefined,
@@ -132,7 +131,6 @@ describe('reactLibGenerator', () => {
       dryRun: false,
       name: 'scope-mylib',
       withComponent: false,
-      withComponentForwardRef: false,
       app: undefined,
       scope: 'scope',
       type: 'ui',
@@ -166,7 +164,6 @@ describe('reactLibGenerator', () => {
     await reactLibGenerator(tree, {
       name: 'mylib',
       withComponent: true,
-      withComponentForwardRef: false,
       app: 'myapp',
       scope: 'shared',
     });

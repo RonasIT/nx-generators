@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useTranslation } from '@ronas-it/react-native-common-modules';
+import { useTranslation } from '@ronas-it/react-native-common-modules/i18n';
 import Constants from 'expo-constants';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
@@ -26,11 +26,10 @@ export function LoginForm(): ReactElement {
     login(form);
   };
 
-  const form = useForm<LoginFormSchema>({
+  const { control, handleSubmit, formState } = useForm({
     defaultValues: formSchema.formValues,
-    resolver: yupResolver<any>(LoginFormSchema.validationSchema),
+    resolver: yupResolver(LoginFormSchema.validationSchema),
   });
-  const { handleSubmit, formState, control } = form;
 
   useEffect(() => {
     if (isSuccess) {
@@ -45,7 +44,7 @@ export function LoginForm(): ReactElement {
         {translate('TEXT_TITLE', { value: appName })}
       </AppText>
       <View style={style.form}>
-        <FormTextInput<LoginFormSchema>
+        <FormTextInput
           label={translate('TEXT_LOGIN')}
           name='email'
           testID='email-input'
@@ -56,7 +55,7 @@ export function LoginForm(): ReactElement {
           control={control}
           returnKeyType='next'
         />
-        <FormTextInput<LoginFormSchema>
+        <FormTextInput
           isPassword={true}
           testID='password-input'
           label={translate('TEXT_PASSWORD')}

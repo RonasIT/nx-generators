@@ -33,15 +33,18 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
 
   // Update tsconfig.base.json
   const tsconfigJson = readJson(tree, 'tsconfig.base.json');
-  tsconfigJson.compilerOptions = { ...config.tsconfig, ...tsconfigJson.compilerOptions };
+  tsconfigJson.compilerOptions = { ...tsconfigJson.compilerOptions, ...config.tsconfig };
+  tsconfigJson.exclude = [...config.tsConfigExclude];
   writeJson(tree, 'tsconfig.base.json', tsconfigJson);
 
   // Update .gitignore
-  const gitignoreContent = tree.read('.gitignore')?.toString() + '\n.eslintcache\n';
+  const gitignoreContent = tree.read('.gitignore')?.toString() + '\n' + config.gitIgnore.join('\n');
   tree.write('.gitignore', gitignoreContent);
 
   // Update .prettierignore
-  const prettierignoreContent = tree.read('.prettierignore')?.toString() + '# Files with custom rules\n**/actions.ts\n**/epics.ts\n**/selectors.ts\n';
+  const prettierignoreContent =
+    tree.read('.prettierignore')?.toString() +
+    '# Files with custom rules\n**/actions.ts\n**/epics.ts\n**/selectors.ts\n';
   tree.write('.prettierignore', prettierignoreContent);
 
   // Add files

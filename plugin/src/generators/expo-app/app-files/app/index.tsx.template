@@ -5,7 +5,7 @@ import { createStyles } from '<%= libPath %>/shared/ui/styles';
 export default function RootScreen(): ReactElement {
   return (
     <View style={styles.container}>
-      <Text>Hello World</Text>
+      <Text style={styles.text}>Hello World</Text>
     </View>
   );
 }
@@ -16,4 +16,7 @@ const styles = createStyles({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  text: {
+    color: 'white'
+  }
 });

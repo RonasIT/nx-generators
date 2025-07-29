@@ -28,12 +28,16 @@ The generators enforce several best practices according to [Nx concepts](https:/
 
 1. Create monorepo with Expo app using [Nx Expo preset](https://nx.dev/nx-api/expo) or with Next.js app using [Nx Next preset](https://nx.dev/nx-api/next):
 
-```sh
-# For Expo app:
-npx create-nx-workspace@latest my-project --preset=expo --appName=my-app --e2eTestRunner=none --ci=skip
+**Expo app:**
 
-# For Next.js app:
-npx create-nx-workspace@latest my-project --preset=next --appName=my-app --nextAppDir=true --nextSrcDir=false --style=scss --e2eTestRunner=none --ci=skip
+```sh
+npx create-nx-workspace@latest my-project --preset=expo --appName=my-app --e2eTestRunner=none --unitTestRunner=none --formatter=prettier --linter=eslint --ci=skip
+```
+
+**Next.js app:**
+
+```sh
+npx create-nx-workspace@latest my-project --preset=next --appName=my-app --nextAppDir=true --unitTestRunner=none --formatter=prettier --linter=eslint --nextSrcDir=false --style=scss --e2eTestRunner=none --ci=skip
 ```
 
 2. Install this package:
@@ -44,25 +48,24 @@ npm i @ronas-it/nx-generators --save-dev
 
 3. Run generators:
 
+Configure workspace:
+
 ```sh
-npx nx g repo-config
-npx nx g code-checks
-
-# For Expo app:
-npx nx g expo-app
-
-# For Next.js app:
-npx nx g next-app
+npx nx g repo-config && npx nx g code-checks
 ```
 
-Or run all generators at once:
+Then run app generators:
+
+**Expo app:**
 
 ```sh
-# For Expo app:
-npx nx g repo-config && npx nx g code-checks && npx nx g expo-app
+npx nx g expo-app
+```
 
-# For Next.js app:
-npx nx g repo-config && npx nx g code-checks && npx nx g next-app
+**Next.js app:**
+
+```sh
+npx nx g next-app
 ```
 
 4. Start the app:
@@ -161,15 +164,12 @@ Generates a library according to [Nx notation](https://nx.dev/concepts/decisions
 1. `withComponent` (optional) - generate the library with `lib/component.tsx` file.
    This option is for `features` or `ui` library.
 
-1. `withComponentForwardRef` (optional) - generate a component with `forwardRef` in `lib/component.tsx` file.
-   This option works if `withComponent` is `true`.
-
 1. `dryRun` (optional) - generate the library without creating files
 
 #### Example
 
 ```sh
-npx nx g react-lib --app=mobile --scope=account --type=features --name=profile-settings --withComponent --withComponentForwardRef --dryRun
+npx nx g react-lib --app=mobile --scope=account --type=features --name=profile-settings --withComponent --dryRun
 ```
 
 or
@@ -260,18 +260,16 @@ Creates a React component in particular library.
 
 2. `subcomponent` (optional) - generate a folder for components
 
-3. `withForwardRef` (optional) - generate a component with forwardRef
-
 #### Example
 
 ```sh
-npx nx g react-component --name=AppButton --subcomponent --withForwardRef
+npx nx g react-component --name=AppButton --subcomponent
 ```
 
 or
 
 ```sh
-npx nx g react-component AppButton --subcomponent --withForwardRef
+npx nx g react-component AppButton --subcomponent
 ```
 
 ### 11. `form`

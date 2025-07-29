@@ -7,7 +7,6 @@ import {
   QuoteKind,
   SourceFile,
   SyntaxKind,
-  VariableDeclaration,
 } from 'ts-morph';
 import { addNamedImport } from '../../../shared/utils';
 
@@ -17,33 +16,6 @@ const form = useForm({
   defaultValues: formSchema.formValues,
   resolver: yupResolver(${formClassName}.validationSchema)
 });\n\n`;
-}
-
-function getForwardRefFunction(variable: VariableDeclaration): FunctionExpression | ArrowFunction {
-  const callExpressionInitializer = variable.getInitializerIfKind(SyntaxKind.CallExpression);
-  const hasForwardRef = callExpressionInitializer?.getExpression().getText() === 'forwardRef';
-
-  if (!hasForwardRef) {
-    throw new Error('Could not find forwardRef');
-  }
-
-  const argument = callExpressionInitializer.getArguments()[0];
-  const hasComponentFunction =
-    argument && [SyntaxKind.FunctionExpression, SyntaxKind.ArrowFunction].includes(argument.getKind());
-
-  if (!hasComponentFunction) {
-    throw new Error('Could not find a component function in forwardRef');
-  }
-
-  const functionExpression = argument.asKind(
-    argument.getKind() === SyntaxKind.FunctionExpression ? SyntaxKind.FunctionExpression : SyntaxKind.ArrowFunction,
-  );
-
-  if (!functionExpression) {
-    throw new Error('Could not get a component function in forwardRef');
-  }
-
-  return functionExpression;
 }
 
 function getPlaceOfUse(
@@ -62,11 +34,15 @@ function getPlaceOfUse(
     throw new Error(`Could not find the place where the form should be used (${placeOfUseName}).`);
   }
 
-  return (
+  const initializer =
     variable.getInitializerIfKind(SyntaxKind.FunctionExpression) ||
-    variable.getInitializerIfKind(SyntaxKind.ArrowFunction) ||
-    getForwardRefFunction(variable)
-  );
+    variable.getInitializerIfKind(SyntaxKind.ArrowFunction);
+
+  if (!initializer) {
+    throw new Error(`The variable "${placeOfUseName}" is not a function.`);
+  }
+
+  return initializer;
 }
 
 export async function addFormUsage(libPath: string, placeOfUseName: string, formClassName: string): Promise<void> {

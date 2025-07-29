@@ -43,7 +43,7 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & {
         backgroundColor: '#FFFFFF',
       },
     },
-    plugins: ['expo-router'],
+    plugins: ['expo-router', 'expo-localization'],
     newArchEnabled: true,
     extra,
   };

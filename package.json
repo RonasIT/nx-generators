@@ -10,7 +10,7 @@
     "prepare": "husky",
     "build": "npx nx run nx-generators:build",
     "release": "npx nx run nx-generators:nx-release-publish",
-    "test": "nx test"
+    "test": "npx nx run nx-generators:test"
   },
   "dependencies": {
     "@eva-design/eva": "^2.2.0",

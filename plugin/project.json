@@ -49,6 +49,13 @@
       "options": {
         "packageRoot": "dist/nx-generators"
       }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "./plugin/jest.config.ts",
+        "passWithNoTests": true
+      }
     }
   }
 }

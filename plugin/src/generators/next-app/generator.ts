@@ -84,8 +84,10 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
 
   if (!appTsconfigJson.include.includes(nextTypesInclude)) {
     appTsconfigJson.include.push(nextTypesInclude);
-    writeJson(tree, appTsconfigPath, appTsconfigJson);
   }
+
+  delete appTsconfigJson.paths;
+  writeJson(tree, appTsconfigPath, appTsconfigJson);
 
   // Add app files
   generateFiles(tree, path.join(__dirname, 'files'), appRoot, {

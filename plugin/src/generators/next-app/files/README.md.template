@@ -7,13 +7,13 @@ This is a web app built with Next.js.
 You can run tasks for this project with:
 
 ```sh
-npx nx <task-name> <%= name %>
+npx nx <task-name> <%= directory %>
 ```
 
 To view the list of available tasks, run:
 
 ```sh
-npx nx show project <%= name %> --web
+npx nx show project <%= directory %> --web
 ```
 
 The following tasks are included by default:
@@ -28,12 +28,9 @@ The following tasks are included by default:
 To run this application locally, follow these steps:
 
 ```sh
-# 1. Navigate to Nx workspace directory containing this app
-cd <path-to-nx-workspace>
-
-# 2. Install dependencies
+# 1. Install dependencies in the root of the repository
 npm install
 
-# 3. Start the local development server
-npx nx dev <%= name %>
+# 2. Start the local development server
+npx nx dev <%= directory %>
 ```

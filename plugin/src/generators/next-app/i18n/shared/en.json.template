@@ -1,5 +1,5 @@
 {
   "HOME_PAGE": {
-    "HOME_PAGE_TEXT": "<%= formatName(name) %> home page"
+    "TEXT_TITLE": "<%= formatName(name) %> home page"
   }
 }

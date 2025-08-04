@@ -1,11 +1,6 @@
 /// <reference types="jest" />
-import {
-  confirm,
-  execSyncMock,
-  formatFilesMock,
-  getProjectsMock,
-  verifyESLintConstraintsConfig,
-} from '../../shared/utils';
+import { execSyncMock, formatFilesMock, getProjectsMock } from '../../shared/tests-utils';
+import { confirm, verifyESLintConstraintsConfig } from '../../shared/utils';
 import { libTagsGenerator } from './generator';
 import * as utils from './utils';
 

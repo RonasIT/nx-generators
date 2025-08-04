@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 import * as path from 'path';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { assertFirstLine, execSyncMock, formatFilesMock, generateFilesMock, readJsonMock } from '../../utils';
+import { assertFirstLine, execSyncMock, formatFilesMock, generateFilesMock, readJsonMock } from '../../tests-utils';
 import { runAppEnvGenerator } from './generator';
 
 describe('runAppEnvGenerator', () => {

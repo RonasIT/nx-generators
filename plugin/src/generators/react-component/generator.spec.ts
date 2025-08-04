@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 import * as path from 'path';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { assertFirstLine } from '../../shared/utils';
+import { assertFirstLine } from '../../shared/tests-utils';
 import { reactComponentGenerator } from './generator';
 
 describe('reactComponentGenerator', () => {

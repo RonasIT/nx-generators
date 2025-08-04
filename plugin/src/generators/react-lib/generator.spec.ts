@@ -3,14 +3,8 @@ import { execSync } from 'child_process';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import {
-  assertFirstLine,
-  mockGenerateFiles,
-  addNxScopeTag,
-  selectProject,
-  confirm,
-  askQuestion,
-} from '../../shared/utils';
+import { assertFirstLine, mockGenerateFiles } from '../../shared/tests-utils';
+import { addNxScopeTag, selectProject, confirm, askQuestion } from '../../shared/utils';
 import { reactLibGenerator } from './generator';
 
 jest.mock('child_process', () => ({

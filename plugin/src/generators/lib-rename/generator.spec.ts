@@ -6,7 +6,7 @@ import {
   getLibraryDetailsByNameMock,
   askQuestionMock,
   getImportPathPrefixMock,
-} from '../../shared/utils';
+} from '../../shared/tests-utils';
 import { libRenameGenerator } from './generator';
 
 jest.mock('../../shared/utils/cli-utils', () => ({

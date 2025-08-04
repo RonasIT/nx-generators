@@ -2,8 +2,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { assertFirstLine, formatFilesMock, installPackagesTaskMock } from '../../shared/tests-utils';
 import * as utils from '../../shared/utils';
-import { assertFirstLine, formatFilesMock, installPackagesTaskMock } from '../../shared/utils';
 import { sentryGenerator } from './generator';
 import * as sentryUtils from './utils';
 

@@ -9,7 +9,7 @@ import {
   existsSyncMock,
   formatFilesMock,
   generateFilesMock,
-} from '../../utils';
+} from '../../tests-utils';
 import { runApiClientGenerator } from './generator';
 
 describe('runApiClientGenerator', () => {

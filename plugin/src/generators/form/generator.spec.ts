@@ -8,7 +8,7 @@ import {
   formatFilesMock,
   installPackagesTaskMock,
   assertFirstLine,
-} from '../../shared/utils';
+} from '../../shared/tests-utils';
 import formGenerator from './generator';
 import * as formUtils from './utils';
 

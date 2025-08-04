@@ -12,7 +12,7 @@ import {
   formatFilesMock,
   generateFilesMock,
   readJsonMock,
-} from '../../utils';
+} from '../../tests-utils';
 import { runStoreGenerator } from './generator';
 
 describe('runStoreGenerator', () => {

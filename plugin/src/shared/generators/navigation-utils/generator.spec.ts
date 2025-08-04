@@ -3,8 +3,8 @@ import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { BaseGeneratorType } from '../../enums';
+import { assertFirstLine, execSyncMock, generateFilesMock } from '../../tests-utils';
 import * as utils from '../../utils';
-import { assertFirstLine, execSyncMock, generateFilesMock } from '../../utils';
 import { runNavigationUtilsGenerator } from './generator';
 
 jest.mock('../../utils', () => ({

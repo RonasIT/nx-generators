@@ -4,5 +4,5 @@ import { ReactElement } from 'react';
 export default function Index(): ReactElement {
   const t = useTranslations('<%= sharedTranslationsKey %>.HOME_PAGE');
 
-  return <div>{t('HOME_PAGE_TEXT')}</div>;
+  return <div>{t('TEXT_TITLE')}</div>;
 }

@@ -55,7 +55,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   }
 
   // Generate shared libs
-  await runAppEnvGenerator(tree, { ...options, baseGeneratorType: BaseGeneratorType.EXPO_APP });
+  await runAppEnvGenerator(tree, options);
   await runStorageGenerator(tree, options);
   await runRNStylesGenerator(tree, options);
   await runNavigationUtilsGenerator(tree, {

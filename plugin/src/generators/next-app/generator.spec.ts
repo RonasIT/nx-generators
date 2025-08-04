@@ -22,7 +22,6 @@ jest.mock('../../shared/generators', () => {
 
   return {
     ...actual,
-    runAppEnvGenerator: jest.fn(),
     runApiClientGenerator: jest.fn(),
     runI18nNextGenerator: jest.fn(),
     runNavigationUtilsGenerator: jest.fn(),
@@ -90,7 +89,6 @@ describe('nextAppGenerator with file content checks', () => {
       `--unitTestRunner=none --e2eTestRunner=none`;
 
     expect(execSyncMock).toHaveBeenCalledWith(expectedCommand, { stdio: 'inherit' });
-    expect(sharedGenerators.runAppEnvGenerator).toHaveBeenCalled();
     expect(sharedGenerators.runI18nNextGenerator).toHaveBeenCalled();
     expect(sharedGenerators.runNavigationUtilsGenerator).toHaveBeenCalled();
   });
@@ -188,15 +186,6 @@ describe('nextAppGenerator with file content checks', () => {
     };
 
     await nextAppGenerator(tree, options);
-
-    // Check that runAppEnvGenerator is called with tree + extended options
-    expect(sharedGenerators.runAppEnvGenerator).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({
-        ...options,
-        baseGeneratorType: BaseGeneratorType.NEXT_APP,
-      }),
-    );
 
     // Check that runI18nNextGenerator is called with tree + options
     expect(sharedGenerators.runI18nNextGenerator).toHaveBeenCalledWith(expect.anything(), options);

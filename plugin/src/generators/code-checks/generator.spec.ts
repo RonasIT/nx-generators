@@ -5,6 +5,11 @@ import config from './config';
 import codeChecksGenerator from './generator';
 import { CodeChecksGeneratorSchema } from './schema';
 
+jest.mock('child_process', () => ({
+  ...jest.requireActual('child_process'),
+  execSync: jest.fn(),
+}));
+
 describe('codeChecksGenerator (integration)', () => {
   let tree: Tree;
 

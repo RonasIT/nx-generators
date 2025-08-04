@@ -1,7 +1,6 @@
 /// <reference types="jest" />
 import * as path from 'path';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { BaseGeneratorType } from '../../enums';
 import { assertFirstLine, execSyncMock, formatFilesMock, generateFilesMock, readJsonMock } from '../../utils';
 import { runAppEnvGenerator } from './generator';
 
@@ -31,7 +30,6 @@ describe('runAppEnvGenerator', () => {
     const options = {
       name: appName,
       directory: appName,
-      baseGeneratorType: BaseGeneratorType.EXPO_APP,
     };
 
     await runAppEnvGenerator(tree, options);
@@ -50,9 +48,7 @@ describe('runAppEnvGenerator', () => {
       expect.objectContaining({
         name: appName,
         directory: appName,
-        baseGeneratorType: BaseGeneratorType.EXPO_APP,
         libPath: `@org/${appName}`,
-        appType: 'EXPO',
         formatName: expect.any(Function),
         formatAppIdentifier: expect.any(Function),
       }),
@@ -63,7 +59,6 @@ describe('runAppEnvGenerator', () => {
       placeholders: {
         name: appName,
         directory: appName,
-        baseGeneratorType: BaseGeneratorType.EXPO_APP,
         libPath: `@org/${appName}`,
         appType: 'EXPO',
       },

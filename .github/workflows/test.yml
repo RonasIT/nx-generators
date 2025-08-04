@@ -2,32 +2,29 @@ name: Test
 
 on:
   pull_request:
-    branches: [ main, master, development ]
+    branches: [main, master, development]
   push:
-    branches: [ main, master, development ]
+    branches: [main, master, development]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'
-        cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Run tests
-      run: npm test
+      - name: Run tests
+        run: npm test
 
-    - name: Run linting
-      run: npm run lint
-
-    - name: Type check
-      run: npx tsc --noEmit
+      - name: Run linting and type checking
+        run: npm run lint

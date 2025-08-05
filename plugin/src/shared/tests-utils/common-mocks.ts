@@ -70,7 +70,7 @@ jest.mock('../utils/config-utils', () => {
 
   return {
     ...actualUtils,
-    getImportPathPrefix: jest.fn(() => 'libs'),
+    getImportPathPrefix: jest.fn(() => '@proj'),
   };
 });
 

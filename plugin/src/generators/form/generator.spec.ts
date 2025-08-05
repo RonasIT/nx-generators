@@ -8,6 +8,7 @@ import {
   formatFilesMock,
   installPackagesTaskMock,
   assertFirstLine,
+  existsSyncMock,
 } from '../../shared/tests-utils';
 import formGenerator from './generator';
 import * as formUtils from './utils';
@@ -57,6 +58,7 @@ describe('formGenerator', () => {
       ),
     );
 
+    existsSyncMock.mockReturnValue(true);
     autoCompleteRunMock = jest.fn().mockResolvedValue(utilsLibFormsRoot);
     (AutoComplete as jest.Mock).mockImplementation(() => ({ run: autoCompleteRunMock }));
 

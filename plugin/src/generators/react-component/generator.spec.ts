@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 import * as path from 'path';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { assertFirstLine } from '../../shared/tests-utils';
+import { assertFirstLine, existsSyncMock } from '../../shared/tests-utils';
 import { reactComponentGenerator } from './generator';
 
 describe('reactComponentGenerator', () => {
@@ -10,6 +10,8 @@ describe('reactComponentGenerator', () => {
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
     jest.clearAllMocks();
+
+    existsSyncMock.mockReturnValue(true);
   });
 
   it('should generate component files and update component index when subcomponent = true', async () => {

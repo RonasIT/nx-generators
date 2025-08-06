@@ -16,9 +16,9 @@ import { BaseGeneratorType } from '../../shared/enums';
 import {
   runApiClientGenerator,
   runFormUtilsGenerator,
-  runStoreGenerator,
   runI18nNextGenerator,
   runNavigationUtilsGenerator,
+  runStoreGenerator,
 } from '../../shared/generators';
 import { addNxAppTag, confirm, formatName, getImportPathPrefix } from '../../shared/utils';
 import { NextAppGeneratorSchema } from './schema';
@@ -57,7 +57,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   }
 
   if (shouldGenerateApiClientLib) {
-    await runApiClientGenerator(tree, options);
+    await runApiClientGenerator(tree, { ...options, type: BaseGeneratorType.NEXT_APP });
   }
 
   if (options.withFormUtils) {

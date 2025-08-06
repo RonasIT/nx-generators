@@ -86,7 +86,8 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
     appTsconfigJson.include.push(nextTypesInclude);
   }
 
-  delete appTsconfigJson.paths;
+  delete appTsconfigJson.compilerOptions.paths;
+  delete appTsconfigJson.compilerOptions.rootDir;
   writeJson(tree, appTsconfigPath, appTsconfigJson);
 
   // Add app files

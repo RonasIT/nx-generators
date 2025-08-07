@@ -2,6 +2,7 @@
 import * as path from 'path';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { dependencies } from '../../dependencies';
+import { BaseGeneratorType } from '../../enums';
 import {
   addDependenciesMock,
   assertFirstLine,
@@ -46,7 +47,7 @@ describe('runApiClientGenerator', () => {
     existsSyncMock.mockReturnValue(true);
     const appLibs = `libs/${appName}`;
 
-    await runApiClientGenerator(tree, { name: appName, directory: appName });
+    await runApiClientGenerator(tree, { name: appName, directory: appName, type: BaseGeneratorType.EXPO_APP });
 
     expect(execSyncMock).toHaveBeenCalledWith(
       `npx nx g react-lib --app=${appName} --scope=shared --type=data-access --name=api-client`,
@@ -79,7 +80,7 @@ describe('runApiClientGenerator', () => {
   it('should not add app package.json dependencies if package.json does not exist', async () => {
     existsSyncMock.mockReturnValue(false);
 
-    await runApiClientGenerator(tree, { name: 'test', directory: appName });
+    await runApiClientGenerator(tree, { name: 'test', directory: appName, type: BaseGeneratorType.EXPO_APP });
 
     expect(addDependenciesMock).toHaveBeenCalledWith(tree, deps, {});
     expect(addDependenciesMock).not.toHaveBeenCalledWith(tree, deps, {}, expect.any(String));

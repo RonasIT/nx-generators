@@ -15,16 +15,16 @@ import {
 import { dependencies, devDependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import {
-  runAppEnvGenerator,
   runApiClientGenerator,
-  runStorageGenerator,
-  runRNStylesGenerator,
+  runAppEnvGenerator,
   runFormUtilsGenerator,
+  runNavigationUtilsGenerator,
+  runRNStylesGenerator,
+  runStorageGenerator,
   runStoreGenerator,
   runUIKittenGenerator,
-  runNavigationUtilsGenerator,
 } from '../../shared/generators';
-import { formatName, formatAppIdentifier, addNxAppTag, getImportPathPrefix, confirm } from '../../shared/utils';
+import { addNxAppTag, confirm, formatAppIdentifier, formatName, getImportPathPrefix } from '../../shared/utils';
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 
@@ -71,7 +71,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   }
 
   if (shouldGenerateApiClientLib) {
-    await runApiClientGenerator(tree, options);
+    await runApiClientGenerator(tree, { ...options, type: BaseGeneratorType.EXPO_APP });
   }
 
   if (options.withFormUtils) {

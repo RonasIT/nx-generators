@@ -1,11 +1,11 @@
-import { appEnv } from '<%= libPath %>/shared/utils/app-env';
+<% if(type === 'expo-app') { %>import { appEnv } from '<%= libPath %>/shared/utils/app-env';<% } %>
 
 export const configuration = {
   // TODO: Add development, production url, when API will be ready
-  apiURL: appEnv.select({
+  apiURL: <% if(type === 'expo-app') { %>appEnv.select({
     development: '',
     production: '',
-  }),
+  }),<% } else { %>'',<% } %>
   auth: {
     refreshTokenRoute: '/auth/refresh',
     // TODO: Add routes, when confirmation functionality will be ready

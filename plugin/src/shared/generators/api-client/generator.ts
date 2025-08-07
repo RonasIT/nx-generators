@@ -3,9 +3,13 @@ import { existsSync } from 'fs';
 import * as path from 'path';
 import { addDependenciesToPackageJson, formatFiles, generateFiles, Tree } from '@nx/devkit';
 import { dependencies } from '../../dependencies';
+import { BaseGeneratorType } from '../../enums';
 import { formatName, formatAppIdentifier, getImportPathPrefix } from '../../utils';
 
-export async function runApiClientGenerator(tree: Tree, options: { name: string; directory: string }): Promise<void> {
+export async function runApiClientGenerator(
+  tree: Tree,
+  options: { name: string; directory: string; type: BaseGeneratorType },
+): Promise<void> {
   const appRoot = `apps/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;

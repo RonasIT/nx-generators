@@ -206,7 +206,10 @@ describe('nextAppGenerator with file content checks', () => {
     );
 
     // Confirm runApiClientGenerator called (prompt triggered)
-    expect(sharedGenerators.runApiClientGenerator).toHaveBeenCalledWith(expect.anything(), options);
+    expect(sharedGenerators.runApiClientGenerator).toHaveBeenCalledWith(expect.anything(), {
+      ...options,
+      type: BaseGeneratorType.NEXT_APP,
+    });
 
     // Confirm runFormUtilsGenerator called (because withFormUtils: true)
     expect(sharedGenerators.runFormUtilsGenerator).toHaveBeenCalledWith(expect.anything(), options);

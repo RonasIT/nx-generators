@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 import * as path from 'path';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { assertFirstLine, execSyncMock, formatFilesMock, generateFilesMock, readJsonMock } from '../../utils';
+import { assertFirstLine, execSyncMock, formatFilesMock, generateFilesMock, readJsonMock } from '../../tests-utils';
 import { runAppEnvGenerator } from './generator';
 
 describe('runAppEnvGenerator', () => {
@@ -11,11 +11,11 @@ describe('runAppEnvGenerator', () => {
     tree = createTreeWithEmptyWorkspace();
 
     tree.write('libs/myapp/shared/utils/app-env/src/index.ts', 'export {}');
-    tree.write('package.json', JSON.stringify({ name: '@org/workspace' }, null, 2));
+    tree.write('package.json', JSON.stringify({ name: '@proj/workspace' }, null, 2));
 
     readJsonMock.mockImplementation((_tree, path) => {
       if (path === 'package.json') {
-        return { name: '@org/workspace' };
+        return { name: '@proj/workspace' };
       }
 
       return {};
@@ -48,7 +48,7 @@ describe('runAppEnvGenerator', () => {
       expect.objectContaining({
         name: appName,
         directory: appName,
-        libPath: `@org/${appName}`,
+        libPath: `@proj/${appName}`,
         formatName: expect.any(Function),
         formatAppIdentifier: expect.any(Function),
       }),
@@ -59,7 +59,7 @@ describe('runAppEnvGenerator', () => {
       placeholders: {
         name: appName,
         directory: appName,
-        libPath: `@org/${appName}`,
+        libPath: `@proj/${appName}`,
         appType: 'EXPO',
       },
     });

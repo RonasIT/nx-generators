@@ -11,7 +11,7 @@ import {
   formatFilesMock,
   generateFilesMock,
   readJsonMock,
-} from '../../utils';
+} from '../../tests-utils';
 import { runRNStylesGenerator } from './generator';
 
 describe('runRNStylesGenerator', () => {

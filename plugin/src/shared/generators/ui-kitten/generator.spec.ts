@@ -2,7 +2,7 @@
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { assertFirstLine, readJsonMock } from '../../utils';
+import { assertFirstLine, readJsonMock } from '../../tests-utils';
 import { runUIKittenGenerator } from './generator';
 
 describe('runUIKittenGenerator', () => {

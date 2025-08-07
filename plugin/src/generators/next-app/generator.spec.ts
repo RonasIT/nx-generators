@@ -14,7 +14,7 @@ import {
   installPackagesTaskMock,
   readJsonMock,
   writeJsonMock,
-} from '../../shared/utils';
+} from '../../shared/tests-utils';
 import { nextAppGenerator } from './generator';
 
 jest.mock('../../shared/generators', () => {

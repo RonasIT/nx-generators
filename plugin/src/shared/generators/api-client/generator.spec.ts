@@ -9,7 +9,7 @@ import {
   existsSyncMock,
   formatFilesMock,
   generateFilesMock,
-} from '../../utils';
+} from '../../tests-utils';
 import { runApiClientGenerator } from './generator';
 
 describe('runApiClientGenerator', () => {
@@ -59,7 +59,7 @@ describe('runApiClientGenerator', () => {
       appLibs,
       expect.objectContaining({
         name: appName,
-        libPath: `/${appName}`,
+        libPath: `@proj/${appName}`,
       }),
     );
 
@@ -70,7 +70,7 @@ describe('runApiClientGenerator', () => {
 
     assertFirstLine(path.join(__dirname, 'lib-files'), appLibs, tree, {
       placeholders: {
-        libPath: `/${appName}`,
+        libPath: `@proj/${appName}`,
         name: appName,
       },
     });

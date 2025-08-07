@@ -9,7 +9,7 @@ import {
   assertFirstLine,
   existsSyncMock,
   execSyncMock,
-} from '../../shared/utils/';
+} from '../../shared/tests-utils';
 import expoAppGenerator from './generator';
 
 const appName = 'myapp';

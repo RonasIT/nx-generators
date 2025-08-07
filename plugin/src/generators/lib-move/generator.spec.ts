@@ -30,7 +30,7 @@ describe('libMoveGenerator', () => {
     (utils.selectProject as jest.Mock).mockResolvedValue(selectedProject);
     (utils.askQuestion as jest.Mock).mockResolvedValue(answer);
 
-    execSyncMock = require('child_process').execSync as jest.Mock;
+    execSyncMock = jest.spyOn(require('child_process'), 'execSync').mockImplementation(() => ({})) as jest.Mock;
   });
 
   const runGenerator = async (): Promise<() => void> =>
@@ -43,7 +43,7 @@ describe('libMoveGenerator', () => {
       expect.stringContaining(
         [
           'npx nx g mv',
-          '--projectName=profile-shared-utils',
+          `--projectName=${libraryDetails.name}`,
           '--newProjectName=mobile-account-ui-account',
           '--destination=libs/mobile/account/ui/account',
           '--importPath=@proj/mobile/account/ui/account',

@@ -2,7 +2,7 @@
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { assertFirstLine, execSyncMock, formatFilesMock } from '../../utils';
+import { assertFirstLine, execSyncMock, formatFilesMock } from '../../tests-utils';
 import { runFormUtilsGenerator } from './generator';
 
 describe('runFormUtilsGenerator', () => {

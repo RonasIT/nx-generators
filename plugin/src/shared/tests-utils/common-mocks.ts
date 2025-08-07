@@ -53,8 +53,8 @@ jest.mock('enquirer', () => ({
 }));
 
 // Mock cli-utils common functions partially
-jest.mock('../cli-utils', () => {
-  const actualUtils = jest.requireActual('../cli-utils');
+jest.mock('../utils/cli-utils', () => {
+  const actualUtils = jest.requireActual('../utils/cli-utils');
 
   return {
     ...actualUtils,
@@ -65,16 +65,16 @@ jest.mock('../cli-utils', () => {
 });
 
 // Mock config-utils common functions partially
-jest.mock('../config-utils', () => {
-  const actualUtils = jest.requireActual('../config-utils');
+jest.mock('../utils/config-utils', () => {
+  const actualUtils = jest.requireActual('../utils/config-utils');
 
   return {
     ...actualUtils,
-    getImportPathPrefix: jest.fn(() => 'libs'),
+    getImportPathPrefix: jest.fn(() => '@proj'),
   };
 });
 
-jest.mock('../get-app-framework-name', () => ({
+jest.mock('../utils/get-app-framework-name', () => ({
   getAppFrameworkName: jest.fn(),
 }));
 
@@ -88,7 +88,7 @@ export const readJsonMock = devkit.readJson as jest.Mock;
 export const writeJsonMock = devkit.writeJson as jest.Mock;
 export const readProjectConfigurationMock = devkit.readProjectConfiguration as jest.Mock;
 export const getProjectsMock = devkit.getProjects as jest.Mock;
-export const confirmMock = require('../cli-utils').confirm as jest.Mock;
-export const askQuestionMock = require('../cli-utils').askQuestion as jest.Mock;
-export const getLibraryDetailsByNameMock = require('../cli-utils').getLibraryDetailsByName as jest.Mock;
-export const getImportPathPrefixMock = require('../config-utils').getImportPathPrefix as jest.Mock;
+export const confirmMock = require('../utils/cli-utils').confirm as jest.Mock;
+export const askQuestionMock = require('../utils/cli-utils').askQuestion as jest.Mock;
+export const getLibraryDetailsByNameMock = require('../utils/cli-utils').getLibraryDetailsByName as jest.Mock;
+export const getImportPathPrefixMock = require('../utils/config-utils').getImportPathPrefix as jest.Mock;

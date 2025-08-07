@@ -1,7 +1,8 @@
 /// <reference types="jest" />
 import { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { askQuestion, execSyncMock, selectProject } from '../../shared/utils';
+import { execSyncMock } from '../../shared/tests-utils';
+import { askQuestion, selectProject } from '../../shared/utils';
 import { libRemoveGenerator } from './generator';
 
 jest.mock('../../shared/utils', () => {

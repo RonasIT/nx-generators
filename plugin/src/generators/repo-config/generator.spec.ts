@@ -11,7 +11,7 @@ import {
   installPackagesTaskMock,
   readJsonMock,
   writeJsonMock,
-} from '../../shared/utils';
+} from '../../shared/tests-utils';
 import { repoConfigGenerator } from './generator';
 
 describe('repoConfigGenerator', () => {

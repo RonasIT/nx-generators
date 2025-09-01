@@ -1,0 +1,151 @@
+import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
+import {
+  onRequestRefreshTokenInterceptor,
+  onResponseRefreshTokenInterceptor,
+  RefreshTokenInterceptorOptions,
+  <% if (type === 'expo-app') { %>tokenInterceptor,<% } %>
+  <% if (type === 'next-app') { %>unauthorizedInterceptor<% } %>
+} from '@ronas-it/axios-api-client';
+import { storeActions } from '@ronas-it/rtkq-entity-api';
+import { authApi, profileApi, LogInResponse } from '<%= libPath %>/shared/data-access/api';
+import { apiService, configuration } from '<%= libPath %>/shared/data-access/api-client';
+<% if (type === 'next-app') { %>import { CookieService } from '@gecko/admin-panel/shared/data-access/cookie';<% } %>
+<% if (type === 'expo-app') { %>import { AppStorageValue, storage } from '<%= libPath %>/shared/data-access/storage';<% } %>
+import { authActions, authReducerPath, authSelectors, AuthState } from './slice';
+
+export const authListenerMiddleware = createListenerMiddleware<{ [authReducerPath]: AuthState }>();
+
+<% if (type === 'expo-app') { %>authListenerMiddleware.startListening({
+  actionCreator: storeActions.init,
+  effect: (_, { dispatch }) => {
+    const token = storage.getString(AppStorageValue.TOKEN);
+    dispatch(authActions.setIsAuthenticated(Boolean(token)));
+
+    apiService.useInterceptors({
+      request: [[tokenInterceptor({ getToken: () => storage.getString(AppStorageValue.TOKEN) ?? '' })]],
+    });
+
+    dispatch(authActions.setIsAppReady(true));
+  },
+});
+
+authListenerMiddleware.startListening({
+  matcher: authApi.internalActions.middlewareRegistered.match,
+  effect: (_, { dispatch, getState }) => {
+    const options: RefreshTokenInterceptorOptions = {
+      configuration: configuration.auth,
+      getIsAuthenticated: () => authSelectors.isAuthenticated(getState()),
+      runTokenRefreshRequest: async () => {
+        const { token } = await dispatch(authApi.endpoints.refreshToken.initiate()).unwrap();
+        storage.set(AppStorageValue.TOKEN, token);
+
+        return token;
+      },
+      onError: () => {
+        return dispatch(authApi.endpoints.logout.initiate()).unwrap();
+      },
+    };
+
+    apiService.useInterceptors({
+      request: [[onRequestRefreshTokenInterceptor(options)]],
+      response: [[null, onResponseRefreshTokenInterceptor(options)]],
+    });
+  },
+});
+
+authListenerMiddleware.startListening({
+  matcher: isAnyOf(authApi.endpoints.login.matchFulfilled, authApi.endpoints.register.matchFulfilled),
+  effect: ({ payload: { token } }: { payload: LogInResponse }, { dispatch }) => {
+    storage.set(AppStorageValue.TOKEN, token);
+    dispatch(authActions.setIsAuthenticated(true));
+  },
+});<% } %>
+
+<% if (type === 'next-app') { %>authListenerMiddleware.startListening({
+  actionCreator: storeActions.init,
+  effect: async (_, { dispatch, getState }) => {
+    const getIsAuthenticated = (): boolean | null => authSelectors.isAuthenticated(getState());
+
+    const getIsTokenExpired = (): boolean | null => {
+      const expiryDate = authSelectors.expiryDate(getState());
+
+      return !expiryDate || expiryDate <= new Date();
+    };
+
+    const options: RefreshTokenInterceptorOptions = {
+      configuration: apiClientConfig.auth,
+      getIsAuthenticated,
+      getIsTokenExpired,
+      runTokenRefreshRequest: async () => {
+        const { token, ttl, refreshTtl } = await dispatch(authApi.endpoints.refreshToken.initiate()).unwrap();
+        const expiryDate = DateTime.now().plus({ minute: ttl }).toJSDate();
+
+        CookieService.set(
+          {
+            isAuthenticated: 'true',
+            tokenExpiryDate: expiryDate.toISOString(),
+          },
+          { expires: DateTime.now().plus({ minute: refreshTtl }).toJSDate() },
+        );
+
+        dispatch(authActions.setExpiryDate(expiryDate));
+
+        return token;
+      },
+      onError: async () => {
+        dispatch(authActions.unauthorize());
+      },
+    };
+
+    apiService.useInterceptors({
+      request: [[onRequestRefreshTokenInterceptor(options)]],
+      response: [
+        [null, onResponseRefreshTokenInterceptor(options)],
+        [
+          null,
+          unauthorizedInterceptor({
+            publicEndpoints: apiClientConfig.auth.unauthorizedRoutes,
+            onError: () => dispatch(authActions.unauthorize()),
+          }),
+        ],
+      ],
+    });
+
+    dispatch(authActions.setIsAppReady(true));
+  },
+});
+
+authListenerMiddleware.startListening({
+  matcher: isAnyOf(authApi.endpoints.login.matchFulfilled, authApi.endpoints.register.matchFulfilled),
+  effect: async ({ payload: { refreshTtl, ttl } }: { payload: LoginResponse }, { dispatch }) => {
+    const expiryDate = DateTime.now().plus({ minute: ttl }).toJSDate();
+
+    CookieService.set(
+      {
+        isAuthenticated: 'true',
+        tokenExpiryDate: expiryDate.toISOString(),
+      },
+      { expires: DateTime.now().plus({ minute: refreshTtl }).toJSDate() },
+    );
+
+    dispatch(authActions.setIsAuthenticated(true));
+    dispatch(authActions.setExpiryDate(expiryDate));
+  },
+});<% } %>
+
+
+authListenerMiddleware.startListening({
+  matcher: isAnyOf(
+    authApi.endpoints.logout.matchFulfilled,
+    authApi.endpoints.logout.matchRejected,
+    profileApi.endpoints.deleteProfile.matchFulfilled,
+  ),
+  effect: (_, { dispatch }) => {
+    <% if (type === 'expo-app') { %>storage.delete(AppStorageValue.TOKEN);<% } %>
+    <% if (type === 'next-app') { %>CookieService.remove(['isAuthenticated', 'tokenExpiryDate']);<% } %>
+    dispatch(authActions.setIsAuthenticated(false));
+    dispatch(authActions.setExpiryDate(null));
+
+    dispatch(profileApi.util.resetApiState());
+  },
+});

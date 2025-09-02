@@ -49,7 +49,16 @@ authListenerMiddleware.startListening({
 
     apiService.useInterceptors({
       request: [[onRequestRefreshTokenInterceptor(options)]],
-      response: [[null, onResponseRefreshTokenInterceptor(options)]],
+      response: [
+        [null, onResponseRefreshTokenInterceptor(options)],
+        [
+           null,
+           unauthorizedInterceptor({
+             publicEndpoints: configuration.auth.unauthorizedRoutes,
+             onError: () => dispatch(authActions.unauthorize()),
+           }),
+        ],
+      ],
     });
   },
 });
@@ -100,6 +109,13 @@ authListenerMiddleware.startListening({
       request: [[onRequestRefreshTokenInterceptor(options)]],
       response: [
         [null, onResponseRefreshTokenInterceptor(options)],
+        [
+          null,
+          unauthorizedInterceptor({
+            publicEndpoints: configuration.auth.unauthorizedRoutes,
+            onError: () => dispatch(authActions.unauthorize()),
+          }),
+        ],
       ],
     });
 
@@ -132,6 +148,13 @@ authListenerMiddleware.startListening({
     profileApi.endpoints.deleteProfile.matchFulfilled,
   ),
   effect: (_, { dispatch }) => {
+    dispatch(authActions.unauthorize());
+  },
+});
+
+authListenerMiddleware.startListening({
+  actionCreator: authActions.unauthorize,
+  effect: () => {
     <% if (type === 'expo-app') { %>storage.delete(AppStorageValue.TOKEN);<% } %>
     <% if (type === 'next-app') { %>CookieService.remove(['isAuthenticated', 'tokenExpiryDate']);<% } %>
     dispatch(authActions.setIsAuthenticated(false));

@@ -26,6 +26,10 @@ const authSlice = createSlice({
     <% if (type === 'next-app') { %>setExpiryDate(state, { payload }: PayloadAction<AuthState['expiryDate']>) {
       state.expiryDate = payload;
     },<% } %>
+    unauthorize(state) {
+      state.isAuthenticated = false;
+      <% if (type === 'next-app') { %>state.expiryDate = null;<% } %>
+    },
   },
   selectors: {
     isAuthenticated: (state) => state.isAuthenticated,

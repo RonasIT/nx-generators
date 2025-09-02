@@ -8,7 +8,7 @@ export class RefreshTokenResponse {
   public ttl: number;
 
   @Expose({ name: 'refresh_ttl' })
-  public refreshTtl: string;
+  public refreshTtl: number;
 
   constructor(partial: Partial<RefreshTokenResponse>) {
     Object.assign(this, partial);

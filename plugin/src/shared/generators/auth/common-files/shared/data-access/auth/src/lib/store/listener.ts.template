@@ -154,7 +154,7 @@ authListenerMiddleware.startListening({
 
 authListenerMiddleware.startListening({
   actionCreator: authActions.unauthorize,
-  effect: () => {
+  effect: (_, { dispatch }) => {
     <% if (type === 'expo-app') { %>storage.delete(AppStorageValue.TOKEN);<% } %>
     <% if (type === 'next-app') { %>CookieService.remove(['isAuthenticated', 'tokenExpiryDate']);<% } %>
     dispatch(authActions.setIsAuthenticated(false));

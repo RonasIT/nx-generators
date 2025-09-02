@@ -4,7 +4,7 @@ import {
   onResponseRefreshTokenInterceptor,
   RefreshTokenInterceptorOptions,
   <% if (type === 'expo-app') { %>tokenInterceptor,<% } %>
-  <% if (type === 'next-app') { %>unauthorizedInterceptor<% } %>
+  unauthorizedInterceptor
 } from '@ronas-it/axios-api-client';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
 <% if (type === 'next-app') { %>import { DateTime } from 'luxon';<% } %>

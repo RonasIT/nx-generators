@@ -68,6 +68,12 @@ export async function runAuthGenerator(tree: Tree, options: AuthGeneratorSchema)
     stdio: 'inherit',
   });
 
+  if (options.type === BaseGeneratorType.NEXT_APP) {
+    execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=cookie`, {
+      stdio: 'inherit',
+    });
+  }
+
   const appPackagePath = `${appRoot}/package.json`;
 
   // Remove unnecessary files and files that will be replaced

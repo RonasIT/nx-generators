@@ -73,7 +73,7 @@ authListenerMiddleware.startListening({
     };
 
     const options: RefreshTokenInterceptorOptions = {
-      configuration: apiClientConfig.auth,
+      configuration: configuration.auth,
       getIsAuthenticated,
       getIsTokenExpired,
       runTokenRefreshRequest: async () => {
@@ -104,7 +104,7 @@ authListenerMiddleware.startListening({
         [
           null,
           unauthorizedInterceptor({
-            publicEndpoints: apiClientConfig.auth.unauthorizedRoutes,
+            publicEndpoints: configuration.auth.unauthorizedRoutes,
             onError: () => dispatch(authActions.unauthorize()),
           }),
         ],
@@ -144,7 +144,7 @@ authListenerMiddleware.startListening({
     <% if (type === 'expo-app') { %>storage.delete(AppStorageValue.TOKEN);<% } %>
     <% if (type === 'next-app') { %>CookieService.remove(['isAuthenticated', 'tokenExpiryDate']);<% } %>
     dispatch(authActions.setIsAuthenticated(false));
-    dispatch(authActions.setExpiryDate(null));
+    <% if (type === 'next-app') { %>dispatch(authActions.setExpiryDate(null));<% } %>
 
     dispatch(profileApi.util.resetApiState());
   },

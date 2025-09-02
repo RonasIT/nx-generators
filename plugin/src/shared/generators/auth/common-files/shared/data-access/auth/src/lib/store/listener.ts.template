@@ -7,9 +7,10 @@ import {
   <% if (type === 'next-app') { %>unauthorizedInterceptor<% } %>
 } from '@ronas-it/axios-api-client';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
+<% if (type === 'next-app') { %>import { DateTime } from 'luxon';<% } %>
 import { authApi, profileApi, LogInResponse } from '<%= libPath %>/shared/data-access/api';
 import { apiService, configuration } from '<%= libPath %>/shared/data-access/api-client';
-<% if (type === 'next-app') { %>import { CookieService } from '@gecko/admin-panel/shared/data-access/cookie';<% } %>
+<% if (type === 'next-app') { %>import { CookieService } from '<%= libPath %>/shared/data-access/cookie';<% } %>
 <% if (type === 'expo-app') { %>import { AppStorageValue, storage } from '<%= libPath %>/shared/data-access/storage';<% } %>
 import { authActions, authReducerPath, authSelectors, AuthState } from './slice';
 
@@ -92,22 +93,13 @@ authListenerMiddleware.startListening({
 
         return token;
       },
-      onError: async () => {
-        dispatch(authActions.unauthorize());
-      },
+      onError: async () => dispatch(authApi.endpoints.logout.initiate()).unwrap(),
     };
 
     apiService.useInterceptors({
       request: [[onRequestRefreshTokenInterceptor(options)]],
       response: [
         [null, onResponseRefreshTokenInterceptor(options)],
-        [
-          null,
-          unauthorizedInterceptor({
-            publicEndpoints: configuration.auth.unauthorizedRoutes,
-            onError: () => dispatch(authActions.unauthorize()),
-          }),
-        ],
       ],
     });
 
@@ -117,7 +109,7 @@ authListenerMiddleware.startListening({
 
 authListenerMiddleware.startListening({
   matcher: isAnyOf(authApi.endpoints.login.matchFulfilled, authApi.endpoints.register.matchFulfilled),
-  effect: async ({ payload: { refreshTtl, ttl } }: { payload: LoginResponse }, { dispatch }) => {
+  effect: async ({ payload: { refreshTtl, ttl } }: { payload: LogInResponse }, { dispatch }) => {
     const expiryDate = DateTime.now().plus({ minute: ttl }).toJSDate();
 
     CookieService.set(
@@ -132,7 +124,6 @@ authListenerMiddleware.startListening({
     dispatch(authActions.setExpiryDate(expiryDate));
   },
 });<% } %>
-
 
 authListenerMiddleware.startListening({
   matcher: isAnyOf(

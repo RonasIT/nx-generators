@@ -75,7 +75,7 @@ export async function runAuthGenerator(tree: Tree, options: AuthGeneratorSchema)
   tree.delete(`${libRoot}/shared/data-access/auth/src/index.ts`);
 
   // Add lib files
-  generateFiles(tree, path.join(__dirname, '/lib-files'), libRoot, {
+  generateFiles(tree, path.join(__dirname, '/common-files'), libRoot, {
     ...options,
     formatName,
     formatAppIdentifier,

@@ -1,0 +1,33 @@
+import { cookieConfig } from '<%= libPath %>/shared/data-access/cookie';
+import { Locale } from '<%= libPath %>/shared/utils/i18n';
+import { NextRequest, NextResponse } from 'next/server';
+import createMiddleware from 'next-intl/middleware';
+import { constants } from './constants';
+
+const redirectToPage = (request: NextRequest, route: string): NextResponse => {
+  const pathname = request.nextUrl.pathname;
+  const segments = pathname.split('/');
+  const languageCode = constants.locales.includes(segments[0] as Locale) ? segments[0] : '';
+  const newUrl = new URL(`${languageCode}${route}`, request.url);
+
+  return NextResponse.redirect(newUrl);
+};
+
+const intlMiddleware = createMiddleware({
+  locales: constants.locales,
+  defaultLocale: constants.defaultLocale,
+  localePrefix: 'never',
+});
+
+export default async function middleware(request: NextRequest): Promise<NextResponse> {
+  const pathname = request.nextUrl.pathname;
+  const isAuthenticated = request.cookies.get(cookieConfig.keys.isAuthenticated)?.value === 'true';
+
+  // TODO: Implement redirects with redirectToPage according to pathname and isAuthenticated
+
+  return intlMiddleware(request);
+}
+
+export const config = {
+  matcher: ['/((?!api|_next|.*\\..*).*)'],
+};

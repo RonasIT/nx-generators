@@ -26,6 +26,7 @@ import { NextAppGeneratorSchema } from './schema';
 export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSchema) {
   const shouldGenerateApiClientLib =
     options.withStore && !isBoolean(options.withApiClient) && (await confirm('Do you want to create api client lib?'));
+  const shouldGenerateAuthLibs = shouldGenerateApiClientLib && (await confirm('Do you want to create auth lib?'));
 
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
@@ -118,6 +119,12 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
 
   return (): void => {
     installPackagesTask(tree);
+
+    if (shouldGenerateAuthLibs) {
+      execSync(`npx nx g auth --directory=${options.directory} --type=${BaseGeneratorType.NEXT_APP}`, {
+        stdio: 'inherit',
+      });
+    }
 
     if (options.withSentry) {
       execSync(`npx nx g sentry --directory=${appRoot}`, {

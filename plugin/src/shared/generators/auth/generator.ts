@@ -4,7 +4,8 @@ import * as path from 'path';
 import { addDependenciesToPackageJson, formatFiles, generateFiles, installPackagesTask, Tree } from '@nx/devkit';
 import { IndentationText, Project, QuoteKind, StructureKind, SyntaxKind } from 'ts-morph';
 import { dependencies, devDependencies } from '../../dependencies';
-import { formatName, formatAppIdentifier, searchAliasPath, getImportPathPrefix } from '../../utils';
+import { BaseGeneratorType } from '../../enums';
+import { formatAppIdentifier, formatName, getImportPathPrefix, searchAliasPath } from '../../utils';
 import { AuthGeneratorSchema } from './schema';
 
 const updateStore = (libRoot: string): void => {
@@ -67,6 +68,12 @@ export async function runAuthGenerator(tree: Tree, options: AuthGeneratorSchema)
     stdio: 'inherit',
   });
 
+  if (options.type === BaseGeneratorType.NEXT_APP) {
+    execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=data-access --name=cookie`, {
+      stdio: 'inherit',
+    });
+  }
+
   const appPackagePath = `${appRoot}/package.json`;
 
   // Remove unnecessary files and files that will be replaced
@@ -74,20 +81,34 @@ export async function runAuthGenerator(tree: Tree, options: AuthGeneratorSchema)
   tree.delete(`${libRoot}/shared/data-access/auth/src/index.ts`);
 
   // Add lib files
-  generateFiles(tree, path.join(__dirname, '/lib-files'), libRoot, {
+  generateFiles(tree, path.join(__dirname, '/common-files'), libRoot, {
     ...options,
     formatName,
     formatAppIdentifier,
     libPath,
   });
 
+  if (options.type === BaseGeneratorType.NEXT_APP) {
+    generateFiles(tree, path.join(__dirname, '/next-libs-files'), libRoot, {});
+    generateFiles(tree, path.join(__dirname, '/next-app-files'), appRoot, { libPath });
+  }
+
   updateStore(libRoot);
 
-  // Add dependencies
+  // Add dependencies to root package.json
   addDependenciesToPackageJson(tree, dependencies['auth'], devDependencies['auth']);
 
+  if (options.type === BaseGeneratorType.NEXT_APP) {
+    addDependenciesToPackageJson(tree, dependencies['next-auth'], devDependencies['next-auth']);
+  }
+
+  // Add dependencies to app package.json
   if (existsSync(appPackagePath)) {
     addDependenciesToPackageJson(tree, dependencies['auth'], devDependencies['auth'], appPackagePath);
+
+    if (options.type === BaseGeneratorType.NEXT_APP) {
+      addDependenciesToPackageJson(tree, dependencies['next-auth'], devDependencies['next-auth'], appPackagePath);
+    }
   }
 
   await formatFiles(tree);

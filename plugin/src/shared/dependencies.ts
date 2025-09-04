@@ -31,6 +31,9 @@ export const dependencies = {
   auth: {
     luxon: '^3.6.1',
   },
+  'next-auth': {
+    'js-cookie': '^3.0.5',
+  },
   'rn-styles': {
     'react-native-extended-stylesheet': '^0.12.0',
   },
@@ -95,5 +98,8 @@ export const devDependencies = {
   },
   auth: {
     '@types/luxon': '3.6.2',
+  },
+  'next-auth': {
+    '@types/js-cookie': '^3.0.6',
   },
 };

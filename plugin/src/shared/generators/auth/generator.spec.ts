@@ -6,8 +6,7 @@ import { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { dependencies, devDependencies } from '../../dependencies';
 import { BaseGeneratorType } from '../../enums';
-import { addDependenciesMock, existsSyncMock } from '../../tests-utils/common-mocks';
-import { assertFirstLine } from '../../tests-utils/utils';
+import { assertFirstLine, addDependenciesMock, existsSyncMock } from '../../tests-utils';
 import runAuthGenerator from './generator';
 
 describe('auth generator (integration, mocked Nx + addDependenciesMock)', () => {

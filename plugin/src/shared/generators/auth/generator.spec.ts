@@ -4,13 +4,16 @@ import * as os from 'os';
 import * as path from 'path';
 import { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { dependencies, devDependencies } from '../../dependencies';
 import { BaseGeneratorType } from '../../enums';
-import { assertFirstLine } from '../../tests-utils';
-import { runAuthGenerator } from './generator';
+import { addDependenciesMock, existsSyncMock } from '../../tests-utils/common-mocks';
+import { assertFirstLine } from '../../tests-utils/utils';
+import runAuthGenerator from './generator';
 
-describe('auth generator (integration, mocked Nx)', () => {
+describe('auth generator (integration, mocked Nx + addDependenciesMock)', () => {
   let tempDir: string;
   let tree: Tree;
+
   const appName = 'my-app';
   const libsRoot = `libs/${appName}`;
   const appsRoot = `apps/${appName}`;
@@ -39,7 +42,6 @@ describe('auth generator (integration, mocked Nx)', () => {
       JSON.stringify({ name: projAlias, devDependencies: { '@nx/devkit': '^3.0.0' } }),
     );
 
-    // Minimal tsconfig.json for path resolution
     fs.writeFileSync(
       path.join(tempDir, 'tsconfig.json'),
       JSON.stringify({
@@ -55,6 +57,7 @@ describe('auth generator (integration, mocked Nx)', () => {
     );
 
     tree = createTreeWithEmptyWorkspace();
+    addDependenciesMock.mockClear();
   });
 
   afterAll(() => {
@@ -77,21 +80,53 @@ describe('auth generator (integration, mocked Nx)', () => {
     }
   });
 
-  it('should generate shared libs (Expo) with correct first lines', async () => {
+  it('should generate shared libs (Expo) and add auth dependencies', async () => {
     await runAuthGenerator(tree, { directory: appName, type: BaseGeneratorType.EXPO_APP });
 
     assertFirstLine(path.join(__dirname, 'common-files'), libsRoot, tree, { placeholders: { appName } });
+
+    expect(addDependenciesMock).toHaveBeenCalledWith(
+      tree,
+      expect.objectContaining(dependencies.auth),
+      expect.objectContaining(devDependencies.auth),
+    );
   });
 
-  it('should generate Next-specific libs/files with correct first lines', async () => {
+  it('should generate Next-specific libs/files and add root + app dependencies', async () => {
+    existsSyncMock.mockImplementation((filePath: string) => {
+      return filePath === `${appsRoot}/package.json`;
+    });
+
     await runAuthGenerator(tree, { directory: appName, type: BaseGeneratorType.NEXT_APP });
 
     assertFirstLine(path.join(__dirname, 'common-files'), libsRoot, tree, { placeholders: { appName } });
-
     assertFirstLine(path.join(__dirname, 'next-libs-files'), libsRoot, tree, { placeholders: { appName } });
-
     assertFirstLine(path.join(__dirname, 'next-app-files'), appsRoot, tree, {
       placeholders: { appName, libPath: `${projAlias}/${appName}` },
     });
+
+    expect(addDependenciesMock).toHaveBeenCalledWith(
+      tree,
+      expect.objectContaining(dependencies.auth),
+      expect.objectContaining(devDependencies.auth),
+    );
+    expect(addDependenciesMock).toHaveBeenCalledWith(
+      tree,
+      expect.objectContaining(dependencies['next-auth']),
+      expect.objectContaining(devDependencies['next-auth']),
+    );
+
+    expect(addDependenciesMock).toHaveBeenCalledWith(
+      tree,
+      expect.objectContaining(dependencies.auth),
+      expect.objectContaining(devDependencies.auth),
+      `${appsRoot}/package.json`,
+    );
+    expect(addDependenciesMock).toHaveBeenCalledWith(
+      tree,
+      expect.objectContaining(dependencies['next-auth']),
+      expect.objectContaining(devDependencies['next-auth']),
+      `${appsRoot}/package.json`,
+    );
   });
 });

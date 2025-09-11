@@ -24,7 +24,6 @@ describe('auth generator (integration, mocked Nx + addDependenciesMock)', () => 
   beforeAll(() => {
     // Create a temp directory for Nx workspace
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nx-gen-test-'));
-    process.chdir(tempDir);
 
     fs.mkdirSync(path.join(tempDir, appsRoot), { recursive: true });
     fs.mkdirSync(path.join(tempDir, storePath), { recursive: true });
@@ -47,9 +46,9 @@ describe('auth generator (integration, mocked Nx + addDependenciesMock)', () => 
         compilerOptions: {
           baseUrl: '.',
           paths: {
-            [`${projAlias}/${appName}/shared/data-access/api/src`]: [apiPath],
-            [`${projAlias}/${appName}/shared/data-access/auth/src`]: [authPath],
-            [`${projAlias}/${appName}/shared/data-access/store/src`]: [storePath],
+            [`${projAlias}/${appName}/shared/data-access/api/src`]: [path.join(tempDir, apiPath)],
+            [`${projAlias}/${appName}/shared/data-access/auth/src`]: [path.join(tempDir, authPath)],
+            [`${projAlias}/${appName}/shared/data-access/store/src`]: [path.join(tempDir, storePath)],
           },
         },
       }),
@@ -80,7 +79,7 @@ describe('auth generator (integration, mocked Nx + addDependenciesMock)', () => 
   });
 
   it('should generate shared libs (Expo) and add auth dependencies', async () => {
-    await runAuthGenerator(tree, { directory: appName, type: BaseGeneratorType.EXPO_APP });
+    await runAuthGenerator(tree, { directory: appName, type: BaseGeneratorType.EXPO_APP }, tempDir);
 
     assertFirstLine(path.join(__dirname, 'common-files'), libsRoot, tree, { placeholders: { appName } });
 
@@ -96,7 +95,7 @@ describe('auth generator (integration, mocked Nx + addDependenciesMock)', () => 
       return filePath === `${appsRoot}/package.json`;
     });
 
-    await runAuthGenerator(tree, { directory: appName, type: BaseGeneratorType.NEXT_APP });
+    await runAuthGenerator(tree, { directory: appName, type: BaseGeneratorType.NEXT_APP }, tempDir);
 
     assertFirstLine(path.join(__dirname, 'common-files'), libsRoot, tree, { placeholders: { appName } });
     assertFirstLine(path.join(__dirname, 'next-libs-files'), libsRoot, tree, { placeholders: { appName } });

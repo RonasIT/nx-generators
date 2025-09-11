@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import * as readline from 'readline';
 import { getProjects, ProjectType, Tree } from '@nx/devkit';
 import { compact } from 'lodash';
@@ -27,7 +28,7 @@ export const confirm = async (confirmationMessage: string): Promise<boolean> => 
     name: 'question',
     message: confirmationMessage,
   });
-  
+
   return await prompt.run();
 };
 
@@ -38,14 +39,12 @@ export enum LibraryType {
   UTILS = 'utils',
 }
 
-const parseLibsPaths = (): Record<string, Array<string>> => {
-  let tsconfig;
+const parseLibsPaths = (workspaceRoot = process.cwd()): Record<string, Array<string>> => {
+  const tsconfigPath = fs.existsSync(path.join(workspaceRoot, 'tsconfig.base.json'))
+    ? path.join(workspaceRoot, 'tsconfig.base.json')
+    : path.join(workspaceRoot, 'tsconfig.json');
 
-  if (fs.existsSync('tsconfig.base.json')) {
-    tsconfig = JSON.parse(fs.readFileSync('tsconfig.base.json', 'utf8'));
-  } else {
-    tsconfig = JSON.parse(fs.readFileSync('tsconfig.json', 'utf8'));
-  }
+  const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, 'utf8'));
 
   return tsconfig.compilerOptions.paths;
 };
@@ -76,11 +75,10 @@ export const searchNxLibsPaths = (
   return paths.filter((path) => path[method](input));
 };
 
-export const searchAliasPath = (input: string): string | undefined => {
-  const libs = parseLibsPaths();
-  const path = Object.keys(libs).find((key) => libs[key][0].includes(input));
+export const searchAliasPath = (input: string, workspaceRoot?: string): string | undefined => {
+  const libs = parseLibsPaths(workspaceRoot);
 
-  return path;
+  return Object.keys(libs).find((key) => libs[key][0].includes(input));
 };
 
 export const filterSource = async (input: string, source: Array<string>): Promise<Array<{ value: string }>> => {

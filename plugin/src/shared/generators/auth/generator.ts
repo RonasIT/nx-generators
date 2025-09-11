@@ -8,7 +8,7 @@ import { BaseGeneratorType } from '../../enums';
 import { formatAppIdentifier, formatName, getImportPathPrefix, searchAliasPath } from '../../utils';
 import { AuthGeneratorSchema } from './schema';
 
-const updateStore = (libRoot: string): void => {
+const updateStore = (libRoot: string, workspaceRoot = process.cwd()): void => {
   const project = new Project({
     manipulationSettings: {
       indentationText: IndentationText.TwoSpaces,
@@ -16,12 +16,10 @@ const updateStore = (libRoot: string): void => {
     },
   });
 
-  const storePath = `${libRoot}/shared/data-access/store/src`;
-  const apiPath = `${libRoot}/shared/data-access/api/src`;
-  const authPath = `${libRoot}/shared/data-access/auth/src`;
-  const store = project.addSourceFileAtPath(`${storePath}/store.ts`);
-  const apiAlias = searchAliasPath(apiPath);
-  const authAlias = searchAliasPath(authPath);
+  const storePath = path.join(workspaceRoot, libRoot, 'shared/data-access/store/src/store.ts');
+  const store = project.addSourceFileAtPath(storePath);
+  const apiAlias = searchAliasPath(path.join(workspaceRoot, libRoot, 'shared/data-access/api/src'), workspaceRoot);
+  const authAlias = searchAliasPath(path.join(workspaceRoot, libRoot, 'shared/data-access/auth/src'), workspaceRoot);
 
   if (!apiAlias) {
     throw new Error('Could not find API library.');
@@ -55,7 +53,7 @@ const updateStore = (libRoot: string): void => {
   project.saveSync();
 };
 
-export async function runAuthGenerator(tree: Tree, options: AuthGeneratorSchema) {
+export async function runAuthGenerator(tree: Tree, options: AuthGeneratorSchema, workspaceRoot = process.cwd()) {
   const appRoot = `apps/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
@@ -93,7 +91,7 @@ export async function runAuthGenerator(tree: Tree, options: AuthGeneratorSchema)
     generateFiles(tree, path.join(__dirname, '/next-app-files'), appRoot, { libPath });
   }
 
-  updateStore(libRoot);
+  updateStore(libRoot, workspaceRoot);
 
   // Add dependencies to root package.json
   addDependenciesToPackageJson(tree, dependencies['auth'], devDependencies['auth']);

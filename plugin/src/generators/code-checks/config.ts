@@ -23,6 +23,7 @@ export default {
     noImplicitAny: true,
     strictPropertyInitialization: false,
     strictNullChecks: true,
+    lib: ['es2022', 'dom'],
   },
   tsConfigExclude: ['**/*.cjs', '**/*.mjs', 'node_modules', 'dist'],
   gitIgnore: ['.eslintcache', '*.tsbuildinfo'],

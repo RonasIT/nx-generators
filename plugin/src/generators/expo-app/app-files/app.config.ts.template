@@ -15,9 +15,9 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & { extra: { eas: EASConfig }
     scheme: '<%= name %>-dev',
     version: '0.1.0',
     orientation: 'portrait',
-    icon: './assets/icon.png',
+    icon: './assets/images/icon.png',
     splash: {
-      image: './assets/splash.png',
+      image: './assets/images/splash.png',
       resizeMode: 'contain',
       backgroundColor: '#ffffff',
     },
@@ -36,7 +36,7 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & { extra: { eas: EASConfig }
       package: appId,
       versionCode: 1,
       adaptiveIcon: {
-        foregroundImage: './assets/adaptive-icon.png',
+        foregroundImage: './assets/images/adaptive-icon.png',
         backgroundColor: '#FFFFFF',
       },
       edgeToEdgeEnabled: true

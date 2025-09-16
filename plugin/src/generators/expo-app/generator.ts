@@ -7,9 +7,7 @@ import {
   generateFiles,
   installPackagesTask,
   readJson,
-  readProjectConfiguration,
   Tree,
-  updateProjectConfiguration,
   writeJson,
 } from '@nx/devkit';
 import { dependencies, devDependencies } from '../../shared/dependencies';
@@ -41,13 +39,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   // Install @nx/expo plugin
   execSync('npx nx add @nx/expo', { stdio: 'inherit' });
 
-  if (existsSync(appRoot)) {
-    const project = readProjectConfiguration(tree, options.directory);
-
-    project.tags = [`app:${options.directory}`, 'type:app'];
-
-    updateProjectConfiguration(tree, project.name as string, project);
-  } else {
+  if (!existsSync(appRoot)) {
     execSync(
       `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=none --unitTestRunner=none --e2eTestRunner=none`,
       { stdio: 'inherit' },

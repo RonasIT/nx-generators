@@ -4,6 +4,5 @@
   "sourceRoot": "apps/<%= directory %>",
   "projectType": "application",
   "tags": ["app:<%= directory %>", "type:app"],
-  "// targets": "to see all targets run: nx show project <%= directory %> --web",
   "targets": {}
 }

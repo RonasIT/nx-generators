@@ -68,6 +68,12 @@ npx nx g expo-app
 npx nx g next-app
 ```
 
+4. Start the app:
+
+```sh
+npx nx start my-app
+```
+
 5. Continue developing your app by generating libraries and components:
 
 ```sh
@@ -78,6 +84,8 @@ npx nx g react-component
 ## Generators overview
 
 Note: each generator accepts the `--help` argument to see generator instructions. Example: `npx nx g react-lib --help`.
+
+Also, you can run unit tests using `npx nx test nx-generators`
 
 ### Repository
 
@@ -464,56 +472,3 @@ const { initialSearchParams, setSearchParams } = useFilteringSearchParams<ItemSe
 
 setSearchParams({ categoryId: 5 });
 ```
-
-## Development
-
-### Example app
-
-An example React Native application is included in the `apps/mobile` directory and its associated libraries in the `libs` directory. This example:
-
-- Demonstrates the capabilities of all available generators
-- Showcases the recommended repository structure and organization
-- Provides practical examples of library usage and best practices
-- Serves as a testing ground for generator development
-
-To run the example app locally, use:
-
-```sh
-npx nx start example
-```
-
-### Local development
-
-The `plugin` directory contains the source code for all generators in this package. Here's how to contribute:
-
-1. **Modify generator code**
-
-   - Navigate to `plugin/src` directory
-   - Add new or edit the existing generator source code
-   - Follow the existing code style and patterns
-
-2. **Test your changes**
-
-   - Run generators locally to verify functionality
-   - Example: `npx nx g expo-app`
-   - Run unit tests using `npx nx test nx-generators`
-
-3. **Update generator metadata**
-
-   - If you've added new options or changed generator behavior
-   - Update the corresponding entries in `plugin/generators.json`
-   - Ensure all options are properly documented
-
-4. **Submit changes**
-   - Create a pull request with your modifications
-   - Include clear descriptions of changes
-   - Reference any related issues or discussions
-
-### Build
-
-In order to build the package, run `build` script.\
-Build results are placed in `dist/nx-generators` directory.
-
-### Publish
-
-To publish a package distribution to NPM, run `release` script.

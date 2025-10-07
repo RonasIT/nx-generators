@@ -7,6 +7,6 @@ Sentry.init({
   tracesSampleRate: 1,
 
   debug: false,
-  integrations: [Sentry.inboundFiltersIntegration()],
+  integrations: [Sentry.eventFiltersIntegration()],
   denyUrls: ['localhost'],
 });

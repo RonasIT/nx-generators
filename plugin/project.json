@@ -23,6 +23,11 @@
         "assets": [
           "plugin/*.md",
           {
+            "input": ".",
+            "glob": "README.md",
+            "output": "."
+          },
+          {
             "input": "./plugin/src",
             "glob": "**/!(*.ts)",
             "output": "./src"

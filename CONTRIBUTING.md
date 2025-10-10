@@ -13,10 +13,17 @@ An example React Native application is included in the `apps/mobile` directory a
 - Provides practical examples of library usage and best practices
 - Serves as a testing ground for generator development
 
-To run the example app locally, use:
+To run the example app locally, run in the repo root:
 
 ```sh
 npx nx start example
+```
+
+Or run from the app directory:
+
+```sh
+cd apps/mobile
+npm run start
 ```
 
 ### Local development
@@ -29,14 +36,11 @@ The `plugin` directory contains the source code for all generators in this packa
    - Follow the existing code style and patterns
 
 2. **Test your changes**
-   - Run generators locally to verify functionality
-   - Example: `npx nx g expo-app`
+   - Run generators locally to verify functionality, for example: `npx nx g expo-app`
    - Run unit tests using `npx nx test nx-generators`
 
 3. **Update generator metadata**
-   - If you've added new options or changed generator behavior
-   - Update the corresponding entries in `plugin/generators.json`
-   - Ensure all options are properly documented
+   - If you've added new options or changed generator behavior, update the corresponding entries in `plugin/generators.json`, and ensure all options are properly documented
 
 4. **Submit changes**
    - Create a pull request with your modifications

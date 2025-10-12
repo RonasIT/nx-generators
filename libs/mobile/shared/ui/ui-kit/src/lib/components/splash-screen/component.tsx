@@ -7,7 +7,7 @@ import { AppScreen } from '../screen';
 export function AppSplashScreen(): ReactElement {
   return (
     <AppScreen scrollDisabled style={styles.screen} withBackgroundImage>
-      <Image source={{ uri: Images.background }} />
+      <Image source={Images.background} />
     </AppScreen>
   );
 }

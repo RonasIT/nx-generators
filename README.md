@@ -335,6 +335,22 @@ npx nx g sentry --directory=apps/mobile --dsn=http://your-dsn.ingest.sentry.io/1
 
 Generates a deployment-ready Dockerfile for Next.js applications in the monorepo.
 
+### 15. `auth`
+
+Generates authentication setup module for Expo/Next application.
+
+#### Options
+
+1. `directory` - the application directory
+
+2. `type` - application type, can be `next-app` or `expo-app`
+
+#### Example
+
+```sh
+npx nx g auth --directory=mobile --type=expo-app
+```
+
 ## Navigation utilities
 
 The generators `next-app` and `expo-app` also create customizable utilities for navigation

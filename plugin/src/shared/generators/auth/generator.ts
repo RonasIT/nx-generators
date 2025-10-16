@@ -18,7 +18,10 @@ const updateStore = (libRoot: string, workspaceRoot = process.cwd()): void => {
 
   const storePath = path.join(workspaceRoot, libRoot, 'shared/data-access/store/src/store.ts');
   const store = project.addSourceFileAtPath(storePath);
-  const apiAlias = searchAliasPath(path.join(workspaceRoot, libRoot, 'shared/data-access/api/src'), workspaceRoot);
+  const apiAlias = searchAliasPath(
+    path.relative(workspaceRoot, path.join(workspaceRoot, libRoot, 'shared/data-access/api/src')),
+    workspaceRoot,
+  );
   const authAlias = searchAliasPath(path.join(workspaceRoot, libRoot, 'shared/data-access/auth/src'), workspaceRoot);
 
   if (!apiAlias) {

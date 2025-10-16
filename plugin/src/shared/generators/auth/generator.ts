@@ -22,7 +22,10 @@ const updateStore = (libRoot: string, workspaceRoot = process.cwd()): void => {
     path.relative(workspaceRoot, path.join(workspaceRoot, libRoot, 'shared/data-access/api/src')),
     workspaceRoot,
   );
-  const authAlias = searchAliasPath(path.join(workspaceRoot, libRoot, 'shared/data-access/auth/src'), workspaceRoot);
+  const authAlias = searchAliasPath(
+    path.relative(workspaceRoot, path.join(workspaceRoot, libRoot, 'shared/data-access/auth/src')),
+    workspaceRoot,
+  );
 
   if (!apiAlias) {
     throw new Error('Could not find API library.');

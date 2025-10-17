@@ -17,7 +17,7 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & { extra: { eas: EASConfig }
     orientation: 'portrait',
     icon: './assets/images/icon.png',
     splash: {
-      image: './assets/images/splash.png',
+      image: './assets/images/splash-icon.png',
       resizeMode: 'contain',
       backgroundColor: '#ffffff',
     },

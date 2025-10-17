@@ -1,6 +1,6 @@
 import { Input, InputProps } from '@ui-kitten/components/ui';
 import React, { ReactElement, useMemo, useState } from 'react';
-import { NativeSyntheticEvent, StyleProp, TextInputFocusEventData, View, ViewStyle } from 'react-native';
+import { StyleProp, View, ViewStyle } from 'react-native';
 import { commonStyle, createStyles, useAppTheme } from '@ronas-it/mobile/shared/ui/styles';
 import { ErrorMessage } from '../error-message';
 import { AppPressableIcon } from '../pressable-icon';
@@ -63,15 +63,13 @@ export const AppTextInput = React.forwardRef(function Component(
 
   const renderErrorCaption = useMemo(() => error && <ErrorMessage message={error} />, [error]);
 
-  const onFocusHandler = (args: NativeSyntheticEvent<TextInputFocusEventData>): void => onFocus?.(args);
-
   return (
     <View style={[commonStyle.fullWidth, isStretched && commonStyle.fullFlex, containerStyle]}>
       <Input
         ref={ref}
         value={value}
         onChangeText={onChangeText}
-        onFocus={onFocusHandler}
+        onFocus={onFocus}
         selectionColor={theme['text-primary-color']}
         status={error ? 'danger' : status}
         secureTextEntry={isSecured && isPassword}

@@ -3,10 +3,9 @@ import { setLanguage } from '@ronas-it/react-native-common-modules/i18n';
 <% if(isUIKittenEnabled) { %>
 import { UserThemeProvider } from '<%= libPath %>/shared/features/user-theme-provider';
 <% } %>
-<% if(isStoreEnabled) { %>import { storeActions } from '@ronas-it/rtkq-entity-api';<% } %>
 import { Stack } from 'expo-router';
-import { ReactElement<% if(isStoreEnabled) { %>, useEffect<% } %> } from 'react';
-<% if(isStoreEnabled) { %>import { Provider, useDispatch } from 'react-redux';<% } %>
+import { ReactElement } from 'react';
+<% if(isStoreEnabled) { %>import { Provider } from 'react-redux';<% } %>
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -25,14 +24,8 @@ export const unstable_settings = {
 };
 
 function App(): ReactElement {
-  <% if(isStoreEnabled) { %>
-  const dispatch = useDispatch();
   useLanguage('en');
 
-  useEffect(() => {
-    dispatch(storeActions.init());
-  }, []);
-  <% } %>
   return (
     <Stack>
       <Stack.Screen name='index' />

@@ -6,7 +6,6 @@ import {
   <% if (type === 'expo-app') { %>tokenInterceptor,<% } %>
   unauthorizedInterceptor
 } from '@ronas-it/axios-api-client';
-import { storeActions } from '@ronas-it/rtkq-entity-api';
 <% if (type === 'next-app') { %>import { DateTime } from 'luxon';<% } %>
 import { authApi, profileApi, LogInResponse } from '<%= libPath %>/shared/data-access/api';
 import { apiService, configuration } from '<%= libPath %>/shared/data-access/api-client';
@@ -17,18 +16,6 @@ import { authActions, authReducerPath, authSelectors, AuthState } from './slice'
 export const authListenerMiddleware = createListenerMiddleware<{ [authReducerPath]: AuthState }>();
 
 <% if (type === 'expo-app') { %>authListenerMiddleware.startListening({
-  matcher: authApi.internalActions.middlewareRegistered.match,
-  effect: (_, { dispatch }) => {
-    const token = storage.getString(AppStorageValue.TOKEN);
-    dispatch(authActions.setIsAuthenticated(Boolean(token)));
-
-    apiService.useInterceptors({
-      request: [[tokenInterceptor({ getToken: () => storage.getString(AppStorageValue.TOKEN) ?? '' })]],
-    });
-  },
-});
-
-authListenerMiddleware.startListening({
   matcher: authApi.internalActions.middlewareRegistered.match,
   effect: (_, { dispatch, getState }) => {
     const options: RefreshTokenInterceptorOptions = {
@@ -44,9 +31,15 @@ authListenerMiddleware.startListening({
         return dispatch(authApi.endpoints.logout.initiate()).unwrap();
       },
     };
+    const token = storage.getString(AppStorageValue.TOKEN);
+
+    dispatch(authActions.setIsAuthenticated(Boolean(token)));
 
     apiService.useInterceptors({
-      request: [[onRequestRefreshTokenInterceptor(options)]],
+      request: [
+        [onRequestRefreshTokenInterceptor(options)],
+        [tokenInterceptor({ getToken: () => storage.getString(AppStorageValue.TOKEN) ?? '' })],
+      ],
       response: [
         [null, onResponseRefreshTokenInterceptor(options)],
         [
@@ -70,7 +63,7 @@ authListenerMiddleware.startListening({
 });<% } %>
 
 <% if (type === 'next-app') { %>authListenerMiddleware.startListening({
-  matcher: authApi.internalActions.middlewareRegistered.match,,
+  matcher: authApi.internalActions.middlewareRegistered.match,
   effect: async (_, { dispatch, getState }) => {
     const getIsAuthenticated = (): boolean | null => authSelectors.isAuthenticated(getState());
 

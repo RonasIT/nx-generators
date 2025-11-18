@@ -5,7 +5,6 @@ import {
   RefreshTokenInterceptorOptions,
   tokenInterceptor,
 } from '@ronas-it/axios-api-client';
-import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { authApi, profileApi, LogInResponse } from '@ronas-it/mobile/shared/data-access/api';
 import { apiService, configuration } from '@ronas-it/mobile/shared/data-access/api-client';
 import { AppStorageValue, storage } from '@ronas-it/mobile/shared/data-access/storage';
@@ -16,26 +15,12 @@ export const authListenerMiddleware = createListenerMiddleware<{
 }>();
 
 authListenerMiddleware.startListening({
-  actionCreator: storeActions.init,
-  effect: (_, { dispatch }) => {
-    const token = storage.getString(AppStorageValue.TOKEN);
-    dispatch(authActions.setIsAuthenticated(Boolean(token)));
-
-    apiService.useInterceptors({
-      request: [[tokenInterceptor({ getToken: () => storage.getString(AppStorageValue.TOKEN) ?? '' })]],
-    });
-
-    dispatch(authActions.setIsAppReady(true));
-
-    if (token) {
-      dispatch(profileApi.endpoints.getProfile.initiate());
-    }
-  },
-});
-
-authListenerMiddleware.startListening({
   matcher: authApi.internalActions.middlewareRegistered.match,
   effect: (_, { dispatch, getState }) => {
+    const token = storage.getString(AppStorageValue.TOKEN);
+
+    dispatch(authActions.setIsAuthenticated(Boolean(token)));
+
     const options: RefreshTokenInterceptorOptions = {
       configuration: configuration.auth,
       getIsAuthenticated: () => authSelectors.isAuthenticated(getState()),
@@ -51,9 +36,16 @@ authListenerMiddleware.startListening({
     };
 
     apiService.useInterceptors({
-      request: [[onRequestRefreshTokenInterceptor(options)]],
+      request: [
+        [onRequestRefreshTokenInterceptor(options)],
+        [tokenInterceptor({ getToken: () => storage.getString(AppStorageValue.TOKEN) ?? '' })],
+      ],
       response: [[null, onResponseRefreshTokenInterceptor(options)]],
     });
+
+    if (token) {
+      dispatch(profileApi.endpoints.getProfile.initiate());
+    }
   },
 });
 

@@ -3,13 +3,11 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export interface AuthState {
   isAuthenticated: boolean | null;
-  isAppReady: boolean;
   <% if (type === 'next-app') { %>expiryDate: Date | null;<% } %>
 }
 
 const initialState: AuthState = {
   isAuthenticated: <% if (type === 'next-app') { %>CookieService.get('isAuthenticated') === 'true',<% } else { %>null,<% } %>
-  isAppReady: false,
   <% if (type === 'next-app') { %>expiryDate: new Date(CookieService.get('tokenExpiryDate')),<% } %>
 };
 
@@ -19,9 +17,6 @@ const authSlice = createSlice({
   reducers: {
     setIsAuthenticated(state, { payload }: PayloadAction<boolean>) {
       state.isAuthenticated = payload;
-    },
-    setIsAppReady(state, { payload }: PayloadAction<boolean>) {
-      state.isAppReady = payload;
     },
     <% if (type === 'next-app') { %>setExpiryDate(state, { payload }: PayloadAction<AuthState['expiryDate']>) {
       state.expiryDate = payload;
@@ -33,7 +28,6 @@ const authSlice = createSlice({
   },
   selectors: {
     isAuthenticated: (state) => state.isAuthenticated,
-    isAppReady: (state) => state.isAppReady,
     <% if (type === 'next-app') { %>expiryDate: (state) => state.expiryDate,<% } %>
   },
 });

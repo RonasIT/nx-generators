@@ -18,7 +18,7 @@
     "@nx/devkit": "22.0.3",
     "@nx/plugin": "22.0.3",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@reduxjs/toolkit": "^2.5.0",
+    "@reduxjs/toolkit": "2.5.0",
     "@ronas-it/axios-api-client": "^0.1.2",
     "@ronas-it/react-native-common-modules": "^1.1.0",
     "@ronas-it/rtkq-entity-api": "^0.5.0",

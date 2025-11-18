@@ -39,10 +39,16 @@ The `plugin` directory contains the source code for all generators in this packa
    - Run generators locally to verify functionality, for example: `npx nx g expo-app`
    - Run unit tests using `npx nx test nx-generators`
 
-3. **Update generator metadata**
+3. **Test package preview (Optional)**
+   - Change version in `plugin/package.json` to an alpha version, for example: `"0.18.1-alpha.1"`
+   - Build package locally: `npm run build`
+   - Release alpha version of the package: `npm run release -- --tag=alpha`
+   - Install the package in your test environment: `npm i @ronas-it/nx-generators@alpha --save-dev`
+
+4. **Update generator metadata**
    - If you've added new options or changed generator behavior, update the corresponding entries in `plugin/generators.json`, and ensure all options are properly documented
 
-4. **Submit changes**
+5. **Submit changes**
    - Create a pull request with your modifications
    - Include clear descriptions of changes
    - Reference any related issues or discussions
@@ -78,14 +84,15 @@ Follow conventional commit format:
 
 To create a new release:
 
-1. **Bump the version**: Run `npm version {patch|minor|major}` to update the version number in `package.json` and create a git commit and tag
+1. **Bump the version**: In the `plugin` directory run `npm version {patch|minor|major}` to update the version number in `package.json` and create a git commit and tag
    - `patch`: Bug fixes (0.2.0 → 0.2.1)
    - `minor`: New features (0.2.0 → 0.3.0)
    - `major`: Breaking changes (0.2.0 → 1.0.0)
 
-2. **Push changes**: Push the commit and tag to the repository:
+2. **Push changes**: Create commit, tag and push them to the repository:
 
    ```bash
+   git commit -m "chore: release v0.18.0"
    git push && git push --tags
    ```
 

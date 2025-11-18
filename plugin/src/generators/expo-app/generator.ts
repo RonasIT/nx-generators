@@ -7,6 +7,7 @@ import {
   generateFiles,
   installPackagesTask,
   readJson,
+  removeDependenciesFromPackageJson,
   Tree,
   writeJson,
 } from '@nx/devkit';
@@ -102,6 +103,12 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   };
   writeJson(tree, appPackagePath, appPackageJson);
 
+  // Remove dependencies with version "*" from @nx/expo template
+  const dependenciesToRemove = Object.keys(appPackageJson.dependencies).filter((dependency) =>
+    appPackageJson.dependencies[dependency].includes('*'),
+  );
+  removeDependenciesFromPackageJson(tree, dependenciesToRemove, [], appPackagePath);
+
   // Add app files
   generateFiles(tree, path.join(__dirname, 'app-files'), appRoot, {
     ...options,
@@ -120,7 +127,6 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
 
   // Add dependencies
   addDependenciesToPackageJson(tree, dependencies['expo-app'], devDependencies['expo-app']);
-
   addDependenciesToPackageJson(tree, dependencies['expo-app'], devDependencies['expo-app'], appPackagePath);
 
   await formatFiles(tree);

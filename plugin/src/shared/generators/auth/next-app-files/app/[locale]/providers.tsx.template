@@ -1,26 +1,13 @@
 'use client';
 
-import { storeActions } from '@ronas-it/rtkq-entity-api';
-import { PropsWithChildren, ReactElement, ReactNode, useEffect } from 'react';
-import { Provider, useDispatch, useSelector } from 'react-redux';
-import { authSelectors } from '<%= libPath %>/shared/data-access/auth';
+import { PropsWithChildren, ReactElement } from 'react';
+import { Provider } from 'react-redux';
 import { store } from '<%= libPath %>/shared/data-access/store';
-
-function App({ children }: PropsWithChildren): ReactNode {
-  const dispatch = useDispatch();
-  const isAppReady = useSelector(authSelectors.isAppReady);
-
-  useEffect(() => {
-    dispatch(storeActions.init());
-  }, []);
-
-  return isAppReady ? children : null;
-}
 
 export function Providers({ children }: PropsWithChildren): ReactElement {
   return (
     <Provider store={store}>
-      <App>{children}</App>
+      {children}
     </Provider>
   );
 }

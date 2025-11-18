@@ -15,6 +15,7 @@ export default {
     declarationMap: false,
     emitDeclarationOnly: false,
     declaration: false,
+    module: 'esnext',
     moduleResolution: 'bundler',
     jsx: 'react-native',
     allowJs: true,

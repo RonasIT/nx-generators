@@ -11,6 +11,8 @@ const nextConfig = {
     svgr: false,
   },
   output: 'standalone',
+  reactCompiler: true,
+  cacheComponents: true,
   async redirects() {
     return [];
   },

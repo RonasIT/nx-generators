@@ -37,7 +37,6 @@ function App(): ReactElement {
   const dispatch = useDispatch();
   const router = useRouter();
   const isAuthenticated = useSelector(authSelectors.isAuthenticated);
-  const isAppReady = useSelector(authSelectors.isAppReady);
 
   useLanguage('en');
 
@@ -46,10 +45,10 @@ function App(): ReactElement {
   }, []);
 
   useEffect(() => {
-    if (isAppReady && !isAuthenticated) {
+    if (!isAuthenticated) {
       router.replace(navigationConfig.routes.signIn);
     }
-  }, [isAppReady, isAuthenticated]);
+  }, [isAuthenticated]);
 
   return (
     <Stack>

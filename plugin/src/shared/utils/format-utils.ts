@@ -1,4 +1,4 @@
-import path from 'path';
+import * as path from 'path';
 
 export const formatName = (value: string, withoutSpaces = false): string =>
   value

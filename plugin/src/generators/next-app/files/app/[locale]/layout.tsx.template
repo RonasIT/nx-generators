@@ -1,5 +1,4 @@
 import { pick } from 'lodash-es';
-import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
@@ -7,6 +6,7 @@ import { ReactElement, ReactNode } from 'react';
 import { constants } from '../../constants';
 <% if(hasProviders) { %> import { Providers } from './providers';<% } %>
 import type { Locale } from '<%= libPath %>/shared/utils/i18n';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: '<%= formatName(name) %>',
@@ -20,11 +20,11 @@ export const generateStaticParams = (): Array<{ locale: string }> =>
 export default async function RootLayout({ children, params }: LayoutProps<'/[locale]'>): Promise<ReactElement> {
   const { locale } = await params;
 
-  if (!locales.includes(locale)) {
+  if (!locales.includes(locale as Locale)) {
     notFound();
   }
 
-  setRequestLocale(locale as Locale);
+  setRequestLocale(locale);
 
   const messages = await getMessages();
 

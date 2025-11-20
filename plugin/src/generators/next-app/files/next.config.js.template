@@ -12,7 +12,6 @@ const nextConfig = {
   },
   output: 'standalone',
   reactCompiler: true,
-  cacheComponents: true,
   async redirects() {
     return [];
   },

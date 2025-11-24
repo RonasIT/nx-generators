@@ -31,13 +31,13 @@ The generators enforce several best practices according to [Nx concepts](https:/
 **Expo app:**
 
 ```sh
-npx create-nx-workspace@latest my-project --preset=expo --appName=my-app --e2eTestRunner=none --unitTestRunner=none --formatter=prettier --linter=eslint --ci=skip
+npx create-nx-workspace@latest my-project --preset=expo --appName=mobile --e2eTestRunner=none --unitTestRunner=none --formatter=prettier --linter=eslint --ci=skip
 ```
 
 **Next.js app:**
 
 ```sh
-npx create-nx-workspace@latest my-project --preset=next --appName=my-app --nextAppDir=true --unitTestRunner=none --formatter=prettier --linter=eslint --nextSrcDir=false --style=scss --e2eTestRunner=none --ci=skip
+npx create-nx-workspace@latest my-project --preset=next --appName=web --nextAppDir=true --unitTestRunner=none --formatter=prettier --linter=eslint --nextSrcDir=false --style=scss --e2eTestRunner=none --ci=skip
 ```
 
 2. Install this package:
@@ -70,8 +70,16 @@ npx nx g next-app
 
 4. Start the app:
 
+**Expo app:**
+
 ```sh
-npx nx start my-app
+npx nx start mobile
+```
+
+**Next.js app:**
+
+```sh
+npx nx dev web
 ```
 
 5. Continue developing your app by generating libraries and components:

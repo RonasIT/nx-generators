@@ -39,14 +39,14 @@ The `plugin` directory contains the source code for all generators in this packa
    - Run generators locally to verify functionality, for example: `npx nx g expo-app`
    - Run unit tests using `npx nx test nx-generators`
 
-3. **Test package preview (Optional)**
+3. **Update generator metadata**
+   - If you've added new options or changed generator behavior, update the corresponding entries in `plugin/generators.json`, and ensure all options are properly documented
+
+4. **Test package preview (Optional)**
    - Change version in `plugin/package.json` to an alpha version, for example: `"0.18.1-alpha.1"`
    - Build package locally: `npm run build`
    - Release alpha version of the package: `npm run release -- --tag=alpha`
    - Install the package in your test environment: `npm i @ronas-it/nx-generators@alpha --save-dev`
-
-4. **Update generator metadata**
-   - If you've added new options or changed generator behavior, update the corresponding entries in `plugin/generators.json`, and ensure all options are properly documented
 
 5. **Submit changes**
    - Create a pull request with your modifications
@@ -57,20 +57,15 @@ The `plugin` directory contains the source code for all generators in this packa
 
 ### Branch naming
 
-Use descriptive branch names:
-
-- `feat/add-new-export-format`
-- `fix/handle-missing-tokens`
-- `docs/update-readme`
+Use descriptive branch names and follow [Conventional Branch](https://conventional-branch.github.io/) guidelines.
 
 ### Commit messages
 
-Follow conventional commit format:
+Follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format
 
-- `feat: add support for CSS custom properties`
-- `fix: handle empty design tokens gracefully`
-- `docs: update installation instructions`
-- `refactor: simplify token processing logic`
+### Code checks
+
+Repository has pre-commit code style and correctness checks. You can run them manually using `lint` and `format` scripts.
 
 ### Pull request process
 

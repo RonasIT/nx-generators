@@ -104,7 +104,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   writeJson(tree, appPackagePath, appPackageJson);
 
   // Remove dependencies with version "*" from @nx/expo template
-  const dependenciesToRemove = Object.keys(appPackageJson.dependencies).filter((dependency) =>
+  const dependenciesToRemove = Object.keys(appPackageJson.dependencies || {}).filter((dependency) =>
     appPackageJson.dependencies[dependency].includes('*'),
   );
   removeDependenciesFromPackageJson(tree, dependenciesToRemove, [], appPackagePath);

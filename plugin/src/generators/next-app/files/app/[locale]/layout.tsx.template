@@ -6,25 +6,21 @@ import { ReactElement, ReactNode } from 'react';
 import { constants } from '../../constants';
 <% if(hasProviders) { %> import { Providers } from './providers';<% } %>
 import type { Locale } from '<%= libPath %>/shared/utils/i18n';
+import type { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: '<%= formatName(name) %>',
 };
 
-export interface RootLayoutProps {
-  children: ReactNode;
-  params: Promise<{ locale: Locale }>;
-}
-
 const locales = constants.locales;
 
-export const generateStaticParams = (): Array<{ locale: Locale }> =>
+export const generateStaticParams = (): Array<{ locale: string }> =>
   locales.map((locale) => ({ locale }));
 
-export default async function RootLayout({ children, params }: RootLayoutProps): Promise<ReactElement> {
+export default async function RootLayout({ children, params }: LayoutProps<'/[locale]'>): Promise<ReactElement> {
   const { locale } = await params;
 
-  if (!locales.includes(locale)) {
+  if (!locales.includes(locale as Locale)) {
     notFound();
   }
 

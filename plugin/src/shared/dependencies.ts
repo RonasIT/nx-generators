@@ -22,10 +22,10 @@ export const dependencies = {
     'react-native-svg-transformer': '~1.5.1',
   },
   'next-app': {
-    'next-intl': '^4.3.12',
+    'next-intl': '^4.5.3',
     'lodash-es': '^4.17.21',
     'class-transformer': '^0.5.1',
-    next: '~15.5.4',
+    next: '~16.0.3',
   },
   'api-client': {
     '@ronas-it/axios-api-client': '^0.1.2',
@@ -92,7 +92,7 @@ export const devDependencies = {
     'metro-config': '^0.82.0',
   },
   'next-app': {
-    'eslint-config-next': '^15.5.4',
+    'eslint-config-next': '^16.0.3',
     '@types/lodash-es': '^4.17.12',
   },
   'repo-config': {

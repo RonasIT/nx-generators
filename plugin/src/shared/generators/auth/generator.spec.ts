@@ -46,9 +46,9 @@ describe('auth generator (integration, mocked Nx + addDependenciesMock)', () => 
         compilerOptions: {
           baseUrl: '.',
           paths: {
-            [`${projAlias}/${appName}/shared/data-access/api/src`]: [path.join(tempDir, apiPath)],
-            [`${projAlias}/${appName}/shared/data-access/auth/src`]: [path.join(tempDir, authPath)],
-            [`${projAlias}/${appName}/shared/data-access/store/src`]: [path.join(tempDir, storePath)],
+            [`${projAlias}/${appName}/shared/data-access/api/src`]: [apiPath],
+            [`${projAlias}/${appName}/shared/data-access/auth/src`]: [authPath],
+            [`${projAlias}/${appName}/shared/data-access/store/src`]: [storePath],
           },
         },
       }),

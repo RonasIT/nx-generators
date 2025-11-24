@@ -84,7 +84,8 @@ export const devDependencies = {
   },
   'expo-app': {
     '@types/lodash-es': '^4.17.12',
-    '@types/react': '~19.1.0',
+    '@types/react': '^19.1.0',
+    '@types/react-dom': '^19.1.0',
     '@expo/cli': '~54.0.11',
     'reactotron-react-native': '~5.1.17',
     'reactotron-redux': '~3.2.1',
@@ -100,7 +101,7 @@ export const devDependencies = {
     'cross-env': '^10.1.0',
   },
   auth: {
-    '@types/luxon': '3.7.1',
+    '@types/luxon': '^3.7.1',
   },
   'next-auth': {
     '@types/js-cookie': '^3.0.6',

@@ -60,3 +60,6 @@ ios
 android
 
 .eslintcache
+
+# Next
+apps/*/.next

@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 export const formatName = (value: string, withoutSpaces = false): string =>
   value
     .split('-')
@@ -13,3 +15,5 @@ export const getProjectName = (str: string): string => {
 };
 
 export const getLibName = (path: string): string | undefined => path.split('/').pop();
+
+export const normalizeLibPath = (libPath: string): string => path.normalize(libPath).split(path.sep).join('/');

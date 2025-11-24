@@ -5,7 +5,7 @@ import { addDependenciesToPackageJson, formatFiles, generateFiles, installPackag
 import { IndentationText, Project, QuoteKind, StructureKind, SyntaxKind } from 'ts-morph';
 import { dependencies, devDependencies } from '../../dependencies';
 import { BaseGeneratorType } from '../../enums';
-import { formatAppIdentifier, formatName, getImportPathPrefix, searchAliasPath } from '../../utils';
+import { formatAppIdentifier, formatName, getImportPathPrefix, normalizeLibPath, searchAliasPath } from '../../utils';
 import { AuthGeneratorSchema } from './schema';
 
 const updateStore = (libRoot: string, workspaceRoot = process.cwd()): void => {
@@ -19,11 +19,11 @@ const updateStore = (libRoot: string, workspaceRoot = process.cwd()): void => {
   const storePath = path.join(workspaceRoot, libRoot, 'shared/data-access/store/src/store.ts');
   const store = project.addSourceFileAtPath(storePath);
   const apiAlias = searchAliasPath(
-    path.relative(workspaceRoot, path.join(workspaceRoot, libRoot, 'shared/data-access/api/src')),
+    normalizeLibPath(path.relative(workspaceRoot, path.join(workspaceRoot, libRoot, 'shared/data-access/api/src'))),
     workspaceRoot,
   );
   const authAlias = searchAliasPath(
-    path.relative(workspaceRoot, path.join(workspaceRoot, libRoot, 'shared/data-access/auth/src')),
+    normalizeLibPath(path.relative(workspaceRoot, path.join(workspaceRoot, libRoot, 'shared/data-access/auth/src'))),
     workspaceRoot,
   );
 

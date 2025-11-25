@@ -30,6 +30,7 @@ jest.mock('@nx/devkit', () => ({
   }),
   formatFiles: jest.fn(),
   addDependenciesToPackageJson: jest.fn(),
+  removeDependenciesFromPackageJson: jest.fn(),
   installPackagesTask: jest.fn(),
   readProjectConfiguration: jest.fn(),
   updateProjectConfiguration: jest.fn(),

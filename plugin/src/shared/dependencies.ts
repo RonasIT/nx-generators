@@ -95,6 +95,7 @@ export const devDependencies = {
   'next-app': {
     'eslint-config-next': '^16.0.3',
     '@types/lodash-es': '^4.17.12',
+    'babel-plugin-react-compiler': '^1.0.0',
   },
   'repo-config': {
     syncpack: '^13.0.4',

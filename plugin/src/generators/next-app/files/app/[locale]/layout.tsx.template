@@ -2,7 +2,7 @@ import { pick } from 'lodash-es';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import { ReactElement, ReactNode } from 'react';
+import { ReactElement } from 'react';
 import { constants } from '../../constants';
 <% if(hasProviders) { %> import { Providers } from './providers';<% } %>
 import type { Locale } from '<%= libPath %>/shared/utils/i18n';

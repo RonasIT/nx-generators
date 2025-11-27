@@ -2,7 +2,7 @@ import { pick } from 'lodash-es';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { constants } from '../../constants';
 <% if(hasProviders) { %> import { Providers } from './providers';<% } %>
 import type { Locale } from '<%= libPath %>/shared/utils/i18n';
@@ -12,12 +12,17 @@ export const metadata: Metadata = {
   title: '<%= formatName(name) %>',
 };
 
+export interface RootLayoutProps {
+  children: ReactNode;
+  params: Promise<{ locale: Locale }>;
+}
+
 const locales = constants.locales;
 
 export const generateStaticParams = (): Array<{ locale: string }> =>
   locales.map((locale) => ({ locale }));
 
-export default async function RootLayout({ children, params }: LayoutProps<'/[locale]'>): Promise<ReactElement> {
+export default async function RootLayout({ children, params }: RootLayoutProps): Promise<ReactElement> {
   const { locale } = await params;
 
   if (!locales.includes(locale as Locale)) {

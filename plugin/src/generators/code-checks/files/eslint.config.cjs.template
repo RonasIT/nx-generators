@@ -8,7 +8,7 @@ module.exports = (async () => {
 
   return [
     {
-      ignores: ['**/node_modules', '**/dist', '**/*.js', '**/*.cjs', '**/*.mjs', 'apps/*/app.config.ts'],
+      ignores: ['**/node_modules', '**/dist', '**/.next', '**/*.js', '**/*.cjs', '**/*.mjs', 'apps/*/app.config.ts'],
     },
     ...ronasitConfig,
     {

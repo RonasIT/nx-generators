@@ -28,7 +28,7 @@ export const dependencies = {
     next: '~16.0.3',
   },
   'api-client': {
-    '@ronas-it/axios-api-client': '^0.1.2',
+    '@ronas-it/axios-api-client': '^0.2.0',
   },
   auth: {
     luxon: '^3.7.2',
@@ -40,7 +40,8 @@ export const dependencies = {
     'react-native-extended-stylesheet': '^0.12.0',
   },
   store: {
-    '@ronas-it/rtkq-entity-api': '^0.5.0',
+    '@ronas-it/rtkq-entity-api': '^1.0.0',
+    '@reduxjs/toolkit': '^2.11.0',
     'react-redux': '^9.2.0',
   },
   'ui-kitten': {

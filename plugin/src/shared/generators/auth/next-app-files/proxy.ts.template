@@ -1,5 +1,6 @@
 import { cookieConfig } from '<%= libPath %>/shared/data-access/cookie';
 import { Locale } from '<%= libPath %>/shared/utils/i18n';
+import { navigationConfig } from '<%= libPath %>/shared/utils/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { constants } from './constants';
@@ -23,7 +24,10 @@ export default async function proxy(request: NextRequest): Promise<NextResponse>
   const pathname = request.nextUrl.pathname;
   const isAuthenticated = request.cookies.get(cookieConfig.keys.isAuthenticated)?.value === 'true';
 
-  // TODO: Implement redirects with redirectToPage according to pathname and isAuthenticated
+  // TODO: Implement redirects with redirectToPage according to pathname and isAuthenticated. Example:
+  if (!isAuthenticated && pathname !== navigationConfig.routes.public.signIn) {
+    return redirectToPage(request, navigationConfig.routes.public.signIn);
+  }
 
   return intlMiddleware(request);
 }

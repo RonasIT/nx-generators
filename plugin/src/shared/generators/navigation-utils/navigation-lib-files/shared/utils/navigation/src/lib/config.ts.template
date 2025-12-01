@@ -2,8 +2,7 @@ export const navigationConfig = {
   routes: {
     // TODO: Write app routes here. Example:
     public: {
-      signIn: '/sign-in',
-      signUp: '/sign-up',
+      signIn: '/',
     },
   }
 };

@@ -15,7 +15,7 @@ export const dependencies = {
     'expo-localization': '~17.0.7',
     'i18n-js': '~4.5.1',
     'lodash-es': '^4.17.21',
-    react: '~19.1.0',
+    react: '~19.1.2',
     'react-native': '~0.81.4',
     'react-native-svg': '~15.12.1',
     'react-native-svg-transformer': '~1.5.1',
@@ -25,6 +25,8 @@ export const dependencies = {
     'lodash-es': '^4.17.21',
     'class-transformer': '^0.5.1',
     next: '~16.0.7',
+    react: '~19.1.2',
+    'react-dom': '~19.1.2',
   },
   'api-client': {
     '@ronas-it/axios-api-client': '^0.1.2',

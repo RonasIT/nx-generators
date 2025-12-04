@@ -56,7 +56,7 @@ export const dependencies = {
       '@sentry/react-native': '~7.3.0',
     },
     next: {
-      '@sentry/nextjs': '^10.19.0',
+      '@sentry/nextjs': '^10.27.0',
     },
   },
 };

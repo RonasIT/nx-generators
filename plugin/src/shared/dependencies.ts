@@ -16,6 +16,7 @@ export const dependencies = {
     'i18n-js': '~4.5.1',
     'lodash-es': '^4.17.21',
     react: '~19.1.2',
+    'react-dom': '~19.1.2',
     'react-native': '~0.81.4',
     'react-native-svg': '~15.12.1',
     'react-native-svg-transformer': '~1.5.1',

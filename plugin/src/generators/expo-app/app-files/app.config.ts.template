@@ -45,6 +45,9 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & { extra: { eas: EASConfig }
       'expo-router',
       'expo-localization'
     ],
+    experiments: {
+      reactCanary: true,
+    },
     newArchEnabled: true,
     extra,
   };

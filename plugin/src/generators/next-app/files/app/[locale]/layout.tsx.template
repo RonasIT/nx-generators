@@ -12,12 +12,17 @@ export const metadata: Metadata = {
   title: '<%= formatName(name) %>',
 };
 
+export interface RootLayoutProps {
+  children: ReactNode;
+  params: Promise<{ locale: Locale }>;
+}
+
 const locales = constants.locales;
 
 export const generateStaticParams = (): Array<{ locale: string }> =>
   locales.map((locale) => ({ locale }));
 
-export default async function RootLayout({ children, params }: LayoutProps<'/[locale]'>): Promise<ReactElement> {
+export default async function RootLayout({ children, params }: RootLayoutProps): Promise<ReactElement> {
   const { locale } = await params;
 
   if (!locales.includes(locale as Locale)) {

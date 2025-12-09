@@ -18,10 +18,8 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   const projectRoot = '.';
 
   // Delete files
-  tree.delete('.eslintrc.json');
-  tree.delete('eslint.config.cjs');
-  tree.delete('eslint.config.mjs');
   tree.delete('.prettierrc');
+  tree.delete('tsconfig.json');
 
   // Configure pre-commit hook
   execSync('npx mrm@2 lint-staged', { stdio: 'inherit' });

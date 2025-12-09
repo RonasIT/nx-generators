@@ -1,5 +1,4 @@
-import { ExpoConfig } from 'expo/config';
-import { EASConfig } from 'expo-constants/build/Constants.types';
+import { EASConfig, ExpoConfig } from '@expo/config';
 
 const createConfig = (): Omit<ExpoConfig, 'extra'> & {
   extra: { eas: EASConfig } & typeof extra;
@@ -23,6 +22,9 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & {
       image: './assets/splash.png',
       resizeMode: 'contain',
       backgroundColor: '#ffffff',
+    },
+    runtimeVersion: {
+      policy: 'appVersion',
     },
     updates: {
       url: `https://u.expo.dev/${projectId}`,

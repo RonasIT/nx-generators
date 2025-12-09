@@ -20,18 +20,19 @@ Below are links to tools and services used in this project:
 
 - [Tasks]() (will be added later)
 - [Design]() (will be added later)
+- [API Documentation]() (will be added later)
 - [Expo]() (will be added later)
 - [Google Play Console]() (will be added later)
 - [App Store Connect]() (will be added later)
 - [Firebase]() (will be added later)
-- [API Documentation]() (will be added later)
+- [Development environment]() (will be added later)
 - [Laravel Telescope]() (will be added later)
 - [Sentry]() (will be added later)
 
 ## Repository management
 
 This workspace uses [Nx](https://nx.dev/getting-started/intro) for repository management and code generation.
-You can install [Nx extension](https://nx.dev/getting-started/editor-setup) for your code editor.
+You can install [Nx extension](https://nx.dev/docs/getting-started/editor-setup) for your code editor.
 
 ### Code generation
 
@@ -57,6 +58,7 @@ Check [the generators docs](https://github.com/RonasIT/nx-generators/blob/main/R
 #### Generate apps
 
 - `npx nx g expo-app` - generate new RN Expo app
+- `npx nx g next-app` - generate new Next.js app
 
 ### Running tasks
 

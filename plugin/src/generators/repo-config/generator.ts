@@ -22,7 +22,7 @@ export async function repoConfigGenerator(tree: Tree) {
   // Update project package.json
   const projectPackageJson = readJson(tree, projectPackagePath);
   projectPackageJson.workspaces = ['apps/*'];
-  projectPackageJson.scripts = { ...scripts, ...projectPackageJson.scripts };
+  projectPackageJson.scripts = scripts;
   writeJson(tree, projectPackagePath, projectPackageJson);
 
   // Add project files

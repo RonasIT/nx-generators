@@ -45,7 +45,7 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   // Update .prettierignore
   const prettierignoreContent =
     tree.read('.prettierignore')?.toString() +
-    '# Files with custom rules\n**/actions.ts\n**/epics.ts\n**/selectors.ts\n';
+    '\n\n# Files with custom rules\n**/actions.ts\n**/epics.ts\n**/selectors.ts\n';
   tree.write('.prettierignore', prettierignoreContent);
 
   // Add files

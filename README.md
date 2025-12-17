@@ -26,18 +26,10 @@ The generators enforce several best practices according to [Nx concepts](https:/
 
 ## Usage
 
-1. Create monorepo with Expo app using [Nx Expo preset](https://nx.dev/nx-api/expo) or with Next.js app using [Nx Next preset](https://nx.dev/nx-api/next):
-
-**Expo app:**
+1. Create a monorepo using [Nx Typescript preset](https://nx.dev/docs/technologies/typescript):
 
 ```sh
-npx create-nx-workspace@latest my-project --preset=expo --appName=mobile --e2eTestRunner=none --unitTestRunner=none --formatter=prettier --linter=eslint --ci=skip
-```
-
-**Next.js app:**
-
-```sh
-npx create-nx-workspace@latest my-project --preset=next --appName=web --nextAppDir=true --unitTestRunner=none --formatter=prettier --linter=eslint --nextSrcDir=false --style=scss --e2eTestRunner=none --ci=skip
+npx create-nx-workspace@latest my-project --preset=ts --appName=mobile --e2eTestRunner=none --unitTestRunner=none --formatter=prettier --linter=eslint --ci=skip
 ```
 
 2. Install this package:

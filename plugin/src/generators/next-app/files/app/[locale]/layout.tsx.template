@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export interface RootLayoutProps {
   children: ReactNode;
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: string }>;
 }
 
 const locales = constants.locales;

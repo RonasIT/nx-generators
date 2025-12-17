@@ -68,6 +68,7 @@ export const devDependencies = {
   'code-checks': {
     '@eslint/compat': '^1.4.0',
     '@eslint/eslintrc': '^3.3.1',
+    '@eslint/js': '^9.37.0',
     eslint: '^9.37.0',
     prettier: '^3.6.2',
     'eslint-config-prettier': '^10.1.8',
@@ -82,6 +83,7 @@ export const devDependencies = {
     '@typescript-eslint/eslint-plugin': '^8.46.0',
     '@typescript-eslint/parser': '^8.46.0',
     'tsc-files': '^1.1.4',
+    'typescript-eslint': '^8.46.0',
   },
   'expo-app': {
     '@types/lodash-es': '^4.17.12',
@@ -94,6 +96,7 @@ export const devDependencies = {
   'next-app': {
     'eslint-config-next': '^16.0.3',
     '@types/lodash-es': '^4.17.12',
+    'babel-plugin-react-compiler': '^1.0.0',
   },
   'repo-config': {
     syncpack: '^13.0.4',

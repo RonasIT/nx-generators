@@ -26,6 +26,7 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
 
   // Install eslint plugin
   execSync('npx nx add @nx/eslint', { stdio: 'inherit' });
+  execSync('npx nx add @nx/eslint-plugin', { stdio: 'inherit' });
 
   const packageJson = readJson(tree, 'package.json');
   packageJson['lint-staged'] = config['lint-staged'];

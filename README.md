@@ -29,7 +29,7 @@ The generators enforce several best practices according to [Nx concepts](https:/
 1. Create a monorepo using [Nx Typescript preset](https://nx.dev/docs/technologies/typescript):
 
 ```sh
-npx create-nx-workspace@latest my-project --preset=ts --appName=mobile --e2eTestRunner=none --unitTestRunner=none --formatter=prettier --linter=eslint --ci=skip
+npx create-nx-workspace@latest my-project --preset=ts --e2eTestRunner=none --unitTestRunner=none --formatter=prettier --linter=eslint --ci=skip
 ```
 
 2. Install this package:

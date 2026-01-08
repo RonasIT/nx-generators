@@ -88,6 +88,7 @@ export const devDependencies = {
   'expo-app': {
     '@types/lodash-es': '^4.17.12',
     '@types/react': '~19.1.10',
+    '@types/react-dom': '~19.1.11',
     '@expo/cli': '~54.0.11',
     'reactotron-react-native': '~5.1.17',
     'reactotron-redux': '~3.2.1',
@@ -98,6 +99,7 @@ export const devDependencies = {
     'eslint-config-next': '^16.0.3',
     '@types/lodash-es': '^4.17.12',
     '@types/react': '~19.1.10',
+    '@types/react-dom': '~19.1.11',
     'babel-plugin-react-compiler': '^1.0.0',
   },
   'repo-config': {

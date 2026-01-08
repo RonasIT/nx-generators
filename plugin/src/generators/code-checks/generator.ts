@@ -21,12 +21,12 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   tree.delete('.prettierrc');
   tree.delete('tsconfig.json');
 
-  // Configure pre-commit hook
-  execSync('npx mrm@2 lint-staged', { stdio: 'inherit' });
-
   // Install eslint plugin
   execSync('npx nx add @nx/eslint', { stdio: 'inherit' });
   execSync('npx nx add @nx/eslint-plugin', { stdio: 'inherit' });
+
+  // Configure pre-commit hook
+  execSync('npx mrm@2 lint-staged', { stdio: 'inherit' });
 
   const packageJson = readJson(tree, 'package.json');
   packageJson['lint-staged'] = config['lint-staged'];

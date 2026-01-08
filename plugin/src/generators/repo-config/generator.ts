@@ -18,11 +18,12 @@ export async function repoConfigGenerator(tree: Tree) {
 
   // Remove unnecessary files and files that will be replaced
   tree.delete('README.md');
+  tree.delete('packages');
 
   // Update project package.json
   const projectPackageJson = readJson(tree, projectPackagePath);
   projectPackageJson.workspaces = ['apps/*'];
-  projectPackageJson.scripts = { ...scripts, ...projectPackageJson.scripts };
+  projectPackageJson.scripts = scripts;
   writeJson(tree, projectPackagePath, projectPackageJson);
 
   // Add project files

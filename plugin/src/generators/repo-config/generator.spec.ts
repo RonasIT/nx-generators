@@ -13,6 +13,7 @@ import {
   writeJsonMock,
 } from '../../shared/tests-utils';
 import { repoConfigGenerator } from './generator';
+import scripts from './scripts';
 
 describe('repoConfigGenerator', () => {
   let tree: devkit.Tree;
@@ -23,12 +24,8 @@ describe('repoConfigGenerator', () => {
   });
 
   it('should update package.json, generate files, add dependencies, format files and return install callback', async () => {
-    const oldScript = 'echo old';
     const mockPackageJson = {
       name: '@myorg/my-project',
-      scripts: {
-        oldScript: oldScript,
-      },
     };
     readJsonMock.mockReturnValue(mockPackageJson);
 
@@ -41,9 +38,7 @@ describe('repoConfigGenerator', () => {
       'package.json',
       expect.objectContaining({
         workspaces: ['apps/*'],
-        scripts: expect.objectContaining({
-          oldScript: oldScript,
-        }),
+        scripts: scripts,
       }),
     );
 

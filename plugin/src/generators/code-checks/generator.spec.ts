@@ -23,7 +23,6 @@ describe('codeChecksGenerator (integration)', () => {
     tree.write('.prettierignore', 'dist\n');
 
     // Files to be deleted
-    tree.write('.eslintrc.json', '{}');
     tree.write('.prettierrc', '{}');
     tree.write('eslint.config.cjs', '');
   });
@@ -33,7 +32,6 @@ describe('codeChecksGenerator (integration)', () => {
     const installFn = await codeChecksGenerator(tree, options);
 
     // Deleted legacy config files
-    expect(tree.exists('.eslintrc.json')).toBe(false);
     expect(tree.exists('.prettierrc')).toBe(false);
 
     // Re-created file

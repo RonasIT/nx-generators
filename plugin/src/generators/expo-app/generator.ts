@@ -133,7 +133,6 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
 
   return (): void => {
     installPackagesTask(tree);
-    execSync('npx expo install --fix', { stdio: 'inherit' });
 
     if (shouldGenerateAuthLibs) {
       execSync(`npx nx g auth --directory=${options.directory} --type=${BaseGeneratorType.EXPO_APP}`, {
@@ -148,6 +147,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     }
 
     execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
+    execSync('npx expo install --fix', { stdio: 'inherit' });
   };
 }
 

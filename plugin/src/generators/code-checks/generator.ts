@@ -18,10 +18,12 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   const projectRoot = '.';
 
   // Delete files
-  tree.delete('.eslintrc.json');
-  tree.delete('eslint.config.cjs');
-  tree.delete('eslint.config.mjs');
   tree.delete('.prettierrc');
+  tree.delete('tsconfig.json');
+
+  // Install eslint plugin
+  execSync('npx nx add @nx/eslint', { stdio: 'inherit' });
+  execSync('npx nx add @nx/eslint-plugin', { stdio: 'inherit' });
 
   // Configure pre-commit hook
   execSync('npx mrm@2 lint-staged', { stdio: 'inherit' });
@@ -44,7 +46,7 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   // Update .prettierignore
   const prettierignoreContent =
     tree.read('.prettierignore')?.toString() +
-    '# Files with custom rules\n**/actions.ts\n**/epics.ts\n**/selectors.ts\n';
+    '\n\n# Files with custom rules\n**/actions.ts\n**/epics.ts\n**/selectors.ts\n';
   tree.write('.prettierignore', prettierignoreContent);
 
   // Add files

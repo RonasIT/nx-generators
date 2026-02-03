@@ -17,6 +17,7 @@
     "expo-image": "~3.0.9",
     "expo-insights": "~0.10.7",
     "expo-linking": "~8.0.8",
+    "expo-localization": "~17.0.7",
     "expo-router": "~6.0.12",
     "expo-splash-screen": "~31.0.10",
     "expo-status-bar": "~3.0.8",
@@ -26,7 +27,6 @@
     "react": "19.1.0",
     "react-hook-form": "^7.65.0",
     "react-native": "0.81.5",
-    "react-native-extended-stylesheet": "^0.12.0",
     "react-native-mmkv": "^3.3.3",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
@@ -34,8 +34,7 @@
     "react-native-svg-transformer": "^1.5.1",
     "react-redux": "^9.2.0",
     "tslib": "^2.8.1",
-    "yup": "^1.7.1",
-    "expo-localization": "~17.0.7"
+    "yup": "^1.7.1"
   },
   "scripts": {
     "start": "cross-env EXPO_PUBLIC_APP_ENV=development npx expo start",

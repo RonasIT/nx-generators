@@ -9,7 +9,6 @@
     "@ronas-it/axios-api-client": "^0.2.0",
     "@ronas-it/react-native-common-modules": "^1.1.0",
     "@ronas-it/rtkq-entity-api": "^1.0.0",
-    "@ui-kitten/components": "^5.3.1",
     "expo": "^54.0.0",
     "expo-constants": "~18.0.9",
     "expo-dev-client": "~6.0.15",

@@ -2,7 +2,8 @@ import { Button, ButtonProps, Spinner } from '@ui-kitten/components';
 import { RenderProp } from '@ui-kitten/components/devsupport';
 import { ReactElement, forwardRef } from 'react';
 import { StyleProp, TextProps, ViewStyle } from 'react-native';
-import { commonStyle, createStyles, spacings } from '@ronas-it/mobile/shared/ui/styles';
+import { StyleSheet } from 'react-native-unistyles';
+import { commonStyle, spacings } from '@ronas-it/mobile/shared/ui/styles';
 
 export interface AppButtonProps extends ButtonProps {
   title?: string | RenderProp<TextProps>;
@@ -43,9 +44,9 @@ export const AppButton = forwardRef<Button, AppButtonProps>(function Component(
   );
 });
 
-const styles = createStyles({
+const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: spacings.containerOffset,
-    paddingVertical: spacings.contentOffset,
+    paddingHorizontal: spacings.xxl,
+    paddingVertical: spacings.xl,
   },
 });

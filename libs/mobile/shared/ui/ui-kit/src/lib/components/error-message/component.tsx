@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { StyleProp, TextStyle, View, ViewStyle } from 'react-native';
-import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
+import { StyleSheet } from 'react-native-unistyles';
 import { AppText, AppTextProps } from '../text';
 
 interface ErrorMessageProps extends AppTextProps {
@@ -19,7 +19,7 @@ export function ErrorMessage({ message, textStyle, containerStyle, ...props }: E
   );
 }
 
-const styles = createStyles({
+const styles = StyleSheet.create({
   container: {
     paddingTop: 4,
   },

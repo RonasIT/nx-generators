@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { ReactElement } from 'react';
+import { StyleSheet } from 'react-native-unistyles';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
-import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
 import { AppScreen } from '../screen';
 
 export function AppSplashScreen(): ReactElement {
@@ -12,7 +12,7 @@ export function AppSplashScreen(): ReactElement {
   );
 }
 
-const styles = createStyles({
+const styles = StyleSheet.create({
   screen: {
     justifyContent: 'center',
     alignItems: 'center',

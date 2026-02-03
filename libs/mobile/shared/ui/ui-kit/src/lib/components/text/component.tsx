@@ -1,6 +1,6 @@
 import { Text, TextProps } from '@ui-kitten/components';
 import { ReactElement } from 'react';
-import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
+import { StyleSheet } from 'react-native-unistyles';
 
 export interface AppTextProps extends TextProps {
   isCentered?: boolean;
@@ -15,7 +15,7 @@ export function AppText({
   return <Text style={[isCentered && styles.center, elementStyle]} category={category} {...restProps} />;
 }
 
-const styles = createStyles({
+const styles = StyleSheet.create({
   center: {
     textAlign: 'center',
   },

@@ -1,7 +1,8 @@
 import Constants from 'expo-constants';
 import { ReactElement } from 'react';
 import { Platform, TextStyle } from 'react-native';
-import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
+import { StyleSheet } from 'react-native-unistyles';
+import { rem } from '@ronas-it/mobile/shared/ui/styles';
 import { AppText } from '@ronas-it/mobile/shared/ui/ui-kit';
 
 export function AppVersion(props: { style?: TextStyle }): ReactElement {
@@ -13,10 +14,10 @@ export function AppVersion(props: { style?: TextStyle }): ReactElement {
   return <AppText style={[style.versionText, props.style]}>{versionName}</AppText>;
 }
 
-const style = createStyles({
+const style = StyleSheet.create({
   versionText: {
     width: '100%',
     textAlign: 'right',
-    fontSize: '0.85rem',
+    fontSize: 0.85 * rem,
   },
 });

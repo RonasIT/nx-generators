@@ -2,9 +2,10 @@ import { useTranslation } from '@ronas-it/react-native-common-modules/i18n';
 import { Image } from 'expo-image';
 import { Fragment, ReactElement } from 'react';
 import { View } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 import { authApi, profileApi } from '@ronas-it/mobile/shared/data-access/api';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
-import { commonStyle, createStyles } from '@ronas-it/mobile/shared/ui/styles';
+import { commonStyle, rem } from '@ronas-it/mobile/shared/ui/styles';
 import { AppText, AppButton, AppSpinner } from '@ronas-it/mobile/shared/ui/ui-kit';
 
 export function ProfileDetails(): ReactElement {
@@ -34,9 +35,9 @@ export function ProfileDetails(): ReactElement {
   );
 }
 
-const styles = createStyles({
+const styles = StyleSheet.create({
   profile: {
-    gap: '1rem',
+    gap: 1 * rem,
   },
   photo: {
     alignSelf: 'center',

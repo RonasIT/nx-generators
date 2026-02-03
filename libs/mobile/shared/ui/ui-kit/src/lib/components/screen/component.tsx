@@ -2,8 +2,9 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { Layout } from '@ui-kitten/components';
 import { ReactElement, useMemo } from 'react';
 import { ImageBackground, ScrollView, ScrollViewProps, View, ViewProps } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
-import { commonStyle, createStyles, spacings } from '@ronas-it/mobile/shared/ui/styles';
+import { commonStyle, spacings } from '@ronas-it/mobile/shared/ui/styles';
 
 export interface AppScreenProps {
   scrollDisabled?: boolean;
@@ -69,11 +70,11 @@ export function AppScreen(props: AppScreenProps & (ScrollableScreenProps | NonSc
   );
 }
 
-const styles = createStyles({
+const styles = StyleSheet.create({
   scroll: {
     minHeight: '100%',
   },
   container: {
-    paddingHorizontal: spacings.containerOffset,
+    paddingHorizontal: spacings.xxl,
   },
 });

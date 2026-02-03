@@ -1,22 +1,17 @@
-import { Dimensions } from 'react-native';
-import EStyleSheet from 'react-native-extended-stylesheet';
-import { createStyles } from './extended-stylesheet';
+import { StyleSheet } from 'react-native-unistyles';
+import { appThemes } from './themes';
 import { spacings } from './variables';
 
-export const screenWidth = Dimensions.get('window').width;
-export const screenHeight = Dimensions.get('window').height;
-export const isSmallScreen = screenWidth <= 360;
-export const rem = isSmallScreen ? 14 : 16;
-export const headerVerticalPadding = 0.625 * rem;
+type AppThemes = typeof appThemes;
 
-EStyleSheet.build({
-  $rem: rem,
-  $screenWidth: screenWidth,
-});
+declare module 'react-native-unistyles' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export type UnistylesThemes = AppThemes
+}
 
-export const commonStyle = createStyles({
+export const commonStyle = StyleSheet.create({
   container: {
-    paddingHorizontal: spacings.contentOffset,
+    paddingHorizontal: spacings.md,
   },
   fullFlex: {
     flex: 1,
@@ -24,7 +19,7 @@ export const commonStyle = createStyles({
   fullWidth: {
     width: '100%',
   },
+  fullHeight: {
+    height: '100%',
+  },
 });
-
-export const getResponsiveWidth = (width: number): number => screenWidth * (width / 100);
-export const getResponsiveHeight = (height: number): number => screenHeight * (height / 100);

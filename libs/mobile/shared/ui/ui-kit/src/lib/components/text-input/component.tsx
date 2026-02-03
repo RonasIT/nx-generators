@@ -1,7 +1,8 @@
 import { Input, InputProps } from '@ui-kitten/components/ui';
 import React, { ReactElement, useMemo, useState } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
-import { commonStyle, createStyles, useAppTheme } from '@ronas-it/mobile/shared/ui/styles';
+import { StyleSheet } from 'react-native-unistyles';
+import { commonStyle, useAppTheme } from '@ronas-it/mobile/shared/ui/styles';
 import { ErrorMessage } from '../error-message';
 import { AppPressableIcon } from '../pressable-icon';
 import { AppText } from '../text';
@@ -88,7 +89,7 @@ export const AppTextInput = React.forwardRef(function Component(
   );
 });
 
-const styles = createStyles({
+const styles = StyleSheet.create({
   text: {
     alignSelf: 'flex-start',
   },

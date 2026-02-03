@@ -1,7 +1,7 @@
 import { SchemaType } from '@eva-design/dss/types/schema';
 import defaultEvaMapping from '@eva-design/eva/mapping';
 import { PartialDeep } from 'type-fest';
-import { rem } from '../styles';
+import { rem } from '../metrics';
 import { fontFamily, colors } from '../variables';
 
 export const mapping: PartialDeep<typeof defaultEvaMapping | SchemaType> = {

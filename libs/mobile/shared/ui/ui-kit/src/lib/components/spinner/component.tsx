@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { StyleProp, View, ViewStyle, ActivityIndicator, ActivityIndicatorProps } from 'react-native';
-import { createStyles, useAppTheme } from '@ronas-it/mobile/shared/ui/styles';
+import { StyleSheet } from 'react-native-unistyles';
+import { useAppTheme } from '@ronas-it/mobile/shared/ui/styles';
 
 export interface AppSpinnerProps extends ActivityIndicatorProps {
   containerStyle?: StyleProp<ViewStyle>;
@@ -16,7 +17,7 @@ export function AppSpinner({ size = 'large', containerStyle, ...restProps }: App
   );
 }
 
-const styles = createStyles({
+const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',

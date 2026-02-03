@@ -1,3 +1,5 @@
+import { rem } from './metrics';
+
 export const colors = {
   primary: '#C32F41',
   primaryOpacity: 'rgba(195, 47, 65, 0.5)',
@@ -24,11 +26,12 @@ export const colors = {
 };
 
 export const spacings = {
-  elementOffset: '0.5rem', // 8px
-  basicOffset: '1rem', // 16px
-  contentOffset: '1.25rem', // 20px
-  containerOffset: '1.5rem', // 24px
-  containerSecondaryOffset: '2rem', // 32px
+  xxs: 0.25 * rem, // 4px
+  xs: 0.5 * rem, // 8px
+  sm: 0.75 * rem, // 12px
+  md: 1 * rem, // 16px
+  xl: 1.25 * rem, // 20px
+  xxl: 1.5 * rem, // 24px
 };
 
 export const fontFamily = {

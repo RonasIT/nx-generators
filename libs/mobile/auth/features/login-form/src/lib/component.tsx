@@ -6,10 +6,11 @@ import { useRouter } from 'expo-router';
 import { ReactElement, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ScrollView, View } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 import { authApi } from '@ronas-it/mobile/shared/data-access/api';
 import { AppVersion } from '@ronas-it/mobile/shared/ui/app-version';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
-import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
+import { rem } from '@ronas-it/mobile/shared/ui/styles';
 import { AppButton, AppText, ErrorMessage, FormTextInput } from '@ronas-it/mobile/shared/ui/ui-kit';
 import { FormValues } from '@ronas-it/mobile/shared/utils/form';
 import { navigationConfig } from '@ronas-it/mobile/shared/utils/navigation';
@@ -81,22 +82,22 @@ export function LoginForm(): ReactElement {
   );
 }
 
-const style = createStyles({
+const style = StyleSheet.create({
   content: {
-    paddingTop: '2rem',
+    paddingTop: 2 * rem,
   },
   logo: {
-    width: '3.5rem',
-    height: '3.5rem',
+    width: 3.5 * rem,
+    height: 3.5 * rem,
     alignSelf: 'center',
   },
   title: {
-    marginVertical: '2rem',
+    marginVertical: 2 * rem,
   },
   form: {
-    gap: '0.5rem',
+    gap: 0.5 * rem,
   },
   footer: {
-    marginTop: '2rem',
+    marginTop: 2 * rem,
   },
 });

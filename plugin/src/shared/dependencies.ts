@@ -47,10 +47,6 @@ export const dependencies = {
     '@ronas-it/rtkq-entity-api': '^0.5.0',
     'react-redux': '^9.2.0',
   },
-  'ui-kitten': {
-    '@eva-design/eva': '^2.2.0',
-    '@ui-kitten/components': '^5.3.1',
-  },
   form: {
     '@hookform/resolvers': '^5.2.2',
     'react-hook-form': '^7.65.0',

@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { View, Text } from 'react-native';
-import { createStyles } from '<%= libPath %>/shared/ui/styles';
+import { StyleSheet } from 'react-native-unistyles';
 
 export default function RootScreen(): ReactElement {
   return (
@@ -10,7 +10,7 @@ export default function RootScreen(): ReactElement {
   );
 }
 
-const styles = createStyles({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',

@@ -67,7 +67,6 @@ describe('expoAppGenerator integration with file content checks', () => {
       directory: directory,
       withStore: false,
       withFormUtils: false,
-      withUIKitten: false,
       withSentry: false,
     });
 
@@ -99,7 +98,6 @@ describe('expoAppGenerator integration with file content checks', () => {
       directory: directory,
       withStore: false,
       withFormUtils: false,
-      withUIKitten: false,
       withSentry: false,
     });
 
@@ -121,7 +119,6 @@ describe('expoAppGenerator integration with file content checks', () => {
       directory: directory,
       withStore: true,
       withFormUtils: true,
-      withUIKitten: true,
       withSentry: true,
     });
 

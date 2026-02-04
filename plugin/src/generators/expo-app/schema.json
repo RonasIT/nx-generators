@@ -34,12 +34,6 @@
       "default": false,
       "x-prompt": "Do you want to create form utils lib?"
     },
-    "withUIKitten": {
-      "type": "boolean",
-      "description": "Add UI Kitten library to the app",
-      "default": false,
-      "x-prompt": "Do you want to install @ui-kitten?"
-    },
     "withSentry": {
       "type": "boolean",
       "description": "Add Sentry to the app",

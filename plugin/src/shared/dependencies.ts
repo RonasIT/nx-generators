@@ -39,7 +39,9 @@ export const dependencies = {
     'js-cookie': '^3.0.5',
   },
   'rn-styles': {
-    'react-native-extended-stylesheet': '^0.12.0',
+    'react-native-unistyles': '^3.0.22',
+    'react-native-edge-to-edge': '^1.7.0',
+    'react-native-nitro-modules': '0.33.2',
   },
   store: {
     '@ronas-it/rtkq-entity-api': '^0.5.0',

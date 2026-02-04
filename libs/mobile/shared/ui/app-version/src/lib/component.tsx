@@ -17,7 +17,7 @@ export function AppVersion(props: { style?: TextStyle }): ReactElement {
 const style = StyleSheet.create({
   versionText: {
     width: '100%',
-    textAlign: 'right',
+    textAlign: 'center',
     fontSize: 0.85 * rem,
   },
 });

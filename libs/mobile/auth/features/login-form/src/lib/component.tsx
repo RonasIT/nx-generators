@@ -41,7 +41,7 @@ export function LoginForm(): ReactElement {
   return (
     <ScrollView contentContainerStyle={style.content}>
       <Image source={Images.logo} style={style.logo} />
-      <AppText style={style.title} category='h1'>
+      <AppText style={style.title} variant='h1'>
         {translate('TEXT_TITLE', { value: appName })}
       </AppText>
       <View style={style.form}>
@@ -70,11 +70,10 @@ export function LoginForm(): ReactElement {
       <View style={style.footer}>
         <AppButton
           onPress={handleSubmit(onSubmit)}
-          status='basic'
           isLoading={isLoading}
           disabled={!formState.isValid}
           testID='submit-button'
-          title={translate('BUTTON_SUBMIT')}
+          text={translate('BUTTON_SUBMIT')}
         />
       </View>
       <AppVersion />
@@ -82,9 +81,9 @@ export function LoginForm(): ReactElement {
   );
 }
 
-const style = StyleSheet.create({
+const style = StyleSheet.create(({ spacings }) => ({
   content: {
-    paddingTop: 2 * rem,
+    paddingTop: spacings['4xl'],
   },
   logo: {
     width: 3.5 * rem,
@@ -92,12 +91,13 @@ const style = StyleSheet.create({
     alignSelf: 'center',
   },
   title: {
-    marginVertical: 2 * rem,
+    marginVertical: spacings['4xl'],
+    textAlign: 'center',
   },
   form: {
-    gap: 0.5 * rem,
+    gap: spacings.sm,
   },
   footer: {
-    marginTop: 2 * rem,
+    marginVertical: spacings['4xl'],
   },
-});
+}));

@@ -1,5 +1,4 @@
 import { useHeaderHeight } from '@react-navigation/elements';
-import { Layout } from '@ui-kitten/components';
 import { ReactElement, useMemo } from 'react';
 import { ImageBackground, ScrollView, ScrollViewProps, View, ViewProps } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
@@ -39,11 +38,17 @@ export function AppScreen(props: AppScreenProps & (ScrollableScreenProps | NonSc
   const [ViewComponent, viewComponentProps] = useMemo(
     (): [typeof View, ViewProps] | [typeof ScrollView, ScrollViewProps] =>
       scrollDisabled
-        ? [View, { style: [commonStyle.fullFlex, !noOutsideSpacing && styles.container, elementStyle], ...restProps }]
+        ? [
+            View,
+            {
+              style: [commonStyle.fullFlex, !noOutsideSpacing && styles.spacingsContainer, elementStyle],
+              ...restProps,
+            },
+          ]
         : [
             ScrollView,
             {
-              contentContainerStyle: [styles.scroll, !noOutsideSpacing && styles.container, elementStyle],
+              contentContainerStyle: [styles.scroll, !noOutsideSpacing && styles.spacingsContainer, elementStyle],
               showsVerticalScrollIndicator: false,
               keyboardShouldPersistTaps: 'handled',
               ...restProps,
@@ -64,17 +69,20 @@ export function AppScreen(props: AppScreenProps & (ScrollableScreenProps | NonSc
       {content}
     </ImageBackground>
   ) : (
-    <Layout level='1' style={commonStyle.fullFlex} testID={testID}>
+    <View style={[styles.container, commonStyle.fullFlex]} testID={testID}>
       {content}
-    </Layout>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(({ colors }) => ({
+  container: {
+    backgroundColor: colors.backgroundPrimary,
+  },
   scroll: {
     minHeight: '100%',
   },
-  container: {
+  spacingsContainer: {
     paddingHorizontal: spacings.xxl,
   },
-});
+}));

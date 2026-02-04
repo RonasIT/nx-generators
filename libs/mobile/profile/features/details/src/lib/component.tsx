@@ -19,7 +19,7 @@ export function ProfileDetails(): ReactElement {
       <View style={commonStyle.fullFlex}>
         {profile ? (
           <View style={styles.profile}>
-            <AppText category='h1'>{translate('TEXT_GREETING', { name: profile.nickname })}</AppText>
+            <AppText variant='h1'>{translate('TEXT_GREETING', { name: profile.nickname })}</AppText>
             <Image source={avatarSrc} style={styles.photo} />
             <View>
               <AppText>{translate('TEXT_EMAIL', { email: profile.email })}</AppText>
@@ -30,7 +30,7 @@ export function ProfileDetails(): ReactElement {
           <AppSpinner />
         )}
       </View>
-      <AppButton onPress={() => logout()} title={translate('BUTTON_LOGOUT')} isLoading={isLoading} />
+      <AppButton onPress={() => logout()} text={translate('BUTTON_LOGOUT')} isLoading={isLoading} />
     </Fragment>
   );
 }

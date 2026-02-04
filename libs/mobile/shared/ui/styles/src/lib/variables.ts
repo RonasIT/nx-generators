@@ -10,7 +10,7 @@ export const colors = {
   textPrimary: '#F6F6F6',
   textBasic: '#1B1A19',
   textSecondary: '#BABABA',
-  textTertriary: '#63636B',
+  textTertiary: '#63636B',
 
   backgroundPrimary: '#1B1A19',
   backgroundSecondary: '#292726',
@@ -32,6 +32,8 @@ export const spacings = {
   md: 1 * rem, // 16px
   xl: 1.25 * rem, // 20px
   xxl: 1.5 * rem, // 24px
+  xxxl: 1.75 * rem, // 28px
+  '4xl': 2 * rem, // 32px,
 };
 
 export const fontFamily = {

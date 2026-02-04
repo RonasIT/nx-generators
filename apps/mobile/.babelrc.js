@@ -10,6 +10,7 @@ module.exports = function (api) {
           autoProcessImports: '@ronas-it/mobile',
         },
       ],
+      ['react-native-worklets/plugin'],
     ],
   };
 };

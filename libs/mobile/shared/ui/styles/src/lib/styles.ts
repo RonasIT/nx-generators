@@ -13,7 +13,9 @@ type AppThemes = typeof appThemes;
 
 declare module 'react-native-unistyles' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  export type UnistylesThemes = AppThemes
+  export interface UnistylesThemes {
+    light: AppThemes['light'];
+  }
 }
 
 export const commonStyle = StyleSheet.create({

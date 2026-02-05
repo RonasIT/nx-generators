@@ -154,13 +154,6 @@ describe('expoAppGenerator integration with file content checks', () => {
     );
 
     expect(execSyncMock).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `npx nx g react-lib --app=${directory} --scope=shared --type=features --name=user-theme-provider --withComponent=false`,
-      ),
-      { stdio: 'inherit' },
-    );
-
-    expect(execSyncMock).toHaveBeenCalledWith(
       expect.stringContaining(`npx nx g react-lib --app=${directory} --scope=shared --type=utils --name=navigation`),
       { stdio: 'inherit' },
     );

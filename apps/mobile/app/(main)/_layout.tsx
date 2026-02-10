@@ -1,3 +1,4 @@
+import { AppHeader } from '@ronas-it/mobile/shared/ui/ui-kit';
 import { useTranslation } from '@ronas-it/react-native-common-modules/i18n';
 import { Stack } from 'expo-router';
 import { ReactElement } from 'react';
@@ -10,8 +11,7 @@ export default function MainNavigation(): ReactElement {
       <Stack.Screen
         name='index'
         options={{
-          headerTitleAlign: 'left',
-          title: translate('TEXT_PROFILE'),
+          header: (props) => <AppHeader title={translate('TEXT_PROFILE')} {...props} />,
         }}
       />
     </Stack>

@@ -2,13 +2,10 @@ import { Expose } from 'class-transformer';
 
 export class RefreshTokenResponse {
   @Expose()
-  public token: string;
+  public accessToken: string;
 
   @Expose()
-  public ttl: number;
-
-  @Expose({ name: 'refresh_ttl' })
-  public refreshTtl: string;
+  public refreshToken: string;
 
   constructor(partial: Partial<RefreshTokenResponse>) {
     Object.assign(this, partial);

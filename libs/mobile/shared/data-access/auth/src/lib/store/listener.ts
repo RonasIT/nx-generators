@@ -17,18 +17,24 @@ export const authListenerMiddleware = createListenerMiddleware<{
 authListenerMiddleware.startListening({
   matcher: authApi.internalActions.middlewareRegistered.match,
   effect: (_, { dispatch, getState }) => {
-    const token = storage.getString(AppStorageValue.TOKEN);
+    const accessToken = storage.getString(AppStorageValue.ACCESS_TOKEN);
 
-    dispatch(authActions.setIsAuthenticated(Boolean(token)));
+    dispatch(authActions.setIsAuthenticated(Boolean(accessToken)));
 
     const options: RefreshTokenInterceptorOptions = {
       configuration: configuration.auth,
       getIsAuthenticated: () => authSelectors.isAuthenticated(getState()),
       runTokenRefreshRequest: async () => {
-        const { token } = await dispatch(authApi.endpoints.refreshToken.initiate()).unwrap();
-        storage.set(AppStorageValue.TOKEN, token);
+        const refreshToken = storage.getString(AppStorageValue.REFRESH_TOKEN);
 
-        return token;
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await dispatch(
+          authApi.endpoints.refreshToken.initiate({ refreshToken: refreshToken || '' }),
+        ).unwrap();
+
+        storage.set(AppStorageValue.ACCESS_TOKEN, newAccessToken);
+        storage.set(AppStorageValue.REFRESH_TOKEN, newRefreshToken);
+
+        return newAccessToken;
       },
       onError: () => {
         return dispatch(authApi.endpoints.logout.initiate()).unwrap();
@@ -38,21 +44,20 @@ authListenerMiddleware.startListening({
     apiService.useInterceptors({
       request: [
         [onRequestRefreshTokenInterceptor(options)],
-        [tokenInterceptor({ getToken: () => storage.getString(AppStorageValue.TOKEN) ?? '' })],
+        [tokenInterceptor({ getToken: () => storage.getString(AppStorageValue.ACCESS_TOKEN) ?? '' })],
       ],
       response: [[null, onResponseRefreshTokenInterceptor(options)]],
     });
 
-    if (token) {
-      dispatch(profileApi.endpoints.getProfile.initiate());
-    }
+    dispatch(authActions.setIsAppReady(true));
   },
 });
 
 authListenerMiddleware.startListening({
-  matcher: isAnyOf(authApi.endpoints.login.matchFulfilled, authApi.endpoints.register.matchFulfilled),
-  effect: ({ payload: { token } }: { payload: LogInResponse }, { dispatch }) => {
-    storage.set(AppStorageValue.TOKEN, token);
+  matcher: authApi.endpoints.login.matchFulfilled,
+  effect: ({ payload: { accessToken, refreshToken } }: { payload: LogInResponse }, { dispatch }) => {
+    storage.set(AppStorageValue.ACCESS_TOKEN, accessToken);
+    storage.set(AppStorageValue.REFRESH_TOKEN, refreshToken);
     dispatch(authActions.setIsAuthenticated(true));
   },
 });
@@ -64,7 +69,8 @@ authListenerMiddleware.startListening({
     profileApi.endpoints.deleteProfile.matchFulfilled,
   ),
   effect: (_, { dispatch }) => {
-    storage.delete(AppStorageValue.TOKEN);
+    storage.delete(AppStorageValue.ACCESS_TOKEN);
+    storage.delete(AppStorageValue.REFRESH_TOKEN);
     dispatch(authActions.setIsAuthenticated(false));
 
     dispatch(profileApi.util.resetApiState());

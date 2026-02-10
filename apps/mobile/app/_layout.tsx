@@ -36,6 +36,8 @@ SplashScreen.preventAutoHideAsync();
 function App(): ReactElement {
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const isAppReady = useSelector(authSelectors.isAppReady);
   const isAuthenticated = useSelector(authSelectors.isAuthenticated);
 
   useLanguage('en');
@@ -45,10 +47,10 @@ function App(): ReactElement {
   }, []);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (isAppReady && !isAuthenticated) {
       router.replace(navigationConfig.routes.signIn);
     }
-  }, [isAuthenticated]);
+  }, [isAppReady, isAuthenticated]);
 
   return (
     <Stack>

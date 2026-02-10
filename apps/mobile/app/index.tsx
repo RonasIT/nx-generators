@@ -7,9 +7,15 @@ import { useSelector } from 'react-redux';
 
 export default function RootScreen(): ReactElement {
   const router = useRouter();
+
+  const isAppReady = useSelector(authSelectors.isAppReady);
   const isAuthenticated = useSelector(authSelectors.isAuthenticated);
 
   useEffect(() => {
+    if (!isAppReady) {
+      return;
+    }
+
     if (isAuthenticated) {
       router.replace(navigationConfig.routes.profile);
 
@@ -17,7 +23,7 @@ export default function RootScreen(): ReactElement {
     }
 
     router.replace(navigationConfig.routes.signIn);
-  }, [isAuthenticated]);
+  }, [isAppReady, isAuthenticated]);
 
   return <AppSplashScreen />;
 }

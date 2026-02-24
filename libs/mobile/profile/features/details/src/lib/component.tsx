@@ -2,9 +2,10 @@ import { useTranslation } from '@ronas-it/react-native-common-modules/i18n';
 import { Image } from 'expo-image';
 import { Fragment, ReactElement } from 'react';
 import { View } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 import { authApi, profileApi } from '@ronas-it/mobile/shared/data-access/api';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
-import { commonStyle, createStyles } from '@ronas-it/mobile/shared/ui/styles';
+import { commonStyle, rem } from '@ronas-it/mobile/shared/ui/styles';
 import { AppText, AppButton, AppSpinner } from '@ronas-it/mobile/shared/ui/ui-kit';
 
 export function ProfileDetails(): ReactElement {
@@ -18,7 +19,7 @@ export function ProfileDetails(): ReactElement {
       <View style={commonStyle.fullFlex}>
         {profile ? (
           <View style={styles.profile}>
-            <AppText category='h1'>{translate('TEXT_GREETING', { name: profile.nickname })}</AppText>
+            <AppText variant='h1'>{translate('TEXT_GREETING', { name: profile.nickname })}</AppText>
             <Image source={avatarSrc} style={styles.photo} />
             <View>
               <AppText>{translate('TEXT_EMAIL', { email: profile.email })}</AppText>
@@ -29,14 +30,14 @@ export function ProfileDetails(): ReactElement {
           <AppSpinner />
         )}
       </View>
-      <AppButton onPress={() => logout()} title={translate('BUTTON_LOGOUT')} isLoading={isLoading} />
+      <AppButton onPress={() => logout()} text={translate('BUTTON_LOGOUT')} isLoading={isLoading} />
     </Fragment>
   );
 }
 
-const styles = createStyles({
+const styles = StyleSheet.create({
   profile: {
-    gap: '1rem',
+    gap: 1 * rem,
   },
   photo: {
     alignSelf: 'center',

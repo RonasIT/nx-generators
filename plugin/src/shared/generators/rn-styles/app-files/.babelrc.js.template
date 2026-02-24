@@ -7,10 +7,9 @@ module.exports = function (api) {
         'react-native-unistyles/plugin',
         {
           root: 'app',
-          autoProcessImports: '@ronas-it/mobile',
+          autoProcessImports: '<%= libPath %>',
         },
       ],
-      ['react-native-worklets/plugin'],
     ],
   };
 };

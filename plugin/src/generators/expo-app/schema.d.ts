@@ -6,5 +6,4 @@ export interface ExpoAppGeneratorSchema {
   withAuth?: boolean;
   withSentry: boolean;
   withFormUtils: boolean;
-  withUIKitten: boolean;
 }

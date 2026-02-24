@@ -22,12 +22,19 @@ export async function runRNStylesGenerator(tree: Tree, options: { name: string; 
 
   // Remove unnecessary files and files that will be replaced
   tree.delete(`${libRoot}/shared/ui/styles/src/index.ts`);
+  tree.delete(`${appRoot}/.babelrc.js`);
 
   // Add lib files
   generateFiles(tree, path.join(__dirname, 'lib-files'), libRoot, {
     ...options,
     formatName,
     formatAppIdentifier,
+    libPath,
+  });
+
+  // Add app files
+  generateFiles(tree, path.join(__dirname, 'app-files'), appRoot, {
+    ...options,
     libPath,
   });
 

@@ -67,7 +67,6 @@ describe('expoAppGenerator integration with file content checks', () => {
       directory: directory,
       withStore: false,
       withFormUtils: false,
-      withUIKitten: false,
       withSentry: false,
     });
 
@@ -99,7 +98,6 @@ describe('expoAppGenerator integration with file content checks', () => {
       directory: directory,
       withStore: false,
       withFormUtils: false,
-      withUIKitten: false,
       withSentry: false,
     });
 
@@ -121,7 +119,6 @@ describe('expoAppGenerator integration with file content checks', () => {
       directory: directory,
       withStore: true,
       withFormUtils: true,
-      withUIKitten: true,
       withSentry: true,
     });
 
@@ -153,13 +150,6 @@ describe('expoAppGenerator integration with file content checks', () => {
 
     expect(execSyncMock).toHaveBeenCalledWith(
       expect.stringContaining(`npx nx g react-lib --app=${directory} --scope=shared --type=utils --name=form`),
-      { stdio: 'inherit' },
-    );
-
-    expect(execSyncMock).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `npx nx g react-lib --app=${directory} --scope=shared --type=features --name=user-theme-provider --withComponent=false`,
-      ),
       { stdio: 'inherit' },
     );
 

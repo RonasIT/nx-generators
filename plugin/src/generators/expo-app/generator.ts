@@ -21,7 +21,6 @@ import {
   runRNStylesGenerator,
   runStorageGenerator,
   runStoreGenerator,
-  runUIKittenGenerator,
 } from '../../shared/generators';
 import { addNxAppTag, confirm, formatAppIdentifier, formatName, getImportPathPrefix } from '../../shared/utils';
 import { ExpoAppGeneratorSchema } from './schema';
@@ -71,10 +70,6 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     await runFormUtilsGenerator(tree, options);
   }
 
-  if (options.withUIKitten) {
-    await runUIKittenGenerator(tree, options);
-  }
-
   // Workaround: Even with the '--e2eTestRunner=none' parameter, the test folder is created. We delete it manually.
   if (existsSync(appTestFolder)) {
     rmSync(appTestFolder, { recursive: true, force: true });
@@ -115,7 +110,6 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     formatName,
     formatAppIdentifier,
     libPath,
-    isUIKittenEnabled: options.withUIKitten,
     isStoreEnabled: options.withStore,
     appDirectory: options.directory,
   });

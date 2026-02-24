@@ -35,11 +35,6 @@
       "schema": "./src/generators/sentry/schema.json",
       "description": "Creates Sentry integration for Expo/Next application"
     },
-    "ui-kitten": {
-      "factory": "./src/shared/generators/ui-kitten/generator",
-      "schema": "./src/shared/generators/ui-kitten/schema.json",
-      "description": "Installs and configures UI-Kitten for Expo application"
-    },
     "entity-api": {
       "factory": "./src/generators/entity-api/generator",
       "schema": "./src/generators/entity-api/schema.json",

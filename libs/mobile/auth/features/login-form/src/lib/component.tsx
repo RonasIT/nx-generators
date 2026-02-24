@@ -6,10 +6,11 @@ import { useRouter } from 'expo-router';
 import { ReactElement, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ScrollView, View } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 import { authApi } from '@ronas-it/mobile/shared/data-access/api';
 import { AppVersion } from '@ronas-it/mobile/shared/ui/app-version';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
-import { createStyles } from '@ronas-it/mobile/shared/ui/styles';
+import { rem } from '@ronas-it/mobile/shared/ui/styles';
 import { AppButton, AppText, ErrorMessage, FormTextInput } from '@ronas-it/mobile/shared/ui/ui-kit';
 import { FormValues } from '@ronas-it/mobile/shared/utils/form';
 import { navigationConfig } from '@ronas-it/mobile/shared/utils/navigation';
@@ -40,7 +41,7 @@ export function LoginForm(): ReactElement {
   return (
     <ScrollView contentContainerStyle={style.content}>
       <Image source={Images.logo} style={style.logo} />
-      <AppText style={style.title} category='h1'>
+      <AppText style={style.title} variant='h1'>
         {translate('TEXT_TITLE', { value: appName })}
       </AppText>
       <View style={style.form}>
@@ -69,11 +70,10 @@ export function LoginForm(): ReactElement {
       <View style={style.footer}>
         <AppButton
           onPress={handleSubmit(onSubmit)}
-          status='basic'
           isLoading={isLoading}
           disabled={!formState.isValid}
           testID='submit-button'
-          title={translate('BUTTON_SUBMIT')}
+          text={translate('BUTTON_SUBMIT')}
         />
       </View>
       <AppVersion />
@@ -81,22 +81,23 @@ export function LoginForm(): ReactElement {
   );
 }
 
-const style = createStyles({
+const style = StyleSheet.create(({ spacings }) => ({
   content: {
-    paddingTop: '2rem',
+    paddingTop: spacings['4xl'],
   },
   logo: {
-    width: '3.5rem',
-    height: '3.5rem',
+    width: 3.5 * rem,
+    height: 3.5 * rem,
     alignSelf: 'center',
   },
   title: {
-    marginVertical: '2rem',
+    marginVertical: spacings['4xl'],
+    textAlign: 'center',
   },
   form: {
-    gap: '0.5rem',
+    gap: spacings.sm,
   },
   footer: {
-    marginTop: '2rem',
+    marginVertical: spacings['4xl'],
   },
-});
+}));

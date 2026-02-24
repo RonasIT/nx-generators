@@ -39,15 +39,13 @@ export const dependencies = {
     'js-cookie': '^3.0.5',
   },
   'rn-styles': {
-    'react-native-extended-stylesheet': '^0.12.0',
+    'react-native-unistyles': '^3.0.22',
+    'react-native-edge-to-edge': '^1.7.0',
+    'react-native-nitro-modules': '0.33.2',
   },
   store: {
     '@ronas-it/rtkq-entity-api': '^0.5.0',
     'react-redux': '^9.2.0',
-  },
-  'ui-kitten': {
-    '@eva-design/eva': '^2.2.0',
-    '@ui-kitten/components': '^5.3.1',
   },
   form: {
     '@hookform/resolvers': '^5.2.2',

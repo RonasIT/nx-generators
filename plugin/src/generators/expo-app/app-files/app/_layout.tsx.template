@@ -1,9 +1,7 @@
 <% if(isStoreEnabled) { %> import { store } from '<%= libPath %>/shared/data-access/store';<% } %>
 import { setLanguage } from '@ronas-it/react-native-common-modules/i18n';
-<% if(isUIKittenEnabled) { %>
-import { UserThemeProvider } from '<%= libPath %>/shared/features/user-theme-provider';
-<% } %>
 import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { ReactElement } from 'react';
 <% if(isStoreEnabled) { %>import { Provider } from 'react-redux';<% } %>
 
@@ -36,9 +34,8 @@ function App(): ReactElement {
 export default function RootLayout(): ReactElement | null {
   return (
     <% if(isStoreEnabled) { %><Provider store={store}><% } %>
-    <% if(isUIKittenEnabled) { %><UserThemeProvider><% } %>
+      <StatusBar style='light' />
       <App />
-    <% if(isUIKittenEnabled) { %></UserThemeProvider><% } %>
     <% if(isStoreEnabled) { %></Provider><% } %>
   );
 }

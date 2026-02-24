@@ -1,51 +1,122 @@
-import { Button, ButtonProps, Spinner } from '@ui-kitten/components';
-import { RenderProp } from '@ui-kitten/components/devsupport';
-import { ReactElement, forwardRef } from 'react';
-import { StyleProp, TextProps, ViewStyle } from 'react-native';
-import { commonStyle, createStyles, spacings } from '@ronas-it/mobile/shared/ui/styles';
+import { Fragment, ReactElement } from 'react';
+import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
+import { UnistylesVariants, StyleSheet } from 'react-native-unistyles';
+import { colors, rem, spacings } from '@ronas-it/mobile/shared/ui/styles';
+import { AppSpinner } from '../spinner';
+import { AppText } from '../text';
 
-export interface AppButtonProps extends ButtonProps {
-  title?: string | RenderProp<TextProps>;
-  style?: StyleProp<ViewStyle>;
-  isLoading?: boolean;
-  fitContent?: boolean;
-  withPaddings?: boolean;
-}
+type AppButtonProps = UnistylesVariants<typeof buttonStyles> &
+  Omit<PressableProps, 'style'> & {
+    accessoryLeft?: ReactElement;
+    accessoryRight?: ReactElement;
+    text?: string;
+    isLoading?: boolean;
+    isFilled?: boolean;
+    style?: StyleProp<ViewStyle>;
+  };
 
-export const AppButton = forwardRef<Button, AppButtonProps>(function Component(
-  {
-    title,
-    accessoryLeft,
-    style: elementStyle = {},
-    isLoading,
-    fitContent,
-    disabled,
-    size = 'large',
-    appearance = 'filled',
-    status = 'primary',
-    withPaddings,
-    ...props
-  }: AppButtonProps,
-  ref,
-): ReactElement {
+export const AppButton = ({
+  variant = 'primary',
+  size = 'regular',
+  disabled,
+  text,
+  isLoading,
+  isFilled,
+  style,
+  accessoryLeft,
+  accessoryRight,
+  ...props
+}: AppButtonProps): ReactElement => {
+  buttonStyles.useVariants({ variant, size });
+  textStyles.useVariants({ variant });
+
+  const buttonDisabled = disabled || isLoading;
+
   return (
-    <Button
-      ref={ref}
-      status={status}
-      style={[withPaddings && styles.container, !fitContent && commonStyle.fullWidth, elementStyle]}
-      accessoryLeft={isLoading ? () => <Spinner status={'control'} size={'medium'} /> : accessoryLeft}
-      appearance={appearance}
-      disabled={disabled || isLoading}
-      size={size}
+    <Pressable
+      style={({ pressed }) => [buttonStyles.button(pressed, !!isFilled), style]}
+      disabled={buttonDisabled}
       {...props}>
-      {title}
-    </Button>
+      {({ pressed }): ReactElement =>
+        isLoading ? (
+          <AppSpinner size='small' color={variant === 'primary' ? colors.backgroundPrimary : colors.textPrimary} />
+        ) : (
+          <Fragment>
+            {accessoryLeft}
+            <AppText
+              variant={size === 'regular' ? 'bodyDefaultBold' : 'bodySmallBold'}
+              style={textStyles.text(!!buttonDisabled, pressed)}>
+              {text}
+            </AppText>
+            {accessoryRight}
+          </Fragment>
+        )
+      }
+    </Pressable>
   );
-});
+};
 
-const styles = createStyles({
-  container: {
-    paddingHorizontal: spacings.containerOffset,
-    paddingVertical: spacings.contentOffset,
-  },
-});
+const buttonStyles = StyleSheet.create(({ colors }) => ({
+  button: (pressed: boolean, filled: boolean) => ({
+    flex: filled ? 1 : 0,
+    flexDirection: 'row',
+    gap: spacings.xs,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'transparent',
+    variants: {
+      variant: {
+        primary: {
+          backgroundColor: colors.primary,
+        },
+        secondary: {
+          backgroundColor: colors.backgroundSecondary,
+        },
+        tertiary: {
+          backgroundColor: 'transparent',
+          borderColor: pressed ? colors.textTertiary : 'transparent',
+        },
+        danger: {
+          backgroundColor: 'transparent',
+          borderColor: pressed ? colors.textTertiary : 'transparent',
+        },
+      },
+      size: {
+        regular: {
+          borderRadius: 1 * rem,
+          minHeight: 3.5 * rem,
+          paddingHorizontal: 2.625 * rem,
+        },
+        small: {
+          borderRadius: 1 * rem,
+          minHeight: 2 * rem,
+          paddingHorizontal: 1 * rem,
+        },
+      },
+    },
+  }),
+}));
+
+const textStyles = StyleSheet.create(({ colors }) => ({
+  text: (disabled: boolean, pressed: boolean) => ({
+    variants: {
+      variant: {
+        primary: {
+          color: colors.textPrimary,
+          opacity: disabled ? 0.4 : pressed ? 0.8 : 1,
+        },
+        secondary: {
+          color: disabled ? colors.textSecondary : pressed ? colors.primary : colors.textPrimary,
+        },
+        tertiary: {
+          color: disabled ? colors.textSecondary : colors.textPrimary,
+        },
+        danger: {
+          color: colors.error,
+          opacity: disabled ? 0.4 : pressed ? 0.8 : 1,
+        },
+      },
+    },
+  }),
+}));

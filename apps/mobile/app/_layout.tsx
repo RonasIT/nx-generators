@@ -1,6 +1,5 @@
 import { authSelectors } from '@ronas-it/mobile/shared/data-access/auth';
 import { store } from '@ronas-it/mobile/shared/data-access/store';
-import { UserThemeProvider } from '@ronas-it/mobile/shared/features/user-theme-provider';
 import { fonts } from '@ronas-it/mobile/shared/ui/styles';
 import { navigationConfig } from '@ronas-it/mobile/shared/utils/navigation';
 import { setLanguage } from '@ronas-it/react-native-common-modules/i18n';
@@ -8,6 +7,7 @@ import { storeActions } from '@ronas-it/rtkq-entity-api';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { ReactElement, useEffect } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 
@@ -79,9 +79,8 @@ export default function RootLayout(): ReactElement | null {
 
   return (
     <Provider store={store}>
-      <UserThemeProvider>
-        <App />
-      </UserThemeProvider>
+      <StatusBar style={'light'} />
+      <App />
     </Provider>
   );
 }

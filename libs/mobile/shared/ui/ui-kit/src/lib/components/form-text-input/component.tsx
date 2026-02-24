@@ -1,12 +1,12 @@
-import { Input } from '@ui-kitten/components';
-import { ReactElement } from 'react';
+import { ReactElement, RefObject } from 'react';
 import { Control, FieldValues, Path, useController } from 'react-hook-form';
+import { TextInput } from 'react-native';
 import { AppTextInput, AppTextInputProps } from '../text-input';
 
 export interface FormTextInputProps<T extends FieldValues> extends AppTextInputProps {
   name: Path<T>;
   control: Control<T>;
-  inputRef?: React.ForwardedRef<Input>;
+  inputRef?: RefObject<TextInput | null>;
 }
 
 export function FormTextInput<T extends FieldValues>({

@@ -14,7 +14,7 @@ export class LoginFormSchema implements BaseFormSchema<LoginFormSchema> {
   public static get validationSchema(): Yup.ObjectSchema<FormValues<LoginFormSchema>> {
     return Yup.object().shape({
       username: Yup.string().required(i18n.t('AUTH.VALIDATION.TEXT_VALIDATION_REQUIRED_FIELD')),
-      password: Yup.string().required(i18n.t('TEXT_VALIDATION_REQUIRED_FIELD')),
+      password: Yup.string().required(i18n.t('AUTH.VALIDATION.TEXT_VALIDATION_REQUIRED_FIELD')),
     });
   }
 

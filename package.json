@@ -125,7 +125,8 @@
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "plugin/*"
   ],
   "lint-staged": {
     "*.{ts,tsx}": "tsc-files --noEmit types.d.ts",

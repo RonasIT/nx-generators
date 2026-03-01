@@ -20,11 +20,6 @@ jobs:
           node-version: "22"
           cache: "npm"
 
-      - name: Check NPM and Node.js versions
-        run: |
-          echo "NPM version: $(npm -v)"
-          echo "Node.js version: $(node -v)"
-
       - name: Install dependencies
         run: npm ci
 

@@ -18,7 +18,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: "npm"
       - name: Check NPM and Node.js versions
         run: |
           echo "NPM version: $(npm -v)"

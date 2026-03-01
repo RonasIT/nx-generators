@@ -13,6 +13,8 @@ An example React Native application is included in the `apps/mobile` directory a
 - Provides practical examples of library usage and best practices
 - Serves as a testing ground for generator development
 
+The example app uses [DummyJSON](https://dummyjson.com/docs) for API interaction demonstration. Test credentials: `emilys` | `emilyspass`.
+
 To run the example app locally, run in the repo root:
 
 ```sh

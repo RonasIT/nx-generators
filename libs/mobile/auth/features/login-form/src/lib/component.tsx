@@ -5,7 +5,7 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { ReactElement, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import { authApi } from '@ronas-it/mobile/shared/data-access/api';
 import { AppVersion } from '@ronas-it/mobile/shared/ui/app-version';
@@ -39,20 +39,18 @@ export function LoginForm(): ReactElement {
   }, [isSuccess]);
 
   return (
-    <ScrollView contentContainerStyle={style.content}>
+    <View style={style.content}>
       <Image source={Images.logo} style={style.logo} />
       <AppText style={style.title} variant='h1'>
         {translate('TEXT_TITLE', { value: appName })}
       </AppText>
       <View style={style.form}>
         <FormTextInput
-          label={translate('TEXT_LOGIN')}
-          name='email'
-          testID='email-input'
+          label={translate('TEXT_USERNAME')}
+          name='username'
+          testID='username-input'
           autoCapitalize='none'
           autoCorrect={false}
-          autoComplete='email'
-          keyboardType='email-address'
           control={control}
           returnKeyType='next'
         />
@@ -66,7 +64,6 @@ export function LoginForm(): ReactElement {
         />
         {!!error?.message && <ErrorMessage message={error.message} />}
       </View>
-
       <View style={style.footer}>
         <AppButton
           onPress={handleSubmit(onSubmit)}
@@ -77,7 +74,7 @@ export function LoginForm(): ReactElement {
         />
       </View>
       <AppVersion />
-    </ScrollView>
+    </View>
   );
 }
 

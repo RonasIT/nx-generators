@@ -2,10 +2,12 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export interface AuthState {
   isAuthenticated: boolean | null;
+  isAppReady: boolean;
 }
 
 const initialState: AuthState = {
   isAuthenticated: null,
+  isAppReady: false,
 };
 
 const authSlice = createSlice({
@@ -15,9 +17,13 @@ const authSlice = createSlice({
     setIsAuthenticated(state, { payload }: PayloadAction<boolean>) {
       state.isAuthenticated = payload;
     },
+    setIsAppReady(state, { payload }: PayloadAction<boolean>) {
+      state.isAppReady = payload;
+    },
   },
   selectors: {
     isAuthenticated: (state) => state.isAuthenticated,
+    isAppReady: (state) => state.isAppReady,
   },
 });
 

@@ -1,11 +1,12 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { User } from '../../user';
-import { RefreshTokenResponse } from './refresh-token-response';
 
-export class LogInResponse extends RefreshTokenResponse {
+export class LogInResponse extends User {
   @Expose()
-  @Type(() => User)
-  public user: User;
+  public accessToken: string;
+
+  @Expose()
+  public refreshToken: string;
 
   constructor(partial: Partial<LogInResponse> = {}) {
     super(partial);

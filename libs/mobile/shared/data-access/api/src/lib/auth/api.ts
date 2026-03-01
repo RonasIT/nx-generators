@@ -1,14 +1,7 @@
 import { prepareRequestParams } from '@ronas-it/rtkq-entity-api';
 import { plainToInstance } from 'class-transformer';
 import { createAppApi } from '@ronas-it/mobile/shared/data-access/api-client';
-import {
-  ForgotPasswordRequest,
-  LoginRequest,
-  LogInResponse,
-  RefreshTokenResponse,
-  RegisterRequest,
-  RestorePasswordRequest,
-} from './models';
+import { LoginRequest, LogInResponse, RefreshTokenRequest, RefreshTokenResponse } from './models';
 
 export const authApi = createAppApi({
   reducerPath: 'auth',
@@ -19,52 +12,21 @@ export const authApi = createAppApi({
 
         return {
           method: 'POST',
-          url: '/login',
+          url: '/auth/login',
           data: request,
         };
       },
       transformResponse: (response) => plainToInstance(LogInResponse, response),
       transformErrorResponse: (response) => ({ ...response, skipToast: true }),
     }),
-    register: builder.mutation<LogInResponse, RegisterRequest>({
+    refreshToken: builder.mutation<RefreshTokenResponse, RefreshTokenRequest>({
       query: (params) => {
-        const request = prepareRequestParams(params, RegisterRequest);
+        const request = prepareRequestParams(params, RefreshTokenRequest);
 
         return {
           method: 'POST',
-          url: '/register',
+          url: '/auth/refresh',
           data: request,
-        };
-      },
-      transformResponse: (response) => plainToInstance(LogInResponse, response),
-      transformErrorResponse: (response) => ({ ...response, skipToast: true }),
-    }),
-    refreshToken: builder.mutation<RefreshTokenResponse, void>({
-      query: () => ({
-        method: 'GET',
-        url: '/auth/refresh',
-      }),
-    }),
-    forgotPassword: builder.mutation<void, ForgotPasswordRequest>({
-      query: (params) => {
-        const request = prepareRequestParams(params, ForgotPasswordRequest);
-
-        return {
-          method: 'POST',
-          url: '/auth/forgot-password',
-          data: request,
-        };
-      },
-      transformErrorResponse: (response) => ({ ...response, skipToast: true }),
-    }),
-    restorePassword: builder.mutation<void, RestorePasswordRequest>({
-      query: (params) => {
-        const request = prepareRequestParams(params, RestorePasswordRequest);
-
-        return {
-          method: 'POST',
-          url: '/auth/restore-password',
-          params: request,
         };
       },
     }),

@@ -1,41 +1,50 @@
 import { useTranslation } from '@ronas-it/react-native-common-modules/i18n';
+import { AppSafeAreaView } from '@ronas-it/react-native-common-modules/safe-area-view';
 import { Image } from 'expo-image';
-import { Fragment, ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import { authApi, profileApi } from '@ronas-it/mobile/shared/data-access/api';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
-import { commonStyle, rem } from '@ronas-it/mobile/shared/ui/styles';
+import { rem } from '@ronas-it/mobile/shared/ui/styles';
 import { AppText, AppButton, AppSpinner } from '@ronas-it/mobile/shared/ui/ui-kit';
 
 export function ProfileDetails(): ReactElement {
   const translate = useTranslation('PROFILE.DETAILS');
+
   const { data: profile } = profileApi.useGetProfileQuery();
   const [logout, { isLoading }] = authApi.useLogoutMutation();
-  const avatarSrc = profile?.avatar ? { uri: profile.avatar.media.link } : Images.logo;
 
-  return (
-    <Fragment>
-      <View style={commonStyle.fullFlex}>
-        {profile ? (
-          <View style={styles.profile}>
-            <AppText variant='h1'>{translate('TEXT_GREETING', { name: profile.nickname })}</AppText>
-            <Image source={avatarSrc} style={styles.photo} />
-            <View>
-              <AppText>{translate('TEXT_EMAIL', { email: profile.email })}</AppText>
-              {profile.username && <AppText>{translate('TEXT_NAME', { name: profile.username })}</AppText>}
-            </View>
-          </View>
-        ) : (
-          <AppSpinner />
-        )}
+  const avatarSrc = profile?.image ? { uri: profile.image } : Images.logo;
+
+  return profile ? (
+    <AppSafeAreaView edges={['bottom']} style={styles.container}>
+      <View style={styles.profile}>
+        <AppText variant='h1' style={styles.title}>
+          {translate('TEXT_GREETING', { name: profile.username })}
+        </AppText>
+        <Image source={avatarSrc} style={styles.photo} />
+        <View>
+          <AppText>{translate('TEXT_EMAIL', { email: profile.email })}</AppText>
+          {(profile.firstName || profile.lastName) && (
+            <AppText>{translate('TEXT_NAME', { name: `${profile.firstName} ${profile.lastName}` })}</AppText>
+          )}
+        </View>
       </View>
       <AppButton onPress={() => logout()} text={translate('BUTTON_LOGOUT')} isLoading={isLoading} />
-    </Fragment>
+    </AppSafeAreaView>
+  ) : (
+    <AppSpinner isFullScreen />
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(({ spacings }) => ({
+  container: {
+    flex: 1,
+    gap: spacings.md,
+    paddingTop: spacings.md,
+    paddingBottom: spacings.md,
+  },
   profile: {
     gap: 1 * rem,
   },
@@ -46,4 +55,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     textAlign: 'center',
   },
-});
+  title: {
+    textAlign: 'center',
+  },
+}));

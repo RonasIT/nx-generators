@@ -8,7 +8,6 @@ import { commonStyle, spacings } from '@ronas-it/mobile/shared/ui/styles';
 export interface AppScreenProps {
   scrollDisabled?: boolean;
   noOutsideSpacing?: boolean;
-  withLoader?: boolean;
   withBackgroundImage?: boolean;
   withHeader?: boolean;
 }
@@ -83,6 +82,6 @@ const styles = StyleSheet.create(({ colors }) => ({
     minHeight: '100%',
   },
   spacingsContainer: {
-    paddingHorizontal: spacings.xxl,
+    paddingHorizontal: spacings.md,
   },
 }));

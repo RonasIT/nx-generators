@@ -72,6 +72,7 @@ describe('expoAppGenerator integration with file content checks', () => {
 
     const appFilesDir = path.join(__dirname, 'app-files');
     const i18nDir = path.join(__dirname, 'i18n');
+    const rootFilesDir = path.join(__dirname, 'root-files');
 
     assertFirstLine(appFilesDir, `apps/${directory}`, tree, {
       placeholders: {
@@ -82,6 +83,7 @@ describe('expoAppGenerator integration with file content checks', () => {
     });
     assertFirstLine(path.join(i18nDir, 'app'), `i18n/${directory}/app`, tree);
     assertFirstLine(path.join(i18nDir, 'shared'), `i18n/${directory}/shared`, tree);
+    assertFirstLine(rootFilesDir, '.', tree);
 
     expect(callback).toBeInstanceOf(Function);
 

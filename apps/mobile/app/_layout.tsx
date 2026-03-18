@@ -25,11 +25,6 @@ const useLanguage = setLanguage(
   'en',
 );
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export const unstable_settings = {
-  initialRouteName: 'index',
-};
-
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 

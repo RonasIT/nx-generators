@@ -43,6 +43,10 @@ export const dependencies = {
     'react-native-edge-to-edge': '^1.7.0',
     'react-native-nitro-modules': '0.33.2',
   },
+  'ui-kit': {
+    'react-native-reanimated': '^4.1.5',
+    'react-native-worklets': '0.7.1',
+  },
   store: {
     '@ronas-it/rtkq-entity-api': '^0.5.0',
     'react-redux': '^9.2.0',

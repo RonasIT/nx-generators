@@ -1,0 +1,21 @@
+import { ReactNode } from 'react';
+import { SvgProps } from 'react-native-svg';
+import { colors } from '<%= libPath %>/shared/ui/styles';
+import { Icons } from '../assets';
+import { IconName } from './types';
+
+export interface IconProps extends SvgProps {
+  name: IconName;
+}
+
+const defaultColor = colors.textPrimary;
+
+export function Icon({ name, ...restProps }: IconProps): ReactNode {
+  const props: SvgProps = {
+    color: defaultColor,
+    ...restProps,
+  };
+  const Component = name in Icons && Icons[name];
+
+  return Component ? <Component {...props} /> : null;
+}

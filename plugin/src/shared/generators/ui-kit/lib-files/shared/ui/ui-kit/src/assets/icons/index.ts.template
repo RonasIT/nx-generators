@@ -1,0 +1,7 @@
+import eyeOff from './eye-off';
+import eye from './eye.svg';
+
+export const Icons = {
+  eyeOff,
+  eye,
+};

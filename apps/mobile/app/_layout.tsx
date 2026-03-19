@@ -43,15 +43,15 @@ function App(): ReactElement {
 
   useEffect(() => {
     if (isAppReady && !isAuthenticated) {
-      router.replace(navigationConfig.routes.signIn);
+      router.replace(`/${navigationConfig.auth.root}`);
     }
   }, [isAppReady, isAuthenticated]);
 
   return (
     <Stack>
       <Stack.Screen name='index' />
-      <Stack.Screen name={navigationConfig.routesGroups.auth} options={{ headerShown: false }} />
-      <Stack.Screen name={navigationConfig.routesGroups.main} options={{ headerShown: false }} />
+      <Stack.Screen name={navigationConfig.auth.root} options={{ headerShown: false }} />
+      <Stack.Screen name={navigationConfig.main.root} options={{ headerShown: false }} />
     </Stack>
   );
 }
@@ -76,7 +76,7 @@ export default function RootLayout(): ReactElement | null {
 
   return (
     <Provider store={store}>
-      <StatusBar style={'light'} />
+      <StatusBar style='light' />
       <App />
     </Provider>
   );

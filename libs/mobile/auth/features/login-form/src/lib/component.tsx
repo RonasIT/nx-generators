@@ -34,7 +34,7 @@ export function LoginForm(): ReactElement {
 
   useEffect(() => {
     if (isSuccess) {
-      router.replace(navigationConfig.routes.profile);
+      router.replace(`/${navigationConfig.main.root}`);
     }
   }, [isSuccess]);
 

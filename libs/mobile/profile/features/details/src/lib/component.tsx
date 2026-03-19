@@ -9,7 +9,11 @@ import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { rem } from '@ronas-it/mobile/shared/ui/styles';
 import { AppText, AppButton, AppSpinner } from '@ronas-it/mobile/shared/ui/ui-kit';
 
-export function ProfileDetails(): ReactElement {
+export interface ProfileDetailsProps {
+  goToUiKitScreen: () => void;
+}
+
+export function ProfileDetails({ goToUiKitScreen }: ProfileDetailsProps): ReactElement {
   const translate = useTranslation('PROFILE.DETAILS');
 
   const { data: profile } = profileApi.useGetProfileQuery();
@@ -31,6 +35,7 @@ export function ProfileDetails(): ReactElement {
           )}
         </View>
       </View>
+      <AppButton onPress={goToUiKitScreen} text={translate('BUTTON_SHOW_UI_KIT')} />
       <AppButton onPress={() => logout()} text={translate('BUTTON_LOGOUT')} isLoading={isLoading} />
     </AppSafeAreaView>
   ) : (

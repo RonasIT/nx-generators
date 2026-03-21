@@ -55,7 +55,7 @@ Create builds using [EAS Build](https://docs.expo.dev/build/introduction/):
 
 **Tip**: you can [create builds locally](https://docs.expo.dev/build-reference/local-builds/) by passing `--local` flag when starting build command.
 
-### EAS Ignore
+#### EAS Ignore
 
 The `.easignore` file in the repository root controls which files are uploaded to [EAS Build](https://docs.expo.dev/build-reference/easignore/) servers.
 It uses a whitelist approach — everything is ignored by default, and only files required for the mobile build are included:

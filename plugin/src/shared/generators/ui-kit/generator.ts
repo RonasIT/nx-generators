@@ -7,6 +7,7 @@ import { getImportPathPrefix } from '../../utils';
 
 export async function runUiKitGenerator(tree: Tree, options: { name: string; directory: string }): Promise<void> {
   const appRoot = `apps/${options.directory}`;
+  const i18nRoot = `i18n/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
 
@@ -24,6 +25,7 @@ export async function runUiKitGenerator(tree: Tree, options: { name: string; dir
   // Remove unnecessary files
   tree.delete(`${libRoot}/shared/ui/ui-kit/src/index.ts`);
   tree.delete(`${appLayoutPath}/index.tsx`);
+  tree.delete(`${i18nRoot}/shared/en.json`);
 
   // Add lib files
   generateFiles(tree, path.join(__dirname, 'lib-files'), libRoot, {
@@ -42,6 +44,9 @@ export async function runUiKitGenerator(tree: Tree, options: { name: string; dir
     ...options,
     libPath,
   });
+
+  // Add i18n files
+  generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {});
 
   // Add dependencies
   addDependenciesToPackageJson(tree, dependencies['ui-kit'], {});

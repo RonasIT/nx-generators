@@ -1,9 +1,11 @@
 import eyeOff from './eye-off';
 import eye from './eye.svg';
 import check from './check.svg';
+import underConstruction from './under-construction.svg';
 
 export const Icons = {
   eyeOff,
   eye,
   check,
+  underConstruction,
 };

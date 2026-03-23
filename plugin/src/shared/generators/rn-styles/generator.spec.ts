@@ -51,7 +51,9 @@ describe('runRNStylesGenerator', () => {
 
     const templateDir = path.join(__dirname, 'lib-files');
     const targetDir = `libs/${options.directory}`;
-    assertFirstLine(templateDir, targetDir, tree);
+    assertFirstLine(templateDir, targetDir, tree, {
+      ignoreFiles: ['*.ttf'],
+    });
 
     expect(addDependenciesMock).toHaveBeenCalledWith(tree, stylesDependencies, {});
     expect(addDependenciesMock).toHaveBeenCalledWith(

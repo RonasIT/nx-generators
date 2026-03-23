@@ -1,13 +1,12 @@
 import { useTranslation } from '@ronas-it/react-native-common-modules/i18n';
 import { AppSafeAreaView } from '@ronas-it/react-native-common-modules/safe-area-view';
-import { Image } from 'expo-image';
 import { ReactElement } from 'react';
 import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import { authApi, profileApi } from '@ronas-it/mobile/shared/data-access/api';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { rem } from '@ronas-it/mobile/shared/ui/styles';
-import { AppText, AppButton, AppSpinner } from '@ronas-it/mobile/shared/ui/ui-kit';
+import { AppText, AppButton, AppSpinner, AppImage } from '@ronas-it/mobile/shared/ui/ui-kit';
 
 export interface ProfileDetailsProps {
   goToUiKitScreen: () => void;
@@ -27,7 +26,7 @@ export function ProfileDetails({ goToUiKitScreen }: ProfileDetailsProps): ReactE
         <AppText variant='h1' style={styles.title}>
           {translate('TEXT_GREETING', { name: profile.username })}
         </AppText>
-        <Image source={avatarSrc} style={styles.photo} />
+        <AppImage source={avatarSrc} style={styles.photo} />
         <View>
           <AppText>{translate('TEXT_EMAIL', { email: profile.email })}</AppText>
           {(profile.firstName || profile.lastName) && (

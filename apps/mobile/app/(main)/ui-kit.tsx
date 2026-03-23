@@ -1,10 +1,19 @@
-import { AppButton, AppScreen, AppSpinner, AppText, AppTextInput } from '@ronas-it/mobile/shared/ui/ui-kit';
+import {
+  AppButton,
+  AppCheckbox,
+  AppScreen,
+  AppSpinner,
+  AppText,
+  AppTextInput,
+} from '@ronas-it/mobile/shared/ui/ui-kit';
 import { ReactElement, useState } from 'react';
+import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
 export default function UiKitScreen(): ReactElement {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
 
   return (
     <AppScreen style={styles.container}>
@@ -22,6 +31,10 @@ export default function UiKitScreen(): ReactElement {
       <AppText>Body Small Bold</AppText>
       <AppText>Body Extra Small</AppText>
       <AppText>Body Extra Small Bold</AppText>
+      <View style={styles.checkbox}>
+        <AppCheckbox value={isChecked} onValueChange={setIsChecked} />
+        <AppText>Checkbox</AppText>
+      </View>
       <AppTextInput
         label='Username'
         autoCapitalize='none'
@@ -47,5 +60,10 @@ const styles = StyleSheet.create(({ spacings }) => ({
   container: {
     gap: spacings.xs,
     paddingVertical: spacings.md,
+  },
+  checkbox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacings.xs,
   },
 }));

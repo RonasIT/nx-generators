@@ -1,7 +1,9 @@
 import eyeOff from './eye-off';
 import eye from './eye.svg';
+import check from './check.svg';
 
 export const Icons = {
   eyeOff,
   eye,
+  check,
 };

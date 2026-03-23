@@ -1,3 +1,4 @@
+import check from './check.svg';
 import chevronLeft from './chevron-left.svg';
 import eyeOff from './eye-off.svg';
 import eye from './eye.svg';
@@ -8,4 +9,5 @@ export const Icons = {
   eyeOff,
   profile,
   chevronLeft,
+  check,
 };

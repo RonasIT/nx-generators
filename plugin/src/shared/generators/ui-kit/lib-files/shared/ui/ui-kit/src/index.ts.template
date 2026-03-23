@@ -9,3 +9,4 @@ export * from './text';
 export * from './text-input';
 export * from './header';
 export * from './image';
+export * from './checkbox';

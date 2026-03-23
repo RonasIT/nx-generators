@@ -3,8 +3,24 @@ import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { Tree } from '@nx/devkit';
 
+const BINARY_FILE_PATTERN = /\.(ttf|otf|eot|woff2?|png|jpe?g|gif|ico|webp|pdf)$/i;
+
+function fileNameMatchesIgnorePattern(fileName: string, pattern: string): boolean {
+  if (!pattern.includes('*')) {
+    return fileName === pattern;
+  }
+
+  const regexSource = pattern
+    .split('*')
+    .map((segment) => segment.replace(/[.+^${}()|[\]\\]/g, '\\$&'))
+    .join('.*');
+
+  return new RegExp(`^${regexSource}$`).test(fileName);
+}
+
 interface AssertFirstLineOptions {
   placeholders?: Record<string, string>;
+  /** Basename match, or glob with `*` (e.g. `*.ttf`). */
   ignoreFiles?: Array<string>;
 }
 
@@ -24,7 +40,7 @@ export function assertFirstLine(
     if (entry.isDirectory()) {
       assertFirstLine(srcPath, path.join(targetDir, entry.name), tree, options);
     } else {
-      if (ignoreFiles.includes(entry.name)) {
+      if (ignoreFiles.some((p) => fileNameMatchesIgnorePattern(entry.name, p))) {
         continue;
       }
 
@@ -90,6 +106,11 @@ export function mockGenerateFiles(
         }
 
         const destPath = path.join(dest, fileName).split(path.sep).join('/');
+
+        if (BINARY_FILE_PATTERN.test(fileName)) {
+          tree.write(destPath, fs.readFileSync(srcPath));
+          continue;
+        }
 
         let content = fs.readFileSync(srcPath, 'utf8');
 

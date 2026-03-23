@@ -102,7 +102,7 @@ Configures code checks and formatting with pre-commit hook.
 ### 3. `expo-app`
 
 Generates and configures an Expo React Native app.
-Also generates [navigation utilities](#navigation-utilities).
+Also generates [navigation utilities](#navigation-utilities) and `.easignore` file for optimized [EAS Build](https://docs.expo.dev/build-reference/easignore/) uploads.
 
 #### Options
 

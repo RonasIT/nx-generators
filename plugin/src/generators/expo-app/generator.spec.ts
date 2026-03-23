@@ -83,6 +83,12 @@ describe('expoAppGenerator integration with file content checks', () => {
     assertFirstLine(path.join(i18nDir, 'app'), `i18n/${directory}/app`, tree);
     assertFirstLine(path.join(i18nDir, 'shared'), `i18n/${directory}/shared`, tree);
 
+    // Verify .easignore was generated with app-specific entries
+    const easignore = tree.read('.easignore', 'utf-8');
+    expect(easignore).toContain(`!apps/${directory}`);
+    expect(easignore).toContain(`!libs/${directory}`);
+    expect(easignore).toContain(`!i18n/${directory}`);
+
     expect(callback).toBeInstanceOf(Function);
 
     // Should not call nx g
@@ -109,6 +115,67 @@ describe('expoAppGenerator integration with file content checks', () => {
     );
 
     expect(callback).toBeInstanceOf(Function);
+  });
+
+  it('should merge app-specific entries into existing .easignore for second app', async () => {
+    existsSyncMock.mockImplementation((filePath: string) => filePath.includes(`apps/${directory}`));
+
+    readProjectConfigurationMock.mockReturnValue({
+      name: appName,
+      root: `apps/${directory}`,
+      sourceRoot: `apps/${directory}/src`,
+      projectType: 'application',
+      tags: [],
+      targets: {},
+    });
+
+    // Generate first app
+    await expoAppGenerator(tree, {
+      name: appName,
+      directory: directory,
+      withStore: false,
+      withFormUtils: false,
+      withSentry: false,
+    });
+
+    const easignoreAfterFirst = tree.read('.easignore', 'utf-8');
+    expect(easignoreAfterFirst).toContain(`!apps/${directory}`);
+
+    // Generate second app
+    const secondDirectory = 'tablet';
+    existsSyncMock.mockImplementation((filePath: string) => filePath.includes(`apps/${secondDirectory}`));
+
+    readProjectConfigurationMock.mockReturnValue({
+      name: 'tabletapp',
+      root: `apps/${secondDirectory}`,
+      sourceRoot: `apps/${secondDirectory}/src`,
+      projectType: 'application',
+      tags: [],
+      targets: {},
+    });
+
+    await expoAppGenerator(tree, {
+      name: 'tabletapp',
+      directory: secondDirectory,
+      withStore: false,
+      withFormUtils: false,
+      withSentry: false,
+    });
+
+    const easignoreAfterSecond = tree.read('.easignore', 'utf-8')!;
+
+    // Should contain both apps
+    expect(easignoreAfterSecond).toContain(`!apps/${directory}`);
+    expect(easignoreAfterSecond).toContain(`!apps/${secondDirectory}`);
+    expect(easignoreAfterSecond).toContain(`!libs/${secondDirectory}`);
+    expect(easignoreAfterSecond).toContain(`!i18n/${secondDirectory}`);
+
+    // Common lines should appear only once
+    const packageJsonMatches = easignoreAfterSecond.match(/!package\.json/g);
+    expect(packageJsonMatches).toHaveLength(1);
+
+    const sharedLibsMatches = easignoreAfterSecond.match(/!libs\/shared\n/g);
+    expect(sharedLibsMatches).toHaveLength(1);
   });
 
   it('should call expected sub-generators and CLI commands when all options are true', async () => {

@@ -23,6 +23,7 @@ import {
   runStoreGenerator,
 } from '../../shared/generators';
 import { addNxAppTag, confirm, formatAppIdentifier, formatName, getImportPathPrefix } from '../../shared/utils';
+import { generateEasignore } from './easignore';
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 
@@ -113,6 +114,8 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     isStoreEnabled: options.withStore,
     appDirectory: options.directory,
   });
+
+  generateEasignore(tree, options.directory);
 
   tree.delete(`${appRoot}/tsconfig.app.json`);
 

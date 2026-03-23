@@ -39,9 +39,9 @@ export const dependencies = {
     'js-cookie': '^3.0.5',
   },
   'rn-styles': {
-    'react-native-unistyles': '^3.0.22',
+    'react-native-unistyles': '~3.1.1',
     'react-native-edge-to-edge': '^1.7.0',
-    'react-native-nitro-modules': '0.33.2',
+    'react-native-nitro-modules': '~0.35.2',
   },
   'ui-kit': {
     'react-native-reanimated': '^4.1.5',

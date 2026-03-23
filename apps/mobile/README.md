@@ -55,6 +55,19 @@ Create builds using [EAS Build](https://docs.expo.dev/build/introduction/):
 
 **Tip**: you can [create builds locally](https://docs.expo.dev/build-reference/local-builds/) by passing `--local` flag when starting build command.
 
+#### EAS Ignore
+
+The `.easignore` file in the repository root controls which files are uploaded to [EAS Build](https://docs.expo.dev/build-reference/easignore/) servers.
+It uses a whitelist approach — everything is ignored by default, and only files required for the mobile build are included:
+
+- App directory (`apps/{app-name}`)
+- App-specific and shared libraries (`libs/{app-name}`, `libs/shared`)
+- Translations (`i18n/{app-name}`, `i18n/shared`)
+- Dependency patches and root config files
+
+The file is generated automatically by the `expo-app` generator and supports multiple apps in a monorepo.
+When a new app is added, only its app-specific entries are appended — common entries are not duplicated.
+
 ### 3. Distribute
 
 #### Internal

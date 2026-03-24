@@ -31,6 +31,7 @@
       "@ronas-it/mobile/shared/data-access/auth": ["libs/mobile/shared/data-access/auth/src/index.ts"],
       "@ronas-it/mobile/shared/data-access/storage": ["libs/mobile/shared/data-access/storage/src/index.ts"],
       "@ronas-it/mobile/shared/data-access/store": ["libs/mobile/shared/data-access/store/src/index.ts"],
+      "@ronas-it/mobile/shared/features/toast-provider": ["libs/mobile/shared/features/toast-provider/src/index.ts"],
       "@ronas-it/mobile/shared/ui/app-version": ["libs/mobile/shared/ui/app-version/src/index.ts"],
       "@ronas-it/mobile/shared/ui/assets": ["libs/mobile/shared/ui/assets/src/index.ts"],
       "@ronas-it/mobile/shared/ui/styles": ["libs/mobile/shared/ui/styles/src/index.ts"],
@@ -38,6 +39,7 @@
       "@ronas-it/mobile/shared/utils/app-env": ["libs/mobile/shared/utils/app-env/src/index.ts"],
       "@ronas-it/mobile/shared/utils/form": ["libs/mobile/shared/utils/form/src/index.ts"],
       "@ronas-it/mobile/shared/utils/navigation": ["libs/mobile/shared/utils/navigation/src/index.ts"],
+      "@ronas-it/mobile/shared/utils/toast-service": ["libs/mobile/shared/utils/toast-service/src/index.ts"],
       "@ronas-it/nx-generators": ["plugin/src/index.ts"]
     }
   },

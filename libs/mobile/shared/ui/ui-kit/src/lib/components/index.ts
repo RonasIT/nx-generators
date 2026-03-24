@@ -13,3 +13,4 @@ export * from './image';
 export * from './pressable';
 export * from './checkbox';
 export * from './search-input';
+export * from './toast';

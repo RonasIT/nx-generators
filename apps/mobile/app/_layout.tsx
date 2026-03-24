@@ -1,5 +1,6 @@
 import { authSelectors } from '@ronas-it/mobile/shared/data-access/auth';
 import { store } from '@ronas-it/mobile/shared/data-access/store';
+import { ToastProvider } from '@ronas-it/mobile/shared/features/toast-provider';
 import { fonts } from '@ronas-it/mobile/shared/ui/styles';
 import { navigationConfig } from '@ronas-it/mobile/shared/utils/navigation';
 import { setLanguage } from '@ronas-it/react-native-common-modules/i18n';
@@ -76,8 +77,10 @@ export default function RootLayout(): ReactElement | null {
 
   return (
     <Provider store={store}>
-      <StatusBar style='light' />
-      <App />
+      <ToastProvider>
+        <StatusBar style='light' />
+        <App />
+      </ToastProvider>
     </Provider>
   );
 }

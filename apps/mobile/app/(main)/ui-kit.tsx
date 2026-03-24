@@ -7,6 +7,7 @@ import {
   AppTextInput,
   SearchInput,
 } from '@ronas-it/mobile/shared/ui/ui-kit';
+import { ToastService } from '@ronas-it/mobile/shared/utils/toast-service';
 import { ReactElement, useState } from 'react';
 import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
@@ -51,7 +52,7 @@ export default function UiKitScreen(): ReactElement {
         onChangeText={setSearchValue}
         onClearPress={() => setSearchValue('')}
       />
-      <AppButton text='Button Primary Regular' />
+      <AppButton text='Button Primary Regular (show toast)' onPress={ToastService.showFeatureNotImplemented} />
       <AppButton text='Button Primary Small' size='small' />
       <AppButton text='Button Secondary Regular' variant='secondary' />
       <AppButton text='Button Secondary Small' variant='secondary' size='small' />

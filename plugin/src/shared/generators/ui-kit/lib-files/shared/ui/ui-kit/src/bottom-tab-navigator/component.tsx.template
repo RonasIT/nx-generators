@@ -1,0 +1,63 @@
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { AppSafeAreaView } from '@ronas-it/react-native-common-modules/safe-area-view';
+import { ReactElement } from 'react';
+import { Platform } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
+import { spacings } from '<%= libPath %>/shared/ui/styles';
+import { Icon } from '../icon';
+import { AppPressable } from '../pressable';
+import { AppText } from '../text';
+
+export function BottomTabNavigator({ state, navigation }: BottomTabBarProps): ReactElement {
+  return (
+    <AppSafeAreaView edges={['bottom']} style={styles.container}>
+      {state.routes.map((route, index) => {
+        const isFocused = state.index === index;
+
+        const onPress = (): void => {
+          const event = navigation.emit({
+            type: 'tabPress',
+            target: route.key,
+            canPreventDefault: true,
+          });
+
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(route.name, route.params);
+          }
+        };
+
+        return (
+          <AppPressable
+            key={route.key}
+            accessibilityState={isFocused ? { selected: true } : {}}
+            onPress={onPress}
+            style={styles.button(isFocused)}>
+            <Icon name='search' />
+            <AppText style={styles.text} variant='bodyExtraSmallBold'>Route</AppText>
+          </AppPressable>
+        );
+      })}
+    </AppSafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create(({ colors }) => ({
+  container: {
+    backgroundColor: colors.backgroundPrimary,
+    borderTopWidth: 1,
+    borderColor: colors.textTertiary,
+    paddingTop: spacings.xs,
+    paddingHorizontal: spacings.xs,
+    paddingBottom: Platform.OS === 'ios' ? 0 : spacings.xs,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  button: (focused: boolean) => ({
+    flex: 1,
+    alignItems: 'center',
+    opacity: focused ? 1 : 0.6,
+  }),
+  text: {
+    paddingTop: 6,
+  },
+}));

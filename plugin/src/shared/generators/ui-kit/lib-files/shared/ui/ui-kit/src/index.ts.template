@@ -12,3 +12,4 @@ export * from './image';
 export * from './checkbox';
 export * from './under-construction';
 export * from './search-input';
+export * from './bottom-tab-navigator';

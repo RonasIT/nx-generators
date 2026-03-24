@@ -9,10 +9,12 @@ export async function runUiKitGenerator(tree: Tree, options: { name: string; dir
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
-  const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
 
+  const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
   const appPackagePath = `${appRoot}/package.json`;
   const appLayoutPath = `${appRoot}/app`;
+  const toastProviderPath = `${libRoot}/shared/features/toast-provider/src`;
+  const toastServicePath = `${libRoot}/shared/utils/toast-service/src`;
 
   // Generate ui-kit lib
   execSync(
@@ -22,10 +24,25 @@ export async function runUiKitGenerator(tree: Tree, options: { name: string; dir
     },
   );
 
+  // Generate toast-provider lib
+  execSync(
+    `npx nx g react-lib --app=${options.directory} --scope=shared --type=features --name=toast-provider --withComponent=false`,
+    {
+      stdio: 'inherit',
+    },
+  );
+
+  // Generate toast-service lib
+  execSync(`npx nx g react-lib --app=${options.directory} --scope=shared --type=utils --name=toast-service`, {
+    stdio: 'inherit',
+  });
+
   // Remove unnecessary files
   tree.delete(`${libRoot}/shared/ui/ui-kit/src/index.ts`);
   tree.delete(`${appLayoutPath}/index.tsx`);
   tree.delete(`${i18nRoot}/shared/en.json`);
+  tree.delete(`${toastProviderPath}/index.ts`);
+  tree.delete(`${toastServicePath}/index.ts`);
 
   // Add lib files
   generateFiles(tree, path.join(__dirname, 'lib-files'), libRoot, {
@@ -47,6 +64,15 @@ export async function runUiKitGenerator(tree: Tree, options: { name: string; dir
 
   // Add i18n files
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {});
+
+  // Add toast-provider files
+  generateFiles(tree, path.join(__dirname, 'toast-provider-files'), toastProviderPath, {
+    ...options,
+    libPath,
+  });
+
+  // Add toast-service files
+  generateFiles(tree, path.join(__dirname, 'toast-service-files'), toastServicePath, {});
 
   // Add dependencies
   addDependenciesToPackageJson(tree, dependencies['ui-kit'], {});

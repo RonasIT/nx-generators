@@ -2,6 +2,10 @@
   "SHARED": {
     "UNDER_CONSTRUCTION": {
       "TEXT_WE_ARE_WORKING_ON_THIS_SECTION": "We are working on this section"
+    },
+    "TOAST_SERVICE": {
+      "TEXT_FEATURE_NOT_IMPLEMENTED_YET": "Feature is not implemented yet",
+      "TEXT_SOMETHING_WENT_WRONG": "Something went wrong"
     }
   }
 }

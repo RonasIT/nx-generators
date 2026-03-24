@@ -47,6 +47,7 @@ export const dependencies = {
     'react-native-reanimated': '^4.1.5',
     'react-native-worklets': '0.7.1',
     'expo-image': '~3.0.10',
+    'react-native-toast-message': '^2.3.3',
   },
   store: {
     '@ronas-it/rtkq-entity-api': '^0.5.0',

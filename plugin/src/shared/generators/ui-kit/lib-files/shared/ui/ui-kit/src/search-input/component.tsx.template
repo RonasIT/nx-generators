@@ -1,0 +1,92 @@
+import { ReactElement, useRef, useState } from 'react';
+import { TextInput, TextInputProps, View, FocusEvent, ViewStyle, Platform } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
+import { colors, spacings } from '<%= libPath %>/shared/ui/styles';
+import { Icon } from '../icon';
+import { AppPressable } from '../pressable';
+import { AppPressableIcon } from '../pressable-icon';
+import { textStyles } from '../text';
+
+export interface SearchInputProps extends Omit<TextInputProps, 'ref'> {
+  onInputPress?: () => void;
+  onClearPress?: () => void;
+  containerStyle?: ViewStyle;
+}
+
+export function SearchInput({
+  onInputPress,
+  onClearPress,
+  onFocus,
+  onBlur,
+  value,
+  containerStyle,
+  ...restProps
+}: SearchInputProps): ReactElement {
+  textStyles.useVariants({ variant: 'bodyDefault' });
+
+  const isIos = Platform.OS === 'ios';
+  const ref = useRef<TextInput>(null);
+
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleInputPress = (): void => {
+    ref.current?.focus();
+  };
+
+  const handleFocus = (e: FocusEvent): void => {
+    setIsFocused(true);
+    onFocus?.(e);
+  };
+
+  const handleBlur = (e: FocusEvent): void => {
+    setIsFocused(false);
+    onBlur?.(e);
+  };
+
+  return (
+    <AppPressable style={containerStyle} onPress={onInputPress || handleInputPress} pressedOpacity={1}>
+      <View style={styles.container(isFocused)}>
+        <Icon name='search' />
+        <TextInput
+          ref={ref}
+          style={[textStyles.text, styles.input, isIos && styles.noLineHeight]}
+          cursorColor={colors.textPrimary}
+          selectionColor={colors.textPrimary}
+          placeholderTextColor={colors.textSecondary}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
+          returnKeyType='search'
+          value={value}
+          {...restProps}
+        />
+        {!!value && onClearPress && <AppPressableIcon name='close' onPress={onClearPress} />}
+      </View>
+    </AppPressable>
+  );
+}
+
+const styles = StyleSheet.create(({ colors }) => ({
+  container: (focused: boolean) => ({
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacings.xs,
+    paddingVertical: spacings.sm,
+    paddingHorizontal: spacings.md,
+    borderRadius: 200,
+    backgroundColor: colors.backgroundSecondary,
+    borderWidth: 1,
+    borderColor: focused ? colors.textTertiary : colors.backgroundSecondary,
+  }),
+  // NOTE: Needs to fix Android spacings
+  input: {
+    padding: 0,
+    flex: 1,
+    // https://reactnative.dev/docs/text-style-props#includefontpadding-android
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
+  noLineHeight: {
+    lineHeight: 0,
+  },
+}));

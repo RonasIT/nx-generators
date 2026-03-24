@@ -12,3 +12,4 @@ export * from './header';
 export * from './image';
 export * from './pressable';
 export * from './checkbox';
+export * from './search-input';

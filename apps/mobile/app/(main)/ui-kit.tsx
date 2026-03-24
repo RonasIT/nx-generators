@@ -5,6 +5,7 @@ import {
   AppSpinner,
   AppText,
   AppTextInput,
+  SearchInput,
 } from '@ronas-it/mobile/shared/ui/ui-kit';
 import { ReactElement, useState } from 'react';
 import { View } from 'react-native';
@@ -14,6 +15,7 @@ export default function UiKitScreen(): ReactElement {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   return (
     <AppScreen style={styles.container}>
@@ -43,6 +45,12 @@ export default function UiKitScreen(): ReactElement {
         onChangeText={setUsername}
       />
       <AppTextInput isPassword={true} label='Password' value={password} onChangeText={setPassword} />
+      <SearchInput
+        placeholder='Search'
+        value={searchValue}
+        onChangeText={setSearchValue}
+        onClearPress={() => setSearchValue('')}
+      />
       <AppButton text='Button Primary Regular' />
       <AppButton text='Button Primary Small' size='small' />
       <AppButton text='Button Secondary Regular' variant='secondary' />

@@ -1,11 +1,15 @@
+import close from './close.svg';
+import check from './check.svg';
 import eyeOff from './eye-off';
 import eye from './eye.svg';
-import check from './check.svg';
+import search from './search.svg';
 import underConstruction from './under-construction.svg';
 
 export const Icons = {
+  close,
+  check,
   eyeOff,
   eye,
-  check,
+  search,
   underConstruction,
 };

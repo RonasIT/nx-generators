@@ -1,11 +1,13 @@
-import { AppButton, AppScreen, AppSpinner, AppText, AppTextInput } from '<%= libPath %>/shared/ui/ui-kit';
+import { AppButton, AppScreen, AppSpinner, AppText, AppTextInput, SearchInput } from '<%= libPath %>/shared/ui/ui-kit';
 import { ReactElement, useState } from 'react';
+import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
 export default function RootScreen(): ReactElement {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>('');
 
   return (
     <AppScreen style={styles.container}>
@@ -33,6 +35,12 @@ export default function RootScreen(): ReactElement {
         autoCorrect={false}
         value={username}
         onChangeText={setUsername}
+      />
+      <SearchInput
+        placeholder='Search'
+        value={searchValue}
+        onChangeText={setSearchValue}
+        onClearPress={() => setSearchValue('')}
       />
       <AppTextInput isPassword={true} label='Password' value={password} onChangeText={setPassword} />
       <AppButton text='Button Primary Regular' />

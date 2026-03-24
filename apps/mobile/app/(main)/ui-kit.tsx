@@ -20,20 +20,20 @@ export default function UiKitScreen(): ReactElement {
 
   return (
     <AppScreen style={styles.container}>
-      <AppText>Title H1</AppText>
-      <AppText>Title H2</AppText>
-      <AppText>Title H3</AppText>
-      <AppText>Title H4</AppText>
-      <AppText>Title H5</AppText>
-      <AppText>Title H6</AppText>
-      <AppText>Body Large</AppText>
-      <AppText>Body Large Bold</AppText>
-      <AppText>Body Default</AppText>
-      <AppText>Body Default Bold</AppText>
-      <AppText>Body Small</AppText>
-      <AppText>Body Small Bold</AppText>
-      <AppText>Body Extra Small</AppText>
-      <AppText>Body Extra Small Bold</AppText>
+      <AppText variant='h1'>Title H1</AppText>
+      <AppText variant='h2'>Title H2</AppText>
+      <AppText variant='h3'>Title H3</AppText>
+      <AppText variant='h4'>Title H4</AppText>
+      <AppText variant='h5'>Title H5</AppText>
+      <AppText variant='h6'>Title H6</AppText>
+      <AppText variant='bodyLarge'>Body Large</AppText>
+      <AppText variant='bodyLargeBold'>Body Large Bold</AppText>
+      <AppText variant='bodyDefault'>Body Default</AppText>
+      <AppText variant='bodyDefaultBold'>Body Default Bold</AppText>
+      <AppText variant='bodySmall'>Body Small</AppText>
+      <AppText variant='bodySmallBold'>Body Small Bold</AppText>
+      <AppText variant='bodyExtraSmall'>Body Extra Small</AppText>
+      <AppText variant='bodyExtraSmallBold'>Body Extra Small Bold</AppText>
       <View style={styles.checkbox}>
         <AppCheckbox value={isChecked} onValueChange={setIsChecked} />
         <AppText>Checkbox</AppText>

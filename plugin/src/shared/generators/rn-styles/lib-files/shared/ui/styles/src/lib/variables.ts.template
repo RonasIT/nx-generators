@@ -37,7 +37,7 @@ export const spacings = {
 };
 
 export const fontFamily = {
-  regular: 'Gilroy Regular',
-  bold: 'Gilroy Bold',
-  semiBold: 'Gilroy SemiBold',
+  regular: 'Manrope Regular',
+  bold: 'Manrope Bold',
+  semiBold: 'Manrope SemiBold',
 };

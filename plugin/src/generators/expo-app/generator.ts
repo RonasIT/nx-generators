@@ -52,7 +52,11 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   await runAppEnvGenerator(tree, options);
   await runStorageGenerator(tree, options);
   await runRNStylesGenerator(tree, options);
-  await runUiKitGenerator(tree, options);
+
+  if (options.withUiKit) {
+    await runUiKitGenerator(tree, options);
+  }
+
   await runNavigationUtilsGenerator(tree, {
     appDirectory: options.directory,
     baseGeneratorType: BaseGeneratorType.EXPO_APP,

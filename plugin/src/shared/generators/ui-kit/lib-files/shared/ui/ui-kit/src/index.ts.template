@@ -14,3 +14,4 @@ export * from './under-construction';
 export * from './search-input';
 export * from './bottom-tab-navigator';
 export * from './toast';
+export * from './modal';

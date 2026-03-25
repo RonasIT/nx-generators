@@ -13,20 +13,11 @@ export async function runUiKitGenerator(tree: Tree, options: { name: string; dir
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
   const appPackagePath = `${appRoot}/package.json`;
   const appLayoutPath = `${appRoot}/app`;
-  const toastProviderPath = `${libRoot}/shared/features/toast-provider/src`;
   const toastServicePath = `${libRoot}/shared/utils/toast-service/src`;
 
   // Generate ui-kit lib
   execSync(
     `npx nx g react-lib --app=${options.directory} --scope=shared --type=ui --name=ui-kit --withComponent=false`,
-    {
-      stdio: 'inherit',
-    },
-  );
-
-  // Generate toast-provider lib
-  execSync(
-    `npx nx g react-lib --app=${options.directory} --scope=shared --type=features --name=toast-provider --withComponent=false`,
     {
       stdio: 'inherit',
     },
@@ -41,7 +32,6 @@ export async function runUiKitGenerator(tree: Tree, options: { name: string; dir
   tree.delete(`${libRoot}/shared/ui/ui-kit/src/index.ts`);
   tree.delete(`${appLayoutPath}/index.tsx`);
   tree.delete(`${i18nRoot}/shared/en.json`);
-  tree.delete(`${toastProviderPath}/index.ts`);
   tree.delete(`${toastServicePath}/index.ts`);
 
   // Add lib files
@@ -64,12 +54,6 @@ export async function runUiKitGenerator(tree: Tree, options: { name: string; dir
 
   // Add i18n files
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {});
-
-  // Add toast-provider files
-  generateFiles(tree, path.join(__dirname, 'toast-provider-files'), toastProviderPath, {
-    ...options,
-    libPath,
-  });
 
   // Add toast-service files
   generateFiles(tree, path.join(__dirname, 'toast-service-files'), toastServicePath, {});

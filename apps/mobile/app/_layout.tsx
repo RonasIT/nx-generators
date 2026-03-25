@@ -1,7 +1,7 @@
 import { authSelectors } from '@ronas-it/mobile/shared/data-access/auth';
 import { store } from '@ronas-it/mobile/shared/data-access/store';
-import { ToastProvider } from '@ronas-it/mobile/shared/features/toast-provider';
 import { fonts } from '@ronas-it/mobile/shared/ui/styles';
+import { ToastProvider } from '@ronas-it/mobile/shared/ui/ui-kit';
 import { navigationConfig } from '@ronas-it/mobile/shared/utils/navigation';
 import { setLanguage } from '@ronas-it/react-native-common-modules/i18n';
 import { storeActions } from '@ronas-it/rtkq-entity-api';

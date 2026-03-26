@@ -45,7 +45,7 @@ export const dependencies = {
   },
   'ui-kit': {
     'react-native-reanimated': '^4.1.5',
-    'react-native-worklets': '0.7.1',
+    'react-native-worklets': '^0.8.0',
     'expo-image': '~3.0.10',
     'react-native-toast-message': '^2.3.3',
   },

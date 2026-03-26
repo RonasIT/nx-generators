@@ -1,6 +1,6 @@
+import { setLanguage } from '@ronas-it/react-native-common-modules/i18n';
 <% if(isStoreEnabled) { %> import { store } from '<%= libPath %>/shared/data-access/store';<% } %>
 import { fonts } from '<%= libPath %>/shared/ui/styles';
-import { setLanguage } from '@ronas-it/react-native-common-modules/i18n';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';

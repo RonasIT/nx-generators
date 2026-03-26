@@ -53,10 +53,6 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   await runStorageGenerator(tree, options);
   await runRNStylesGenerator(tree, options);
 
-  if (options.withUiKit) {
-    await runUiKitGenerator(tree, options);
-  }
-
   await runNavigationUtilsGenerator(tree, {
     appDirectory: options.directory,
     baseGeneratorType: BaseGeneratorType.EXPO_APP,
@@ -127,6 +123,11 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
 
   addNxAppTag(tree, options.directory);
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {});
+
+  // Generate ui-kit files after app files to avoid conflicts and prevent overwriting
+  if (options.withUiKit) {
+    await runUiKitGenerator(tree, options);
+  }
 
   // Add dependencies
   addDependenciesToPackageJson(tree, dependencies['expo-app'], devDependencies['expo-app']);

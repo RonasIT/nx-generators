@@ -1,4 +1,4 @@
-import { AppButton, AppScreen, AppSpinner, AppText, AppTextInput, SearchInput } from '<%= libPath %>/shared/ui/ui-kit';
+import { AppButton, AppScreen, AppSpinner, AppText, AppTextInput, SearchInput, AppCheckbox } from '<%= libPath %>/shared/ui/ui-kit';
 import { ReactElement, useState } from 'react';
 import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
@@ -29,18 +29,18 @@ export default function RootScreen(): ReactElement {
         <AppCheckbox value={isChecked} onValueChange={setIsChecked} />
         <AppText>Checkbox</AppText>
       </View>
+      <SearchInput
+        placeholder='Search'
+        value={searchValue}
+        onChangeText={setSearchValue}
+        onClearPress={() => setSearchValue('')}
+      />
       <AppTextInput
         label='Username'
         autoCapitalize='none'
         autoCorrect={false}
         value={username}
         onChangeText={setUsername}
-      />
-      <SearchInput
-        placeholder='Search'
-        value={searchValue}
-        onChangeText={setSearchValue}
-        onClearPress={() => setSearchValue('')}
       />
       <AppTextInput isPassword={true} label='Password' value={password} onChangeText={setPassword} />
       <AppButton text='Button Primary Regular' />

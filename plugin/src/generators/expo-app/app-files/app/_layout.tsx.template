@@ -5,7 +5,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { ReactElement, useEffect } from 'react';
+import { Fragment, ReactElement, useEffect } from 'react';
 <% if(isStoreEnabled) { %>import { Provider } from 'react-redux';<% } %>
 
 export { ErrorBoundary } from 'expo-router';
@@ -51,9 +51,11 @@ export default function RootLayout(): ReactElement | null {
   }
 
   return (
+    <Fragment>
     <% if(isStoreEnabled) { %><Provider store={store}><% } %>
       <StatusBar style='light' />
       <App />
     <% if(isStoreEnabled) { %></Provider><% } %>
+    </Fragment>
   );
 }

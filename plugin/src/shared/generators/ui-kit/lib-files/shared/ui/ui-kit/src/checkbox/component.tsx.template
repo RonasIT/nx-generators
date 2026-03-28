@@ -1,0 +1,36 @@
+import { ReactElement } from 'react';
+import { StyleSheet } from 'react-native-unistyles';
+import { colors } from '<%= libPath %>/shared/ui/styles';
+import { Icon } from '../icon';
+import { AppPressable, AppPressableProps } from '../pressable';
+
+export interface AppCheckboxProps extends AppPressableProps {
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+}
+
+export const AppCheckbox = ({ value, onValueChange, disabled, style, ...props }: AppCheckboxProps): ReactElement => {
+  const handlePress = (): void => {
+    if (!disabled) {
+      onValueChange(!value);
+    }
+  };
+
+  return (
+    <AppPressable style={styles.checkbox} disabled={disabled} onPress={handlePress} {...props}>
+      {value && <Icon name='check' color={colors.primary} />}
+    </AppPressable>
+  );
+};
+
+const styles = StyleSheet.create(({ colors, spacings }) => ({
+  checkbox: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.textPrimary,
+    width: spacings.xxl,
+    height: spacings.xxl,
+    borderRadius: spacings.xs,
+  },
+}));

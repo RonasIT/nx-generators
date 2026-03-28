@@ -1,7 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from '@ronas-it/react-native-common-modules/i18n';
 import Constants from 'expo-constants';
-import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { ReactElement, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -11,7 +10,7 @@ import { authApi } from '@ronas-it/mobile/shared/data-access/api';
 import { AppVersion } from '@ronas-it/mobile/shared/ui/app-version';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { rem } from '@ronas-it/mobile/shared/ui/styles';
-import { AppButton, AppText, ErrorMessage, FormTextInput } from '@ronas-it/mobile/shared/ui/ui-kit';
+import { AppButton, AppText, ErrorMessage, FormTextInput, AppImage } from '@ronas-it/mobile/shared/ui/ui-kit';
 import { FormValues } from '@ronas-it/mobile/shared/utils/form';
 import { navigationConfig } from '@ronas-it/mobile/shared/utils/navigation';
 import { LoginFormSchema } from './forms';
@@ -34,13 +33,13 @@ export function LoginForm(): ReactElement {
 
   useEffect(() => {
     if (isSuccess) {
-      router.replace(navigationConfig.routes.profile);
+      router.replace(`/${navigationConfig.main.root}`);
     }
   }, [isSuccess]);
 
   return (
     <View style={style.content}>
-      <Image source={Images.logo} style={style.logo} />
+      <AppImage source={Images.logo} style={style.logo} />
       <AppText style={style.title} variant='h1'>
         {translate('TEXT_TITLE', { value: appName })}
       </AppText>

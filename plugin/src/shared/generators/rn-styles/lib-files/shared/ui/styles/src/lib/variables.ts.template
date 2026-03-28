@@ -37,7 +37,7 @@ export const spacings = {
 };
 
 export const fontFamily = {
-  regular: 'System',
-  bold: 'System',
-  semiBold: 'System'
+  regular: 'Manrope Regular',
+  bold: 'Manrope Bold',
+  semiBold: 'Manrope SemiBold',
 };

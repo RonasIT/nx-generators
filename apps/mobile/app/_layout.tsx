@@ -1,6 +1,7 @@
 import { authSelectors } from '@ronas-it/mobile/shared/data-access/auth';
 import { store } from '@ronas-it/mobile/shared/data-access/store';
 import { fonts } from '@ronas-it/mobile/shared/ui/styles';
+import { ToastProvider } from '@ronas-it/mobile/shared/ui/ui-kit';
 import { navigationConfig } from '@ronas-it/mobile/shared/utils/navigation';
 import { setLanguage } from '@ronas-it/react-native-common-modules/i18n';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
@@ -25,11 +26,6 @@ const useLanguage = setLanguage(
   'en',
 );
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export const unstable_settings = {
-  initialRouteName: 'index',
-};
-
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -48,15 +44,15 @@ function App(): ReactElement {
 
   useEffect(() => {
     if (isAppReady && !isAuthenticated) {
-      router.replace(navigationConfig.routes.signIn);
+      router.replace(`/${navigationConfig.auth.root}`);
     }
   }, [isAppReady, isAuthenticated]);
 
   return (
     <Stack>
       <Stack.Screen name='index' />
-      <Stack.Screen name={navigationConfig.routesGroups.auth} options={{ headerShown: false }} />
-      <Stack.Screen name={navigationConfig.routesGroups.main} options={{ headerShown: false }} />
+      <Stack.Screen name={navigationConfig.auth.root} options={{ headerShown: false }} />
+      <Stack.Screen name={navigationConfig.main.root} options={{ headerShown: false }} />
     </Stack>
   );
 }
@@ -81,8 +77,10 @@ export default function RootLayout(): ReactElement | null {
 
   return (
     <Provider store={store}>
-      <StatusBar style={'light'} />
-      <App />
+      <ToastProvider>
+        <StatusBar style='light' />
+        <App />
+      </ToastProvider>
     </Provider>
   );
 }

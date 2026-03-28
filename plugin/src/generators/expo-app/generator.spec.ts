@@ -66,6 +66,7 @@ describe('expoAppGenerator integration with file content checks', () => {
       name: appName,
       directory: directory,
       withStore: false,
+      withUiKit: false,
       withFormUtils: false,
       withSentry: false,
     });
@@ -103,6 +104,7 @@ describe('expoAppGenerator integration with file content checks', () => {
       name: appName,
       directory: directory,
       withStore: false,
+      withUiKit: false,
       withFormUtils: false,
       withSentry: false,
     });
@@ -135,6 +137,7 @@ describe('expoAppGenerator integration with file content checks', () => {
       directory: directory,
       withStore: false,
       withFormUtils: false,
+      withUiKit: false,
       withSentry: false,
     });
 
@@ -159,6 +162,7 @@ describe('expoAppGenerator integration with file content checks', () => {
       directory: secondDirectory,
       withStore: false,
       withFormUtils: false,
+      withUiKit: false,
       withSentry: false,
     });
 
@@ -185,6 +189,7 @@ describe('expoAppGenerator integration with file content checks', () => {
       name: appName,
       directory: directory,
       withStore: true,
+      withUiKit: true,
       withFormUtils: true,
       withSentry: true,
     });

@@ -2,6 +2,10 @@
   "SHARED": {
     "ITEMS_LIST_EMPTY_STATE": {
       "TEXT_NO_ITEMS": "No items"
+    },
+    "TOAST_SERVICE": {
+      "TEXT_FEATURE_NOT_IMPLEMENTED_YET": "Feature is not implemented yet",
+      "TEXT_SOMETHING_WENT_WRONG": "Something went wrong"
     }
   }
 }

@@ -28,6 +28,12 @@
       "default": false,
       "x-prompt": "Do you want to create store lib?"
     },
+    "withUiKit": {
+      "type": "boolean",
+      "description": "Add a UI-kit library with pre-built components to the app",
+      "default": false,
+      "x-prompt": "Do you want to create a UI-kit library with pre-built components?"
+    },
     "withFormUtils": {
       "type": "boolean",
       "description": "Add form utils library to the app",

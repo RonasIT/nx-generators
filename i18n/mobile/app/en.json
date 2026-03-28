@@ -5,7 +5,8 @@
     },
     "MAIN_LAYOUT": {
       "TEXT_HOME": "Home",
-      "TEXT_PROFILE": "Profile"
+      "TEXT_PROFILE": "Profile",
+      "TEXT_UI_KIT": "UI Kit"
     }
   }
 }

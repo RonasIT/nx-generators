@@ -1,0 +1,31 @@
+import { useTranslation } from '@ronas-it/react-native-common-modules/i18n';
+import { ReactElement } from 'react';
+import { StyleProp, View, ViewStyle } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
+import { rem } from '<%= libPath %>/shared/ui/styles';
+import { Icon } from '../icon';
+import { AppText } from '../text';
+
+interface UnderConstructionProps {
+  style?: StyleProp<ViewStyle>;
+}
+
+export function UnderConstruction({ style }: UnderConstructionProps): ReactElement {
+  const translate = useTranslation('SHARED.UNDER_CONSTRUCTION');
+
+  return (
+    <View style={[styles.container, style]}>
+      <Icon name='underConstruction' />
+      <AppText>{translate('TEXT_WE_ARE_WORKING_ON_THIS_SECTION')}</AppText>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 2 * rem,
+  },
+});

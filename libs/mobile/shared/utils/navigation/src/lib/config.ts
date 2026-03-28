@@ -4,9 +4,11 @@ const routesGroups = {
 };
 
 export const navigationConfig = {
-  routesGroups,
-  routes: {
-    signIn: `/${routesGroups.auth}`,
-    profile: `/${routesGroups.main}`,
+  auth: {
+    root: routesGroups.auth,
+  },
+  main: {
+    root: routesGroups.main,
+    'ui-kit': `ui-kit`,
   },
 };

@@ -4,7 +4,8 @@
       "TEXT_GREETING": "Hey, {{name}}!",
       "TEXT_EMAIL": "Email: {{email}}",
       "TEXT_NAME": "Name: {{name}}",
-      "BUTTON_LOGOUT": "Log out"
+      "BUTTON_LOGOUT": "Log out",
+      "BUTTON_SHOW_UI_KIT": "Show UI Kit"
     }
   }
 }

@@ -10,6 +10,7 @@ export * from './splash-screen';
 export * from './spinner';
 export * from './header';
 export * from './image';
+export * from './keyboard-avoiding-view';
 export * from './pressable';
 export * from './checkbox';
 export * from './search-input';

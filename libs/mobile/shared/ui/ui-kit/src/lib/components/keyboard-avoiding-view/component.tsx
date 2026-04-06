@@ -1,0 +1,47 @@
+import { ReactElement, Ref } from 'react';
+import { View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  KeyboardAvoidingViewProps,
+  KeyboardAwareScrollView,
+  KeyboardAwareScrollViewProps,
+  KeyboardAwareScrollViewRef,
+} from 'react-native-keyboard-controller';
+import { commonStyle, rem } from '@ronas-it/mobile/shared/ui/styles';
+
+type AppKeyboardAvoidingViewProps =
+  | ({
+      isScrollable: true;
+      ref?: Ref<KeyboardAwareScrollViewRef>;
+    } & KeyboardAwareScrollViewProps)
+  | ({
+      isScrollable?: false;
+      ref?: Ref<View>;
+    } & KeyboardAvoidingViewProps);
+
+export const AppKeyboardAvoidingView = ({
+  children,
+  ref,
+  isScrollable,
+  ...restProps
+}: AppKeyboardAvoidingViewProps): ReactElement => {
+  return isScrollable ? (
+    <KeyboardAwareScrollView
+      ref={ref as Ref<KeyboardAwareScrollViewRef>}
+      keyboardShouldPersistTaps='handled'
+      showsVerticalScrollIndicator={false}
+      alwaysBounceVertical={false}
+      bottomOffset={rem}
+      style={commonStyle.fullHeight}
+      {...restProps}>
+      {children}
+    </KeyboardAwareScrollView>
+  ) : (
+    <KeyboardAvoidingView
+      ref={ref as Ref<View>}
+      behavior='padding'
+      {...(restProps as Omit<KeyboardAvoidingViewProps, 'behavior' | 'contentContainerStyle'>)}>
+      {children}
+    </KeyboardAvoidingView>
+  );
+};

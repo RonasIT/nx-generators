@@ -11,6 +11,9 @@ const COMMON_LINES = `# Whitelist — ignore everything except what's needed for
 # Mobile apps
 !apps
 apps/*
+apps/*/.expo
+apps/*/android
+apps/*/ios
 
 # Shared libraries
 !libs
@@ -27,6 +30,10 @@ i18n/*
 # Dependency patches for React Native packages
 !patches
 !patches/**
+
+# Tools
+!tools
+!tools/**
 
 # Root config files required for the build
 !package.json

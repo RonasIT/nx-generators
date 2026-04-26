@@ -10,6 +10,7 @@ import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { ReactElement, useEffect } from 'react';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 
 export { ErrorBoundary } from 'expo-router';
@@ -79,7 +80,9 @@ export default function RootLayout(): ReactElement | null {
     <Provider store={store}>
       <ToastProvider>
         <StatusBar style='light' />
-        <App />
+        <KeyboardProvider>
+          <App />
+        </KeyboardProvider>
       </ToastProvider>
     </Provider>
   );

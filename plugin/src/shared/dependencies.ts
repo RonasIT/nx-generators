@@ -48,6 +48,7 @@ export const dependencies = {
     'react-native-worklets': '0.5.1',
     'expo-image': '~3.0.10',
     'react-native-toast-message': '^2.3.3',
+    'react-native-keyboard-controller': '^1.20.7',
   },
   store: {
     '@ronas-it/rtkq-entity-api': '^0.5.0',

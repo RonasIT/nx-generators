@@ -9,6 +9,7 @@ export * from './text';
 export * from './text-input';
 export * from './header';
 export * from './image';
+export * from './keyboard-avoiding-view';
 export * from './checkbox';
 export * from './under-construction';
 export * from './search-input';

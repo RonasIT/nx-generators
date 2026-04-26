@@ -148,6 +148,8 @@ module.exports = (async () => {
           },
         ],
 
+        '@typescript-eslint/no-empty-function': 'error',
+
         '@typescript-eslint/no-use-before-define': [
           'warn',
           {

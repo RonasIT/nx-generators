@@ -44,6 +44,7 @@ export const dependencies = {
     'react-native-nitro-modules': '~0.35.2',
   },
   'ui-kit': {
+    'expo-constants': '~18.0.13',
     'react-native-reanimated': '~4.1.1',
     'react-native-worklets': '0.5.1',
     'expo-image': '~3.0.10',

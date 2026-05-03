@@ -48,6 +48,7 @@ export const dependencies = {
     'react-native-reanimated': '~4.1.1',
     'react-native-worklets': '0.5.1',
     'expo-image': '~3.0.10',
+    'expo-router': '~6.0.12',
     'react-native-toast-message': '^2.3.3',
     'react-native-keyboard-controller': '^1.20.7',
   },

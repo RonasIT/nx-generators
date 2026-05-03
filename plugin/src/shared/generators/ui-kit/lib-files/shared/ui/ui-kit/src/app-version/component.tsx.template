@@ -1,0 +1,27 @@
+import Constants from 'expo-constants';
+import { ReactElement } from 'react';
+import { Platform, View } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
+import { AppText } from '../text';
+
+export function AppVersion(): ReactElement {
+  const build =
+    Platform.OS === 'ios'
+      ? Constants.expoConfig?.ios?.buildNumber
+      : Constants.expoConfig?.android?.versionCode;
+
+  return (
+    <View style={styles.container}>
+      <AppText>{Constants.expoConfig?.version}</AppText>
+      <AppText>{`(${build})`}</AppText>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create(({ spacings }) => ({
+  container: {
+    gap: spacings.xs,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+}));

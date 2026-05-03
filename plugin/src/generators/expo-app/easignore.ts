@@ -11,9 +11,6 @@ const COMMON_LINES = `# Whitelist — ignore everything except what's needed for
 # Mobile apps
 !apps
 apps/*
-apps/*/.expo
-apps/*/android
-apps/*/ios
 
 # Shared libraries
 !libs
@@ -51,6 +48,8 @@ function getAppSpecificLines(directory: string): string {
 !apps/${directory}
 !apps/${directory}/**
 apps/${directory}/.expo
+apps/${directory}/android
+apps/${directory}/ios
 
 # Libraries: ${directory}
 !libs/${directory}

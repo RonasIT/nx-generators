@@ -28,6 +28,10 @@ i18n/*
 !patches
 !patches/**
 
+# Tools
+!tools
+!tools/**
+
 # Root config files required for the build
 !package.json
 !package-lock.json
@@ -44,6 +48,8 @@ function getAppSpecificLines(directory: string): string {
 !apps/${directory}
 !apps/${directory}/**
 apps/${directory}/.expo
+apps/${directory}/android
+apps/${directory}/ios
 
 # Libraries: ${directory}
 !libs/${directory}

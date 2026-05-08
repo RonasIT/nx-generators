@@ -1,5 +1,6 @@
 import { addDependenciesToPackageJson, Tree } from '@nx/devkit';
 import { tsquery } from '@phenomnomnominal/tsquery';
+import { Project, ScriptKind } from 'ts-morph';
 import {
   createPrinter,
   factory,
@@ -24,15 +25,17 @@ const addRequiredImportsExpo = (content: string): string =>
         import { isRunningInExpoGo } from 'expo';`,
   );
 
-const removeExportsKeywordForRootLayout = (content: string): string =>
-  tsquery.replace(
-    content,
-    'FunctionDeclaration:has(Identifier[name="RootLayout"]) > :matches(ExportKeyword, DefaultKeyword)',
-    () => '',
-    {
-      visitAllChildren: true,
-    },
-  );
+const removeExportsKeywordForRootLayout = (content: string): string => {
+  const sourceFile = new Project({ useInMemoryFileSystem: true }).createSourceFile('file.tsx', content, {
+    scriptKind: ScriptKind.TSX,
+  });
+
+  const fn = sourceFile.getFunctions().find((f) => f.getName() === 'RootLayout');
+  fn?.setIsDefaultExport(false);
+  fn?.setIsExported(false);
+
+  return sourceFile.getFullText();
+};
 
 const updateExtraConfig = (content: string, dsn: string): string =>
   createPrinter().printFile(

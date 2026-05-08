@@ -30,9 +30,9 @@ const removeExportsKeywordForRootLayout = (content: string): string => {
     scriptKind: ScriptKind.TSX,
   });
 
-  const fn = sourceFile.getFunctions().find((f) => f.getName() === 'RootLayout');
-  fn?.setIsDefaultExport(false);
-  fn?.setIsExported(false);
+  const rootLayout = sourceFile.getFunctions().find((func) => func.getName() === 'RootLayout');
+  rootLayout?.setIsDefaultExport(false);
+  rootLayout?.setIsExported(false);
 
   return sourceFile.getFullText();
 };

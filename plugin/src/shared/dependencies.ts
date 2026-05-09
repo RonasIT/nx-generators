@@ -1,6 +1,6 @@
 export const dependencies = {
   'expo-app': {
-    '@ronas-it/react-native-common-modules': '~1.1.0',
+    '@ronas-it/react-native-common-modules': '~2.0.0',
     'react-native-mmkv': '~3.3.3',
     'expo-constants': '~18.0.9',
     'expo-dev-client': '~6.0.15',
@@ -30,7 +30,7 @@ export const dependencies = {
     'react-dom': '~19.2.4',
   },
   'api-client': {
-    '@ronas-it/axios-api-client': '^0.1.2',
+    '@ronas-it/axios-api-client': '^0.2.0',
   },
   auth: {
     luxon: '^3.7.2',
@@ -53,7 +53,7 @@ export const dependencies = {
     'react-native-keyboard-controller': '^1.20.7',
   },
   store: {
-    '@ronas-it/rtkq-entity-api': '^0.5.0',
+    '@ronas-it/rtkq-entity-api': '^1.1.1',
     'react-redux': '^9.2.0',
   },
   form: {

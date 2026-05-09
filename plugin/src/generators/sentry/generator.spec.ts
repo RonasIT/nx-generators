@@ -2,10 +2,20 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { assertFirstLine, formatFilesMock, installPackagesTaskMock } from '../../shared/tests-utils';
+import {
+  assertFirstLine,
+  expoAppConfigMinimal,
+  expoMetroMinimal,
+  expoRootLayoutMinimal,
+  formatFilesMock,
+  installPackagesTaskMock,
+  nextConfigComposeWithNxMinimal,
+} from '../../shared/tests-utils';
 import * as utils from '../../shared/utils';
 import { sentryGenerator } from './generator';
 import * as sentryUtils from './utils';
+import { generateSentryExpo } from './utils/generate-sentry-expo';
+import { generateSentryNext } from './utils/generate-sentry-next';
 
 jest.mock('../../shared/utils', () => {
   const actual = jest.requireActual('../../shared/utils');
@@ -113,5 +123,61 @@ describe('sentryGenerator', () => {
     expect(sentryUtils.generateSentryNext).not.toHaveBeenCalled();
     expect(sentryUtils.generateSentryExpo).not.toHaveBeenCalled();
     expect(formatFilesMock).toHaveBeenCalledWith(tree);
+  });
+});
+
+describe('generateSentryExpo', () => {
+  let tree: ReturnType<typeof createTreeWithEmptyWorkspace>;
+  const projectRoot = 'apps/my-expo-app';
+
+  beforeEach(() => {
+    tree = createTreeWithEmptyWorkspace();
+    tree.write(`${projectRoot}/package.json`, JSON.stringify({ name: 'my-expo-app' }, null, 2));
+    tree.write(`${projectRoot}/app/_layout.tsx`, expoRootLayoutMinimal);
+    tree.write(`${projectRoot}/app.config.ts`, expoAppConfigMinimal);
+    tree.write(`${projectRoot}/metro.config.js`, expoMetroMinimal);
+  });
+
+  it('should append Sentry.init using Constants.expoConfig extra dsn to _layout.tsx', () => {
+    const dsn = 'https://examplePublicKey@o0.ingest.sentry.io/0';
+
+    generateSentryExpo(tree, { dsn }, projectRoot);
+
+    const layout = tree.read(`${projectRoot}/app/_layout.tsx`, 'utf-8');
+
+    expect(layout).toContain('Sentry.init({');
+    expect(layout).toContain('dsn: Constants.expoConfig?.extra?.sentry?.dsn');
+  });
+});
+
+describe('generateSentryNext', () => {
+  let tree: ReturnType<typeof createTreeWithEmptyWorkspace>;
+  const projectRoot = 'apps/my-next-app';
+
+  beforeEach(() => {
+    tree = createTreeWithEmptyWorkspace();
+    tree.write(`${projectRoot}/package.json`, JSON.stringify({ name: 'my-next-app' }, null, 2));
+    tree.write(`${projectRoot}/next.config.js`, nextConfigComposeWithNxMinimal);
+    tree.write(`${projectRoot}/.env`, '');
+    tree.write(`${projectRoot}/.env.development`, '');
+    tree.write(`${projectRoot}/.env.production`, '');
+  });
+
+  it('should wrap next.config.js with withSentryConfig and generate templates with dsn', () => {
+    const dsn = 'https://examplePublicKey@o0.ingest.sentry.io/0';
+
+    generateSentryNext(tree, { directory: projectRoot, dsn }, projectRoot);
+
+    const nextConfigContent = tree.read(`${projectRoot}/next.config.js`, 'utf-8');
+
+    expect(nextConfigContent).toContain('withSentryConfig');
+    expect(nextConfigContent).toContain('@sentry/nextjs');
+    expect(nextConfigContent).toContain('sentryWebpackPluginOptions');
+
+    const instrumentationClient = tree.read(`${projectRoot}/instrumentation-client.ts`, 'utf-8');
+
+    expect(instrumentationClient).toContain(dsn);
+
+    expect(tree.read(`${projectRoot}/.env`, 'utf-8')).toContain('SENTRY_AUTH_TOKEN=');
   });
 });

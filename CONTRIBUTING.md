@@ -50,7 +50,13 @@ The `plugin` directory contains the source code for all generators in this packa
    - Release alpha version of the package: `npm run release -- --tag=alpha`
    - Install the package in your test environment: `npm i @ronas-it/nx-generators@alpha --save-dev`
 
-5. **Submit changes**
+5. **Test locally in another project with Yalc (Optional)**
+   - [Yalc](https://github.com/wclr/yalc) is a small local package store so other repos can depend on your build without publishing to npm. Install once: `npm i yalc -g`
+   - From the repository root run `npm run build`, then `cd dist/nx-generators` and `yalc publish` (publish this folder, not `plugin/` — it matches what npm ships)
+   - In the consumer project run `yalc add @ronas-it/nx-generators`
+   - When you iterate here, publish again from `dist/nx-generators`, or use `yalc publish --push` to refresh existing installs
+
+6. **Submit changes**
    - Create a pull request with your modifications
    - Include clear descriptions of changes
    - Reference any related issues or discussions

@@ -41,7 +41,7 @@ const updateExtraConfig = (content: string, dsn: string): string =>
   createPrinter().printFile(
     tsquery.map(
       tsquery.ast(content),
-      'VariableDeclaration > Identifier[name="extra"] ~ ObjectLiteralExpression',
+      'VariableDeclaration:has(Identifier[name="extra"]) > ObjectLiteralExpression',
       (node) =>
         createObjectLiteralExpression(
           [
@@ -120,7 +120,7 @@ export function generateSentryExpo(tree: Tree, options: SentryGeneratorSchema, p
 
       Sentry.init({
         dsn: Constants.expoConfig?.extra?.sentry?.dsn,
-        environment: Constants.expoConfig?.extra?.env,
+        environment: process.env.EXPO_PUBLIC_APP_ENV,
         debug: false,
         integrations: [navigationIntegration],
         enableNativeFramesTracking: !isRunningInExpoGo(), // Tracks slow and frozen frames in the application

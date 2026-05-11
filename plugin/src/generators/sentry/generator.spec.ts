@@ -147,6 +147,11 @@ describe('generateSentryExpo', () => {
 
     expect(layout).toContain('Sentry.init({');
     expect(layout).toContain('dsn: Constants.expoConfig?.extra?.sentry?.dsn');
+
+    const appConfig = tree.read(`${projectRoot}/app.config.ts`, 'utf-8');
+
+    expect(appConfig).toContain(`dsn: "${dsn}"`);
+    expect(appConfig).toContain('sentry:');
   });
 });
 

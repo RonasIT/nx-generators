@@ -54,9 +54,6 @@ const updateExtraConfig = (content: string, dsn: string): string =>
           ],
           (node as ObjectLiteralExpression).properties,
         ),
-      {
-        visitAllChildren: true,
-      },
     ),
   );
 

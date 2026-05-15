@@ -1,7 +1,7 @@
 export const dependencies = {
   'expo-app': {
     '@ronas-it/react-native-common-modules': '~2.0.0',
-    'react-native-mmkv': '~3.3.3',
+    'react-native-mmkv': '^4.3.1',
     'expo-constants': '~55.0.16',
     'expo-dev-client': '~55.0.33',
     'expo-router': '~55.0.14',
@@ -39,9 +39,9 @@ export const dependencies = {
     'js-cookie': '^3.0.5',
   },
   'rn-styles': {
-    'react-native-unistyles': '~3.1.1',
-    'react-native-edge-to-edge': '^1.7.0',
-    'react-native-nitro-modules': '~0.35.2',
+    'react-native-unistyles': '^3.2.4',
+    'react-native-edge-to-edge': '^1.8.1',
+    'react-native-nitro-modules': '0.35.6',
   },
   'ui-kit': {
     'expo-constants': '~55.0.16',
@@ -97,8 +97,8 @@ export const devDependencies = {
     '@types/react': '~19.2.0',
     '@types/react-dom': '~19.2.0',
     '@expo/cli': '^55.0.30',
-    'reactotron-react-native': '~5.1.17',
-    'reactotron-redux': '~3.2.1',
+    'reactotron-react-native': '^5.1.18',
+    'reactotron-redux': '^3.2.1',
     metro: '^0.83.7',
     'metro-config': '~0.83.7',
   },

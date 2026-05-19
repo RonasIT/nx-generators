@@ -46,7 +46,6 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & {
       },
     },
     plugins: ['expo-router', 'expo-localization'],
-    newArchEnabled: true,
     extra,
   };
 };

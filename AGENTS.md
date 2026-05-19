@@ -39,11 +39,6 @@ Use the MCP tools **list_knowledge_bases**, **search_knowledge_base**, and **get
 | ------------------------ | -------------------------------------- |
 | Backend Docs (Laravel)   | `60603f2d-1318-4e81-adbd-681b47b22b3a` |
 | Frontend Docs (RN, Next) | `7de525d2-a308-41e4-ab15-42d527549703` |
-| Sales Documentation      | `b0d7f492-cf20-442b-a767-2255113f036f` |
-| Ronas IT Dribbble        | `e64d0850-bd4d-4e68-9ca4-4e2211d795d4` |
-| Sales                    | `8f8bb651-a5dc-43e5-a650-a3a145543690` |
-| Marketing                | `5006584c-28f5-4a5b-8fa8-0f61e3c7f981` |
-| Tasks Templates          | `44fc3e2e-c0eb-4700-bb51-4d80cadbf0f9` |
 
 **Keeping the table up to date:** If you call **list_knowledge_bases** and the result shows new bases, different IDs, or missing entries compared to the table above, update the "Knowledge Base IDs" table in this file (AGENTS.md) so it matches the current list. That keeps the reference accurate for future sessions.
 

@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
-import { MMKV } from 'react-native-mmkv';
+import { createMMKV } from 'react-native-mmkv';
 
-export const storage = new MMKV({
+export const storage = createMMKV({
   id: '<%= directory %>',
   // If we need more security, we can use EAS secret variables here
   encryptionKey: Platform.OS === 'web' ? undefined : '<%= directory %>',

@@ -69,8 +69,8 @@ authListenerMiddleware.startListening({
     profileApi.endpoints.deleteProfile.matchFulfilled,
   ),
   effect: (_, { dispatch }) => {
-    storage.delete(AppStorageValue.ACCESS_TOKEN);
-    storage.delete(AppStorageValue.REFRESH_TOKEN);
+    storage.remove(AppStorageValue.ACCESS_TOKEN);
+    storage.remove(AppStorageValue.REFRESH_TOKEN);
     dispatch(authActions.setIsAuthenticated(false));
 
     dispatch(profileApi.util.resetApiState());

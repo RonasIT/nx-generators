@@ -71,5 +71,6 @@
         "unitTestRunner": "none"
       }
     }
-  }
+  },
+  "analytics": false
 }

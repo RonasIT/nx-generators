@@ -6,6 +6,7 @@ const appRoot = __dirname;
 const monorepoRoot = path.resolve(appRoot, '../..');
 const defaultConfig = getDefaultConfig(appRoot);
 const { assetExts, sourceExts } = defaultConfig.resolver;
+const watchFolders = Array.from(new Set([...defaultConfig.watchFolders, monorepoRoot]));
 /**
  * Metro configuration
  * https://facebook.github.io/metro/docs/configuration
@@ -20,7 +21,7 @@ const customConfig = {
     assetExts: assetExts.filter((ext) => ext !== 'svg'),
     sourceExts: [...sourceExts, 'cjs', 'mjs', 'svg'],
   },
-  watchFolders: [monorepoRoot],
+  watchFolders,
 };
 
 module.exports = mergeConfig(defaultConfig, customConfig);

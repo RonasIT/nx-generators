@@ -13,51 +13,43 @@ const addRequiredImports = (content: string): string =>
     'VariableStatement:has(Identifier[name="withNx"]):has(CallExpression:has(Identifier[name="require"]))',
     (node) => `${node.getText()}
       const { withSentryConfig } = require('@sentry/nextjs');`,
-    {},
   );
 
 const modifyNextConfig = (content: string): string =>
   createPrinter().printFile(
-    tsquery.map(
-      tsquery.ast(content),
-      'Identifier[name="nextConfig"] ~ ObjectLiteralExpression',
-      (node) => {
-        return createObjectLiteralExpression(
-          [
-            {
-              key: 'widenClientFileUpload',
-              initializer: factory.createTrue(),
-              comment: 'Upload a larger set of source maps for prettier stack traces (increases build time)',
-            },
-            {
-              key: 'transpileClientSDK',
-              initializer: factory.createTrue(),
-              comment: 'Transpiles SDK to be compatible with IE11 (increases bundle size)',
-            },
-            {
-              key: 'tunnelRoute',
-              initializer: factory.createStringLiteral('/monitoring'),
-              comment:
-                'Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)',
-            },
-            {
-              key: 'hideSourceMaps',
-              initializer: factory.createTrue(),
-              comment: 'Hides source maps from generated client bundles',
-            },
-            {
-              key: 'disableLogger',
-              initializer: factory.createTrue(),
-              comment: 'Automatically tree-shake Sentry logger statements to reduce bundle size',
-            },
-          ],
-          (node as ObjectLiteralExpression).properties,
-        );
-      },
-      {
-        visitAllChildren: true,
-      },
-    ),
+    tsquery.map(tsquery.ast(content), 'Identifier[name="nextConfig"] ~ ObjectLiteralExpression', (node) => {
+      return createObjectLiteralExpression(
+        [
+          {
+            key: 'widenClientFileUpload',
+            initializer: factory.createTrue(),
+            comment: 'Upload a larger set of source maps for prettier stack traces (increases build time)',
+          },
+          {
+            key: 'transpileClientSDK',
+            initializer: factory.createTrue(),
+            comment: 'Transpiles SDK to be compatible with IE11 (increases bundle size)',
+          },
+          {
+            key: 'tunnelRoute',
+            initializer: factory.createStringLiteral('/monitoring'),
+            comment:
+              'Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)',
+          },
+          {
+            key: 'hideSourceMaps',
+            initializer: factory.createTrue(),
+            comment: 'Hides source maps from generated client bundles',
+          },
+          {
+            key: 'disableLogger',
+            initializer: factory.createTrue(),
+            comment: 'Automatically tree-shake Sentry logger statements to reduce bundle size',
+          },
+        ],
+        (node as ObjectLiteralExpression).properties,
+      );
+    }),
   );
 
 const wrapIntoSentryConfig = (content: string): string => {
@@ -79,18 +71,12 @@ const wrapIntoSentryConfig = (content: string): string => {
 
       ${node.getText()}`;
     },
-    {
-      visitAllChildren: true,
-    },
   );
 
   return tsquery.replace(
     withSentryWebpackPluginOptions,
     'CallExpression > CallExpression:has(Identifier[name="withNx"]) Identifier[name="nextConfig"]',
     (node) => `withSentryConfig(${node.getText()}, sentryWebpackPluginOptions)`,
-    {
-      visitAllChildren: true,
-    },
   );
 };
 

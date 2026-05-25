@@ -1,7 +1,7 @@
 export default {
   'lint-staged': {
     '*.{ts,tsx}': 'tsc-files --noEmit types.d.ts',
-    '*.{ts,tsx,js,html,json,md}': 'prettier --write',
+    '*.{ts,tsx,js,html,json,md,css,scss}': 'prettier --write',
     '*.{ts,tsx,js}': 'eslint --cache --fix',
   },
   tsconfig: {

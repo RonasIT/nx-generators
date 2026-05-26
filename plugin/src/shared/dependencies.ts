@@ -50,7 +50,7 @@ export const dependencies = {
     'expo-image': '~55.0.10',
     'expo-router': '~55.0.14',
     'react-native-toast-message': '^2.3.3',
-    'react-native-keyboard-controller': '1.20.7',
+    'react-native-keyboard-controller': '1.21.8',
   },
   store: {
     '@ronas-it/rtkq-entity-api': '^1.1.1',

@@ -91,6 +91,8 @@ export const devDependencies = {
     '@typescript-eslint/parser': '^8.46.0',
     'tsc-files': '^1.1.4',
     'typescript-eslint': '^8.46.0',
+    stylelint: '^17.12.0',
+    'stylelint-config-standard-scss': '^17.0.0',
   },
   'expo-app': {
     '@types/lodash-es': '^4.17.12',

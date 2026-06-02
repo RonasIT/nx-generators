@@ -28,5 +28,5 @@ export default {
     lib: ['es2022', 'dom'],
   },
   tsConfigExclude: ['**/*.cjs', '**/*.mjs', 'node_modules', 'dist'],
-  gitIgnore: ['.eslintcache', '*.tsbuildinfo'],
+  gitIgnore: ['.eslintcache', '*.tsbuildinfo', 'output'],
 };

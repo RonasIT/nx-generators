@@ -44,6 +44,8 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
     );
   }
 
+  tree.write('.gitignore', tree.read('.gitignore')?.toString() + '\nnext-env.d.ts\n');
+
   await runI18nNextGenerator(tree, options);
   await runNavigationUtilsGenerator(tree, {
     appDirectory: options.directory,

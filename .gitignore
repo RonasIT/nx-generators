@@ -4,6 +4,7 @@
 dist
 tmp
 /out-tsc
+output
 
 # dependencies
 node_modules
@@ -63,3 +64,4 @@ android
 
 # Next
 apps/*/.next
+apps/*/next-env.d.ts

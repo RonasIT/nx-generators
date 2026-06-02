@@ -77,6 +77,9 @@ describe('codeChecksGenerator (integration)', () => {
     const types = tree.read('types.d.ts', 'utf-8');
     expect(types).toContain('// This file is added for correct work of TS-checks in pre-commit hook using tsc-files');
 
+    const stylelintConfig = tree.read('stylelint.config.mjs', 'utf-8');
+    expect(stylelintConfig).toContain('export default');
+
     // Callback should be a function
     expect(typeof installFn).toBe('function');
   });

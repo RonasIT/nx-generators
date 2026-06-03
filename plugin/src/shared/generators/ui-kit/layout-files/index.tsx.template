@@ -1,4 +1,4 @@
-import { AppButton, AppScreen, AppSpinner, AppSwitch, AppText, AppTextInput, SearchInput, AppCheckbox } from '<%= libPath %>/shared/ui/ui-kit';
+import { AppButton, AppScreen, AppSpinner, AppSwitch, AppTag, AppText, AppTextInput, SearchInput, AppCheckbox } from '<%= libPath %>/shared/ui/ui-kit';
 import { ReactElement, useState } from 'react';
 import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
@@ -34,6 +34,7 @@ export default function RootScreen(): ReactElement {
         <AppSwitch checked={isSwitched} onValueChange={setIsSwitched} />
         <AppText>Switch</AppText>
       </View>
+      <AppTag text='Tag' />
       <SearchInput
         placeholder='Search'
         value={searchValue}

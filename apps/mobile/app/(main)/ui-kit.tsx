@@ -4,6 +4,7 @@ import {
   AppScreen,
   AppSpinner,
   AppSwitch,
+  AppTag,
   AppText,
   AppTextInput,
   SearchInput,
@@ -44,6 +45,7 @@ export default function UiKitScreen(): ReactElement {
         <AppSwitch checked={isSwitched} onValueChange={setIsSwitched} />
         <AppText>Switch</AppText>
       </View>
+      <AppTag text='Tag' />
       <AppTextInput
         label='Username'
         autoCapitalize='none'

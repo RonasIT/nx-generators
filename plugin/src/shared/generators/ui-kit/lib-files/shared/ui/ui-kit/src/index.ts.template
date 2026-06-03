@@ -18,3 +18,4 @@ export * from './bottom-tab-navigator';
 export * from './toast';
 export * from './modal';
 export * from './switch';
+export * from './tag';

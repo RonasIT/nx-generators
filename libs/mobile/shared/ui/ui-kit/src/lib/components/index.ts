@@ -16,3 +16,4 @@ export * from './checkbox';
 export * from './search-input';
 export * from './toast';
 export * from './switch';
+export * from './tag';

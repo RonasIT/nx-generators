@@ -1,0 +1,72 @@
+import { ReactElement } from 'react';
+import { View } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
+import { AppText } from '../text';
+import { Icon } from '../icon';
+import { AppPressable } from '../pressable';
+import { colors, spacings } from '<%= libPath %>/shared/ui/styles';
+
+export interface AppTagProps {
+  text: string;
+  onRemovePress?: () => void;
+  backgroundColor?: keyof typeof colors;
+  textColor?: keyof typeof colors;
+}
+
+export function AppTag({
+  text,
+  onRemovePress,
+  backgroundColor = 'primary',
+  textColor = 'textPrimary',
+}: AppTagProps): ReactElement {
+  return (
+    <View style={containerStyles.container(backgroundColor, !!onRemovePress)}>
+      <AppText variant='bodySmall' style={textStyles.text(textColor)}>
+        {text}
+      </AppText>
+      {onRemovePress && (
+        <AppPressable onPress={onRemovePress} style={containerStyles.iconContainer} hitSlop={10}>
+          <View style={containerStyles.iconBackground(textColor)} />
+          <Icon name='close' color={textColor} width={16} height={16} />
+        </AppPressable>
+      )}
+    </View>
+  );
+}
+
+const containerStyles = StyleSheet.create(({ colors }) => ({
+  container: (backgroundColor: keyof typeof colors, withRemoveButton: boolean) => ({
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    alignItems: 'center',
+    height: 32,
+    gap: 4,
+    paddingLeft: spacings.sm,
+    paddingRight: withRemoveButton ? spacings.xxs : spacings.sm,
+    borderRadius: spacings.xs,
+    backgroundColor: colors[backgroundColor],
+  }),
+  iconContainer: {
+    borderRadius: 100,
+    overflow: 'hidden',
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  iconBackground: (iconColor: keyof typeof colors) => ({
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: colors[iconColor],
+    opacity: 0.1,
+  }),
+}));
+
+const textStyles = StyleSheet.create(({ colors }) => ({
+  text: (textColor: keyof typeof colors) => ({
+    color: colors[textColor],
+  }),
+}));

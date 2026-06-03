@@ -1,4 +1,4 @@
-import { AppButton, AppScreen, AppSpinner, AppText, AppTextInput, SearchInput, AppCheckbox } from '<%= libPath %>/shared/ui/ui-kit';
+import { AppButton, AppScreen, AppSpinner, AppSwitch, AppText, AppTextInput, SearchInput, AppCheckbox } from '<%= libPath %>/shared/ui/ui-kit';
 import { ReactElement, useState } from 'react';
 import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
@@ -7,6 +7,7 @@ export default function RootScreen(): ReactElement {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [isSwitched, setIsSwitched] = useState(false);
   const [searchValue, setSearchValue] = useState<string>('');
 
   return (
@@ -28,6 +29,10 @@ export default function RootScreen(): ReactElement {
       <View style={styles.checkbox}>
         <AppCheckbox value={isChecked} onValueChange={setIsChecked} />
         <AppText>Checkbox</AppText>
+      </View>
+      <View style={styles.checkbox}>
+        <AppSwitch checked={isSwitched} onValueChange={setIsSwitched} />
+        <AppText>Switch</AppText>
       </View>
       <SearchInput
         placeholder='Search'

@@ -3,6 +3,7 @@ import {
   AppCheckbox,
   AppScreen,
   AppSpinner,
+  AppSwitch,
   AppText,
   AppTextInput,
   SearchInput,
@@ -16,6 +17,7 @@ export default function UiKitScreen(): ReactElement {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+  const [isSwitched, setIsSwitched] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
   return (
@@ -37,6 +39,10 @@ export default function UiKitScreen(): ReactElement {
       <View style={styles.checkbox}>
         <AppCheckbox value={isChecked} onValueChange={setIsChecked} />
         <AppText>Checkbox</AppText>
+      </View>
+      <View style={styles.checkbox}>
+        <AppSwitch checked={isSwitched} onValueChange={setIsSwitched} />
+        <AppText>Switch</AppText>
       </View>
       <AppTextInput
         label='Username'

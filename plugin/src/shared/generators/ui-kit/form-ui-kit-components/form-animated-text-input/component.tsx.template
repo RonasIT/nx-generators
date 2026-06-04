@@ -3,18 +3,18 @@ import { Control, FieldValues, Path, useController } from 'react-hook-form';
 import { TextInput } from 'react-native';
 import { AnimatedTextInput, AnimatedTextInputProps } from '../animated-text-input';
 
-export interface FormTextInputProps<T extends FieldValues> extends AnimatedTextInputProps {
+export interface FormAnimatedTextInputProps<T extends FieldValues> extends AnimatedTextInputProps {
   name: Path<T>;
   control: Control<T>;
   inputRef?: RefObject<TextInput | null>;
 }
 
-export function FormTextInput<T extends FieldValues>({
+export function FormAnimatedTextInput<T extends FieldValues>({
   name,
   control,
   inputRef,
   ...restProps
-}: FormTextInputProps<T>): ReactElement {
+}: FormAnimatedTextInputProps<T>): ReactElement {
   const { field, fieldState } = useController({ control, name });
 
   return (

@@ -10,7 +10,7 @@ import { authApi } from '@ronas-it/mobile/shared/data-access/api';
 import { AppVersion } from '@ronas-it/mobile/shared/ui/app-version';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { rem } from '@ronas-it/mobile/shared/ui/styles';
-import { AppButton, AppText, ErrorMessage, FormTextInput, AppImage } from '@ronas-it/mobile/shared/ui/ui-kit';
+import { AppButton, AppText, ErrorMessage, FormAnimatedTextInput, AppImage } from '@ronas-it/mobile/shared/ui/ui-kit';
 import { FormValues } from '@ronas-it/mobile/shared/utils/form';
 import { navigationConfig } from '@ronas-it/mobile/shared/utils/navigation';
 import { LoginFormSchema } from './forms';
@@ -44,7 +44,7 @@ export function LoginForm(): ReactElement {
         {translate('TEXT_TITLE', { value: appName })}
       </AppText>
       <View style={style.form}>
-        <FormTextInput
+        <FormAnimatedTextInput
           label={translate('TEXT_USERNAME')}
           name='username'
           testID='username-input'
@@ -53,7 +53,7 @@ export function LoginForm(): ReactElement {
           control={control}
           returnKeyType='next'
         />
-        <FormTextInput
+        <FormAnimatedTextInput
           isPassword={true}
           testID='password-input'
           label={translate('TEXT_PASSWORD')}

@@ -3,17 +3,22 @@ import { existsSync } from 'fs';
 import * as path from 'path';
 import { addDependenciesToPackageJson, formatFiles, generateFiles, Tree } from '@nx/devkit';
 import { dependencies } from '../../dependencies';
-import { getImportPathPrefix } from '../../utils';
+import { appendFileContent, getImportPathPrefix } from '../../utils';
 
-export async function runUiKitGenerator(tree: Tree, options: { name: string; directory: string }): Promise<void> {
+export async function runUiKitGenerator(
+  tree: Tree,
+  options: { name: string; directory: string; withFormUtils?: boolean },
+): Promise<void> {
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
   const libRoot = `libs/${options.directory}`;
+  const uiKitRoot = `${libRoot}/shared/ui/ui-kit/src`;
 
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
   const appPackagePath = `${appRoot}/package.json`;
   const appLayoutPath = `${appRoot}/app`;
   const toastServicePath = `${libRoot}/shared/utils/toast-service/src`;
+  const uiKitIndexPath = `${uiKitRoot}/index.ts`;
 
   // Generate ui-kit lib
   execSync(
@@ -29,7 +34,7 @@ export async function runUiKitGenerator(tree: Tree, options: { name: string; dir
   });
 
   // Remove unnecessary files
-  tree.delete(`${libRoot}/shared/ui/ui-kit/src/index.ts`);
+  tree.delete(uiKitIndexPath);
   tree.delete(`${appLayoutPath}/index.tsx`);
   tree.delete(`${i18nRoot}/shared/en.json`);
   tree.delete(`${toastServicePath}/index.ts`);
@@ -39,6 +44,20 @@ export async function runUiKitGenerator(tree: Tree, options: { name: string; dir
     ...options,
     libPath,
   });
+
+  const cachedUiKitIndexContent = tree.read(uiKitIndexPath, 'utf8') || '';
+
+  if (options.withFormUtils) {
+    generateFiles(tree, path.join(__dirname, 'form-ui-kit-components'), uiKitRoot, {
+      ...options,
+      libPath,
+    });
+
+    const formUiKitIndexContent = tree.read(uiKitIndexPath, 'utf8') || '';
+
+    tree.write(uiKitIndexPath, cachedUiKitIndexContent);
+    appendFileContent(uiKitIndexPath, formUiKitIndexContent, tree);
+  }
 
   // Add app files
   generateFiles(tree, path.join(__dirname, 'app-files'), appRoot, {
@@ -61,8 +80,16 @@ export async function runUiKitGenerator(tree: Tree, options: { name: string; dir
   // Add dependencies
   addDependenciesToPackageJson(tree, dependencies['ui-kit'], {});
 
+  if (options.withFormUtils) {
+    addDependenciesToPackageJson(tree, dependencies.form, {});
+  }
+
   if (existsSync(appPackagePath)) {
     addDependenciesToPackageJson(tree, dependencies['ui-kit'], {}, appPackagePath);
+
+    if (options.withFormUtils) {
+      addDependenciesToPackageJson(tree, dependencies.form, {}, appPackagePath);
+    }
   }
 
   await formatFiles(tree);

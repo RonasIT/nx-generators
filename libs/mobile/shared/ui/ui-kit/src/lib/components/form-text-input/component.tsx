@@ -1,9 +1,9 @@
 import { ReactElement, RefObject } from 'react';
 import { Control, FieldValues, Path, useController } from 'react-hook-form';
 import { TextInput } from 'react-native';
-import { AppTextInput, AppTextInputProps } from '../text-input';
+import { AnimatedTextInput, AnimatedTextInputProps } from '../animated-text-input';
 
-export interface FormTextInputProps<T extends FieldValues> extends AppTextInputProps {
+export interface FormTextInputProps<T extends FieldValues> extends AnimatedTextInputProps {
   name: Path<T>;
   control: Control<T>;
   inputRef?: RefObject<TextInput | null>;
@@ -18,7 +18,7 @@ export function FormTextInput<T extends FieldValues>({
   const { field, fieldState } = useController({ control, name });
 
   return (
-    <AppTextInput
+    <AnimatedTextInput
       ref={inputRef}
       value={field.value}
       onChangeText={field.onChange}

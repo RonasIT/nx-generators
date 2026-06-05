@@ -141,8 +141,7 @@ describe('runUiKitGenerator', () => {
 
     expect(uiKitIndexContent).toContain("export * from './animated-text-input';");
     expect(uiKitIndexContent).toContain("export * from './static-text-input';");
-    expect(uiKitIndexContent).toContain("export * from './form-animated-text-input';");
-    expect(uiKitIndexContent).toContain("export * from './form-static-text-input';");
+    expect(uiKitIndexContent).toContain("export * from './form-text-input';");
 
     expect(addDependenciesMock).toHaveBeenCalledWith(tree, uiKitDependencies, {});
     expect(addDependenciesMock).toHaveBeenCalledWith(tree, formDependencies, {});

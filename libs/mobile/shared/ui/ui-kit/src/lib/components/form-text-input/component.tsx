@@ -1,0 +1,47 @@
+import { ReactElement, RefObject } from 'react';
+import { Control, FieldValues, Path, useController } from 'react-hook-form';
+import { TextInput } from 'react-native';
+import { AnimatedTextInput, AnimatedTextInputProps } from '../animated-text-input';
+import { StaticTextInput, StaticTextInputProps } from '../static-text-input';
+
+export interface FormTextInputProps<T extends FieldValues>
+  extends Omit<AnimatedTextInputProps, 'ref'>, Omit<StaticTextInputProps, 'ref'> {
+  name: Path<T>;
+  control: Control<T>;
+  inputRef?: RefObject<TextInput | null>;
+  inputVariant?: 'animated' | 'static';
+}
+
+export function FormTextInput<T extends FieldValues>({
+  name,
+  control,
+  inputRef,
+  inputVariant = 'animated',
+  ...restProps
+}: FormTextInputProps<T>): ReactElement {
+  const { field, fieldState } = useController({ control, name });
+
+  if (inputVariant === 'static') {
+    return (
+      <StaticTextInput
+        ref={inputRef}
+        value={field.value}
+        onChangeText={field.onChange}
+        onBlur={field.onBlur}
+        error={fieldState.error?.message}
+        {...(restProps as StaticTextInputProps)}
+      />
+    );
+  }
+
+  return (
+    <AnimatedTextInput
+      ref={inputRef}
+      value={field.value}
+      onChangeText={field.onChange}
+      onBlur={field.onBlur}
+      error={fieldState.error?.message}
+      {...(restProps as AnimatedTextInputProps)}
+    />
+  );
+}

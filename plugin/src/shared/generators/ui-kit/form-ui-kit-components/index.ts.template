@@ -1,2 +1,1 @@
-export * from './form-animated-text-input';
-export * from './form-static-text-input';
+export * from './form-text-input';

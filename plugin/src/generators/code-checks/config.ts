@@ -3,6 +3,7 @@ export default {
     '*.{ts,tsx}': 'tsc-files --noEmit types.d.ts',
     '*.{ts,tsx,js,html,json,md,css,scss}': 'prettier --write',
     '*.{ts,tsx,js}': 'eslint --cache --fix',
+    '*.{css,scss}': 'stylelint --fix --allow-empty-input',
   },
   tsconfig: {
     baseUrl: '.',
@@ -27,5 +28,5 @@ export default {
     lib: ['es2022', 'dom'],
   },
   tsConfigExclude: ['**/*.cjs', '**/*.mjs', 'node_modules', 'dist'],
-  gitIgnore: ['.eslintcache', '*.tsbuildinfo'],
+  gitIgnore: ['.eslintcache', '*.tsbuildinfo', 'output'],
 };

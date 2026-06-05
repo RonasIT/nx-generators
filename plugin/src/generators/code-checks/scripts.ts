@@ -1,5 +1,6 @@
 export default {
   lint: 'npx tsc && npx eslint ./',
-  format: 'npx prettier --write . && npm run lint -- --fix',
+  'lint:css': 'npx stylelint "**/*.{css,scss}" --fix --allow-empty-input',
+  format: 'npx prettier --write . && npm run lint -- --fix && npm run lint:css',
   prepare: 'husky',
 };

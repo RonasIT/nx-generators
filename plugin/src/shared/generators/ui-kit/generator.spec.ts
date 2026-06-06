@@ -20,7 +20,12 @@ describe('runUiKitGenerator', () => {
     name: 'ui-kit',
     directory: 'myapp',
   };
+  const formOptions = {
+    ...options,
+    withFormUtils: true,
+  };
   const uiKitDependencies = dependencies['ui-kit'];
+  const formDependencies = dependencies.form;
   const libPath = '@proj/myapp';
 
   beforeEach(() => {
@@ -108,7 +113,50 @@ describe('runUiKitGenerator', () => {
       {},
       `apps/${options.directory}/package.json`,
     );
+    expect(addDependenciesMock).not.toHaveBeenCalledWith(tree, formDependencies, {});
+    expect(addDependenciesMock).not.toHaveBeenCalledWith(
+      tree,
+      formDependencies,
+      {},
+      `apps/${options.directory}/package.json`,
+    );
     expect(formatFilesMock).toHaveBeenCalledWith(tree);
+  });
+
+  it('should generate form ui kit components and merge their exports when withFormUtils is true', async () => {
+    existsSyncMock.mockReturnValue(true);
+    await runUiKitGenerator(tree, formOptions);
+
+    expect(generateFilesMock).toHaveBeenCalledTimes(6);
+
+    const formTemplateDir = path.join(__dirname, 'form-ui-kit-components');
+    const formTargetDir = `libs/${options.directory}/shared/ui/ui-kit/src`;
+
+    assertFirstLine(formTemplateDir, formTargetDir, tree, {
+      placeholders: { ...options, libPath },
+      ignoreFiles: ['index.ts.template'],
+    });
+
+    const uiKitIndexContent = tree.read(`${formTargetDir}/index.ts`, 'utf8') ?? '';
+
+    expect(uiKitIndexContent).toContain("export * from './animated-text-input';");
+    expect(uiKitIndexContent).toContain("export * from './static-text-input';");
+    expect(uiKitIndexContent).toContain("export * from './form-text-input';");
+
+    expect(addDependenciesMock).toHaveBeenCalledWith(tree, uiKitDependencies, {});
+    expect(addDependenciesMock).toHaveBeenCalledWith(tree, formDependencies, {});
+    expect(addDependenciesMock).toHaveBeenCalledWith(
+      tree,
+      uiKitDependencies,
+      {},
+      `apps/${options.directory}/package.json`,
+    );
+    expect(addDependenciesMock).toHaveBeenCalledWith(
+      tree,
+      formDependencies,
+      {},
+      `apps/${options.directory}/package.json`,
+    );
   });
 
   it('should skip app package dependency if package.json missing', async () => {

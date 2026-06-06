@@ -3,9 +3,12 @@ import {
   AppCheckbox,
   AppScreen,
   AppSpinner,
+  AppSwitch,
+  AppTag,
   AppText,
-  AppTextInput,
+  AnimatedTextInput,
   SearchInput,
+  StaticTextInput,
 } from '@ronas-it/mobile/shared/ui/ui-kit';
 import { ToastService } from '@ronas-it/mobile/shared/utils/toast-service';
 import { ReactElement, useState } from 'react';
@@ -13,9 +16,11 @@ import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
 export default function UiKitScreen(): ReactElement {
-  const [username, setUsername] = useState('');
+  const [animatedInputValue, setAnimatedInputValue] = useState('');
+  const [staticInputValue, setStaticInputValue] = useState('');
   const [password, setPassword] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+  const [isSwitched, setIsSwitched] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
   return (
@@ -38,14 +43,20 @@ export default function UiKitScreen(): ReactElement {
         <AppCheckbox value={isChecked} onValueChange={setIsChecked} />
         <AppText>Checkbox</AppText>
       </View>
-      <AppTextInput
-        label='Username'
+      <View style={styles.checkbox}>
+        <AppSwitch checked={isSwitched} onValueChange={setIsSwitched} />
+        <AppText>Switch</AppText>
+      </View>
+      <AppTag text='Tag' />
+      <AnimatedTextInput
+        label='Animated text input'
         autoCapitalize='none'
         autoCorrect={false}
-        value={username}
-        onChangeText={setUsername}
+        value={animatedInputValue}
+        onChangeText={setAnimatedInputValue}
       />
-      <AppTextInput isPassword={true} label='Password' value={password} onChangeText={setPassword} />
+      <StaticTextInput placeholder='Static text input' value={staticInputValue} onChangeText={setStaticInputValue} />
+      <AnimatedTextInput isPassword={true} label='Password' value={password} onChangeText={setPassword} />
       <SearchInput
         placeholder='Search'
         value={searchValue}

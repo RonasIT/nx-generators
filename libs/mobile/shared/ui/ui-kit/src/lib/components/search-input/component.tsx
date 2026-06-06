@@ -51,7 +51,7 @@ export function SearchInput({
           ref={ref}
           style={[textStyles.text, styles.input, isIos && styles.noLineHeight]}
           cursorColor={colors.textPrimary}
-          selectionColor={colors.textPrimary}
+          selectionColor={colors.primaryOpacity}
           placeholderTextColor={colors.textSecondary}
           onBlur={handleBlur}
           onFocus={handleFocus}

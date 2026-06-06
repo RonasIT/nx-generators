@@ -2,12 +2,12 @@ import { ReactElement, RefObject, useRef, useState } from 'react';
 import { TextInput, FocusEvent, TextInputProps, View, Platform, TouchableWithoutFeedback } from 'react-native';
 import Animated, { useSharedValue } from 'react-native-reanimated';
 import { StyleSheet } from 'react-native-unistyles';
-import { colors, commonStyle, rem, spacings } from '<%= libPath %>/shared/ui/styles';
+import { colors, commonStyle, rem, spacings } from '@ronas-it/mobile/shared/ui/styles';
 import { AppPressableIcon } from '../pressable-icon';
 import { AppText, textStyles as appTextStyles } from '../text';
 import { useAnimatedLabel } from './hooks';
 
-export interface AppTextInputProps extends TextInputProps {
+export interface AnimatedTextInputProps extends TextInputProps {
   accessoryRight?: ReactElement;
   label?: string;
   error?: string;
@@ -17,7 +17,7 @@ export interface AppTextInputProps extends TextInputProps {
   nextInputRef?: RefObject<TextInput | null>;
 }
 
-export const AppTextInput = ({
+export const AnimatedTextInput = ({
   disabled,
   label,
   error,
@@ -33,7 +33,7 @@ export const AppTextInput = ({
   returnKeyType,
   placeholder,
   ...props
-}: AppTextInputProps): ReactElement => {
+}: AnimatedTextInputProps): ReactElement => {
   appTextStyles.useVariants({ variant: 'bodyDefault' });
   const isIos = Platform.OS === 'ios';
   const inputRef = ref || useRef<TextInput>(null);
@@ -71,7 +71,7 @@ export const AppTextInput = ({
       <View style={inputStyles.container(isFocused, !!disabled, !!error)}>
         <TouchableWithoutFeedback onPress={handleInputPress}>
           <View style={commonStyle.fullFlex}>
-            {label && (
+            {!!label && (
               <Animated.View style={labelAnimatedStyle} pointerEvents='none'>
                 <AppText
                   variant='bodyDefault'
@@ -91,7 +91,7 @@ export const AppTextInput = ({
               onBlur={handleBlur}
               style={[appTextStyles.text, textStyles.input(!!disabled, isIos), inputStyles.input]}
               cursorColor={colors.textPrimary}
-              selectionColor={colors.textPrimary}
+              selectionColor={colors.primaryOpacity}
               hitSlop={{ top: 40 }}
               secureTextEntry={isSecured && isPassword}
               onSubmitEditing={nextInputRef ? goToNextRef : onSubmitEditing}
@@ -103,7 +103,7 @@ export const AppTextInput = ({
         </TouchableWithoutFeedback>
         {accessoryRightComponent}
       </View>
-      {error && (
+      {!!error && (
         <AppText variant='bodySmall' style={textStyles.error}>
           {error}
         </AppText>

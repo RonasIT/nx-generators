@@ -52,6 +52,7 @@ export function LoginForm(): ReactElement {
           autoCorrect={false}
           control={control}
           returnKeyType='next'
+          inputVariant='animated'
         />
         <FormTextInput
           isPassword={true}
@@ -60,6 +61,7 @@ export function LoginForm(): ReactElement {
           name='password'
           control={control}
           returnKeyType='done'
+          inputVariant='animated'
         />
         {!!error?.message && <ErrorMessage message={error.message} />}
       </View>

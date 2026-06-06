@@ -5,7 +5,8 @@ import { AnimatedTextInput, AnimatedTextInputProps } from '../animated-text-inpu
 import { StaticTextInput, StaticTextInputProps } from '../static-text-input';
 
 export interface FormTextInputProps<T extends FieldValues>
-  extends Omit<AnimatedTextInputProps, 'ref'>, Omit<StaticTextInputProps, 'ref'> {
+  extends Omit<AnimatedTextInputProps, 'ref'>,
+    Omit<StaticTextInputProps, 'ref'> {
   name: Path<T>;
   control: Control<T>;
   inputRef?: RefObject<TextInput | null>;

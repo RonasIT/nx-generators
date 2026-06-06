@@ -1,0 +1,139 @@
+import { ReactElement, RefObject, useRef, useState } from 'react';
+import { TextInput, FocusEvent, TextInputProps, View, Platform, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
+import { colors, commonStyle, rem, spacings } from '@ronas-it/mobile/shared/ui/styles';
+import { AppPressableIcon } from '../pressable-icon';
+import { AppText, textStyles as appTextStyles } from '../text';
+
+export interface StaticTextInputProps extends TextInputProps {
+  label?: string;
+  accessoryRight?: ReactElement;
+  error?: string;
+  disabled?: boolean;
+  isPassword?: boolean;
+  ref?: RefObject<TextInput | null>;
+  nextInputRef?: RefObject<TextInput | null>;
+}
+
+export const StaticTextInput = ({
+  disabled,
+  error,
+  style,
+  label,
+  accessoryRight,
+  value,
+  isPassword,
+  onFocus,
+  onBlur,
+  ref,
+  nextInputRef,
+  onSubmitEditing,
+  returnKeyType,
+  placeholder,
+  ...props
+}: StaticTextInputProps): ReactElement => {
+  appTextStyles.useVariants({ variant: 'bodyDefault' });
+  const isIos = Platform.OS === 'ios';
+  const inputRef = ref || useRef<TextInput>(null);
+
+  const [isFocused, setIsFocused] = useState(false);
+  const [isSecured, setIsSecured] = useState(true);
+
+  const handleOnFocus = (e: FocusEvent): void => {
+    setIsFocused(true);
+    onFocus?.(e);
+  };
+
+  const handleBlur = (e: FocusEvent): void => {
+    setIsFocused(false);
+    onBlur?.(e);
+  };
+
+  const goToNextRef = (): void => nextInputRef?.current?.focus();
+
+  const handleInputPress = (): void => inputRef.current?.focus();
+
+  const accessoryRightComponent = isPassword ? (
+    <AppPressableIcon name={isSecured ? 'eye' : 'eyeOff'} onPress={() => setIsSecured(!isSecured)} />
+  ) : (
+    accessoryRight
+  );
+
+  return (
+    <View style={styles.wrapper}>
+      <View style={inputStyles.wrapper}>
+        {!!label && <AppText variant='bodySmall'>{label}</AppText>}
+        <View style={inputStyles.container(isFocused, !!error)}>
+          <TouchableWithoutFeedback onPress={handleInputPress}>
+            <View style={commonStyle.fullFlex}>
+              <TextInput
+                ref={inputRef}
+                editable={!disabled}
+                value={value}
+                onFocus={handleOnFocus}
+                onBlur={handleBlur}
+                style={[appTextStyles.text, textStyles.input(isIos), inputStyles.input]}
+                cursorColor={colors.textPrimary}
+                selectionColor={colors.primaryOpacity}
+                placeholder={label ? '' : placeholder}
+                placeholderTextColor={colors.textSecondary}
+                hitSlop={{ top: 40 }}
+                secureTextEntry={isSecured && isPassword}
+                onSubmitEditing={nextInputRef ? goToNextRef : onSubmitEditing}
+                returnKeyType={nextInputRef ? 'next' : returnKeyType}
+                {...props}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+          {accessoryRightComponent}
+        </View>
+      </View>
+      {!!error && (
+        <AppText variant='bodySmall' style={textStyles.error}>
+          {error}
+        </AppText>
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  wrapper: {
+    gap: spacings.xs,
+  },
+});
+
+const inputStyles = StyleSheet.create(({ colors }) => ({
+  wrapper: {
+    gap: spacings.xxs,
+  },
+  container: (focused: boolean, errored: boolean) => ({
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacings.xs,
+    borderWidth: 1,
+    backgroundColor: focused ? colors.backgroundPrimary : colors.backgroundSecondary,
+    borderColor: focused ? colors.primary : errored ? colors.error : colors.backgroundSecondary,
+    borderRadius: spacings.md,
+    minHeight: 3.5 * rem,
+    paddingHorizontal: spacings.sm,
+  }),
+  input: {
+    flex: 1,
+    padding: 0,
+  },
+}));
+
+const textStyles = StyleSheet.create(({ colors }) => ({
+  input: (isIos: boolean) => ({
+    color: colors.textPrimary,
+    lineHeight: isIos ? 0 : 1.4375 * rem,
+    // NOTE: Needs to fix Android spacings
+    // https://reactnative.dev/docs/text-style-props#includefontpadding-android
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  }),
+  error: {
+    color: colors.error,
+  },
+}));

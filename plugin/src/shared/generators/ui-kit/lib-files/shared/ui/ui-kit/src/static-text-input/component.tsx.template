@@ -62,7 +62,7 @@ export const StaticTextInput = ({
   return (
     <View style={styles.wrapper}>
       <View style={inputStyles.wrapper}>
-        {label && <AppText variant='bodySmall'>{label}</AppText>}
+        {!!label && <AppText variant='bodySmall'>{label}</AppText>}
         <View style={inputStyles.container(isFocused, !!error)}>
           <TouchableWithoutFeedback onPress={handleInputPress}>
             <View style={commonStyle.fullFlex}>
@@ -88,7 +88,7 @@ export const StaticTextInput = ({
           {accessoryRightComponent}
         </View>
       </View>
-      {error && (
+      {!!error && (
         <AppText variant='bodySmall' style={textStyles.error}>
           {error}
         </AppText>

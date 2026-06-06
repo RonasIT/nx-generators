@@ -71,7 +71,7 @@ export const AnimatedTextInput = ({
       <View style={inputStyles.container(isFocused, !!disabled, !!error)}>
         <TouchableWithoutFeedback onPress={handleInputPress}>
           <View style={commonStyle.fullFlex}>
-            {label && (
+            {!!label && (
               <Animated.View style={labelAnimatedStyle} pointerEvents='none'>
                 <AppText
                   variant='bodyDefault'
@@ -103,7 +103,7 @@ export const AnimatedTextInput = ({
         </TouchableWithoutFeedback>
         {accessoryRightComponent}
       </View>
-      {error && (
+      {!!error && (
         <AppText variant='bodySmall' style={textStyles.error}>
           {error}
         </AppText>

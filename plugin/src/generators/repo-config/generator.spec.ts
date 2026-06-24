@@ -12,6 +12,7 @@ import {
   readJsonMock,
   writeJsonMock,
 } from '../../shared/tests-utils';
+import engines from './engines';
 import { repoConfigGenerator } from './generator';
 import scripts from './scripts';
 
@@ -38,7 +39,8 @@ describe('repoConfigGenerator', () => {
       'package.json',
       expect.objectContaining({
         workspaces: ['apps/*'],
-        scripts: scripts,
+        scripts,
+        engines,
       }),
     );
 

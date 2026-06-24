@@ -10,6 +10,7 @@ import {
 } from '@nx/devkit';
 import { devDependencies } from '../../shared/dependencies';
 import { formatName, getProjectName } from '../../shared/utils';
+import engines from './engines';
 import scripts from './scripts';
 
 export async function repoConfigGenerator(tree: Tree) {
@@ -25,6 +26,7 @@ export async function repoConfigGenerator(tree: Tree) {
   const projectPackageJson = readJson(tree, projectPackagePath);
   projectPackageJson.workspaces = ['apps/*'];
   projectPackageJson.scripts = scripts;
+  projectPackageJson.engines = engines;
   writeJson(tree, projectPackagePath, projectPackageJson);
 
   // Add project files

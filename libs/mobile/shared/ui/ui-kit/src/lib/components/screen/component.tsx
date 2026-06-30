@@ -1,4 +1,4 @@
-import { useHeaderHeight } from '@react-navigation/elements';
+import { useHeaderHeight } from 'expo-router/react-navigation';
 import { ReactElement, useMemo } from 'react';
 import { ImageBackground, ScrollView, ScrollViewProps, View, ViewProps } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';

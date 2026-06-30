@@ -3,7 +3,7 @@ import { EASConfig, ExpoConfig } from '@expo/config';
 const createConfig = (): Omit<ExpoConfig, 'extra'> & {
   extra: { eas: EASConfig } & typeof extra;
 } => {
-  const projectId = '';
+  const projectId = '3b4b782c-cea9-44f1-8928-13b5c11153fe';
 
   const appId = 'com.example.dev';
 
@@ -13,16 +13,11 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & {
 
   return {
     name: 'Example Dev',
-    slug: 'example-app',
+    slug: 'example-dev',
     scheme: 'example-dev',
     version: '0.1.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
-    splash: {
-      image: './assets/splash.png',
-      resizeMode: 'contain',
-      backgroundColor: '#ffffff',
-    },
     runtimeVersion: {
       policy: 'appVersion',
     },
@@ -45,7 +40,17 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & {
         backgroundColor: '#FFFFFF',
       },
     },
-    plugins: ['expo-router', 'expo-localization'],
+    plugins: [
+      'expo-router',
+      'expo-localization',
+      [
+        'expo-splash-screen',
+        {
+          image: './assets/splash-icon.png',
+          backgroundColor: '#1B1A19',
+        },
+      ],
+    ],
     extra,
   };
 };

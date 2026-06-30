@@ -16,11 +16,6 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & { extra: { eas: EASConfig }
     version: '0.1.0',
     orientation: 'portrait',
     icon: './assets/images/icon.png',
-    splash: {
-      image: './assets/images/splash-icon.png',
-      resizeMode: 'contain',
-      backgroundColor: '#ffffff',
-    },
     runtimeVersion: {
       policy: 'appVersion',
     },
@@ -45,11 +40,16 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & { extra: { eas: EASConfig }
     },
     plugins: [
       'expo-router',
-      'expo-localization'
+      'expo-localization',
+      [
+        'expo-splash-screen',
+        {
+          image: './assets/images/splash-icon.png',
+          resizeMode: 'contain',
+          backgroundColor: '#ffffff',
+        },
+      ],
     ],
-    experiments: {
-      reactCanary: true,
-    },
     extra,
   };
 };

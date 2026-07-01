@@ -69,6 +69,7 @@
     "@nx/jest": "23.0.1",
     "@nx/js": "23.0.1",
     "@nx/vite": "23.0.1",
+    "@nx/vitest": "23.0.1",
     "@nx/web": "23.0.1",
     "@nx/workspace": "23.0.1",
     "@phenomnomnominal/tsquery": "~6.2.0",

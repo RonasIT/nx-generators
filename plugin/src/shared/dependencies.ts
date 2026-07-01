@@ -117,7 +117,7 @@ export const devDependencies = {
     'cross-env': '^10.1.0',
   },
   auth: {
-    '@types/luxon': '3.7.1',
+    '@types/luxon': '3.7.2',
   },
   'next-auth': {
     '@types/js-cookie': '^3.0.6',

@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.12",
-    "@types/luxon": "3.7.1",
+    "@types/luxon": "3.7.2",
     "reactotron-react-native": "^5.1.18",
     "reactotron-redux": "^3.2.1"
   },

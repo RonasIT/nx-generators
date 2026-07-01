@@ -113,7 +113,7 @@ export const devDependencies = {
     'babel-plugin-react-compiler': '^1.0.0',
   },
   'repo-config': {
-    syncpack: '^13.0.4',
+    syncpack: '^15.3.2',
     'cross-env': '^10.1.0',
   },
   auth: {

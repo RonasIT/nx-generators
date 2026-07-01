@@ -4,7 +4,7 @@
   "license": "MIT",
   "author": "Ronas IT",
   "scripts": {
-    "deps:sync": "npx syncpack fix-mismatches",
+    "deps:sync": "npx syncpack fix",
     "lint": "npx tsc && npx eslint ./",
     "format": "npx prettier --write . && npm run lint -- --fix",
     "prepare": "husky",
@@ -109,7 +109,7 @@
     "prettier": "^3.6.2",
     "react-hook-form": "^7.80.0",
     "reactotron-react-native": "^5.1.18",
-    "syncpack": "^13.0.4",
+    "syncpack": "^15.3.2",
     "test-renderer": "^1.2.0",
     "ts-jest": "^29.4.11",
     "ts-node": "10.9.2",

@@ -59,6 +59,8 @@ module.exports = (async () => {
 
         'react-native/style-sheet-object-names': ['EStyleSheet'],
 
+        'import/ignore': ['node_modules'],
+
         'import/parsers': {
           '@typescript-eslint/parser': ['.ts', '.tsx'],
         },
@@ -311,7 +313,7 @@ module.exports = (async () => {
         'react/jsx-fragments': ['warn', 'element'],
         'import/newline-after-import': 'warn',
         'import/no-unresolved': 'error',
-        'import/no-cycle': 'error',
+        'import/no-cycle': ['error', { ignoreExternal: true }],
 
         'import/order': [
           'warn',

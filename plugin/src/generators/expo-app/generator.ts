@@ -28,6 +28,8 @@ import { generateEasignore } from './easignore';
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 
+const notRequiredDependencies = ['expo-system-ui'];
+
 export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSchema) {
   const shouldGenerateApiClientLib = options.withStore && (await confirm('Do you want to create api client lib?'));
   const shouldGenerateAuthLibs = shouldGenerateApiClientLib && (await confirm('Do you want to create auth lib?'));
@@ -101,11 +103,13 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   };
   writeJson(tree, appPackagePath, appPackageJson);
 
-  // Remove dependencies with version "*" from @nx/expo template
-  const dependenciesToRemove = Object.keys(appPackageJson.dependencies || {}).filter((dependency) =>
+  // Remove dependencies with version "*" from @nx/expo template and not required
+  const dependenciesWithoutVersion = Object.keys(appPackageJson.dependencies || {}).filter((dependency) =>
     appPackageJson.dependencies[dependency].includes('*'),
   );
+  const dependenciesToRemove = [...dependenciesWithoutVersion, ...notRequiredDependencies];
   removeDependenciesFromPackageJson(tree, dependenciesToRemove, [], appPackagePath);
+  removeDependenciesFromPackageJson(tree, notRequiredDependencies, [], 'package.json');
 
   // Add app files
   generateFiles(tree, path.join(__dirname, 'app-files'), appRoot, {

@@ -1,6 +1,6 @@
 {
   "name": "@ronas-it/nx-generators",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "description": "Nx generators for Ronas IT projects",
   "license": "MIT",
   "author": "Ronas IT",
@@ -26,7 +26,7 @@
   "dependencies": {
     "@nx/devkit": "23.0.1",
     "@phenomnomnominal/tsquery": "~6.2.0",
-    "lodash": "^4.17.21",
+    "lodash": "^4.18.1",
     "tslib": "^2.8.1",
     "ts-morph": "^28.0.0"
   },

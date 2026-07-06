@@ -43,6 +43,9 @@ const createConfig = (): Omit<ExpoConfig, 'extra'> & {
     plugins: [
       'expo-router',
       'expo-localization',
+      'expo-font',
+      'expo-status-bar',
+      'expo-image',
       [
         'expo-splash-screen',
         {

@@ -1,6 +1,6 @@
 export const dependencies = {
   'expo-app': {
-    '@expo/metro-config': '~57.0.8',
+    '@expo/metro-config': '~57.0.3',
     '@expo/metro-runtime': '~57.0.3',
     '@ronas-it/react-native-common-modules': '~2.0.1',
     'react-native-mmkv': '^4.3.2',
@@ -102,6 +102,7 @@ export const devDependencies = {
     '@types/react': '~19.2.0',
     '@types/react-dom': '~19.2.0',
     '@expo/cli': '^57.0.4',
+    'babel-preset-expo': '~57.0.1',
     'reactotron-react-native': '^5.1.18',
     'reactotron-redux': '^3.2.1',
     metro: '^0.84.2',
@@ -117,6 +118,7 @@ export const devDependencies = {
   'repo-config': {
     syncpack: '^15.3.2',
     'cross-env': '^10.1.0',
+    typescript: '~6.0.3',
   },
   auth: {
     '@types/luxon': '3.7.2',

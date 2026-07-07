@@ -84,11 +84,6 @@
       "factory": "./src/shared/generators/navigation-utils/generator",
       "schema": "./src/shared/generators/navigation-utils/schema.json",
       "description": "Creates basic utilities for navigation"
-    },
-    "ui-kit": {
-      "factory": "./src/shared/generators/ui-kit/generator",
-      "schema": "./src/shared/generators/ui-kit/schema.json",
-      "description": "Creates basic UI components for an Expo app"
     }
   }
 }

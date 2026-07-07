@@ -49,6 +49,7 @@ describe('codeChecksGenerator (integration)', () => {
     // Updated tsconfig.base.json
     const tsconfig = readJson(tree, 'tsconfig.base.json');
     expect(tsconfig.compilerOptions.allowSyntheticDefaultImports).toBe(true);
+    expect(tsconfig.compilerOptions.ignoreDeprecations).toBe('6.0');
 
     // .gitignore should include .eslintcache
     const gitignore = tree.read('.gitignore', 'utf-8');
@@ -82,5 +83,18 @@ describe('codeChecksGenerator (integration)', () => {
 
     // Callback should be a function
     expect(typeof installFn).toBe('function');
+  });
+
+  it('should not override an existing ignoreDeprecations value in tsconfig.base.json', async () => {
+    tree.write(
+      'tsconfig.base.json',
+      JSON.stringify({ compilerOptions: { target: 'esnext', ignoreDeprecations: '5.0' } }, null, 2),
+    );
+
+    const options: CodeChecksGeneratorSchema = { name: 'my-app' };
+    await codeChecksGenerator(tree, options);
+
+    const tsconfig = readJson(tree, 'tsconfig.base.json');
+    expect(tsconfig.compilerOptions.ignoreDeprecations).toBe('5.0');
   });
 });

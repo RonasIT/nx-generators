@@ -36,6 +36,11 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   // Update tsconfig.base.json
   const tsconfigJson = readJson(tree, 'tsconfig.base.json');
   tsconfigJson.compilerOptions = { ...tsconfigJson.compilerOptions, ...config.tsconfig };
+
+  if (!tsconfigJson.compilerOptions.ignoreDeprecations) {
+    tsconfigJson.compilerOptions.ignoreDeprecations = '6.0';
+  }
+
   tsconfigJson.exclude = [...config.tsConfigExclude];
   writeJson(tree, 'tsconfig.base.json', tsconfigJson);
 

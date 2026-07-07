@@ -110,7 +110,7 @@ export const devDependencies = {
   },
   'next-app': {
     'eslint-config-next': '~16.2.10',
-    '@types/lodash-es': '^4.17.24',
+    '@types/lodash-es': '^4.17.12',
     '@types/react': '~19.2.0',
     '@types/react-dom': '~19.2.0',
     'babel-plugin-react-compiler': '^1.0.0',

@@ -9,7 +9,7 @@ import {
   expoRootLayoutMinimal,
   formatFilesMock,
   installPackagesTaskMock,
-  nextConfigComposeWithNxMinimal,
+  nextConfigMinimal,
 } from '../../shared/tests-utils';
 import * as utils from '../../shared/utils';
 import { sentryGenerator } from './generator';
@@ -162,7 +162,7 @@ describe('generateSentryNext', () => {
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
     tree.write(`${projectRoot}/package.json`, JSON.stringify({ name: 'my-next-app' }, null, 2));
-    tree.write(`${projectRoot}/next.config.js`, nextConfigComposeWithNxMinimal);
+    tree.write(`${projectRoot}/next.config.js`, nextConfigMinimal);
     tree.write(`${projectRoot}/.env`, '');
     tree.write(`${projectRoot}/.env.development`, '');
     tree.write(`${projectRoot}/.env.production`, '');

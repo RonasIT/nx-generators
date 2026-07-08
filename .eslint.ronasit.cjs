@@ -3,6 +3,8 @@ const unusedImports = require('eslint-plugin-unused-imports');
 const react = require('eslint-plugin-react');
 const reactHooks = require('eslint-plugin-react-hooks');
 const _import = require('eslint-plugin-import');
+const reactNative = require('eslint-plugin-react-native');
+const unistyles = require('eslint-plugin-react-native-unistyles');
 const tseslint = require('typescript-eslint');
 
 const globals = require('globals');
@@ -28,6 +30,8 @@ module.exports = (async () => {
         react,
         'react-hooks': reactHooks,
         import: _import,
+        'react-native': reactNative,
+        unistyles,
       },
 
       languageOptions: {
@@ -328,6 +332,13 @@ module.exports = (async () => {
 
         'import/no-duplicates': 'warn',
         'react-hooks/exhaustive-deps': 'off',
+
+        'react-native/no-single-element-style-arrays': 'warn',
+        'react-native/no-color-literals': 'warn',
+        'unistyles/no-unused-styles': 'error',
+        'react-native/split-platform-components': 'error',
+        'react-native/no-inline-styles': 'error',
+        'react-native/no-raw-text': ['error', { skip: ['AppText'] }],
       },
     },
     {
@@ -360,6 +371,13 @@ module.exports = (async () => {
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@stylistic/function-call-argument-newline': ['warn', 'always'],
         '@stylistic/function-paren-newline': ['warn', 'multiline-arguments'],
+      },
+    },
+    {
+      files: ['apps/web/**/*.{ts,tsx}'],
+
+      rules: {
+        'react-native/no-raw-text': 'off',
       },
     },
   ];

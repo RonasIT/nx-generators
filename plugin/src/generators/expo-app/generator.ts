@@ -35,15 +35,30 @@ const legacyPeerDepsLine = 'legacy-peer-deps=true';
 // Workaround: @nx/expo:app installs its own Expo version before we override it with a newer one,
 // which causes an ERESOLVE conflict on the next install. This toggles legacy-peer-deps for the
 // duration of the generator so npm doesn't fail reconciling the two installs.
-function setLegacyPeerDeps(value: boolean): void {
-  const content = existsSync(npmrcPath) ? readFileSync(npmrcPath, 'utf-8') : '';
-  const lines = content.split('\n').filter((line) => line.trim() !== '' && line.trim() !== legacyPeerDepsLine);
+// The original .npmrc content is snapshotted so it can be restored afterwards, instead of
+// unconditionally rewriting the file (which would drop a pre-existing legacy-peer-deps=true or
+// leave behind an empty file where none existed before).
+let originalNpmrcContent: string | null = null;
 
-  if (value) {
-    lines.push(legacyPeerDepsLine);
-  }
+function enableLegacyPeerDeps(): void {
+  originalNpmrcContent = existsSync(npmrcPath) ? readFileSync(npmrcPath, 'utf-8') : null;
+
+  const lines = (originalNpmrcContent ?? '')
+    .split('\n')
+    .filter((line) => line.trim() !== '' && line.trim() !== legacyPeerDepsLine);
+  lines.push(legacyPeerDepsLine);
 
   writeFileSync(npmrcPath, `${lines.join('\n')}\n`);
+}
+
+function restoreNpmrc(): void {
+  if (originalNpmrcContent === null) {
+    if (existsSync(npmrcPath)) {
+      rmSync(npmrcPath);
+    }
+  } else {
+    writeFileSync(npmrcPath, originalNpmrcContent);
+  }
 }
 
 export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSchema) {
@@ -56,7 +71,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
   const tags = [`app:${options.directory}`, 'type:app'];
 
-  setLegacyPeerDeps(true);
+  enableLegacyPeerDeps();
 
   try {
     // Install @nx/expo plugin
@@ -158,7 +173,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
 
     await formatFiles(tree);
   } catch (error) {
-    setLegacyPeerDeps(false);
+    restoreNpmrc();
 
     throw error;
   }
@@ -182,7 +197,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
       execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
       execSync('npx expo install --fix', { stdio: 'inherit' });
     } finally {
-      setLegacyPeerDeps(false);
+      restoreNpmrc();
     }
   };
 }

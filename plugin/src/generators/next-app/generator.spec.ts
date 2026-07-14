@@ -190,10 +190,9 @@ describe('nextAppGenerator with file content checks', () => {
     // Check that runI18nNextGenerator is called with tree + options
     expect(sharedGenerators.runI18nNextGenerator).toHaveBeenCalledWith(expect.anything(), options);
 
-    // Check that runNavigationUtilsGenerator is called with correct appDirectory and baseGeneratorType
+    // Check that runNavigationUtilsGenerator is called with correct appDirectory
     expect(sharedGenerators.runNavigationUtilsGenerator).toHaveBeenCalledWith(expect.anything(), {
       appDirectory: options.directory,
-      baseGeneratorType: BaseGeneratorType.NEXT_APP,
     });
 
     // Check runStoreGenerator called with extended options (only if withStore)

@@ -1,16 +1,20 @@
-import { Tree } from '@nx/devkit';
-import { BaseGeneratorType } from '../../enums';
+import { execSync } from 'child_process';
+import * as path from 'path';
+import { generateFiles, Tree } from '@nx/devkit';
 import { NavigationUtilsGeneratorSchema } from './schema';
-import { setupLib } from './utils';
 
 export async function runNavigationUtilsGenerator(tree: Tree, options: NavigationUtilsGeneratorSchema): Promise<void> {
-  const { appDirectory, baseGeneratorType } = options;
+  const { appDirectory } = options;
 
-  setupLib(tree, appDirectory, 'navigation');
+  execSync(`npx nx g react-lib --app=${appDirectory} --scope=shared --type=utils --name=navigation`, {
+    stdio: 'inherit',
+  });
 
-  if (baseGeneratorType === BaseGeneratorType.NEXT_APP) {
-    setupLib(tree, appDirectory, 'filtering-search-params');
-  }
+  const libRoot = `libs/${appDirectory}`;
+  const libPath = `${libRoot}/shared/utils/navigation/src`;
+  tree.delete(`${libPath}/index.ts`);
+
+  generateFiles(tree, path.join(__dirname, 'navigation-lib-files'), libRoot, {});
 }
 
 export default runNavigationUtilsGenerator;

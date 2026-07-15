@@ -42,13 +42,11 @@
     },
     "withApiClient": {
       "type": "boolean",
-      "description": "Add api client library to the app",
-      "default": false
+      "description": "Add api client library to the app"
     },
     "withAuth": {
       "type": "boolean",
-      "description": "Add auth libraries to the app",
-      "default": false
+      "description": "Add auth libraries to the app"
     }
   },
   "required": ["name", "directory", "withSentry"]

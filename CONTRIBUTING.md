@@ -37,26 +37,37 @@ The `plugin` directory contains the source code for all generators in this packa
    - Add new or edit the existing generator source code
    - Follow the existing code style and patterns
 
-2. **Test your changes**
+2. **Update generator metadata**
+   - If you've added new options or changed generator behavior, update the corresponding entries in `plugin/generators.json`, and ensure all options are properly documented
+
+3. **Test your changes**
    - Run generators locally to verify functionality, for example: `npx nx g expo-app`
    - Run unit tests using `npx nx test nx-generators`
 
-3. **Update generator metadata**
-   - If you've added new options or changed generator behavior, update the corresponding entries in `plugin/generators.json`, and ensure all options are properly documented
+4. **Run E2E tests before submitting a PR**
 
-4. **Test package preview (Optional)**
+   Run `npm run test:e2e` to launch an automated happy-path check (`e2e/run.mjs`, cross-platform — works on macOS, Linux, and Windows). It:
+
+   - builds the package and publishes it to a local [Yalc](https://github.com/wclr/yalc) store
+   - creates a fresh Nx workspace
+   - runs `repo-config`, `code-checks`, `expo-app`, and `next-app` with all optional flags enabled (expect of Sentry generators)
+   - verifies that `npm run lint` passes in the generated workspace
+
+   The test workspace is kept at `e2e/.workspace/e2e-workspace` for inspection after a run. The same check runs in CI on push to `main`, `master`, and `development`.
+
+5. **Test package preview (Optional)**
    - Change version in `plugin/package.json` to an alpha version, for example: `"0.18.1-alpha.1"`
    - Build package locally: `npm run build`
    - Release alpha version of the package: `npm run release -- --tag=alpha`
    - Install the package in your test environment: `npm i @ronas-it/nx-generators@alpha --save-dev`
 
-5. **Test locally in another project with Yalc (Optional)**
+6. **Test locally in another project with Yalc (Optional)**
    - [Yalc](https://github.com/wclr/yalc) is a small local package store so other repos can depend on your build without publishing to npm. Install once: `npm i yalc -g`
    - From the repository root run `npm run build`, then `cd dist/nx-generators` and `yalc publish` (publish this folder, not `plugin/` — it matches what npm ships)
    - In the consumer project run `yalc add @ronas-it/nx-generators`
    - When you iterate here, publish again from `dist/nx-generators`, or use `yalc publish --push` to refresh existing installs
 
-6. **Submit changes**
+7. **Submit changes**
    - Create a pull request with your modifications
    - Include clear descriptions of changes
    - Reference any related issues or discussions
@@ -79,7 +90,7 @@ Repository has pre-commit code style and correctness checks. You can run them ma
 
 1. **Create a feature branch** from `main`
 2. **Make your changes** following the coding standards
-3. **Test your changes** thoroughly
+3. **Test your changes** thoroughly — run unit tests (`npm test`) and E2E tests (`npm run test:e2e`) when generator behavior may be affected
 4. **Update documentation** if needed
 5. **Submit a pull request** with a clear description
 

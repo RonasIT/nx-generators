@@ -1,4 +1,4 @@
-name: Test
+name: E2E
 
 on:
   pull_request:
@@ -7,8 +7,9 @@ on:
     branches: [main, master, development]
 
 jobs:
-  test:
+  e2e:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     steps:
       - name: Checkout code
@@ -23,8 +24,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm test
-
-      - name: Run linting and type checking
-        run: npm run lint
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          NX_NON_INTERACTIVE: true
+          npm_config_yes: true

@@ -182,6 +182,36 @@ describe('expoAppGenerator integration with file content checks', () => {
     expect(sharedLibsMatches).toHaveLength(1);
   });
 
+  it('should create api client and auth libs when withApiClient and withAuth are true without prompting', async () => {
+    existsSyncMock.mockReturnValue(false);
+
+    const callback = await expoAppGenerator(tree, {
+      name: appName,
+      directory: directory,
+      withStore: true,
+      withUiKit: false,
+      withFormUtils: false,
+      withSentry: false,
+      withApiClient: true,
+      withAuth: true,
+    });
+
+    expect(confirmMock).not.toHaveBeenCalled();
+
+    expect(execSyncMock).toHaveBeenCalledWith(
+      expect.stringContaining(
+        `npx nx g react-lib --app=${directory} --scope=shared --type=data-access --name=api-client`,
+      ),
+      { stdio: 'inherit' },
+    );
+
+    callback();
+
+    expect(execSyncMock).toHaveBeenCalledWith(`npx nx g auth --directory=${directory} --type=expo-app`, {
+      stdio: 'inherit',
+    });
+  });
+
   it('should call expected sub-generators and CLI commands when all options are true', async () => {
     existsSyncMock.mockReturnValue(false);
 

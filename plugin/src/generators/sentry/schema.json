@@ -12,7 +12,8 @@
     "dsn": {
       "type": "string",
       "description": "Sentry DSN",
-      "x-prompt": "What is your Sentry DSN?"
+      "x-prompt": "What is your Sentry DSN?",
+      "default": "INSERT_DSN_HERE"
     }
   },
   "required": []

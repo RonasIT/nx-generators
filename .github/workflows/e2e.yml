@@ -1,8 +1,6 @@
 name: E2E
 
 on:
-  pull_request:
-    branches: [main, master, development]
   push:
     branches: [main, master, development]
 

@@ -64,6 +64,9 @@ try {
   console.log('==> Running lint...');
   run('npm run lint', { cwd: E2E_WORKSPACE });
 
+  console.log('==> Running npm audit...');
+  run('npm audit --audit-level=critical', { cwd: E2E_WORKSPACE });
+
   console.log('==> E2E passed.');
 } finally {
   console.log(`==> Workspace kept at: ${E2E_WORKSPACE}`);

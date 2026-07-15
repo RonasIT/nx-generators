@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import { existsSync } from 'fs';
 import * as path from 'path';
 import {
   addDependenciesToPackageJson,
@@ -10,6 +11,7 @@ import {
   writeJson,
 } from '@nx/devkit';
 import { devDependencies } from '../../shared/dependencies';
+import { nxAddCommand } from '../../shared/utils';
 import config from './config';
 import { CodeChecksGeneratorSchema } from './schema';
 import scripts from './scripts';
@@ -22,11 +24,15 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   tree.delete('tsconfig.json');
 
   // Install eslint plugin
-  execSync('npx nx add @nx/eslint', { stdio: 'inherit' });
-  execSync('npx nx add @nx/eslint-plugin', { stdio: 'inherit' });
+  nxAddCommand('@nx/eslint');
+  nxAddCommand('@nx/eslint-plugin');
 
-  // Configure pre-commit hook
-  execSync('npx mrm@2 lint-staged', { stdio: 'inherit' });
+  // Configure pre-commit hook (husky requires a local .git directory)
+  if (!existsSync(path.join(process.cwd(), '.git'))) {
+    execSync('git init', { stdio: 'inherit' });
+  }
+
+  execSync('npx --yes mrm@2 lint-staged', { stdio: 'inherit' });
 
   const packageJson = readJson(tree, 'package.json');
   packageJson['lint-staged'] = config['lint-staged'];
@@ -52,6 +58,7 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
   const prettierignoreContent =
     tree.read('.prettierignore')?.toString() +
     '\n/output' +
+    '\n.yalc' +
     '\n\n# Files with custom rules\n**/actions.ts\n**/epics.ts\n**/selectors.ts\n';
   tree.write('.prettierignore', prettierignoreContent);
 

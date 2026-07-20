@@ -79,7 +79,6 @@ describe('nextAppGenerator with file content checks', () => {
 
     await nextAppGenerator(tree, optionsBase);
 
-    expect(execSyncMock).toHaveBeenCalledWith('npx nx add @nx/next', { stdio: 'inherit' });
     const tags = `app:${optionsBase.directory}, type:app`;
     const expectedCommand =
       `npx nx g @nx/next:app ${optionsBase.name} ` +
@@ -96,10 +95,42 @@ describe('nextAppGenerator with file content checks', () => {
   it('should skip api client creation if withApiClient is false', async () => {
     existsSyncMock.mockReturnValue(true);
 
-    await nextAppGenerator(tree, { ...optionsBase, withApiClient: false });
+    await nextAppGenerator(tree, { ...optionsBase, withStore: true, withApiClient: false });
 
     expect(confirmMock).not.toHaveBeenCalled();
     expect(sharedGenerators.runApiClientGenerator).not.toHaveBeenCalled();
+  });
+
+  it('should create api client when withApiClient is true without prompting', async () => {
+    existsSyncMock.mockReturnValue(true);
+
+    await nextAppGenerator(tree, { ...optionsBase, withStore: true, withApiClient: true });
+
+    expect(confirmMock).not.toHaveBeenCalled();
+    expect(sharedGenerators.runApiClientGenerator).toHaveBeenCalledWith(expect.anything(), {
+      ...optionsBase,
+      withStore: true,
+      withApiClient: true,
+      type: BaseGeneratorType.NEXT_APP,
+    });
+  });
+
+  it('should run auth generator in post install when withAuth is true', async () => {
+    existsSyncMock.mockReturnValue(true);
+
+    const post = await nextAppGenerator(tree, {
+      ...optionsBase,
+      withStore: true,
+      withApiClient: true,
+      withAuth: true,
+    });
+    post?.();
+
+    expect(confirmMock).not.toHaveBeenCalled();
+    expect(execSyncMock).toHaveBeenCalledWith(
+      `npx nx g auth --directory=${optionsBase.directory} --type=${BaseGeneratorType.NEXT_APP}`,
+      { stdio: 'inherit' },
+    );
   });
 
   it('should delete files and update tsconfig include', async () => {

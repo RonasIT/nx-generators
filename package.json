@@ -10,7 +10,8 @@
     "prepare": "husky",
     "build": "npx nx run nx-generators:build",
     "release": "npx nx run nx-generators:nx-release-publish",
-    "test": "npx nx run nx-generators:test"
+    "test": "npx nx run nx-generators:test",
+    "test:e2e": "node e2e/run.mjs"
   },
   "dependencies": {
     "@expo/metro-runtime": "~57.0.3",
@@ -63,7 +64,7 @@
     "@eslint/js": "^9.37.0",
     "@expo/cli": "^57.0.4",
     "@hookform/resolvers": "^5.4.0",
-    "@nx/eslint": "23.0.1",
+    "@nx/eslint": "^23.0.1",
     "@nx/eslint-plugin": "23.0.1",
     "@nx/expo": "23.0.1",
     "@nx/jest": "23.0.1",
@@ -119,6 +120,7 @@
     "verdaccio": "^6.2.0",
     "vite": "8.1.2",
     "vitest": "4.1.9",
+    "yalc": "^1.0.0-pre.53",
     "yup": "^1.7.1"
   },
   "nx": {

@@ -81,6 +81,8 @@ jest.mock('../utils/get-app-framework-name', () => ({
 
 export const installPackagesTaskMock = devkit.installPackagesTask as jest.Mock;
 export const execSyncMock = child_process.execSync as jest.Mock;
+export const nxAddCommandMock = require('../utils/nx-utils').runNxAddCommand as jest.Mock;
+
 export const existsSyncMock = fs.existsSync as jest.Mock;
 export const generateFilesMock = devkit.generateFiles as jest.Mock;
 export const formatFilesMock = devkit.formatFiles as jest.Mock;

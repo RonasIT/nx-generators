@@ -1,4 +1,4 @@
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { BottomTabBarProps } from 'expo-router/build/react-navigation/bottom-tabs';
 import { AppSafeAreaView } from '@ronas-it/react-native-common-modules/safe-area-view';
 import { ReactElement } from 'react';
 import { Platform } from 'react-native';

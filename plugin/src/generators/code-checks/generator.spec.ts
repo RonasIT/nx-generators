@@ -49,10 +49,12 @@ describe('codeChecksGenerator (integration)', () => {
     // Updated tsconfig.base.json
     const tsconfig = readJson(tree, 'tsconfig.base.json');
     expect(tsconfig.compilerOptions.allowSyntheticDefaultImports).toBe(true);
+    expect(tsconfig.compilerOptions.ignoreDeprecations).toBe('6.0');
 
     // .gitignore should include .eslintcache
     const gitignore = tree.read('.gitignore', 'utf-8');
     expect(gitignore).toContain('.eslintcache');
+    expect(gitignore).toContain('.yalc');
 
     // .prettierignore should include comment and ignored files
     const prettierignore = tree.read('.prettierignore', 'utf-8');
@@ -60,6 +62,7 @@ describe('codeChecksGenerator (integration)', () => {
     expect(prettierignore).toContain('**/actions.ts');
     expect(prettierignore).toContain('**/epics.ts');
     expect(prettierignore).toContain('**/selectors.ts');
+    expect(prettierignore).toContain('.yalc');
 
     // Assert contents of other new files
     const eslintRonasit = tree.read('.eslint.ronasit.cjs', 'utf-8');
@@ -75,12 +78,25 @@ describe('codeChecksGenerator (integration)', () => {
     expect(tsconfigJson).toContain('"extends": "./tsconfig.base.json"');
 
     const types = tree.read('types.d.ts', 'utf-8');
-    expect(types).toContain('// This file is added for correct work of TS-checks in pre-commit hook using tsc-files');
+    expect(types).toContain("declare module '*.scss'");
 
     const stylelintConfig = tree.read('stylelint.config.mjs', 'utf-8');
     expect(stylelintConfig).toContain('export default');
 
     // Callback should be a function
     expect(typeof installFn).toBe('function');
+  });
+
+  it('should not override an existing ignoreDeprecations value in tsconfig.base.json', async () => {
+    tree.write(
+      'tsconfig.base.json',
+      JSON.stringify({ compilerOptions: { target: 'esnext', ignoreDeprecations: '5.0' } }, null, 2),
+    );
+
+    const options: CodeChecksGeneratorSchema = { name: 'my-app' };
+    await codeChecksGenerator(tree, options);
+
+    const tsconfig = readJson(tree, 'tsconfig.base.json');
+    expect(tsconfig.compilerOptions.ignoreDeprecations).toBe('5.0');
   });
 });

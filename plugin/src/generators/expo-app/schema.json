@@ -45,6 +45,14 @@
       "description": "Add Sentry to the app",
       "default": false,
       "x-prompt": "Do you want to use Sentry in your app?"
+    },
+    "withApiClient": {
+      "type": "boolean",
+      "description": "Add api client library to the app"
+    },
+    "withAuth": {
+      "type": "boolean",
+      "description": "Add auth libraries to the app"
     }
   },
   "required": ["name", "directory", "withSentry"]

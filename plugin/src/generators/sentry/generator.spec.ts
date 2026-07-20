@@ -9,7 +9,7 @@ import {
   expoRootLayoutMinimal,
   formatFilesMock,
   installPackagesTaskMock,
-  nextConfigComposeWithNxMinimal,
+  nextConfigMinimal,
 } from '../../shared/tests-utils';
 import * as utils from '../../shared/utils';
 import { sentryGenerator } from './generator';
@@ -99,6 +99,25 @@ describe('sentryGenerator', () => {
     assertFirstLine(templatesDir, directory, tree);
   });
 
+  it('should call generateSentryNext with empty dsn when dsn is omitted', async () => {
+    (utils.getAppFrameworkName as jest.Mock).mockReturnValue('next');
+
+    await sentryGenerator(tree, { directory });
+
+    expect(sentryUtils.generateSentryNext).toHaveBeenCalledWith(tree, { directory }, directory);
+  });
+
+  it('should use placeholder dsn in non-interactive mode when dsn is omitted', async () => {
+    (utils.getAppFrameworkName as jest.Mock).mockReturnValue('next');
+    process.env.NX_NON_INTERACTIVE = 'true';
+
+    await sentryGenerator(tree, { directory });
+
+    expect(sentryUtils.generateSentryNext).toHaveBeenCalledWith(tree, { directory, dsn: 'INSERT_DSN_HERE' }, directory);
+
+    delete process.env.NX_NON_INTERACTIVE;
+  });
+
   it('should call generateSentryExpo when framework is expo', async () => {
     const expoDirectory = 'apps/my-expo-app';
     (utils.getAppFrameworkName as jest.Mock).mockReturnValue('expo');
@@ -162,7 +181,7 @@ describe('generateSentryNext', () => {
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
     tree.write(`${projectRoot}/package.json`, JSON.stringify({ name: 'my-next-app' }, null, 2));
-    tree.write(`${projectRoot}/next.config.js`, nextConfigComposeWithNxMinimal);
+    tree.write(`${projectRoot}/next.config.js`, nextConfigMinimal);
     tree.write(`${projectRoot}/.env`, '');
     tree.write(`${projectRoot}/.env.development`, '');
     tree.write(`${projectRoot}/.env.production`, '');

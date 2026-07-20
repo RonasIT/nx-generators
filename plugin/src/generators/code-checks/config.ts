@@ -27,6 +27,6 @@ export default {
     strictNullChecks: true,
     lib: ['es2022', 'dom'],
   },
-  tsConfigExclude: ['**/*.cjs', '**/*.mjs', 'node_modules', 'dist'],
-  gitIgnore: ['.eslintcache', '*.tsbuildinfo', 'output'],
+  tsConfigExclude: ['**/*.cjs', '**/*.mjs', 'node_modules', '.yalc', 'dist'],
+  gitIgnore: ['.eslintcache', '*.tsbuildinfo', 'output', '.yalc', 'yalc.lock'],
 };

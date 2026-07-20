@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
+import { ViewStyle } from 'react-native';
 import { AnimatedStyle, SharedValue, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface UseAnimatedLabelResult {
-  labelAnimatedStyle: AnimatedStyle;
+  labelAnimatedStyle: AnimatedStyle<ViewStyle>;
 }
 
 export function useAnimatedLabel(isLabelFloated: boolean, labelWidth: SharedValue<number>): UseAnimatedLabelResult {

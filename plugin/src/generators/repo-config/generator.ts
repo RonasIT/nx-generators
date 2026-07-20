@@ -9,7 +9,7 @@ import {
   writeJson,
 } from '@nx/devkit';
 import { devDependencies } from '../../shared/dependencies';
-import { formatName, getProjectName } from '../../shared/utils';
+import { formatName, getProjectName } from '../../shared/utils/format-utils';
 import engines from './engines';
 import scripts from './scripts';
 

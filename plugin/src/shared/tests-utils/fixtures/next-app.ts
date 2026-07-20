@@ -1,8 +1,8 @@
-export const nextConfigComposeWithNxMinimal = `const { composePlugins, withNx } = require('@nx/next/plugins/with-nx');
+export const nextConfigMinimal = `const withNextIntl = require('next-intl/plugin')();
 
 const nextConfig = {
-  nx: {},
+  output: 'standalone',
 };
 
-module.exports = composePlugins(withNx(nextConfig));
+module.exports = withNextIntl(nextConfig);
 `;

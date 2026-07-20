@@ -41,7 +41,7 @@ export async function runApiClientGenerator(
 
   await formatFiles(tree);
 
-  console.warn(`\nPlease set api endpoint in ${libPath}/shared/data-access/api-client/src/configuration.ts`);
+  console.info(`\nPlease set api endpoint in ${libPath}/shared/data-access/api-client/src/configuration.ts`);
 }
 
 export default runApiClientGenerator;

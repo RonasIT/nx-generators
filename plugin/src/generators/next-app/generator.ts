@@ -21,6 +21,7 @@ import {
   runStoreGenerator,
 } from '../../shared/generators';
 import { addNxAppTag, confirm, formatName, getImportPathPrefix, nxAddCommand } from '../../shared/utils';
+import { runNuqsGenerator } from '../nuqs';
 import { NextAppGeneratorSchema } from './schema';
 
 export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSchema) {
@@ -108,6 +109,10 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
 
   if (!hasProviders) {
     tree.delete(`${appRoot}/app/[locale]/providers.tsx`);
+  }
+
+  if (options.withNuqs) {
+    await runNuqsGenerator(tree, { directory: options.directory });
   }
 
   addNxAppTag(tree, options.directory);

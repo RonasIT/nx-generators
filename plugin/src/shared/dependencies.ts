@@ -73,6 +73,9 @@ export const dependencies = {
       '@sentry/nextjs': '^10.63.0',
     },
   },
+  nuqs: {
+    nuqs: '^2.9.0',
+  },
 };
 
 export const devDependencies = {

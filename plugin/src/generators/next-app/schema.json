@@ -40,6 +40,12 @@
       "default": false,
       "x-prompt": "Do you want to use Sentry in your app?"
     },
+    "withNuqs": {
+      "type": "boolean",
+      "description": "Add nuqs to the app for type-safe URL query parameters",
+      "default": false,
+      "x-prompt": "Do you want to use query parameters (nuqs) in your app?"
+    },
     "withApiClient": {
       "type": "boolean",
       "description": "Add api client library to the app"
@@ -49,5 +55,5 @@
       "description": "Add auth libraries to the app"
     }
   },
-  "required": ["name", "directory", "withSentry"]
+  "required": ["name", "directory", "withSentry", "withNuqs"]
 }

@@ -15,6 +15,7 @@ import {
   readJsonMock,
   writeJsonMock,
 } from '../../shared/tests-utils';
+import * as nuqsGenerator from '../nuqs';
 import { nextAppGenerator } from './generator';
 
 jest.mock('../../shared/generators', () => {
@@ -30,6 +31,15 @@ jest.mock('../../shared/generators', () => {
   };
 });
 
+jest.mock('../nuqs', () => {
+  const actual = jest.requireActual('../nuqs');
+
+  return {
+    ...actual,
+    runNuqsGenerator: jest.fn(),
+  };
+});
+
 describe('nextAppGenerator with file content checks', () => {
   let tree: any;
 
@@ -40,6 +50,7 @@ describe('nextAppGenerator with file content checks', () => {
     withApiClient: false,
     withFormUtils: false,
     withSentry: false,
+    withNuqs: false,
   };
 
   beforeEach(() => {
@@ -190,6 +201,7 @@ describe('nextAppGenerator with file content checks', () => {
       withApiClient: false,
       withFormUtils: false,
       withSentry: false,
+      withNuqs: false,
     });
 
     const templatesDir = path.join(__dirname, 'files');
@@ -214,6 +226,7 @@ describe('nextAppGenerator with file content checks', () => {
       withApiClient: undefined, // triggers prompt
       withFormUtils: true,
       withSentry: true,
+      withNuqs: true,
     };
 
     await nextAppGenerator(tree, options);
@@ -244,5 +257,16 @@ describe('nextAppGenerator with file content checks', () => {
 
     // Confirm runFormUtilsGenerator called (because withFormUtils: true)
     expect(sharedGenerators.runFormUtilsGenerator).toHaveBeenCalledWith(expect.anything(), options);
+
+    // Confirm runNuqsGenerator called (because withNuqs: true)
+    expect(nuqsGenerator.runNuqsGenerator).toHaveBeenCalledWith(expect.anything(), { directory: options.directory });
+  });
+
+  it('should not run nuqs generator when withNuqs is false', async () => {
+    existsSyncMock.mockReturnValue(true);
+
+    await nextAppGenerator(tree, optionsBase);
+
+    expect(nuqsGenerator.runNuqsGenerator).not.toHaveBeenCalled();
   });
 });

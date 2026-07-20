@@ -51,7 +51,7 @@ function App(): ReactElement {
 
   return (
     <Stack>
-      <Stack.Screen name='index' />
+      <Stack.Screen name='index' options={{ headerShown: false }} />
       <Stack.Screen name={navigationConfig.auth.root} options={{ headerShown: false }} />
       <Stack.Screen name={navigationConfig.main.root} options={{ headerShown: false }} />
     </Stack>

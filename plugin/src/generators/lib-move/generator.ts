@@ -1,15 +1,14 @@
 import { execSync } from 'child_process';
 import { Tree } from '@nx/devkit';
 import {
-  LibraryType,
+  askQuestion,
   constants,
+  getImportPathPrefix,
   getLibraryDetailsByName,
+  LibraryType,
+  normalizeLibPath,
   selectProject,
   validateLibraryType,
-  getLibDirectoryName,
-  getImportPathPrefix,
-  askQuestion,
-  normalizeLibPath,
 } from '../../shared/utils';
 import { LibMoveGeneratorSchema } from './schema';
 
@@ -43,8 +42,8 @@ export async function libMoveGenerator(tree: Tree, options: LibMoveGeneratorSche
       'If you want to rename the library, enter its new name. Otherwise just press Enter: ',
       defaultLibraryName,
     ));
-  const libDirectoryName = getLibDirectoryName(libraryName, options.scope);
-  const newLibImportPath = normalizeLibPath(`${options.app}/${options.scope}/${options.type}/${libDirectoryName}`);
+
+  const newLibImportPath = normalizeLibPath(`${options.app}/${options.scope}/${options.type}/${libraryName}`);
   const newLibPath = `libs/${newLibImportPath}`;
   const fullLibraryPath = `${getImportPathPrefix(tree)}/${newLibImportPath}`;
   const fullLibraryName = newLibImportPath.split('/').join('-');

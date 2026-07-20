@@ -1,14 +1,12 @@
-import { useHeaderHeight } from '@react-navigation/elements';
+import { useHeaderHeight } from 'expo-router/react-navigation';
 import { ReactElement, useMemo } from 'react';
-import { ImageBackground, ScrollView, ScrollViewProps, View, ViewProps } from 'react-native';
+import { ScrollView, ScrollViewProps, View, ViewProps } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
-import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { commonStyle, spacings } from '@ronas-it/mobile/shared/ui/styles';
 
 export interface AppScreenProps {
   scrollDisabled?: boolean;
   noOutsideSpacing?: boolean;
-  withBackgroundImage?: boolean;
   withHeader?: boolean;
 }
 
@@ -27,7 +25,6 @@ export function AppScreen(props: AppScreenProps & (ScrollableScreenProps | NonSc
     testID,
     scrollDisabled,
     noOutsideSpacing,
-    withBackgroundImage,
     withHeader = false,
     ...restProps
   } = props;
@@ -61,14 +58,8 @@ export function AppScreen(props: AppScreenProps & (ScrollableScreenProps | NonSc
     [children, viewComponentProps],
   );
 
-  return withBackgroundImage ? (
-    <ImageBackground
-      style={[commonStyle.fullFlex, withHeader && { paddingTop: headerHeight }]}
-      source={Images.background}>
-      {content}
-    </ImageBackground>
-  ) : (
-    <View style={[styles.container, commonStyle.fullFlex]} testID={testID}>
+  return (
+    <View style={[commonStyle.fullFlex, styles.container, withHeader && { paddingTop: headerHeight }]} testID={testID}>
       {content}
     </View>
   );

@@ -113,34 +113,6 @@ describe('reactLibGenerator', () => {
     expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
   });
 
-  it('should warn if library directory name differs from library name', async () => {
-    (selectProject as jest.Mock).mockResolvedValue({ name: 'myapp' });
-    (askQuestion as jest.Mock).mockResolvedValue('myscope');
-    (AutoCompleteMock as jest.Mock).mockImplementation(() => ({ run: jest.fn().mockResolvedValue('ui') }));
-    (confirm as jest.Mock).mockResolvedValue(false);
-
-    const outputWarnSpy = jest.spyOn(devkit.output, 'warn');
-
-    const options = {
-      dryRun: false,
-      name: 'scope-mylib',
-      withComponent: false,
-      app: undefined,
-      scope: 'scope',
-      type: 'ui',
-    };
-
-    await reactLibGenerator(tree, options);
-
-    expect(outputWarnSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: expect.stringContaining('The library directory was changed to'),
-      }),
-    );
-
-    outputWarnSpy.mockRestore();
-  });
-
   it('should generate library with component', async () => {
     const featureRoot = 'libs/myapp/shared/features/mylib/src';
     (selectProject as jest.Mock).mockResolvedValue({ name: 'myapp' });

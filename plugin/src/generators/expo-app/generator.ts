@@ -5,12 +5,12 @@ import {
   addDependenciesToPackageJson,
   formatFiles,
   generateFiles,
-  installPackagesTask,
   readJson,
   removeDependenciesFromPackageJson,
   Tree,
   writeJson,
 } from '@nx/devkit';
+import { isBoolean } from 'lodash';
 import { dependencies, devDependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import {
@@ -23,14 +23,25 @@ import {
   runStorageGenerator,
   runStoreGenerator,
 } from '../../shared/generators';
-import { addNxAppTag, confirm, formatAppIdentifier, formatName, getImportPathPrefix } from '../../shared/utils';
+import {
+  addNxAppTag,
+  confirm,
+  formatAppIdentifier,
+  formatName,
+  getImportPathPrefix,
+  runNxAddCommand,
+} from '../../shared/utils';
 import { generateEasignore } from './easignore';
 import { ExpoAppGeneratorSchema } from './schema';
 import scripts from './scripts';
 
 export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSchema) {
-  const shouldGenerateApiClientLib = options.withStore && (await confirm('Do you want to create api client lib?'));
-  const shouldGenerateAuthLibs = shouldGenerateApiClientLib && (await confirm('Do you want to create auth lib?'));
+  const shouldGenerateApiClientLib =
+    options.withStore &&
+    (isBoolean(options.withApiClient) ? options.withApiClient : await confirm('Do you want to create api client lib?'));
+  const shouldGenerateAuthLibs =
+    shouldGenerateApiClientLib &&
+    (isBoolean(options.withAuth) ? options.withAuth : await confirm('Do you want to create auth lib?'));
 
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
@@ -39,7 +50,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   const tags = [`app:${options.directory}`, 'type:app'];
 
   // Install @nx/expo plugin
-  execSync('npx nx add @nx/expo', { stdio: 'inherit' });
+  runNxAddCommand('@nx/expo');
 
   if (!existsSync(appRoot)) {
     execSync(
@@ -101,7 +112,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   };
   writeJson(tree, appPackagePath, appPackageJson);
 
-  // Remove dependencies with version "*" from @nx/expo template
+  // Remove dependencies with version "*" from @nx/expo template and not required
   const dependenciesToRemove = Object.keys(appPackageJson.dependencies || {}).filter((dependency) =>
     appPackageJson.dependencies[dependency].includes('*'),
   );
@@ -136,7 +147,8 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   await formatFiles(tree);
 
   return (): void => {
-    installPackagesTask(tree);
+    // NOTE: @nx/expo:app may install older version of Expo SDK before we override to newer version; legacy-peer-deps reconciles the transition.
+    execSync('npm install --legacy-peer-deps', { stdio: 'inherit' });
 
     if (shouldGenerateAuthLibs) {
       execSync(`npx nx g auth --directory=${options.directory} --type=${BaseGeneratorType.EXPO_APP}`, {
@@ -151,7 +163,6 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
     }
 
     execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
-    execSync('npx expo install --fix', { stdio: 'inherit' });
   };
 }
 

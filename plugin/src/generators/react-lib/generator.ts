@@ -1,18 +1,17 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
-import { formatFiles, generateFiles, output, Tree } from '@nx/devkit';
+import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 import { isBoolean } from 'lodash';
 import {
   addNxScopeTag,
+  askQuestion,
+  confirm,
   constants,
   formatName,
   LibraryType,
+  normalizeLibPath,
   selectProject,
   validateLibraryType,
-  getLibDirectoryName,
-  confirm,
-  askQuestion,
-  normalizeLibPath,
 } from '../../shared/utils';
 import { ReactLibGeneratorSchema } from './schema';
 
@@ -47,8 +46,7 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   const scopeTag = options.scope || constants.sharedValue;
   const tags = [`app:${options.app}`, `scope:${scopeTag}`, `type:${options.type}`];
 
-  const libDirectoryName = getLibDirectoryName(options.name, options.scope);
-  const libName = normalizeLibPath(`${options.app}/${options.scope}/${options.type}/${libDirectoryName}`);
+  const libName = normalizeLibPath(`${options.app}/${options.scope}/${options.type}/${options.name}`);
   const libPath = `libs/${libName}`;
   const command = `npx nx g @nx/react:library --skipPackageJson --unitTestRunner=none --tags="${tags.join(', ')}" --name=${libName} ${libPath} --linter=eslint --component=false --bundler=none --style=scss`;
   const commandWithOptions = options.dryRun ? command + ' --dry-run' : command;
@@ -64,12 +62,6 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
   addNxScopeTag(tree, scopeTag);
 
   await formatFiles(tree);
-
-  if (libDirectoryName !== options.name) {
-    output.warn({
-      title: `The library directory was changed to ${output.bold(libDirectoryName)} so that it does not start with the scope name.`,
-    });
-  }
 }
 
 export default reactLibGenerator;

@@ -333,9 +333,10 @@ module.exports = (async () => {
         'import/no-duplicates': 'warn',
         'react-hooks/exhaustive-deps': 'off',
 
+        'unistyles/no-unused-styles': 'error',  
+
         'react-native/no-single-element-style-arrays': 'warn',
-        'react-native/no-color-literals': 'warn',
-        'unistyles/no-unused-styles': 'error',
+        'react-native/no-color-literals': 'warn',      
         'react-native/split-platform-components': 'error',
         'react-native/no-inline-styles': 'error',
         'react-native/no-raw-text': ['error', { skip: ['AppText'] }],

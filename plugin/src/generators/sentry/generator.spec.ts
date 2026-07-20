@@ -107,6 +107,17 @@ describe('sentryGenerator', () => {
     expect(sentryUtils.generateSentryNext).toHaveBeenCalledWith(tree, { directory }, directory);
   });
 
+  it('should use placeholder dsn in non-interactive mode when dsn is omitted', async () => {
+    (utils.getAppFrameworkName as jest.Mock).mockReturnValue('next');
+    process.env.NX_NON_INTERACTIVE = 'true';
+
+    await sentryGenerator(tree, { directory });
+
+    expect(sentryUtils.generateSentryNext).toHaveBeenCalledWith(tree, { directory, dsn: 'INSERT_DSN_HERE' }, directory);
+
+    delete process.env.NX_NON_INTERACTIVE;
+  });
+
   it('should call generateSentryExpo when framework is expo', async () => {
     const expoDirectory = 'apps/my-expo-app';
     (utils.getAppFrameworkName as jest.Mock).mockReturnValue('expo');

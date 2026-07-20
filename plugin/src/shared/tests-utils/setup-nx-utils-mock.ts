@@ -2,5 +2,5 @@
 
 jest.mock('../utils/nx-utils', () => ({
   ...jest.requireActual('../utils/nx-utils'),
-  nxAddCommand: jest.fn(),
+  runNxAddCommand: jest.fn(),
 }));

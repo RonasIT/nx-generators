@@ -12,15 +12,6 @@
         "$source": "argv",
         "index": 0
       }
-    },
-    "baseGeneratorType": {
-      "type": "string",
-      "description": "Base generator type (Expo or Next.js)",
-      "default": "",
-      "$default": {
-        "$source": "argv",
-        "index": 1
-      }
     }
   },
   "required": []

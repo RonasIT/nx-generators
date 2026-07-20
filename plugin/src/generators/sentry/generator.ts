@@ -3,7 +3,7 @@ import { getAppFrameworkName, selectProject } from '../../shared/utils';
 import { SentryGeneratorSchema } from './schema';
 import { generateSentryNext, generateSentryExpo } from './utils';
 
-const SENTRY_DSN_PLACEHOLDER = 'INSERT_DSN_HERE';
+const sentryDsnPlaceholder = 'INSERT_DSN_HERE';
 
 function isNonInteractive(): boolean {
   return process.env.NX_NON_INTERACTIVE === 'true' || process.argv.includes('--no-interactive');
@@ -14,7 +14,7 @@ export async function sentryGenerator(tree: Tree, options: SentryGeneratorSchema
     options.directory || (await selectProject(tree, 'application', 'Select the application: ', true)).path;
 
   if (!options.dsn && isNonInteractive()) {
-    options.dsn = SENTRY_DSN_PLACEHOLDER;
+    options.dsn = sentryDsnPlaceholder;
   }
 
   const appFrameworkName = getAppFrameworkName(tree, options.directory);

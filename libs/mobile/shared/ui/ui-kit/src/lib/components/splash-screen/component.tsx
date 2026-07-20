@@ -6,8 +6,8 @@ import { AppScreen } from '../screen';
 
 export function AppSplashScreen(): ReactElement {
   return (
-    <AppScreen scrollDisabled style={styles.screen} withBackgroundImage>
-      <AppImage source={Images.background} />
+    <AppScreen scrollDisabled style={styles.screen}>
+      <AppImage source={Images.splashIcon} style={styles.image} />
     </AppScreen>
   );
 }
@@ -16,5 +16,9 @@ const styles = StyleSheet.create({
   screen: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  image: {
+    width: 100,
+    height: 100,
   },
 });

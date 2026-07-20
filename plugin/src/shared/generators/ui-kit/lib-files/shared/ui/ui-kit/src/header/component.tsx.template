@@ -1,6 +1,5 @@
-import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import { AppSafeAreaView } from '@ronas-it/react-native-common-modules/safe-area-view';
-import { useRouter } from 'expo-router';
+import { NativeStackHeaderProps, useRouter } from 'expo-router';
 import { ReactElement } from 'react';
 import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';

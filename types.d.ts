@@ -1,4 +1,17 @@
-// This file is added for correct work of TS-checks in pre-commit hook using tsc-files
-// Issue: https://github.com/gustavopch/tsc-files/issues/20
-// TODO: Uncomment the line below if you have an Expo app
-import 'node_modules/@nx/expo/typings/svg.d.ts';
+/// <reference types="node" />
+
+declare module '*.scss' {
+  const content: Record<string, string>;
+  export default content;
+}
+
+declare module '*.svg' {
+  const content: any;
+  export const ReactComponent: any;
+  export default content;
+}
+
+declare module '*.png' {
+  const content: string;
+  export default content;
+}

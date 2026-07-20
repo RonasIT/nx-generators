@@ -20,13 +20,16 @@ import {
   runNavigationUtilsGenerator,
   runStoreGenerator,
 } from '../../shared/generators';
-import { addNxAppTag, confirm, formatName, getImportPathPrefix } from '../../shared/utils';
+import { addNxAppTag, confirm, formatName, getImportPathPrefix, runNxAddCommand } from '../../shared/utils';
 import { NextAppGeneratorSchema } from './schema';
 
 export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSchema) {
   const shouldGenerateApiClientLib =
-    options.withStore && !isBoolean(options.withApiClient) && (await confirm('Do you want to create api client lib?'));
-  const shouldGenerateAuthLibs = shouldGenerateApiClientLib && (await confirm('Do you want to create auth lib?'));
+    options.withStore &&
+    (isBoolean(options.withApiClient) ? options.withApiClient : await confirm('Do you want to create api client lib?'));
+  const shouldGenerateAuthLibs =
+    shouldGenerateApiClientLib &&
+    (isBoolean(options.withAuth) ? options.withAuth : await confirm('Do you want to create auth lib?'));
 
   const appRoot = `apps/${options.directory}`;
   const i18nRoot = `i18n/${options.directory}`;
@@ -35,7 +38,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   const sharedTranslationsKey = `${options.directory}-shared`;
 
   // Install @nx/next plugin
-  execSync('npx nx add @nx/next', { stdio: 'inherit' });
+  runNxAddCommand('@nx/next');
 
   if (!existsSync(appRoot)) {
     execSync(

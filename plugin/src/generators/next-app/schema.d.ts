@@ -3,6 +3,7 @@ export interface NextAppGeneratorSchema {
   directory: string;
   withStore: boolean;
   withApiClient?: boolean;
+  withAuth?: boolean;
   withFormUtils: boolean;
   withSentry: boolean;
 }

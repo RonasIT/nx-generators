@@ -4,6 +4,7 @@
 dist
 tmp
 /out-tsc
+e2e/.workspace
 
 # dependencies
 node_modules
@@ -63,3 +64,5 @@ android
 
 # Next
 apps/*/.next
+
+.nx/migrate-runs

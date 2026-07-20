@@ -10,9 +10,10 @@ import { createObjectLiteralExpression } from './create-object-literal-expressio
 const addRequiredImports = (content: string): string =>
   tsquery.replace(
     content,
-    'VariableStatement:has(Identifier[name="withNx"]):has(CallExpression:has(Identifier[name="require"]))',
-    (node) => `${node.getText()}
-      const { withSentryConfig } = require('@sentry/nextjs');`,
+    'VariableStatement:has(Identifier[name="nextConfig"])',
+    (node) => `const { withSentryConfig } = require('@sentry/nextjs');
+
+${node.getText()}`,
   );
 
 const modifyNextConfig = (content: string): string =>
@@ -52,12 +53,12 @@ const modifyNextConfig = (content: string): string =>
     }),
   );
 
+const moduleExportsAssignmentSelector =
+  'ExpressionStatement:has(PropertyAccessExpression:has(Identifier[name="module"]):has(Identifier[name="exports"]))';
+
 const wrapIntoSentryConfig = (content: string): string => {
-  const withSentryWebpackPluginOptions = tsquery.replace(
-    content,
-    'ExpressionStatement:has(CallExpression Identifier[name="withNx"])',
-    (node) => {
-      return `
+  const withSentryWebpackPluginOptions = tsquery.replace(content, moduleExportsAssignmentSelector, (node) => {
+    return `
       /**
       * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
       **/
@@ -70,12 +71,11 @@ const wrapIntoSentryConfig = (content: string): string => {
       };
 
       ${node.getText()}`;
-    },
-  );
+  });
 
   return tsquery.replace(
     withSentryWebpackPluginOptions,
-    'CallExpression > CallExpression:has(Identifier[name="withNx"]) Identifier[name="nextConfig"]',
+    `${moduleExportsAssignmentSelector} BinaryExpression > *:last-child`,
     (node) => `withSentryConfig(${node.getText()}, sentryWebpackPluginOptions)`,
   );
 };

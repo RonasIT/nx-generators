@@ -38,7 +38,7 @@ export function restoreNpmrcContent(original: string | null): void {
 }
 
 // NOTE: nx add runs npm install, which can fail when .npmrc enforces min-release-age on freshly published @nx/* packages.
-export function nxAddCommand(plugin: string): void {
+export function runNxAddCommand(plugin: string): void {
   const originalNpmrc = commentMinReleaseAgeInNpmrc();
 
   try {

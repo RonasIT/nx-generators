@@ -29,7 +29,7 @@ import {
   formatAppIdentifier,
   formatName,
   getImportPathPrefix,
-  nxAddCommand,
+  runNxAddCommand,
 } from '../../shared/utils';
 import { generateEasignore } from './easignore';
 import { ExpoAppGeneratorSchema } from './schema';
@@ -50,7 +50,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   const tags = [`app:${options.directory}`, 'type:app'];
 
   // Install @nx/expo plugin
-  nxAddCommand('@nx/expo');
+  runNxAddCommand('@nx/expo');
 
   if (!existsSync(appRoot)) {
     execSync(

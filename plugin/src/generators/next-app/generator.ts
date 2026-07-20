@@ -20,7 +20,7 @@ import {
   runNavigationUtilsGenerator,
   runStoreGenerator,
 } from '../../shared/generators';
-import { addNxAppTag, confirm, formatName, getImportPathPrefix, nxAddCommand } from '../../shared/utils';
+import { addNxAppTag, confirm, formatName, getImportPathPrefix, runNxAddCommand } from '../../shared/utils';
 import { runNuqsGenerator } from '../nuqs';
 import { NextAppGeneratorSchema } from './schema';
 
@@ -39,7 +39,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   const sharedTranslationsKey = `${options.directory}-shared`;
 
   // Install @nx/next plugin
-  nxAddCommand('@nx/next');
+  runNxAddCommand('@nx/next');
 
   if (!existsSync(appRoot)) {
     execSync(

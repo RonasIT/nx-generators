@@ -50,7 +50,7 @@ The `plugin` directory contains the source code for all generators in this packa
 
    - builds the package and publishes it to a local [Yalc](https://github.com/wclr/yalc) store
    - creates a fresh Nx workspace
-   - runs `repo-config`, `code-checks`, `expo-app`, and `next-app` with all optional flags enabled (expect of Sentry generators)
+   - runs `repo-config`, `code-checks`, `expo-app`, and `next-app` with all optional flags enabled (except Sentry generators)
    - verifies that `npm run lint` passes in the generated workspace
 
    The test workspace is kept at `e2e/.workspace/e2e-workspace` for inspection after a run. The same check runs in CI on push to `main`, `master`, and `development`.

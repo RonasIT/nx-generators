@@ -3,10 +3,15 @@
   "description": "Nx generators for Ronas IT projects",
   "license": "MIT",
   "author": "Ronas IT",
+  "private": true,
+  "engines": {
+    "npm": ">=11.10.0"
+  },
   "scripts": {
     "deps:sync": "npx syncpack fix",
     "lint": "npx tsc && npx eslint ./",
-    "format": "npx prettier --write . && npm run lint -- --fix",
+    "lint:css": "npx stylelint \"**/*.{css,scss}\" --fix --allow-empty-input",
+    "format": "npx prettier --write . && npm run lint -- --fix && npm run lint:css",
     "prepare": "husky",
     "build": "npx nx run nx-generators:build",
     "release": "npx nx run nx-generators:nx-release-publish",
@@ -110,6 +115,8 @@
     "prettier": "^3.6.2",
     "react-hook-form": "^7.80.0",
     "reactotron-react-native": "^5.1.18",
+    "stylelint": "^17.12.0",
+    "stylelint-config-standard-scss": "^17.0.0",
     "syncpack": "^15.3.2",
     "test-renderer": "^1.2.0",
     "ts-jest": "^29.4.11",
@@ -137,7 +144,8 @@
   ],
   "lint-staged": {
     "*.{ts,tsx}": "tsc-files --noEmit types.d.ts",
-    "*.{ts,tsx,js,html,json,md}": "prettier --write",
-    "*.{ts,tsx,js}": "eslint --cache --fix"
+    "*.{ts,tsx,js,html,json,md,css,scss}": "prettier --write",
+    "*.{ts,tsx,js}": "eslint --cache --fix",
+    "*.{css,scss}": "stylelint --fix --allow-empty-input"
   }
 }

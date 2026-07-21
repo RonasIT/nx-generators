@@ -71,3 +71,4 @@ android
 apps/*/.next
 
 .nx/migrate-runs
+next-env.d.ts

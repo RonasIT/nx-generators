@@ -40,7 +40,10 @@
       "@ronas-it/mobile/shared/utils/form": ["libs/mobile/shared/utils/form/src/index.ts"],
       "@ronas-it/mobile/shared/utils/navigation": ["libs/mobile/shared/utils/navigation/src/index.ts"],
       "@ronas-it/mobile/shared/utils/toast-service": ["libs/mobile/shared/utils/toast-service/src/index.ts"],
-      "@ronas-it/nx-generators": ["plugin/src/index.ts"]
+      "@ronas-it/nx-generators": ["plugin/src/index.ts"],
+      "@ronas-it/web/shared/utils/i18n": ["./libs/web/shared/utils/i18n/src/index.ts"],
+      "@ronas-it/web/shared/utils/navigation": ["./libs/web/shared/utils/navigation/src/index.ts"],
+      "@ronas-it/web/shared/data-access/store": ["./libs/web/shared/data-access/store/src/index.ts"]
     }
   },
   "references": [

@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { formatFiles, generateFiles, Tree } from '@nx/devkit';
-import { camelCase, kebabCase, startCase } from 'lodash';
+import { camelCase, kebabCase, startCase } from 'lodash-es';
 import { IndentationText, Project, QuoteKind, StructureKind, SyntaxKind } from 'ts-morph';
 import {
   addNamedImport,

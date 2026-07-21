@@ -10,7 +10,7 @@ import {
   Tree,
   writeJson,
 } from '@nx/devkit';
-import { isBoolean } from 'lodash';
+import { isBoolean } from 'lodash-es';
 import { dependencies, devDependencies } from '../../shared/dependencies';
 import { BaseGeneratorType } from '../../shared/enums';
 import {

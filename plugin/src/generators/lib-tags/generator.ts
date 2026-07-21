@@ -1,13 +1,13 @@
 import { execSync } from 'child_process';
 import { Tree, getProjects, ProjectConfiguration, formatFiles, output } from '@nx/devkit';
-import { noop } from 'lodash';
+import { noop } from 'lodash-es';
 import { confirm, verifyESLintConstraintsConfig } from '../../shared/utils';
 import { LibTagsContext } from './interfaces';
 import { LibTagsGeneratorSchema } from './schema';
 import { checkApplicationTags, checkLibraryTags } from './utils';
 
 const context: LibTagsContext = {
-  log: console.log
+  log: console.log,
 };
 
 export async function libTagsGenerator(tree: Tree, options: LibTagsGeneratorSchema): Promise<void> {

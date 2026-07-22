@@ -1,3 +1,6 @@
+import { createApiClient } from '@ronas-it/shared/data-access/api-client';
+import { configuration } from './configuration';
+
 export * from './configuration';
-export * from './service';
-export * from './utils';
+
+export const { apiService, axiosBaseQuery, createAppApi } = createApiClient(configuration.apiURL);

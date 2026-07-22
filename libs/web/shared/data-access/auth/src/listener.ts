@@ -4,60 +4,58 @@ import {
   onResponseRefreshTokenInterceptor,
   RefreshTokenInterceptorOptions,
   tokenInterceptor,
+  unauthorizedInterceptor,
 } from '@ronas-it/axios-api-client';
-import { AppStorageValue, storage } from '@ronas-it/mobile/shared/data-access/storage';
 import { authApi, profileApi, LogInResponse } from '@ronas-it/shared/data-access/api';
 import { apiService, configuration } from '@ronas-it/shared/data-access/api-client';
+import { CookieService } from '@ronas-it/web/shared/data-access/cookie';
 import { authActions, authReducerPath, authSelectors, AuthState } from './slice';
 
-export const authListenerMiddleware = createListenerMiddleware<{
-  [authReducerPath]: AuthState;
-}>();
+export const authListenerMiddleware = createListenerMiddleware<{ [authReducerPath]: AuthState }>();
 
 authListenerMiddleware.startListening({
   matcher: authApi.internalActions.middlewareRegistered.match,
   effect: (_, { dispatch, getState }) => {
-    const accessToken = storage.getString(AppStorageValue.ACCESS_TOKEN);
-
-    dispatch(authActions.setIsAuthenticated(Boolean(accessToken)));
-
     const options: RefreshTokenInterceptorOptions = {
       configuration: configuration.auth,
       getIsAuthenticated: () => authSelectors.isAuthenticated(getState()),
       runTokenRefreshRequest: async () => {
-        const refreshToken = storage.getString(AppStorageValue.REFRESH_TOKEN);
+        const refreshToken = CookieService.get('refreshToken');
 
-        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await dispatch(
-          authApi.endpoints.refreshToken.initiate({ refreshToken: refreshToken || '' }),
+        const { accessToken, refreshToken: newRefreshToken } = await dispatch(
+          authApi.endpoints.refreshToken.initiate({ refreshToken }),
         ).unwrap();
 
-        storage.set(AppStorageValue.ACCESS_TOKEN, newAccessToken);
-        storage.set(AppStorageValue.REFRESH_TOKEN, newRefreshToken);
+        CookieService.set({ accessToken, refreshToken: newRefreshToken });
 
-        return newAccessToken;
+        return accessToken;
       },
-      onError: () => {
-        return dispatch(authApi.endpoints.logout.initiate()).unwrap();
-      },
+      onError: () => dispatch(authApi.endpoints.logout.initiate()).unwrap(),
     };
 
     apiService.useInterceptors({
       request: [
         [onRequestRefreshTokenInterceptor(options)],
-        [tokenInterceptor({ getToken: () => storage.getString(AppStorageValue.ACCESS_TOKEN) ?? '' })],
+        [tokenInterceptor({ getToken: () => CookieService.get('accessToken') })],
       ],
-      response: [[null, onResponseRefreshTokenInterceptor(options)]],
+      response: [
+        [null, onResponseRefreshTokenInterceptor(options)],
+        [
+          null,
+          unauthorizedInterceptor({
+            publicEndpoints: configuration.auth.unauthorizedRoutes,
+            onError: () => dispatch(authActions.unauthorize()),
+          }),
+        ],
+      ],
     });
-
-    dispatch(authActions.setIsAppReady(true));
   },
 });
 
 authListenerMiddleware.startListening({
   matcher: authApi.endpoints.login.matchFulfilled,
   effect: ({ payload: { accessToken, refreshToken } }: { payload: LogInResponse }, { dispatch }) => {
-    storage.set(AppStorageValue.ACCESS_TOKEN, accessToken);
-    storage.set(AppStorageValue.REFRESH_TOKEN, refreshToken);
+    CookieService.set({ accessToken, refreshToken, isAuthenticated: 'true' });
     dispatch(authActions.setIsAuthenticated(true));
   },
 });
@@ -69,8 +67,14 @@ authListenerMiddleware.startListening({
     profileApi.endpoints.deleteProfile.matchFulfilled,
   ),
   effect: (_, { dispatch }) => {
-    storage.remove(AppStorageValue.ACCESS_TOKEN);
-    storage.remove(AppStorageValue.REFRESH_TOKEN);
+    dispatch(authActions.unauthorize());
+  },
+});
+
+authListenerMiddleware.startListening({
+  actionCreator: authActions.unauthorize,
+  effect: (_, { dispatch }) => {
+    CookieService.remove(['accessToken', 'refreshToken', 'isAuthenticated']);
     dispatch(authActions.setIsAuthenticated(false));
 
     dispatch(profileApi.util.resetApiState());

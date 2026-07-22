@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import { Tree, getProjects, ProjectConfiguration, formatFiles, output } from '@nx/devkit';
-import { noop } from 'lodash-es';
+import { noop } from 'lodash';
 import { confirm, verifyESLintConstraintsConfig } from '../../shared/utils';
 import { LibTagsContext } from './interfaces';
 import { LibTagsGeneratorSchema } from './schema';

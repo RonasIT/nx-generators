@@ -1,7 +1,7 @@
 import { existsSync } from 'fs';
 import * as path from 'path';
 import { formatFiles, generateFiles, Tree } from '@nx/devkit';
-import { kebabCase } from 'lodash-es';
+import { kebabCase } from 'lodash';
 import { appendFileContent, formatName, getNxLibsPaths, LibraryType } from '../../shared/utils';
 import { ReactComponentGeneratorSchema } from './schema';
 

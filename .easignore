@@ -47,14 +47,8 @@ apps/mobile/ios
 
 # Libraries: mobile
 !libs/mobile
-libs/mobile/*
-!libs/mobile/shared
-!libs/mobile/shared/**
+!libs/mobile/**
 
 # i18n: mobile
 !i18n/mobile
-i18n/mobile/*
-!i18n/mobile/app
-!i18n/mobile/app/**
-!i18n/mobile/shared
-!i18n/mobile/shared/**
+!i18n/mobile/**

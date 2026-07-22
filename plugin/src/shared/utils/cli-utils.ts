@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as readline from 'readline';
 import { getProjects, ProjectType, Tree } from '@nx/devkit';
-import { compact } from 'lodash-es';
+import { compact } from 'lodash';
 import { constants } from './constants';
 
 export const createCliReadline = (): readline.Interface =>

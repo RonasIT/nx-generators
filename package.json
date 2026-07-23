@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "deps:sync": "npx syncpack fix",
+    "deps:check-generators": "node tools/scripts/check-generator-dependencies.mjs",
     "lint": "npx tsc && npx eslint ./",
     "lint:css": "npx stylelint \"**/*.{css,scss}\" --fix --allow-empty-input",
     "format": "npx prettier --write . && npm run lint -- --fix && npm run lint:css",

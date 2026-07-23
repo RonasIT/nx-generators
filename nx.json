@@ -92,6 +92,6 @@
   },
   "analytics": false,
   "migrate": {
-    "agentic": true
+    "agentic": false
   }
 }

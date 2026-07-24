@@ -5,9 +5,10 @@ description: >
   repository, propagate the resulting versions into the generator source
   (plugin/src/shared/dependencies.ts and plugin/package.json), and verify the plugin package is
   safe to publish. Covers routine bumps (npm-check-updates), Nx workspace migrations
-  (`nx migrate`), and Expo SDK upgrades (Expo's own `expo-upgrade` skill). Use whenever asked to
-  "update dependencies", "upgrade Expo SDK", "bump Nx", "update packages", or similar, for this
-  repository (RonasIT/nx-generators).
+  (`nx migrate`), Expo SDK upgrades (Expo's own `expo-upgrade` skill), and Next.js major/minor
+  upgrades (`@next/codemod`). Use whenever asked to "update dependencies", "upgrade Expo SDK",
+  "bump Nx", "upgrade Next.js", "update packages", or similar, for this repository
+  (RonasIT/nx-generators).
 ---
 
 # Update dependencies (example apps + generator plugin)

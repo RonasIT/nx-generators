@@ -48,18 +48,21 @@ depend on what kind of update this is.
 
 ## Decide what kind of update this is first
 
-These three cases need different tooling and should generally be done in this order, since Nx and
-Expo upgrades manage their own peer versions and you don't want a plain dependency bump to fight
-with them:
+These four cases need different tooling and should generally be done in this order, since Nx,
+Expo, and Next.js upgrades manage their own peer versions/breaking changes and you don't want a
+plain dependency bump to fight with them:
 
 1. **Nx itself has a newer version** (`nx`, `@nx/*` in root `package.json`) → Phase 1a (`nx
 migrate`).
 2. **A new Expo SDK is out** (`expo` in `apps/mobile/package.json` / root) → Phase 1b
    (`expo-upgrade` skill).
-3. **Everything else** (routine minor/patch bumps across the board) → Phase 1c
+3. **A new Next.js major/minor is out** (`next` in root `package.json`, which is where
+   `apps/web`'s dependencies live) → Phase 1c (`@next/codemod`).
+4. **Everything else** (routine minor/patch bumps across the board) → Phase 1d
    (`npm-check-updates`).
 
-If this is a routine update and neither Nx nor Expo have a new major out, skip straight to 1c.
+If this is a routine update and none of Nx, Expo, or Next.js have a new major out, skip straight
+to 1d.
 
 ## Phase 1 — update the example apps
 
@@ -132,7 +135,42 @@ Either way, finish by reconciling `apps/mobile/package.json` against the root `p
 any Expo-managed package that's also listed at the root (e.g. `expo`, `expo-router`,
 `react-native`, `react`) — they should stay in lockstep.
 
-### 1c. Routine updates (`npm-check-updates`)
+### 1c. Next.js upgrade (`@next/codemod`)
+
+Prefer Next.js's own official codemod CLI over a plain version bump for a major/minor jump — it
+bumps the version _and_ runs the automated transforms for that version's breaking changes (e.g.
+renamed APIs, config shape changes), which are easy to miss doing this by hand.
+
+`apps/web` has no `package.json` of its own — `next`, `eslint-config-next`, and `next-intl` all
+live in the root `package.json` — but the app's actual source (the `app/` router tree the codemod
+transforms need to walk) lives under `apps/web`. Run from the **repo root** so the CLI edits the
+right `package.json`:
+
+```sh
+npx @next/codemod@canary upgrade latest    # or a specific target, e.g. `upgrade 16.x.x`
+```
+
+The CLI is interactive: it confirms the target version, updates `next` in the root `package.json`,
+runs the install, then walks you through whichever codemods apply between your current version and
+the target. When it asks which directory to transform, point it at `apps/web` (the tool defaults
+to cwd, which at the repo root has no `app`/`pages` directory of its own — don't let it silently
+transform nothing). If a step doesn't prompt for a path and instead just reports "no pages/app
+directory found," re-run that specific codemod directly against the app directory, e.g.:
+
+```sh
+npx @next/codemod@canary <transform-name> apps/web
+```
+
+(`<transform-name>` is whatever the interactive run named as the codemod it skipped — check
+<https://nextjs.org/docs/app/guides/upgrading/codemods> for the current list and syntax if it's
+unclear, since exact transform names change between Next.js releases.)
+
+After the codemod run, reconcile `eslint-config-next` in the root `package.json` to match the new
+`next` version by hand if the CLI didn't already bump it — they're released in lockstep and should
+carry the same version number. Then run `npm install` and confirm `apps/web` still builds and
+lints (`npx nx build web`, `npx nx lint web`) before moving on.
+
+### 1d. Routine updates (`npm-check-updates`)
 
 Use `npm-check-updates` (`ncu`) to bump everything else.
 
@@ -163,6 +201,8 @@ from .npmrc: 3 days` and holds back anything newer (shown as `[cooldown] x.y.z` 
 - If Phase 1b (Expo upgrade) already ran, either exclude `expo`/`expo-*` here too (`--reject`) or
   re-run `npx expo install --fix` afterwards to make sure `ncu` didn't push an Expo package outside
   the SDK's supported range.
+- If Phase 1c (Next.js codemod) already ran, exclude `next`/`eslint-config-next` here too
+  (`--reject`) so `ncu` doesn't bump them past the version the codemods were written for.
 - `ncu -u` preserves each package's existing range operator (`^`, `~`, exact) while bumping the
   version — it will not, by itself, change `~19.2.7` into `^19.2.7` or vice versa.
 
@@ -239,9 +279,10 @@ verify for itself:
 ## Summary of what to run, in order
 
 ```sh
-# Phase 1 — pick whichever of 1a/1b apply, always finish with 1c
+# Phase 1 — pick whichever of 1a/1b/1c apply, always finish with 1d
 npx nx migrate latest && npm install && npx nx migrate --run-migrations   # 1a, if Nx has an update
 # ...expo-upgrade skill or manual `expo install`/`expo-doctor` flow...     # 1b, if Expo SDK bumped
+npx @next/codemod@canary upgrade latest                                   # 1c, if Next.js has a new major/minor
 npx --yes npm-check-updates --root --workspaces --reject '/^(@nx\/.*|nx)$/' -u   # respects .npmrc min-release-age automatically
 npm install && npm run deps:sync
 

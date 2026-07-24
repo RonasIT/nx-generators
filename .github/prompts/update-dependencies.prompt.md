@@ -16,7 +16,9 @@ file, it has the exact commands, flags, and the reasoning behind each step:
 
 1. **Decide what kind of update this is:** Nx has a new version → `nx migrate`; a new Expo SDK is
    out → use an `expo-upgrade` skill/tooling if available, else upgrade `expo` by hand from the
-   repo root; otherwise it's a routine bump → `npm-check-updates`.
+   repo root; a new Next.js major/minor is out → `npx @next/codemod@canary upgrade latest` from
+   the repo root, pointing it at `apps/web` for the codemod transforms; otherwise it's a routine
+   bump → `npm-check-updates`.
 2. **Update the example apps** (root `package.json` covers `apps/web`; `apps/mobile/package.json`
    is separate) using the tooling from step 1, then `npm install` and `npm run deps:sync`.
 3. **Propagate into the generators:** run `npm run deps:check-generators` and fix every mismatch

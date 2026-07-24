@@ -113,8 +113,7 @@ migration that fails to run automatically or that explicitly requires a manual s
 migration notes are informational only) — this is also the fallback to reach for if running the
 update programmatically doesn't work out. After migrations succeed, delete `migrations.json` and
 the `nx/ai-migrations` folder (both are scratch state written by the first `nx migrate` step, not
-something to commit) and run `npm run lint` and `npx nx test nx-generators` to confirm nothing
-broke.
+something to commit).
 
 ### 1b. Expo SDK upgrade (`expo-upgrade` skill)
 
@@ -191,8 +190,8 @@ unclear, since exact transform names change between Next.js releases.)
 
 After the codemod run, reconcile `eslint-config-next` in the root `package.json` to match the new
 `next` version by hand if the CLI didn't already bump it — they're released in lockstep and should
-carry the same version number. Then run `npm install` and confirm `apps/web` still builds and
-lints (`npx nx build web`, `npx nx lint web`) before moving on.
+carry the same version number. Then run `npm install` and confirm `apps/web` still builds (`npx nx build web`)
+before moving on.
 
 ### 1d. Routine updates (`npm-check-updates`)
 

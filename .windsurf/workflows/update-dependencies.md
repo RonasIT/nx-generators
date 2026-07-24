@@ -3,7 +3,7 @@ description: Update dependencies of apps/mobile and apps/web, propagate versions
 ---
 
 The canonical, tool-agnostic instructions for this task live in
-`docs/skills/update-dependencies.md` in this repository (plain shell commands + file edits,
+`tools/skills/update-dependencies.md` in this repository (plain shell commands + file edits,
 written to work with any coding agent, not just one particular tool). Read that file in full and
 follow it from top to bottom — do not skip Phase 2 (propagating versions into
 `plugin/src/shared/dependencies.ts`), it's the step most commonly forgotten.

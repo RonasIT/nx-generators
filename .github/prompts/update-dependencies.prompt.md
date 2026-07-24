@@ -6,7 +6,7 @@ description: 'Update dependencies of apps/mobile and apps/web, propagate version
 # Update dependencies (example apps + generator plugin)
 
 This repo keeps the canonical, tool-agnostic instructions for this task in
-`docs/skills/update-dependencies.md` (plain shell commands + file edits that work with any coding
+`tools/skills/update-dependencies.md` (plain shell commands + file edits that work with any coding
 agent). Open that file now and follow it from top to bottom, in order — do not skip Phase 2
 (propagating versions into `plugin/src/shared/dependencies.ts`), it's the step most commonly
 forgotten.

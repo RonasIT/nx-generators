@@ -21,6 +21,28 @@ update the paths in all five.
 Read the whole file before starting; the phases build on each other and some decisions in Phase 1
 depend on what kind of update this is.
 
+## Honor the user's own wishes for this run
+
+Before following the default flow below, check whether the user gave any specific instructions for
+this particular run — e.g. "only update X", "skip Y for now", "don't touch Expo this time", "hold
+off on the Next.js major", "also bump `<package>` even though it's outside the usual scope". These
+requests override the corresponding default step:
+
+- A request to update **only** specific package(s) means you should scope Phase 1 (and the
+  `npm-check-updates`/`--reject` invocation in 1d) to just those packages instead of running a full
+  sweep, and skip 1a/1b/1c entirely unless the named packages are `nx`/`@nx/*`, `expo`, or `next`.
+- A request to **skip or exclude** a package or category (e.g. "don't upgrade Expo yet") means
+  excluding it from `ncu`'s `--reject` pattern in 1d and skipping the corresponding sub-phase
+  (1a/1b/1c) even if a newer version is available.
+- Still run Phase 2 (propagating into `plugin/src/shared/dependencies.ts` and `plugin/package.json`)
+  and Phase 3 (tests) for whatever you actually changed — narrowing the scope of Phase 1 doesn't
+  excuse skipping the propagation/verification steps for the packages that were touched.
+- If a wish conflicts with something the ground truth below treats as a hard rule (e.g. asking to
+  install a version newer than `min-release-age` allows, or asking to hand-edit a migration that
+  Nx can run programmatically), flag the conflict to the user instead of silently overriding the
+  rule or silently ignoring the request.
+- If nothing is specified, fall back to the default: run the full flow described below, in order.
+
 ## Ground truth about this repo (verified, don't re-derive)
 
 - Root `package.json` is an npm-workspaces root (`workspaces: ["apps/*", "plugin/*"]`) and holds

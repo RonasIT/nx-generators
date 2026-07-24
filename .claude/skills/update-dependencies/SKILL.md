@@ -13,7 +13,7 @@ description: >
 
 # Update dependencies (example apps + generator plugin)
 
-The full instructions for this task live in `docs/skills/update-dependencies.md` (repo root
+The full instructions for this task live in `tools/skills/update-dependencies.md` (repo root
 relative) — that file is the single source of truth, shared with the Codex/Copilot/Windsurf/Cursor
 adapters in `.agents/skills/`, `.github/prompts/`, `.windsurf/workflows/`, and
 `.cursor/commands/`. Read it in full now and follow it top to bottom, in order — do not skip

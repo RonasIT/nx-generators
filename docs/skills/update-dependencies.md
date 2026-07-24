@@ -88,9 +88,11 @@ npx nx migrate --run-migrations
 
 Only fall back to manually reading a migration's description and editing files by hand for a
 migration that fails to run automatically or that explicitly requires a manual step (some
-migration notes are informational only). After migrations succeed, delete `migrations.json` (it's
-scratch state, not something to commit) and run `npm run lint` and `npx nx test nx-generators` to
-confirm nothing broke.
+migration notes are informational only) — this is also the fallback to reach for if running the
+update programmatically doesn't work out. After migrations succeed, delete `migrations.json` and
+the `nx/ai-migrations` folder (both are scratch state written by the first `nx migrate` step, not
+something to commit) and run `npm run lint` and `npx nx test nx-generators` to confirm nothing
+broke.
 
 ### 1b. Expo SDK upgrade (`expo-upgrade` skill)
 

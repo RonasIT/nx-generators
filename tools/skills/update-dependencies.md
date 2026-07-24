@@ -41,6 +41,12 @@ requests override the corresponding default step:
   install a version newer than `min-release-age` allows, or asking to hand-edit a migration that
   Nx can run programmatically), flag the conflict to the user instead of silently overriding the
   rule or silently ignoring the request.
+- For a **routine** update (heading straight to 1d, nothing named yet), proactively ask whether to
+  scope the sweep to a subset (e.g. "just the packages behind a specific bump," or "skip dev-only
+  tooling this time") before running the full `ncu` pass — a narrower scope makes every downstream
+  phase faster (fewer mismatches to reconcile in Phase 2, less surface for Phase 3 to validate), and
+  costs only one question. Default to the full sweep only if the user has no preference or says
+  they want everything.
 - If nothing is specified, fall back to the default: run the full flow described below, in order.
 
 ## Ground truth about this repo (verified, don't re-derive)
@@ -271,18 +277,14 @@ updated there too, or every future run of the generators will scaffold outdated 
 
 ## Phase 3 — test the package before publishing
 
-1. **Automated tests:**
-   ```sh
-   npx nx test nx-generators   # unit tests for the generators
-   npm run test:e2e            # builds, publishes via Yalc, scaffolds a throwaway workspace,
-                                # runs repo-config/code-checks/expo-app/next-app, lints the result
-   npm run lint                # tsc + eslint at the repo root
-   ```
-2. Do **not** publish the plugin as part of this skill — not `npm run release` (with or without
-   `--tag=alpha`), not a manual `yalc publish`, no GitHub release, tags, or push to a shared branch.
-   Those are publish/ship steps and out of scope for "update dependencies" unless explicitly asked
-   for; verifying the generators against the updated dependencies is left to the user by hand (see
-   "Finishing up" below).
+Run these commands in parallel, if possible
+
+```sh
+npx nx test nx-generators   # unit tests for the generators
+npm run test:e2e            # builds, publishes via Yalc, scaffolds a throwaway workspace,
+                             # runs repo-config/code-checks/expo-app/next-app, lints the result
+npm run lint                # tsc + eslint at the repo root
+```
 
 ## Finishing up
 
@@ -312,6 +314,7 @@ npm install && npm run deps:sync
 # Phase 2 — propagate into the generators
 npm run deps:check-generators   # then edit plugin/src/shared/dependencies.ts + plugin/package.json
 
-# Phase 3 — test the package
-npx nx test nx-generators && npm run test:e2e && npm run lint
+# Phase 3 — test the package (run in parallel, then check all three exit codes)
+npx nx test nx-generators & npm run test:e2e & npm run lint & wait   # POSIX shell (bash/zsh/git-bash)
+# PowerShell: see the Start-Job/Wait-Job snippet in Phase 3 above — `&` above won't parse there
 ```

@@ -37,13 +37,19 @@ export function restoreNpmrcContent(original: string | null): void {
   writeFileSync(npmrcPath, original);
 }
 
-// NOTE: nx add runs npm install, which can fail when .npmrc enforces min-release-age on freshly published @nx/* packages.
-export function runNxAddCommand(plugin: string): void {
+export function runWithMinReleaseAgeDisabled(run: () => void): void {
   const originalNpmrc = commentMinReleaseAgeInNpmrc();
 
   try {
-    execSync(`npx --yes nx add ${plugin}`, { stdio: 'inherit' });
+    run();
   } finally {
     restoreNpmrcContent(originalNpmrc);
   }
+}
+
+// NOTE: nx add runs npm install, which can fail when .npmrc enforces min-release-age on freshly published @nx/* packages.
+export function runNxAddCommand(plugin: string): void {
+  runWithMinReleaseAgeDisabled(() => {
+    execSync(`npx --yes nx add ${plugin}`, { stdio: 'inherit' });
+  });
 }

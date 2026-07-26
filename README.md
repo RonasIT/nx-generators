@@ -133,6 +133,8 @@ Also generates [navigation utilities](#navigation-utilities).
 
 2. `directory` (optional) - name of the directory in the `apps/` folder (e.g: `web`)
 
+3. `withNuqs` (optional) - installs and configures nuqs for the app
+
 #### Example
 
 ```sh
@@ -349,6 +351,27 @@ Generates authentication setup module for Expo/Next application.
 
 ```sh
 npx nx g auth --directory=mobile --type=expo-app
+```
+
+### 16. `nuqs`
+
+Installs [nuqs](https://nuqs.dev/) and adds the `NuqsAdapter` to a
+Next.js application.
+
+If a `providers.tsx` file already exists, the adapter is added there.
+If it doesn't exist yet, the `NuqsAdapter` is added directly to `layout.tsx`.
+
+Can be run standalone, or as part of [`next-app`](#4-next-app) by answering "yes" to the query
+parameters prompt.
+
+#### Options
+
+1. `directory` - the application directory
+
+#### Example
+
+```sh
+npx nx g nuqs --directory=web
 ```
 
 ## Navigation utilities

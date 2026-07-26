@@ -6,4 +6,5 @@ export interface NextAppGeneratorSchema {
   withAuth?: boolean;
   withFormUtils: boolean;
   withSentry: boolean;
+  withNuqs: boolean;
 }

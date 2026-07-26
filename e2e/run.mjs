@@ -53,7 +53,7 @@ try {
   );
 
   console.log('==> Generating next-app...');
-  run('npx nx g next-app my-app web --no-interactive --withStore --withFormUtils --withApiClient --withAuth', {
+  run('npx nx g next-app my-app web --no-interactive --withStore --withFormUtils --withApiClient --withAuth --withNuqs', {
     cwd: e2eWorkspace,
   });
 

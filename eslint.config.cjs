@@ -7,7 +7,16 @@ module.exports = (async () => {
 
   return [
     {
-      ignores: ['**/node_modules', '**/dist', '**/*.js', '**/*.cjs', '**/*.mjs', 'apps/*/app.config.ts', 'src/lib/nx-generators.ts'],
+      ignores: [
+        '**/node_modules',
+        'e2e/.workspace/**',
+        '**/dist',
+        '**/*.js',
+        '**/*.cjs',
+        '**/*.mjs',
+        'apps/*/app.config.ts',
+        'src/lib/nx-generators.ts',
+      ],
     },
     ...baseConfig,
     ...ronasitConfig,

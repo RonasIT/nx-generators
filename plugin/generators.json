@@ -89,6 +89,11 @@
       "factory": "./src/shared/generators/navigation-utils/generator",
       "schema": "./src/shared/generators/navigation-utils/schema.json",
       "description": "Creates basic utilities for navigation"
+    },
+    "mantine": {
+      "factory": "./src/generators/mantine/generator",
+      "schema": "./src/generators/mantine/schema.json",
+      "description": "Installs the mantine library and generates theme files for a Next.js application."
     }
   }
 }

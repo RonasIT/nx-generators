@@ -28,6 +28,7 @@ import {
   runNxAddCommand,
   runWithMinReleaseAgeDisabled,
 } from '../../shared/utils';
+import { runMantineGenerator } from '../mantine';
 import { runNuqsGenerator } from '../nuqs';
 import { NextAppGeneratorSchema } from './schema';
 
@@ -119,6 +120,10 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
 
   if (options.withNuqs) {
     await runNuqsGenerator(tree, { directory: options.directory });
+  }
+
+  if (options.withMantine) {
+    await runMantineGenerator(tree, { directory: options.directory });
   }
 
   addNxAppTag(tree, options.directory);

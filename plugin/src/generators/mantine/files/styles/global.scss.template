@@ -1,0 +1,17 @@
+@use 'variables' as variables;
+
+@layer base {
+  * {box-sizing: border-box;}
+  body {background-color: var(--background-primary); color: var(--text-primary);
+    font-size: var(--font-size-default); line-height: 1.6;
+  }
+  a {text-decoration: none; color: inherit;}
+  button {cursor: pointer;}
+  h1, h2, h3, h4, h5, h6, p {margin: 0;}
+  ol, ul {margin-block: unset;}
+  fieldset {margin: unset; padding: unset; border: none;}
+}
+
+.container {margin-inline: auto; box-sizing: border-box; width: 100%;
+  max-width: var(--max-content-width); padding-inline: var(--screen-padding);
+}

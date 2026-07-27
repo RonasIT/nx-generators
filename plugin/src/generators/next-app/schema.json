@@ -53,7 +53,13 @@
     "withAuth": {
       "type": "boolean",
       "description": "Add auth libraries to the app"
+    },
+    "withMantine": {
+      "type": "boolean",
+      "description": "Add Mantine and theme settings to the app",
+      "default": false,
+      "x-prompt": "Do you want to create a UI-kit library, based on Mantine theme and components?"
     }
   },
-  "required": ["name", "directory", "withSentry", "withNuqs"]
+  "required": ["name", "directory", "withSentry", "withNuqs", "withMantine"]
 }

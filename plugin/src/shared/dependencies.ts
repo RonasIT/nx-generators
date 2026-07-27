@@ -76,6 +76,10 @@ export const dependencies = {
   nuqs: {
     nuqs: '^2.9.0',
   },
+  mantine: {
+    '@mantine/core': '^9.0.0',
+    '@mantine/hooks': '^9.0.0',
+  },
 };
 
 export const devDependencies = {
@@ -129,5 +133,10 @@ export const devDependencies = {
   },
   'next-auth': {
     '@types/js-cookie': '^3.0.6',
+  },
+  mantine: {
+    postcss: '^8.5.8',
+    'postcss-preset-mantine': '^1.18.0',
+    'postcss-simple-vars': '^7.0.1',
   },
 };

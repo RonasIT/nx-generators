@@ -2,7 +2,7 @@ const typescriptEslint = require('@typescript-eslint/eslint-plugin');
 const unusedImports = require('eslint-plugin-unused-imports');
 const react = require('eslint-plugin-react');
 const reactHooks = require('eslint-plugin-react-hooks');
-const _import = require('eslint-plugin-import');
+const importX = require('eslint-plugin-import-x');
 const reactNative = require('eslint-plugin-react-native');
 const unistyles = require('eslint-plugin-react-native-unistyles');
 const tseslint = require('typescript-eslint');
@@ -29,7 +29,7 @@ module.exports = (async () => {
         'unused-imports': unusedImports,
         react,
         'react-hooks': reactHooks,
-        import: _import,
+        'import-x': importX,
         'react-native': reactNative,
         unistyles,
       },
@@ -63,13 +63,13 @@ module.exports = (async () => {
 
         'react-native/style-sheet-object-names': ['EStyleSheet'],
 
-        'import/ignore': ['node_modules'],
+        'import-x/ignore': ['node_modules'],
 
-        'import/parsers': {
+        'import-x/parsers': {
           '@typescript-eslint/parser': ['.ts', '.tsx'],
         },
 
-        'import/resolver': {
+        'import-x/resolver': {
           typescript: {
             alwaysTryTypes: true,
           },
@@ -119,7 +119,7 @@ module.exports = (async () => {
         '@stylistic/type-named-tuple-spacing': 'warn',
         'no-var': 'warn',
         'no-dupe-class-members': 'off',
-        'import/prefer-default-export': 'off',
+        'import-x/prefer-default-export': 'off',
         '@stylistic/implicit-arrow-linebreak': ['warn', 'beside'],
 
         '@stylistic/newline-per-chained-call': [
@@ -315,11 +315,11 @@ module.exports = (async () => {
         '@stylistic/jsx-first-prop-new-line': ['warn', 'multiline'],
         'react/prop-types': 'off',
         'react/jsx-fragments': ['warn', 'element'],
-        'import/newline-after-import': 'warn',
-        'import/no-unresolved': 'error',
-        'import/no-cycle': ['error', { ignoreExternal: true }],
+        'import-x/newline-after-import': 'warn',
+        'import-x/no-unresolved': 'error',
+        'import-x/no-cycle': ['error', { ignoreExternal: true }],
 
-        'import/order': [
+        'import-x/order': [
           'warn',
           {
             groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
@@ -330,7 +330,7 @@ module.exports = (async () => {
           },
         ],
 
-        'import/no-duplicates': 'warn',
+        'import-x/no-duplicates': 'warn',
         'react-hooks/exhaustive-deps': 'off',
 
         'unistyles/no-unused-styles': 'error',  

@@ -84,7 +84,7 @@ export const devDependencies = {
     prettier: '^3.6.2',
     'eslint-config-prettier': '^10.1.8',
     'eslint-import-resolver-typescript': '^4.4.4',
-    'eslint-plugin-import': '^2.32.0',
+    'eslint-plugin-import-x': '^4.17.1',
     'eslint-plugin-jsx-a11y': '^6.10.2',
     'eslint-plugin-react': '^7.37.5',
     'eslint-plugin-react-hooks': '^7.0.0',

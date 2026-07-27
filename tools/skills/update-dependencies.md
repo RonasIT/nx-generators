@@ -32,8 +32,9 @@ requests override the corresponding default step:
   `npm-check-updates`/`--reject` invocation in 1d) to just those packages instead of running a full
   sweep, and skip 1a/1b/1c entirely unless the named packages are `nx`/`@nx/*`, `expo`, or `next`.
 - A request to **skip or exclude** a package or category (e.g. "don't upgrade Expo yet") means
-  excluding it from `ncu`'s `--reject` pattern in 1d and skipping the corresponding sub-phase
-  (1a/1b/1c) even if a newer version is available.
+  adding it to `ncu`'s `--reject` pattern in 1d (packages matching `--reject` are the ones `ncu`
+  leaves alone, per Phase 1d) and skipping the corresponding sub-phase (1a/1b/1c) even if a newer
+  version is available.
 - Still run Phase 2 (propagating into `plugin/src/shared/dependencies.ts` and `plugin/package.json`)
   and Phase 3 (tests) for whatever you actually changed — narrowing the scope of Phase 1 doesn't
   excuse skipping the propagation/verification steps for the packages that were touched.
@@ -222,8 +223,13 @@ from .npmrc: 3 days` and holds back anything newer (shown as `[cooldown] x.y.z` 
   meaning a newer version exists but isn't old enough yet). No extra flag needed; only pass
   `--cooldown <n>` explicitly if you want to override that value for this run.
 - `--root --workspaces` covers the root `package.json` (→ `apps/web`'s dependencies, since it has
-  no package.json of its own) and every workspace package.json (`apps/mobile`, `plugin`) in one
-  pass.
+  no package.json of its own) and `apps/mobile/package.json`. Also run a **separate** pass
+  against the plugin manifest so packages like `@phenomnomnominal/tsquery` or `@types/lodash`
+  aren't silently skipped:
+  ```sh
+  npx --yes npm-check-updates --packageFile plugin/package.json --reject '/^(@nx\/.*|nx)$/'
+  npx --yes npm-check-updates --packageFile plugin/package.json --reject '/^(@nx\/.*|nx)$/' -u
+  ```
 - `--reject '/^(@nx\/.*|nx)$/'` excludes Nx packages — those are handled by `nx migrate` (Phase
   1a) since they need codemods, not just a version bump. (`--reject` takes one regex, not a
   comma-list of regexes — combine multiple patterns into one with `|` as shown.)
@@ -277,7 +283,7 @@ updated there too, or every future run of the generators will scaffold outdated 
 
 ## Phase 3 — test the package before publishing
 
-Run these commands in parallel, if possible
+Run these commands:
 
 ```sh
 npx nx test nx-generators   # unit tests for the generators
@@ -309,12 +315,14 @@ npx nx migrate latest && npm install && npx nx migrate --run-migrations   # 1a, 
 # ...expo-upgrade skill or manual `expo install`/`expo-doctor` flow...     # 1b, if Expo SDK bumped
 npx @next/codemod@canary upgrade latest                                   # 1c, if Next.js has a new major/minor
 npx --yes npm-check-updates --root --workspaces --reject '/^(@nx\/.*|nx)$/' -u   # respects .npmrc min-release-age automatically
+npx --yes npm-check-updates --packageFile plugin/package.json --reject '/^(@nx\/.*|nx)$/' -u   # --workspaces above doesn't reach plugin/package.json
 npm install && npm run deps:sync
 
 # Phase 2 — propagate into the generators
 npm run deps:check-generators   # then edit plugin/src/shared/dependencies.ts + plugin/package.json
 
-# Phase 3 — test the package (run in parallel, then check all three exit codes)
-npx nx test nx-generators & npm run test:e2e & npm run lint & wait   # POSIX shell (bash/zsh/git-bash)
-# PowerShell: see the Start-Job/Wait-Job snippet in Phase 3 above — `&` above won't parse there
+# Phase 3 — test the package
+npx nx test nx-generators
+npm run test:e2e
+npm run lint
 ```

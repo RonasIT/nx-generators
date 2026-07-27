@@ -30,6 +30,7 @@ import {
   formatName,
   getImportPathPrefix,
   runNxAddCommand,
+  runWithMinReleaseAgeDisabled,
 } from '../../shared/utils';
 import { generateEasignore } from './easignore';
 import { ExpoAppGeneratorSchema } from './schema';
@@ -53,10 +54,12 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   runNxAddCommand('@nx/expo');
 
   if (!existsSync(appRoot)) {
-    execSync(
-      `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=none --unitTestRunner=none --e2eTestRunner=none`,
-      { stdio: 'inherit' },
-    );
+    runWithMinReleaseAgeDisabled(() => {
+      execSync(
+        `npx nx g @nx/expo:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=none --unitTestRunner=none --e2eTestRunner=none`,
+        { stdio: 'inherit' },
+      );
+    });
   }
 
   // Generate shared libs
@@ -144,22 +147,25 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   await formatFiles(tree);
 
   return (): void => {
-    // NOTE: @nx/expo:app may install older version of Expo SDK before we override to newer version; legacy-peer-deps reconciles the transition.
-    execSync('npm install --legacy-peer-deps', { stdio: 'inherit' });
+    runWithMinReleaseAgeDisabled(() => {
+      // NOTE: @nx/expo:app may install older version of Expo SDK before we override to newer version; legacy-peer-deps reconciles the transition.
+      execSync('npm install --legacy-peer-deps', { stdio: 'inherit' });
 
-    if (shouldGenerateAuthLibs) {
-      execSync(`npx nx g auth --directory=${options.directory} --type=${BaseGeneratorType.EXPO_APP}`, {
-        stdio: 'inherit',
-      });
-    }
+      if (shouldGenerateAuthLibs) {
+        execSync(`npx nx g auth --directory=${options.directory} --type=${BaseGeneratorType.EXPO_APP}`, {
+          stdio: 'inherit',
+        });
+      }
 
-    if (options.withSentry) {
-      execSync(`npx nx g sentry --directory=${appRoot}`, {
-        stdio: 'inherit',
-      });
-    }
+      if (options.withSentry) {
+        execSync(`npx nx g sentry --directory=${appRoot}`, {
+          stdio: 'inherit',
+        });
+      }
 
-    execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
+      execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
+      execSync('npx expo install --fix', { stdio: 'inherit' });
+    });
   };
 }
 

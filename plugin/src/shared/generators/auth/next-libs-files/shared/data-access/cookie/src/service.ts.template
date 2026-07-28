@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import { isNil } from 'lodash';
+import { isNil } from 'lodash-es';
 import { cookieConfig } from './config';
 
 type Key = keyof typeof cookieConfig.keys;

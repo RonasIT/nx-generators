@@ -34,6 +34,7 @@
     "typescript": ">=5.0.0 <7.0.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.24",
     "typescript": "~6.0.3"
   },
   "type": "commonjs",

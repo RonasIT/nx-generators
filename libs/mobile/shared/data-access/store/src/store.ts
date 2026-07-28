@@ -1,8 +1,8 @@
 import { Reducer } from '@reduxjs/toolkit';
 import { setupReactotron } from '@ronas-it/react-native-common-modules/reactotron';
 import { AppStateFromRootReducer, createStoreInitializer } from '@ronas-it/rtkq-entity-api';
-import { authApi, profileApi } from '@ronas-it/mobile/shared/data-access/api';
 import { authListenerMiddleware, authReducer, authReducerPath } from '@ronas-it/mobile/shared/data-access/auth';
+import { authApi, profileApi } from '@ronas-it/shared/data-access/api';
 
 export type AppState = AppStateFromRootReducer<typeof rootReducer>;
 

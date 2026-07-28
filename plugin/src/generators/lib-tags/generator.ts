@@ -7,7 +7,7 @@ import { LibTagsGeneratorSchema } from './schema';
 import { checkApplicationTags, checkLibraryTags } from './utils';
 
 const context: LibTagsContext = {
-  log: console.log
+  log: console.log,
 };
 
 export async function libTagsGenerator(tree: Tree, options: LibTagsGeneratorSchema): Promise<void> {

@@ -5,9 +5,9 @@ import {
   RefreshTokenInterceptorOptions,
   tokenInterceptor,
 } from '@ronas-it/axios-api-client';
-import { authApi, profileApi, LogInResponse } from '@ronas-it/mobile/shared/data-access/api';
-import { apiService, configuration } from '@ronas-it/mobile/shared/data-access/api-client';
 import { AppStorageValue, storage } from '@ronas-it/mobile/shared/data-access/storage';
+import { authApi, profileApi, LogInResponse } from '@ronas-it/shared/data-access/api';
+import { apiService, configuration } from '@ronas-it/shared/data-access/api-client';
 import { authActions, authReducerPath, authSelectors, AuthState } from './slice';
 
 export const authListenerMiddleware = createListenerMiddleware<{

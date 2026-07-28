@@ -13,6 +13,7 @@ export function FormTextarea<T extends FieldValues>({
   name,
   control,
   onChange,
+  error,
   ...restProps
 }: Omit<FormTextareaProps<T>, 'vars'>): ReactElement {
   const { field, fieldState } = useController({ control, name });
@@ -22,7 +23,7 @@ export function FormTextarea<T extends FieldValues>({
       value={field.value}
       onChange={onChange ?? field.onChange}
       onBlur={field.onBlur}
-      error={fieldState.error?.message}
+      error={error || fieldState.error?.message}
       {...restProps}
     />
   );

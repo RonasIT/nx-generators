@@ -15,6 +15,7 @@ export function FormCheckbox<T extends FieldValues>({
   control,
   onChange,
   isSecure,
+  error,
   ...restProps
 }: Omit<FormCheckboxProps<T>, 'vars'>): ReactElement {
   const { field, fieldState } = useController({ control, name });
@@ -24,7 +25,7 @@ export function FormCheckbox<T extends FieldValues>({
       checked={field.value}
       onChange={onChange ?? field.onChange}
       onBlur={field.onBlur}
-      error={fieldState.error?.message}
+      error={error || fieldState.error?.message}
       {...restProps}
     />
   );

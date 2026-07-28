@@ -13,6 +13,7 @@ export function FormSelect<T extends FieldValues>({
   name,
   control,
   onChange,
+  error,
   ...restProps
 }: FormSelectProps<T>): ReactElement {
   const { field, fieldState } = useController({ control, name });
@@ -22,7 +23,7 @@ export function FormSelect<T extends FieldValues>({
       value={field.value || null}
       onChange={onChange ?? field.onChange}
       onBlur={field.onBlur}
-      error={fieldState.error?.message}
+      error={error || fieldState.error?.message}
       {...restProps}
     />
   );

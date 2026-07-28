@@ -9,7 +9,7 @@ export function hasMantineProvider(content: string): boolean {
   return content.includes(mantineModuleName);
 }
 
-export function addMantineProvider(content: string): string {
+export function addMantineProvider(content: string, uiKitLibrarySpecifier: string): string {
   const project = new Project({
     useInMemoryFileSystem: true,
     manipulationSettings: {
@@ -47,9 +47,12 @@ export function addMantineProvider(content: string): string {
     .map((child) => child.getText())
     .join('');
 
-  jsxElement.replaceWithText(`${openingText}\n<MantineProvider>\n${childrenText}\n</MantineProvider>\n${closingText}`);
+  jsxElement.replaceWithText(
+    `${openingText}\n<MantineProvider theme={theme}>\n${childrenText}\n</MantineProvider>\n${closingText}`,
+  );
 
   addNamedImport('MantineProvider', mantineModuleSpecifier, file);
+  addNamedImport('theme', uiKitLibrarySpecifier, file);
 
   return file.getFullText();
 }

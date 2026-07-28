@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import * as path from 'path';
 import {
   addDependenciesToPackageJson,
@@ -31,6 +32,7 @@ export async function runMantineGenerator(tree: Tree, options: MantineGeneratorS
   const layoutPath = `${appRoot}/app/[locale]/layout.tsx`;
   const importPathPrefix = getImportPathPrefix(tree);
   const stylesLibPath = `${importPathPrefix}/${options.directory}/shared/ui/styles`;
+  const uiKitLibrarySpecifier = `${importPathPrefix}/${options.directory}/shared/ui/ui-kit`;
 
   if (tree.exists(providersPath)) {
     const providersContent = tree.read(providersPath, 'utf-8') as string;
@@ -38,7 +40,7 @@ export async function runMantineGenerator(tree: Tree, options: MantineGeneratorS
     if (hasMantineProvider(providersContent)) {
       output.log({ title: `MantineProvider is already set up in ${providersPath}.` });
     } else {
-      tree.write(providersPath, addMantineProvider(providersContent));
+      tree.write(providersPath, addMantineProvider(providersContent, uiKitLibrarySpecifier));
     }
   } else {
     if (!tree.exists(layoutPath)) {
@@ -50,7 +52,7 @@ export async function runMantineGenerator(tree: Tree, options: MantineGeneratorS
     if (hasMantineProvider(layoutContent)) {
       output.log({ title: `MantineProvider is already set up in ${layoutPath}.` });
     } else {
-      tree.write(layoutPath, wrapLayoutBodyWithMantine(layoutContent));
+      tree.write(layoutPath, wrapLayoutBodyWithMantine(layoutContent, uiKitLibrarySpecifier));
     }
   }
 
@@ -61,6 +63,16 @@ export async function runMantineGenerator(tree: Tree, options: MantineGeneratorS
   generateFiles(tree, path.join(__dirname, 'files/root'), repoRoot, {});
   generateFiles(tree, path.join(__dirname, 'files/styles'), `libs/${options.directory}/shared/ui/styles`, {});
 
+  execSync(
+    `npx nx g react-lib --app=${options.directory} --scope=shared --type=ui --name=ui-kit --withComponent=false`,
+    {
+      stdio: 'inherit',
+    },
+  );
+  generateFiles(tree, path.join(__dirname, 'files/ui-kit'), `libs/${options.directory}/shared/ui/ui-kit/src`, {});
+
+  // Read tsconfig.base.json only after react-lib's execSync has finished writing its own
+  // path entry to disk, so this write doesn't stage a stale snapshot that clobbers it on flush.
   const tsConfig = readJson(tree, 'tsconfig.base.json');
   const paths = tsConfig.compilerOptions.paths;
 

@@ -2,7 +2,7 @@ import { IndentationText, Project, QuoteKind, SyntaxKind } from 'ts-morph';
 import { addNamedImport } from '../../../shared/utils';
 import { mantineModuleName, mantineModuleSpecifier } from './update-providers';
 
-export function wrapLayoutBodyWithMantine(content: string): string {
+export function wrapLayoutBodyWithMantine(content: string, uiKitLibrarySpecifier: string): string {
   const project = new Project({
     useInMemoryFileSystem: true,
     manipulationSettings: {
@@ -31,10 +31,11 @@ export function wrapLayoutBodyWithMantine(content: string): string {
     .join('');
 
   bodyElement.replaceWithText(
-    `${openingText}\n<${mantineModuleName}>\n${childrenText}\n</${mantineModuleName}>\n${closingText}`,
+    `${openingText}\n<${mantineModuleName} theme={theme}>\n${childrenText}\n</${mantineModuleName}>\n${closingText}`,
   );
 
   addNamedImport(mantineModuleName, mantineModuleSpecifier, file);
+  addNamedImport('theme', uiKitLibrarySpecifier, file);
 
   return file.getFullText();
 }

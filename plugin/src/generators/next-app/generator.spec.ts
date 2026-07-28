@@ -15,6 +15,7 @@ import {
   readJsonMock,
   writeJsonMock,
 } from '../../shared/tests-utils';
+import * as mantineGenerator from '../mantine';
 import * as nuqsGenerator from '../nuqs';
 import { nextAppGenerator } from './generator';
 
@@ -40,6 +41,15 @@ jest.mock('../nuqs', () => {
   };
 });
 
+jest.mock('../mantine', () => {
+  const actual = jest.requireActual('../mantine');
+
+  return {
+    ...actual,
+    runMantineGenerator: jest.fn(),
+  };
+});
+
 describe('nextAppGenerator with file content checks', () => {
   let tree: any;
 
@@ -51,6 +61,7 @@ describe('nextAppGenerator with file content checks', () => {
     withFormUtils: false,
     withSentry: false,
     withNuqs: false,
+    withMantine: false,
   };
 
   beforeEach(() => {
@@ -202,6 +213,7 @@ describe('nextAppGenerator with file content checks', () => {
       withFormUtils: false,
       withSentry: false,
       withNuqs: false,
+      withMantine: false,
     });
 
     const templatesDir = path.join(__dirname, 'files');
@@ -227,6 +239,7 @@ describe('nextAppGenerator with file content checks', () => {
       withFormUtils: true,
       withSentry: true,
       withNuqs: true,
+      withMantine: true,
     };
 
     await nextAppGenerator(tree, options);
@@ -259,6 +272,11 @@ describe('nextAppGenerator with file content checks', () => {
 
     // Confirm runNuqsGenerator called (because withNuqs: true)
     expect(nuqsGenerator.runNuqsGenerator).toHaveBeenCalledWith(expect.anything(), { directory: options.directory });
+
+    // Confirm runMantineGenerator called (because withMantine: true)
+    expect(mantineGenerator.runMantineGenerator).toHaveBeenCalledWith(expect.anything(), {
+      directory: options.directory,
+    });
   });
 
   it('should not run nuqs generator when withNuqs is false', async () => {
@@ -267,5 +285,13 @@ describe('nextAppGenerator with file content checks', () => {
     await nextAppGenerator(tree, optionsBase);
 
     expect(nuqsGenerator.runNuqsGenerator).not.toHaveBeenCalled();
+  });
+
+  it('should not run mantine generator when withMantine is false', async () => {
+    existsSyncMock.mockReturnValue(true);
+
+    await nextAppGenerator(tree, optionsBase);
+
+    expect(mantineGenerator.runMantineGenerator).not.toHaveBeenCalled();
   });
 });

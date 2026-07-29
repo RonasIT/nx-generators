@@ -1,0 +1,54 @@
+# Whitelist — ignore everything except what's needed for the mobile EAS build
+
+# Ignore everything
+*
+.*
+
+# Mobile apps
+!apps
+apps/*
+
+# Shared libraries
+!libs
+libs/*
+!libs/shared
+!libs/shared/**
+
+# i18n translations
+!i18n
+i18n/*
+!i18n/shared
+!i18n/shared/**
+
+# Dependency patches for packages
+!patches
+!patches/**
+
+# Tools
+!tools
+!tools/**
+
+# Root config files required for the build
+!package.json
+!package-lock.json
+!tsconfig.json
+!tsconfig.base.json
+!babel.config.json
+!jest.config.ts
+!jest.preset.js
+!types.d.ts
+
+# Mobile app: mobile
+!apps/mobile
+!apps/mobile/**
+apps/mobile/.expo
+apps/mobile/android
+apps/mobile/ios
+
+# Libraries: mobile
+!libs/mobile
+!libs/mobile/**
+
+# i18n: mobile
+!i18n/mobile
+!i18n/mobile/**

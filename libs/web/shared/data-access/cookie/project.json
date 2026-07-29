@@ -1,0 +1,9 @@
+{
+  "name": "web/shared/data-access/cookie",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/web/shared/data-access/cookie/src",
+  "projectType": "library",
+  "tags": ["app:web", "scope:shared", "type:data-access"],
+  "// targets": "to see all targets run: nx show project web/shared/data-access/cookie --web",
+  "targets": {}
+}

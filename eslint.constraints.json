@@ -38,5 +38,9 @@
   {
     "sourceTag": "scope:profile",
     "onlyDependOnLibsWithTags": ["scope:profile", "scope:shared"]
+  },
+  {
+    "sourceTag": "app:web",
+    "onlyDependOnLibsWithTags": ["app:web", "app:shared"]
   }
 ]

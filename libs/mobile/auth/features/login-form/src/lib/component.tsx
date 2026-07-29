@@ -6,13 +6,13 @@ import { ReactElement, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
-import { authApi } from '@ronas-it/mobile/shared/data-access/api';
 import { AppVersion } from '@ronas-it/mobile/shared/ui/app-version';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { rem } from '@ronas-it/mobile/shared/ui/styles';
 import { AppButton, AppText, ErrorMessage, FormTextInput, AppImage } from '@ronas-it/mobile/shared/ui/ui-kit';
-import { FormValues } from '@ronas-it/mobile/shared/utils/form';
 import { navigationConfig } from '@ronas-it/mobile/shared/utils/navigation';
+import { authApi } from '@ronas-it/shared/data-access/api';
+import { FormValues } from '@ronas-it/shared/utils/form';
 import { LoginFormSchema } from './forms';
 
 export function LoginForm(): ReactElement {

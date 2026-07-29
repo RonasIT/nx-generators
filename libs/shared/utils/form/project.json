@@ -1,0 +1,9 @@
+{
+  "name": "shared-utils-form",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/utils/form/src",
+  "projectType": "library",
+  "tags": ["type:utils", "scope:shared", "app:shared"],
+  "// targets": "to see all targets run: nx show project shared-utils-form --web",
+  "targets": {}
+}

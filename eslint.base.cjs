@@ -11,7 +11,7 @@ const compat = new FlatCompat({
 
 module.exports = [
   {
-    ignores: ['**/node_modules', '**/*.js', 'apps/*/app.config.ts', 'src/lib/nx-generators.ts'],
+    ignores: ['**/node_modules', 'e2e/.workspace/**', '**/*.js', 'apps/*/app.config.ts', 'src/lib/nx-generators.ts'],
   },
   {
     plugins: {

@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, ButtonProps, Loader, polymorphic } from '@mantine/core';
 import { ComponentPropsWithoutRef, ReactElement } from 'react';
 import { useOptionalWrapper } from '../hooks';

@@ -20,7 +20,15 @@ import {
   runNavigationUtilsGenerator,
   runStoreGenerator,
 } from '../../shared/generators';
-import { addNxAppTag, confirm, formatName, getImportPathPrefix, runNxAddCommand } from '../../shared/utils';
+import {
+  addNxAppTag,
+  confirm,
+  formatName,
+  getImportPathPrefix,
+  runNxAddCommand,
+  runWithMinReleaseAgeDisabled,
+} from '../../shared/utils';
+import { runNuqsGenerator } from '../nuqs';
 import { NextAppGeneratorSchema } from './schema';
 
 export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSchema) {
@@ -41,19 +49,18 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   runNxAddCommand('@nx/next');
 
   if (!existsSync(appRoot)) {
-    execSync(
-      `npx nx g @nx/next:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=none --appDir=true --style=scss --src=false --unitTestRunner=none --e2eTestRunner=none`,
-      { stdio: 'inherit' },
-    );
+    runWithMinReleaseAgeDisabled(() => {
+      execSync(
+        `npx nx g @nx/next:app ${options.name} --directory=apps/${options.directory} --tags="${tags.join(', ')}" --linter=none --appDir=true --style=scss --src=false --unitTestRunner=none --e2eTestRunner=none`,
+        { stdio: 'inherit' },
+      );
+    });
   }
 
   tree.write('.gitignore', tree.read('.gitignore')?.toString() + '\nnext-env.d.ts\n');
 
   await runI18nNextGenerator(tree, options);
-  await runNavigationUtilsGenerator(tree, {
-    appDirectory: options.directory,
-    baseGeneratorType: BaseGeneratorType.NEXT_APP,
-  });
+  await runNavigationUtilsGenerator(tree, { appDirectory: options.directory });
 
   if (options.withStore) {
     await runStoreGenerator(tree, {
@@ -110,6 +117,10 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
     tree.delete(`${appRoot}/app/[locale]/providers.tsx`);
   }
 
+  if (options.withNuqs) {
+    await runNuqsGenerator(tree, { directory: options.directory });
+  }
+
   addNxAppTag(tree, options.directory);
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {
     ...options,
@@ -123,21 +134,23 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   await formatFiles(tree);
 
   return (): void => {
-    installPackagesTask(tree);
+    runWithMinReleaseAgeDisabled(() => {
+      installPackagesTask(tree);
 
-    if (shouldGenerateAuthLibs) {
-      execSync(`npx nx g auth --directory=${options.directory} --type=${BaseGeneratorType.NEXT_APP}`, {
-        stdio: 'inherit',
-      });
-    }
+      if (shouldGenerateAuthLibs) {
+        execSync(`npx nx g auth --directory=${options.directory} --type=${BaseGeneratorType.NEXT_APP}`, {
+          stdio: 'inherit',
+        });
+      }
 
-    if (options.withSentry) {
-      execSync(`npx nx g sentry --directory=${appRoot}`, {
-        stdio: 'inherit',
-      });
-    }
+      if (options.withSentry) {
+        execSync(`npx nx g sentry --directory=${appRoot}`, {
+          stdio: 'inherit',
+        });
+      }
 
-    execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
+      execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
+    });
   };
 }
 

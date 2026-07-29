@@ -19,8 +19,8 @@ export const dependencies = {
     'expo-localization': '~57.0.0',
     'i18n-js': '~4.5.1',
     'lodash-es': '^4.18.1',
-    react: '~19.2.3',
-    'react-dom': '~19.2.3',
+    react: '~19.2.7',
+    'react-dom': '~19.2.7',
     'react-native': '~0.86.0',
     'react-native-svg': '~15.15.4',
     'react-native-svg-transformer': '~1.5.1',
@@ -72,6 +72,9 @@ export const dependencies = {
     next: {
       '@sentry/nextjs': '^10.63.0',
     },
+  },
+  nuqs: {
+    nuqs: '^2.9.0',
   },
 };
 

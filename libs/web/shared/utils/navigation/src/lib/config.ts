@@ -1,0 +1,8 @@
+export const navigationConfig = {
+  routes: {
+    // TODO: Write app routes here. Example:
+    public: {
+      signIn: '/',
+    },
+  },
+};

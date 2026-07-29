@@ -3,10 +3,10 @@ import { AppSafeAreaView } from '@ronas-it/react-native-common-modules/safe-area
 import { ReactElement } from 'react';
 import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
-import { authApi, profileApi } from '@ronas-it/mobile/shared/data-access/api';
 import { Images } from '@ronas-it/mobile/shared/ui/assets';
 import { rem } from '@ronas-it/mobile/shared/ui/styles';
 import { AppText, AppButton, AppSpinner, AppImage } from '@ronas-it/mobile/shared/ui/ui-kit';
+import { authApi, profileApi } from '@ronas-it/shared/data-access/api';
 
 export interface ProfileDetailsProps {
   goToUiKitScreen: () => void;

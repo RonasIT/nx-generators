@@ -1,6 +1,6 @@
 import { i18n } from '@ronas-it/react-native-common-modules/i18n';
 import * as Yup from 'yup';
-import { BaseFormSchema, FormValues } from '@ronas-it/mobile/shared/utils/form';
+import { BaseFormSchema, FormValues } from '@ronas-it/shared/utils/form';
 
 export class LoginFormSchema implements BaseFormSchema<LoginFormSchema> {
   public username: string;

@@ -86,6 +86,7 @@ export const nxAddCommandMock = require('../utils/nx-utils').runNxAddCommand as 
 export const existsSyncMock = fs.existsSync as jest.Mock;
 export const generateFilesMock = devkit.generateFiles as jest.Mock;
 export const formatFilesMock = devkit.formatFiles as jest.Mock;
+export const outputLogMock = devkit.output.log as jest.Mock;
 export const addDependenciesMock = devkit.addDependenciesToPackageJson as jest.Mock;
 export const readJsonMock = devkit.readJson as jest.Mock;
 export const writeJsonMock = devkit.writeJson as jest.Mock;

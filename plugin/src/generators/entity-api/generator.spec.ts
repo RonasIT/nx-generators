@@ -11,6 +11,17 @@ jest.mock('enquirer', () => ({
   })),
 }));
 
+// getNxLibsPaths normally resolves libraries from the real tsconfig.base.json on disk,
+// which doesn't reflect the in-memory tree used in tests, so it's mocked with realistic paths.
+jest.mock('../../shared/utils', () => ({
+  ...jest.requireActual('../../shared/utils'),
+  getNxLibsPaths: jest.fn(() => [
+    'libs/mobile/shared/data-access/api/src',
+    'libs/mobile/shared/data-access/api-client/src',
+    'libs/mobile/shared/data-access/store/src',
+  ]),
+}));
+
 jest.mock('ts-morph', () => {
   const addProperty = jest.fn();
   const addElement = jest.fn();
@@ -52,18 +63,6 @@ describe('entityApiGenerator', () => {
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
-
-    // Provide a realistic tsconfig.base.json so utils can find libs
-    tree.write(
-      'tsconfig.base.json',
-      JSON.stringify({
-        compilerOptions: {
-          paths: {
-            '@libs/shared/data-access/api': ['libs/mobile/shared/data-access/api/src/index.ts'],
-          },
-        },
-      }),
-    );
   });
 
   it('should generate entity files and update redux store', async () => {

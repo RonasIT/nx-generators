@@ -41,6 +41,11 @@ Thumbs.db
 
 .nx/cache
 .nx/workspace-data
+.claude/worktrees
+.claude/settings.local.json
+
+*.tsbuildinfo
+output
 
 # Expo
 node_modules/
@@ -66,3 +71,4 @@ android
 apps/*/.next
 
 .nx/migrate-runs
+next-env.d.ts

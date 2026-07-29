@@ -133,6 +133,8 @@ Also generates [navigation utilities](#navigation-utilities).
 
 2. `directory` (optional) - name of the directory in the `apps/` folder (e.g: `web`)
 
+3. `withNuqs` (optional) - installs and configures nuqs for the app
+
 #### Example
 
 ```sh
@@ -351,6 +353,27 @@ Generates authentication setup module for Expo/Next application.
 npx nx g auth --directory=mobile --type=expo-app
 ```
 
+### 16. `nuqs`
+
+Installs [nuqs](https://nuqs.dev/) and adds the `NuqsAdapter` to a
+Next.js application.
+
+If a `providers.tsx` file already exists, the adapter is added there.
+If it doesn't exist yet, the `NuqsAdapter` is added directly to `layout.tsx`.
+
+Can be run standalone, or as part of [`next-app`](#4-next-app) by answering "yes" to the query
+parameters prompt.
+
+#### Options
+
+1. `directory` - the application directory
+
+#### Example
+
+```sh
+npx nx g nuqs --directory=web
+```
+
 ## Navigation utilities
 
 The generators `next-app` and `expo-app` also create customizable utilities for navigation
@@ -448,43 +471,4 @@ const filteredItemsLink = navigationConfig.routes.items.list({
 const viewLink = navigationConfig.routes.items.view(1); // /items/1
 const creationLink = navigationConfig.routes.items.create; // /items/create
 const editingLink = navigationConfig.routes.items.edit?.(1); // /items/1/edit
-```
-
-### useFilteringSearchParams (web only)
-
-It's a hook, which converts query parameters to and from a specified model for filtering purposes.
-It calls `useSearchParams` from `next/navigation` under the hook.
-Library - `filtering-search-params`
-
-#### Parameters
-
-- `searchParamsConstructor` - a class constructor used to instantiate the type `TParams` from the parsed search parameters.
-
-#### Returns
-
-An object containing:
-
-- `initialSearchParams` - search parameters, instantiated from `searchParamsConstructor`.
-- `setSearchParams` - a function to update the URL with new search parameters, accepting an instance of `TParams`.
-
-#### Example of usage
-
-```ts
-export class ItemSearchParams {
-  @Expose()
-  public categoryId?: number;
-
-  @Expose()
-  public tags?: Array<string>;
-}
-
-// It's necessary to add ItemSearchParams to this union type
-// so that the hook can accept ItemSearchParams
-export type FilteringSearchParams = ItemSearchParams;
-
-const { initialSearchParams, setSearchParams } = useFilteringSearchParams<ItemSearchParams>({
-  searchParamsConstructor: ItemSearchParams,
-});
-
-setSearchParams({ categoryId: 5 });
 ```

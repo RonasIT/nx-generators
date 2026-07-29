@@ -75,6 +75,11 @@
       "schema": "./src/shared/generators/auth/schema.json",
       "description": "Creates auth related api libs and configures redux store "
     },
+    "nuqs": {
+      "factory": "./src/generators/nuqs/generator",
+      "schema": "./src/generators/nuqs/schema.json",
+      "description": "Installs nuqs and adds the NuqsAdapter to a Next.js application"
+    },
     "dockerfile": {
       "factory": "./src/generators/dockerfile/generator",
       "schema": "./src/generators/dockerfile/schema.json",

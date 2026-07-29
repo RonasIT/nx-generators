@@ -211,6 +211,42 @@ export default function RootLayout({ children }: { children: ReactNode }): React
     assertFirstLine(path.join(__dirname, 'files/root'), '.', tree);
     assertFirstLine(path.join(__dirname, 'files/styles'), `libs/${directory}/shared/ui/styles`, tree);
     assertFirstLine(path.join(__dirname, 'files/ui-kit'), `libs/${directory}/shared/ui/ui-kit/src`, tree);
+
+    const indexContent = tree.read(`libs/${directory}/shared/ui/ui-kit/src/index.ts`, 'utf-8');
+
+    expect(indexContent).not.toContain('form-text-input');
+  });
+
+  it('should not generate ui-kit-form files when withFormComponents is false', async () => {
+    (getAppFrameworkName as jest.Mock).mockReturnValue('next');
+    tree.write(layoutPath, layoutWithoutProviders);
+
+    await runMantineGenerator(tree, { directory, withFormComponents: false });
+
+    expect(generateFilesMock).toHaveBeenCalledTimes(3);
+  });
+
+  it('should generate ui-kit-form files and append their exports to index.ts when withFormComponents is true', async () => {
+    (getAppFrameworkName as jest.Mock).mockReturnValue('next');
+    tree.write(layoutPath, layoutWithoutProviders);
+
+    await runMantineGenerator(tree, { directory, withFormComponents: true });
+
+    expect(generateFilesMock).toHaveBeenCalledTimes(4);
+
+    // index.ts.template is checked separately below: its content gets merged into the base ui-kit index.ts
+    assertFirstLine(path.join(__dirname, 'files/ui-kit-form'), `libs/${directory}/shared/ui/ui-kit/src`, tree, {
+      ignoreFiles: ['index.ts.template'],
+    });
+
+    const indexContent = tree.read(`libs/${directory}/shared/ui/ui-kit/src/index.ts`, 'utf-8') as string;
+
+    expect(indexContent).toContain(`export * from './lib/theme';`);
+    expect(indexContent).toContain(`export * from './lib/form-text-input/component';`);
+    expect(indexContent).toContain(`export * from './lib/form-textarea/component';`);
+    expect(indexContent).toContain(`export * from './lib/form-checkbox/component';`);
+    expect(indexContent).toContain(`export * from './lib/form-select/component';`);
+    expect(indexContent.indexOf('lib/theme')).toBeLessThan(indexContent.indexOf('form-text-input'));
   });
 
   it('should generate the ui-kit library via react-lib and register styles paths in tsconfig.base.json', async () => {

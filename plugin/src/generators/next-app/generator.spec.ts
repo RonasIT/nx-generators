@@ -273,9 +273,10 @@ describe('nextAppGenerator with file content checks', () => {
     // Confirm runNuqsGenerator called (because withNuqs: true)
     expect(nuqsGenerator.runNuqsGenerator).toHaveBeenCalledWith(expect.anything(), { directory: options.directory });
 
-    // Confirm runMantineGenerator called (because withMantine: true)
+    // Confirm runMantineGenerator called (because withMantine: true), with form components enabled (because withFormUtils: true)
     expect(mantineGenerator.runMantineGenerator).toHaveBeenCalledWith(expect.anything(), {
       directory: options.directory,
+      withFormComponents: true,
     });
   });
 

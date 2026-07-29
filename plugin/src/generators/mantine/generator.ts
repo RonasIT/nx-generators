@@ -95,6 +95,17 @@ export async function runMantineGenerator(tree: Tree, options: MantineGeneratorS
 
   writeJson(tree, 'tsconfig.base.json', tsConfig);
 
+  // TypeScript's `noUncheckedSideEffectImports` (default since TS 6.0) only matches the ambient `*.scss`
+  // wildcard module against specifiers literally ending in `.scss`, so the extensionless path alias used
+  // for the side-effect import in layout.tsx needs its own declaration to typecheck.
+  const appIndexDtsPath = `${appRoot}/index.d.ts`;
+  const globalStylesModuleDeclaration = `declare module '${stylesLibPath}/global';`;
+  const appIndexDtsContent = tree.exists(appIndexDtsPath) ? (tree.read(appIndexDtsPath, 'utf-8') as string) : '';
+
+  if (!appIndexDtsContent.includes(globalStylesModuleDeclaration)) {
+    appendFileContent(appIndexDtsPath, `\n${globalStylesModuleDeclaration}\n`, tree);
+  }
+
   await formatFiles(tree);
 
   return (): void => {

@@ -200,6 +200,43 @@ export default function RootLayout({ children }: { children: ReactNode }): React
     expect(layoutContent).toContain(`import '@proj/${directory}/shared/ui/styles/global';`);
   });
 
+  it('should declare the global styles alias as an ambient module in index.d.ts', async () => {
+    (getAppFrameworkName as jest.Mock).mockReturnValue('next');
+    tree.write(layoutPath, layoutWithoutProviders);
+    tree.write(`${appRoot}/index.d.ts`, `declare module '*.svg';\n`);
+
+    await runMantineGenerator(tree, { directory });
+
+    const indexDtsContent = tree.read(`${appRoot}/index.d.ts`, 'utf-8') as string;
+
+    expect(indexDtsContent).toContain(`declare module '*.svg';`);
+    expect(indexDtsContent).toContain(`declare module '@proj/${directory}/shared/ui/styles/global';`);
+  });
+
+  it('should create index.d.ts with the global styles declaration when it does not already exist', async () => {
+    (getAppFrameworkName as jest.Mock).mockReturnValue('next');
+    tree.write(layoutPath, layoutWithoutProviders);
+
+    await runMantineGenerator(tree, { directory });
+
+    const indexDtsContent = tree.read(`${appRoot}/index.d.ts`, 'utf-8') as string;
+
+    expect(indexDtsContent).toContain(`declare module '@proj/${directory}/shared/ui/styles/global';`);
+  });
+
+  it('should not duplicate the global styles declaration when the generator runs again', async () => {
+    (getAppFrameworkName as jest.Mock).mockReturnValue('next');
+    tree.write(layoutPath, layoutWithoutProviders);
+
+    await runMantineGenerator(tree, { directory });
+    await runMantineGenerator(tree, { directory });
+
+    const indexDtsContent = tree.read(`${appRoot}/index.d.ts`, 'utf-8') as string;
+    const occurrences = indexDtsContent?.match(/declare module '@proj\/web\/shared\/ui\/styles\/global';/g);
+
+    expect(occurrences).toHaveLength(1);
+  });
+
   it('should generate root, styles and ui-kit files', async () => {
     (getAppFrameworkName as jest.Mock).mockReturnValue('next');
     tree.write(layoutPath, layoutWithoutProviders);

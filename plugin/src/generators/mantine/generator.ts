@@ -11,7 +11,7 @@ import {
   writeJson,
 } from '@nx/devkit';
 import { dependencies, devDependencies } from '../../shared/dependencies';
-import { getAppFrameworkName, getImportPathPrefix } from '../../shared/utils';
+import { appendFileContent, getAppFrameworkName, getImportPathPrefix } from '../../shared/utils';
 import { MantineGeneratorSchema } from './schema';
 import { addMantineProvider, hasMantineProvider, wrapLayoutBodyWithMantine } from './utils';
 import { configureMantine } from './utils/configure-mantine';
@@ -69,7 +69,21 @@ export async function runMantineGenerator(tree: Tree, options: MantineGeneratorS
       stdio: 'inherit',
     },
   );
-  generateFiles(tree, path.join(__dirname, 'files/ui-kit'), `libs/${options.directory}/shared/ui/ui-kit/src`, {});
+  const uiKitRoot = `libs/${options.directory}/shared/ui/ui-kit/src`;
+  const uiKitIndexPath = `${uiKitRoot}/index.ts`;
+
+  generateFiles(tree, path.join(__dirname, 'files/ui-kit'), uiKitRoot, {});
+
+  if (options.withFormComponents) {
+    const cachedUiKitIndexContent = tree.read(uiKitIndexPath, 'utf8') || '';
+
+    generateFiles(tree, path.join(__dirname, 'files/ui-kit-form'), uiKitRoot, {});
+
+    const formUiKitIndexContent = tree.read(uiKitIndexPath, 'utf8') || '';
+
+    tree.write(uiKitIndexPath, cachedUiKitIndexContent);
+    appendFileContent(uiKitIndexPath, formUiKitIndexContent, tree);
+  }
 
   // Read tsconfig.base.json only after react-lib's execSync has finished writing its own
   // path entry to disk, so this write doesn't stage a stale snapshot that clobbers it on flush.

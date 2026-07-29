@@ -12,7 +12,13 @@
         "index": 0
       },
       "x-prompt": "Enter the name of the directory in the 'apps/' folder"
+    },
+    "withFormComponents": {
+      "type": "boolean",
+      "description": "Add Form components to the UI-kit library (requires react-hook-form)",
+      "default": false,
+      "x-prompt": "Do you want to add Form components to the UI-kit library?"
     }
   },
-  "required": ["directory"]
+  "required": ["directory", "withFormComponents"]
 }

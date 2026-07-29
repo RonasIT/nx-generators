@@ -123,7 +123,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   }
 
   if (options.withMantine) {
-    await runMantineGenerator(tree, { directory: options.directory });
+    await runMantineGenerator(tree, { directory: options.directory, withFormComponents: options.withFormUtils });
   }
 
   addNxAppTag(tree, options.directory);

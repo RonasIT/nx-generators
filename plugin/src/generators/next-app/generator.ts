@@ -17,6 +17,7 @@ import {
   runApiClientGenerator,
   runFormUtilsGenerator,
   runI18nNextGenerator,
+  runMantineGenerator,
   runNavigationUtilsGenerator,
   runStoreGenerator,
 } from '../../shared/generators';
@@ -28,7 +29,6 @@ import {
   runNxAddCommand,
   runWithMinReleaseAgeDisabled,
 } from '../../shared/utils';
-import { runMantineGenerator } from '../mantine';
 import { runNuqsGenerator } from '../nuqs';
 import { NextAppGeneratorSchema } from './schema';
 

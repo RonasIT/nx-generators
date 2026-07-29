@@ -8,3 +8,4 @@ export * from './form-utils';
 export * from './i18n-next';
 export * from './navigation-utils';
 export * from './ui-kit';
+export * from './mantine';

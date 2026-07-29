@@ -11,11 +11,11 @@ import {
   outputLogMock,
   readJsonMock,
   writeJsonMock,
-} from '../../shared/tests-utils';
-import { getAppFrameworkName } from '../../shared/utils';
+} from '../../tests-utils';
+import { getAppFrameworkName } from '../../utils';
 import { runMantineGenerator } from './generator';
 
-jest.mock('../../shared/utils/get-app-framework-name', () => ({
+jest.mock('../../utils/get-app-framework-name', () => ({
   getAppFrameworkName: jest.fn(),
 }));
 

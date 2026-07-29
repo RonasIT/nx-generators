@@ -15,7 +15,6 @@ import {
   readJsonMock,
   writeJsonMock,
 } from '../../shared/tests-utils';
-import * as mantineGenerator from '../mantine';
 import * as nuqsGenerator from '../nuqs';
 import { nextAppGenerator } from './generator';
 
@@ -29,6 +28,7 @@ jest.mock('../../shared/generators', () => {
     runNavigationUtilsGenerator: jest.fn(),
     runStoreGenerator: jest.fn(),
     runFormUtilsGenerator: jest.fn(),
+    runMantineGenerator: jest.fn(),
   };
 });
 
@@ -38,15 +38,6 @@ jest.mock('../nuqs', () => {
   return {
     ...actual,
     runNuqsGenerator: jest.fn(),
-  };
-});
-
-jest.mock('../mantine', () => {
-  const actual = jest.requireActual('../mantine');
-
-  return {
-    ...actual,
-    runMantineGenerator: jest.fn(),
   };
 });
 
@@ -274,7 +265,7 @@ describe('nextAppGenerator with file content checks', () => {
     expect(nuqsGenerator.runNuqsGenerator).toHaveBeenCalledWith(expect.anything(), { directory: options.directory });
 
     // Confirm runMantineGenerator called (because withMantine: true), with form components enabled (because withFormUtils: true)
-    expect(mantineGenerator.runMantineGenerator).toHaveBeenCalledWith(expect.anything(), {
+    expect(sharedGenerators.runMantineGenerator).toHaveBeenCalledWith(expect.anything(), {
       directory: options.directory,
       withFormComponents: true,
     });
@@ -293,6 +284,6 @@ describe('nextAppGenerator with file content checks', () => {
 
     await nextAppGenerator(tree, optionsBase);
 
-    expect(mantineGenerator.runMantineGenerator).not.toHaveBeenCalled();
+    expect(sharedGenerators.runMantineGenerator).not.toHaveBeenCalled();
   });
 });

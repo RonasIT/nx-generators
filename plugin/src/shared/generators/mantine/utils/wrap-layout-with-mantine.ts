@@ -1,5 +1,5 @@
 import { IndentationText, Project, QuoteKind, SyntaxKind } from 'ts-morph';
-import { addNamedImport } from '../../../shared/utils';
+import { addNamedImport } from '../../../utils';
 import { mantineModuleName, mantineModuleSpecifier } from './update-providers';
 
 export function wrapLayoutBodyWithMantine(content: string, uiKitLibrarySpecifier: string): string {

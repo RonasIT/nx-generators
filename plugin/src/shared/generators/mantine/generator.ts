@@ -10,8 +10,8 @@ import {
   readJson,
   writeJson,
 } from '@nx/devkit';
-import { dependencies, devDependencies } from '../../shared/dependencies';
-import { appendFileContent, getAppFrameworkName, getImportPathPrefix } from '../../shared/utils';
+import { dependencies, devDependencies } from '../../dependencies';
+import { appendFileContent, getAppFrameworkName, getImportPathPrefix } from '../../utils';
 import { MantineGeneratorSchema } from './schema';
 import { addMantineProvider, hasMantineProvider, wrapLayoutBodyWithMantine } from './utils';
 import { configureMantine } from './utils/configure-mantine';

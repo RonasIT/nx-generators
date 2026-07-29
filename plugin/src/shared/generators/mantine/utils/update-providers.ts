@@ -1,5 +1,5 @@
 import { IndentationText, Project, QuoteKind, SyntaxKind } from 'ts-morph';
-import { addNamedImport } from '../../../shared/utils';
+import { addNamedImport } from '../../../utils';
 
 export const mantineModuleName = 'MantineProvider';
 export const mantineModuleSpecifier = '@mantine/core';

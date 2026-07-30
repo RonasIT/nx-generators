@@ -79,6 +79,7 @@ export const dependencies = {
   mantine: {
     '@mantine/core': '^9.0.0',
     '@mantine/hooks': '^9.0.0',
+    clsx: '^2.1.1',
   },
 };
 

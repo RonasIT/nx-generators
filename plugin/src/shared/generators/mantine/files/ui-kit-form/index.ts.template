@@ -1,0 +1,4 @@
+export * from './lib/form-text-input/component';
+export * from './lib/form-textarea/component';
+export * from './lib/form-checkbox/component';
+export * from './lib/form-select/component';

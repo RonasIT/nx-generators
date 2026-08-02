@@ -1,5 +1,25 @@
 {
   "HOME_PAGE": {
-    "TEXT_TITLE": "My App home page"
+    "TEXT_TITLE": "My App home page",
+    "TEXT_SUBTITLE": "Mantine + ui-kit demo",
+    "TEXT_MANTINE_SECTION_TITLE": "Mantine components",
+    "TEXT_MANTINE_SECTION_DESCRIPTION": "This card, badges, and layout primitives (Stack/Group/Container) come straight from Mantine.",
+    "TEXT_BADGE_PRIMARY": "Primary",
+    "TEXT_BADGE_SECONDARY": "Secondary",
+    "TEXT_BUTTONS_SECTION_TITLE": "UI-kit buttons",
+    "BUTTON_DEFAULT": "Default",
+    "BUTTON_OUTLINE": "Outline",
+    "BUTTON_LOADING": "Loading",
+    "BUTTON_UNDER_CONSTRUCTION": "Coming soon",
+    "TEXT_FORM_SECTION_TITLE": "UI-kit form components",
+    "TEXT_FIELD_NAME": "Name",
+    "TEXT_FIELD_ROLE": "Role",
+    "TEXT_FIELD_ROLE_PLACEHOLDER": "Select a role",
+    "TEXT_ROLE_ENGINEER": "Engineer",
+    "TEXT_ROLE_DESIGNER": "Designer",
+    "TEXT_ROLE_PRODUCT_MANAGER": "Product Manager",
+    "TEXT_FIELD_BIO": "Bio",
+    "TEXT_FIELD_SUBSCRIBE": "Subscribe to updates",
+    "BUTTON_SUBMIT": "Submit"
   }
 }

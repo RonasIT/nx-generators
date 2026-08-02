@@ -7,4 +7,5 @@ export interface NextAppGeneratorSchema {
   withFormUtils: boolean;
   withSentry: boolean;
   withNuqs: boolean;
+  withMantine: boolean;
 }

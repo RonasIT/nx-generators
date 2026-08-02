@@ -1,0 +1,15 @@
+.icon {
+  // TODO: uncomment when icons are added
+  // background: url(../assets/icons.svg) no-repeat var(--bg-position);
+  // mask: url(../assets/icons.svg) no-repeat center; mask-position: var(--bg-position);
+  width: 24px; height: 24px; background-size: contain; display: inline-block;
+
+  &_background_primary {background: var(--background-primary);}
+  &_text_primary {background: var(--text-primary);}
+  &_current {background: currentColor;}
+  &_brand_primary {background: var(--brand-primary);}
+  &_brand_secondary {background: var(--brand-secondary);}
+
+  // Icon style example
+  // &_your_icon_name {--bg-position: -32px -64px;}
+}

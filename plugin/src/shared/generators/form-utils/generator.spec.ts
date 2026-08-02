@@ -2,7 +2,14 @@
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { assertFirstLine, execSyncMock, formatFilesMock } from '../../tests-utils';
+import { dependencies } from '../../dependencies';
+import {
+  assertFirstLine,
+  addDependenciesMock,
+  execSyncMock,
+  formatFilesMock,
+  installPackagesTaskMock,
+} from '../../tests-utils';
 import { runFormUtilsGenerator } from './generator';
 
 describe('runFormUtilsGenerator', () => {
@@ -37,5 +44,26 @@ describe('runFormUtilsGenerator', () => {
     expect(formatFilesMock).toHaveBeenCalledWith(tree);
 
     assertFirstLine(templatesDir, targetDir, tree);
+  });
+
+  it('should add the form dependencies to package.json', async () => {
+    const options = {
+      directory: 'myapp',
+    };
+
+    await runFormUtilsGenerator(tree, options);
+
+    expect(addDependenciesMock).toHaveBeenCalledWith(expect.anything(), dependencies.form, {});
+  });
+
+  it('should return a callback that installs packages', async () => {
+    const options = {
+      directory: 'myapp',
+    };
+
+    const callback = await runFormUtilsGenerator(tree, options);
+    callback();
+
+    expect(installPackagesTaskMock).toHaveBeenCalledWith(tree);
   });
 });

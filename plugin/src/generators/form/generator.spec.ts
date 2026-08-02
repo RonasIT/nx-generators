@@ -6,7 +6,6 @@ import {
   writeJsonMock,
   generateFilesMock,
   formatFilesMock,
-  installPackagesTaskMock,
   assertFirstLine,
   existsSyncMock,
 } from '../../shared/tests-utils';
@@ -68,7 +67,7 @@ describe('formGenerator', () => {
 
   it('should generate files with matching first lines', async () => {
     const options = { name: 'user', placeOfUse: 'MyComponent' };
-    const callback = await formGenerator(tree, options);
+    await formGenerator(tree, options);
 
     const templatesPath = path.join(__dirname, 'files');
 
@@ -81,8 +80,6 @@ describe('formGenerator', () => {
 
     expect(generateFilesMock).toHaveBeenCalled();
     expect(formatFilesMock).toHaveBeenCalled();
-    callback();
-    expect(installPackagesTaskMock).toHaveBeenCalled();
   });
 
   it('should throw if form name is missing', async () => {

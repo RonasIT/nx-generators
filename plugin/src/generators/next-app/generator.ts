@@ -17,6 +17,7 @@ import {
   runApiClientGenerator,
   runFormUtilsGenerator,
   runI18nNextGenerator,
+  runMantineGenerator,
   runNavigationUtilsGenerator,
   runStoreGenerator,
 } from '../../shared/generators';
@@ -119,6 +120,10 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
 
   if (options.withNuqs) {
     await runNuqsGenerator(tree, { directory: options.directory });
+  }
+
+  if (options.withMantine) {
+    await runMantineGenerator(tree, { directory: options.directory, withFormComponents: options.withFormUtils });
   }
 
   addNxAppTag(tree, options.directory);

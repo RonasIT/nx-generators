@@ -1,0 +1,9 @@
+{
+  "name": "web/shared/ui/ui-kit",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/web/shared/ui/ui-kit/src",
+  "projectType": "library",
+  "tags": ["app:web", "scope:shared", "type:ui"],
+  "// targets": "to see all targets run: nx show project web/shared/ui/ui-kit --web",
+  "targets": {}
+}

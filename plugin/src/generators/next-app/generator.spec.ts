@@ -28,6 +28,7 @@ jest.mock('../../shared/generators', () => {
     runNavigationUtilsGenerator: jest.fn(),
     runStoreGenerator: jest.fn(),
     runFormUtilsGenerator: jest.fn(),
+    runMantineGenerator: jest.fn(),
   };
 });
 
@@ -51,6 +52,7 @@ describe('nextAppGenerator with file content checks', () => {
     withFormUtils: false,
     withSentry: false,
     withNuqs: false,
+    withMantine: false,
   };
 
   beforeEach(() => {
@@ -202,6 +204,7 @@ describe('nextAppGenerator with file content checks', () => {
       withFormUtils: false,
       withSentry: false,
       withNuqs: false,
+      withMantine: false,
     });
 
     const templatesDir = path.join(__dirname, 'files');
@@ -227,6 +230,7 @@ describe('nextAppGenerator with file content checks', () => {
       withFormUtils: true,
       withSentry: true,
       withNuqs: true,
+      withMantine: true,
     };
 
     await nextAppGenerator(tree, options);
@@ -259,6 +263,12 @@ describe('nextAppGenerator with file content checks', () => {
 
     // Confirm runNuqsGenerator called (because withNuqs: true)
     expect(nuqsGenerator.runNuqsGenerator).toHaveBeenCalledWith(expect.anything(), { directory: options.directory });
+
+    // Confirm runMantineGenerator called (because withMantine: true), with form components enabled (because withFormUtils: true)
+    expect(sharedGenerators.runMantineGenerator).toHaveBeenCalledWith(expect.anything(), {
+      directory: options.directory,
+      withFormComponents: true,
+    });
   });
 
   it('should not run nuqs generator when withNuqs is false', async () => {
@@ -267,5 +277,13 @@ describe('nextAppGenerator with file content checks', () => {
     await nextAppGenerator(tree, optionsBase);
 
     expect(nuqsGenerator.runNuqsGenerator).not.toHaveBeenCalled();
+  });
+
+  it('should not run mantine generator when withMantine is false', async () => {
+    existsSyncMock.mockReturnValue(true);
+
+    await nextAppGenerator(tree, optionsBase);
+
+    expect(sharedGenerators.runMantineGenerator).not.toHaveBeenCalled();
   });
 });

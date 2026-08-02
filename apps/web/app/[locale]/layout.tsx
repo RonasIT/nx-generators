@@ -1,3 +1,4 @@
+import { mantineHtmlProps, ColorSchemeScript } from '@mantine/core';
 import { pick } from 'lodash-es';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
@@ -7,6 +8,8 @@ import { constants } from '../../constants';
 import { Providers } from './providers';
 import type { Locale } from '@ronas-it/web/shared/utils/i18n';
 import type { Metadata } from 'next';
+import '@mantine/core/styles.layer.css';
+import '@ronas-it/web/shared/ui/styles/global';
 
 export const metadata: Metadata = {
   title: 'My App',
@@ -33,9 +36,10 @@ export default async function RootLayout({ children, params }: RootLayoutProps):
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
+    <html lang={locale} {...mantineHtmlProps}>
       <head>
         <meta name='robots' content={process.env.NEXT_PUBLIC_APP_ENV === 'production' ? 'index' : 'noindex'} />
+        <ColorSchemeScript />
       </head>
       <body>
         <Providers>

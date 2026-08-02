@@ -1,0 +1,18 @@
+import clsx from 'clsx';
+import style from './component.module.scss';
+import type { ReactElement } from 'react';
+
+export type IconColor = 'background_primary' | 'text_primary' | 'current' | 'brand_primary' | 'brand_secondary';
+
+// TODO: update IconName when icons are added
+export type IconName = 'your_icon_name';
+
+export type IconProps = {
+  name: IconName;
+  color?: IconColor;
+  className?: string;
+};
+
+export function Icon({ name, color = 'text_primary', className }: IconProps): ReactElement {
+  return <span className={clsx(style.icon, style[`icon_${name}`], style[`icon_${color}`], className)} />;
+}

@@ -67,6 +67,10 @@ describe('codeChecksGenerator (integration)', () => {
     // Assert contents of other new files
     const eslintRonasit = tree.read('.eslint.ronasit.cjs', 'utf-8');
     expect(eslintRonasit).toContain('module.exports');
+    expect(eslintRonasit).toContain('eslint-plugin-react-native');
+    expect(eslintRonasit).toContain('eslint-plugin-react-native-unistyles');
+    expect(eslintRonasit).toContain('react-native/no-raw-text');
+    expect(eslintRonasit).toContain('apps/web/**/*.{ts,tsx}');
 
     const prettierrc = tree.read('.prettierrc.js', 'utf-8');
     expect(prettierrc).toContain('module.exports');

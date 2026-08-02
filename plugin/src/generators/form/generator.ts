@@ -1,6 +1,5 @@
 import * as path from 'path';
-import { addDependenciesToPackageJson, formatFiles, generateFiles, installPackagesTask, Tree } from '@nx/devkit';
-import { dependencies } from '../../shared/dependencies';
+import { formatFiles, generateFiles, Tree } from '@nx/devkit';
 import { formatName, getNxLibsPaths, LibraryType } from '../../shared/utils';
 import { FormGeneratorSchema } from './schema';
 import { addFormUsage, getAppName, getFormUtilsDirectory, updateIndex } from './utils';
@@ -45,13 +44,6 @@ export async function formGenerator(tree: Tree, options: FormGeneratorSchema) {
   }
 
   await formatFiles(tree);
-
-  // Install dependencies
-  addDependenciesToPackageJson(tree, dependencies.form, {});
-
-  return (): void => {
-    installPackagesTask(tree);
-  };
 }
 
 export default formGenerator;

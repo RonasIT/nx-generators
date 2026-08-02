@@ -1,8 +1,9 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
-import { formatFiles, generateFiles, Tree } from '@nx/devkit';
+import { addDependenciesToPackageJson, formatFiles, generateFiles, installPackagesTask, Tree } from '@nx/devkit';
+import { dependencies } from '../../dependencies';
 
-export async function runFormUtilsGenerator(tree: Tree, options: { directory: string }): Promise<void> {
+export async function runFormUtilsGenerator(tree: Tree, options: { directory: string }): Promise<() => void> {
   const libRoot = `libs/${options.directory}`;
 
   // Generate shared libs
@@ -17,6 +18,13 @@ export async function runFormUtilsGenerator(tree: Tree, options: { directory: st
   generateFiles(tree, path.join(__dirname, '/lib-files'), libRoot, {});
 
   await formatFiles(tree);
+
+  // Install dependencies
+  addDependenciesToPackageJson(tree, dependencies.form, {});
+
+  return (): void => {
+    installPackagesTask(tree);
+  };
 }
 
 export default runFormUtilsGenerator;

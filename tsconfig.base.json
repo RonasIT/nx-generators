@@ -46,7 +46,10 @@
       "@ronas-it/shared/utils/form": ["libs/shared/utils/form/src/index.ts"],
       "@ronas-it/shared/utils/app-env": ["./libs/shared/utils/app-env/src/index.ts"],
       "@ronas-it/shared/data-access/api-client": ["./libs/shared/data-access/api-client/src/index.ts"],
-      "@ronas-it/shared/data-access/api": ["./libs/shared/data-access/api/src/index.ts"]
+      "@ronas-it/shared/data-access/api": ["./libs/shared/data-access/api/src/index.ts"],
+      "@ronas-it/web/shared/ui/ui-kit": ["./libs/web/shared/ui/ui-kit/src/index.ts"],
+      "@ronas-it/web/shared/ui/styles/variables": ["libs/web/shared/ui/styles/_variables.scss"],
+      "@ronas-it/web/shared/ui/styles/global": ["libs/web/shared/ui/styles/global.scss"]
     }
   },
   "references": [

@@ -76,6 +76,11 @@ export const dependencies = {
   nuqs: {
     nuqs: '^2.9.0',
   },
+  mantine: {
+    '@mantine/core': '^9.0.0',
+    '@mantine/hooks': '^9.0.0',
+    clsx: '^2.1.1',
+  },
 };
 
 export const devDependencies = {
@@ -87,10 +92,12 @@ export const devDependencies = {
     prettier: '^3.6.2',
     'eslint-config-prettier': '^10.1.8',
     'eslint-import-resolver-typescript': '^4.4.4',
-    'eslint-plugin-import': '^2.32.0',
+    'eslint-plugin-import-x': '^4.17.1',
     'eslint-plugin-jsx-a11y': '^6.10.2',
     'eslint-plugin-react': '^7.37.5',
     'eslint-plugin-react-hooks': '^7.0.0',
+    'eslint-plugin-react-native': '^5.0.0',
+    'eslint-plugin-react-native-unistyles': '^3.0.7',
     'eslint-plugin-unused-imports': '^4.2.0',
     husky: '^9.1.7',
     '@stylistic/eslint-plugin': '^4.4.1',
@@ -129,5 +136,10 @@ export const devDependencies = {
   },
   'next-auth': {
     '@types/js-cookie': '^3.0.6',
+  },
+  mantine: {
+    postcss: '^8.5.8',
+    'postcss-preset-mantine': '^1.18.0',
+    'postcss-simple-vars': '^7.0.1',
   },
 };

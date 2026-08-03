@@ -51,9 +51,12 @@ The `plugin` directory contains the source code for all generators in this packa
    - builds the package and publishes it to a local [Yalc](https://github.com/wclr/yalc) store
    - creates a fresh Nx workspace
    - runs `repo-config`, `code-checks`, `expo-app`, and `next-app` with all optional flags enabled (except Sentry generators)
-   - verifies that `npm run lint` passes in the generated workspace
+   - runs `entity-api` and `dockerfile` generators against the scaffolded workspace
+   - verifies generated apps, shared libs, repo-config, and code-checks outputs exist
+   - verifies the Nx project graph includes expected apps and key libraries
+   - verifies that `npm run lint` and `npm audit --audit-level=critical` pass in the generated workspace
 
-   The test workspace is kept at `e2e/.workspace/e2e-workspace` for inspection after a run. The same check runs in CI on push to `main`, `master`, and `development`.
+   The test workspace is kept at `e2e/.workspace/e2e-workspace` for inspection after a run. The same check runs in CI on pull requests and pushes to `main`, `master`, and `development`.
 
 5. **Test package preview (Optional)**
    - Change version in `plugin/package.json` to an alpha version, for example: `"0.18.1-alpha.1"`

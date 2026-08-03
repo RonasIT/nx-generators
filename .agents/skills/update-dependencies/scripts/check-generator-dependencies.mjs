@@ -4,7 +4,7 @@
  * (root 'package.json' and 'apps/mobile/package.json', which is the source of truth after a
  * dependency update in the example apps).
  *
- * Usage: node tools/scripts/check-generator-dependencies.mjs
+ * Usage: node .agents/skills/update-dependencies/scripts/check-generator-dependencies.mjs
  *
  * Exits with code 1 if any version mismatch is found, 0 otherwise. Read-only — never writes files.
  */
@@ -12,7 +12,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 
-const repoRoot = join(fileURLToPath(import.meta.url), '..', '..', '..');
+const repoRoot = join(fileURLToPath(import.meta.url), '..', '..', '..', '..', '..');
 const depsFilePath = join(repoRoot, 'plugin', 'src', 'shared', 'dependencies.ts');
 
 function loadJson(relativePath) {

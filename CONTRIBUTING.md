@@ -87,6 +87,7 @@ so that newly generated projects also get up-to-date packages.
    and run the tests and linting checks. By default, it updates all possible dependencies.
    If you wish to update or not update specific dependencies, you can tell the skill about it.
 2. Manually click through `apps/mobile`, `apps/web` and the plugin to make sure nothing broke.
+3. Update the stack version badges in [README.md](README.md) if Expo, Next.js, Nx, React Native, or TypeScript versions changed in `dependencies.ts`.
 
 ## Repository guidelines
 

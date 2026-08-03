@@ -1,5 +1,16 @@
 # Instructions for AI Assistants
 
+## Skills
+
+Task-specific instructions for this repo live in `.agents/skills/**/SKILL.md`, following the
+[Agent Skills convention][agent-skills]. Some tools load these automatically; if yours doesn't,
+check that directory for a skill matching the task before starting (e.g. `update-dependencies` for
+bumping dependencies of the example apps and generators).
+
+Claude Code additionally auto-loads skills from `.claude/skills/**/SKILL.md`.
+
+[agent-skills]: https://agentskills.io/specification
+
 ## Basic Guidelines
 
 - Always ask questions before implementation if something is unclear

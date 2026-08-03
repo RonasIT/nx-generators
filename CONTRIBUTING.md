@@ -72,6 +72,19 @@ The `plugin` directory contains the source code for all generators in this packa
    - Include clear descriptions of changes
    - Reference any related issues or discussions
 
+### Updating dependencies
+
+There are two places that need updating together: the example apps (`apps/mobile`, `apps/web`)
+and the generators (`plugin/src/shared/dependencies.ts`), which have the same versions hardcoded
+so that newly generated projects also get up-to-date packages.
+
+1. **Run the [`update-dependencies`](.agents/skills/update-dependencies/SKILL.md) skill** —
+   ask your AI coding agent to update dependencies, and it will update the example apps,
+   propagate the new versions into `plugin/src/shared/dependencies.ts` and `plugin/package.json`,
+   and run the tests and linting checks. By default, it updates all possible dependencies.
+   If you wish to update or not update specific dependencies, you can tell the skill about it.
+2. Manually click through `apps/mobile`, `apps/web` and the plugin to make sure nothing broke.
+
 ## Repository guidelines
 
 ### Branch naming

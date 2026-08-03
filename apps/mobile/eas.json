@@ -45,5 +45,8 @@
         "appleTeamId": "YOUR_TEAM_ID"
       }
     }
+  },
+  "cli": {
+    "appVersionSource": "local"
   }
 }

@@ -13,7 +13,7 @@
 
 **Nx plugin that scaffolds production-ready Expo and Next.js monorepos** — consistent structure, module boundaries, Redux/RTK Query, i18n, and code quality out of the box.
 
-[Features](#features) • [Usage](#usage) • [Generators](#generators-overview) • [Contributing](CONTRIBUTING.md)
+[Features](#features) • [Usage](#usage) • [Generators](#generators-overview) • [Contributing](https://github.com/RonasIT/nx-generators/blob/main/CONTRIBUTING.md)
 
 ---
 

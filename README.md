@@ -1,5 +1,22 @@
 # Nx Generators
 
+[![Test](https://github.com/RonasIT/nx-generators/actions/workflows/test.yml/badge.svg)](https://github.com/RonasIT/nx-generators/actions/workflows/test.yml)
+[![E2E](https://github.com/RonasIT/nx-generators/actions/workflows/e2e.yml/badge.svg)](https://github.com/RonasIT/nx-generators/actions/workflows/e2e.yml)
+
+<!-- stack badges: update with plugin/src/shared/dependencies.ts -->
+
+![Nx](https://img.shields.io/badge/Nx-23-143055?logo=nx)
+![Expo SDK](https://img.shields.io/badge/Expo%20SDK-57-000020?logo=expo)
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js)
+![React Native](https://img.shields.io/badge/React%20Native-0.86-61DAFB?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript)
+
+**Nx plugin that scaffolds production-ready Expo and Next.js monorepos** — consistent structure, module boundaries, Redux/RTK Query, i18n, and code quality out of the box.
+
+[Features](#features) • [Usage](#usage) • [Generators](#generators-overview) • [Contributing](CONTRIBUTING.md)
+
+---
+
 This package provides a set of [Nx](https://nx.dev/getting-started/intro) generators that help maintain a consistent project structure, enforce best practices, and automate common development tasks. It is designed to streamline and standardize the development workflow for monorepos with React Native and/or Next.js apps.
 
 ## Features
@@ -472,3 +489,15 @@ const viewLink = navigationConfig.routes.items.view(1); // /items/1
 const creationLink = navigationConfig.routes.items.create; // /items/create
 const editingLink = navigationConfig.routes.items.edit?.(1); // /items/1/edit
 ```
+
+---
+
+<div align="center">
+
+**Built with ❤️ by [Ronas IT](https://ronasit.com)**
+
+_Professional monorepo & cross-platform development • Open source contributors_
+
+[Website](https://ronasit.com) • [GitHub](https://github.com/RonasIT) • [Email](mailto:hello@ronasit.com)
+
+</div>

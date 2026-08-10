@@ -494,7 +494,7 @@ const editingLink = navigationConfig.routes.items.edit?.(1); // /items/1/edit
 
 <div align="center">
 
-**Built with ❤️ by [Ronas IT](https://ronasit.com)**
+**Built with ❤️ by [Ronas IT](https://ronasit.com/services/cross-platform-app-development/)**
 
 _Professional monorepo & cross-platform development • Open source contributors_
 

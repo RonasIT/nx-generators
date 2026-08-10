@@ -177,6 +177,15 @@ describe('nextAppGenerator with file content checks', () => {
     expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 
+  it('should generate the add-fonts agent skill regardless of withMantine', async () => {
+    existsSyncMock.mockReturnValue(true);
+
+    await nextAppGenerator(tree, { ...optionsBase, withMantine: false });
+
+    expect(tree.exists('.agents/skills/add-fonts/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/add-fonts/SKILL.md')).toBe(true);
+  });
+
   it('should run post install tasks correctly', async () => {
     existsSyncMock.mockReturnValue(true);
 
@@ -216,6 +225,8 @@ describe('nextAppGenerator with file content checks', () => {
         libPath: `@proj/${optionsBase.directory}`,
       },
     });
+
+    assertFirstLine(path.join(__dirname, 'agent-skills'), '.', tree);
   });
 
   it('should call all shared generators with correct arguments when all features enabled', async () => {

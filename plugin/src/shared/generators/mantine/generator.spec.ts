@@ -237,21 +237,29 @@ export default function RootLayout({ children }: { children: ReactNode }): React
     expect(occurrences).toHaveLength(1);
   });
 
-  it('should generate root, styles and ui-kit files', async () => {
+  it('should generate root, agent-skills, styles and ui-kit files', async () => {
     (getAppFrameworkName as jest.Mock).mockReturnValue('next');
     tree.write(layoutPath, layoutWithoutProviders);
 
     await runMantineGenerator(tree, { directory });
 
-    expect(generateFilesMock).toHaveBeenCalledTimes(3);
+    expect(generateFilesMock).toHaveBeenCalledTimes(4);
 
     assertFirstLine(path.join(__dirname, 'files/root'), '.', tree);
+    assertFirstLine(path.join(__dirname, 'files/agent-skills'), '.', tree);
     assertFirstLine(path.join(__dirname, 'files/styles'), `libs/${directory}/shared/ui/styles`, tree);
     assertFirstLine(path.join(__dirname, 'files/ui-kit'), `libs/${directory}/shared/ui/ui-kit/src`, tree);
 
     const indexContent = tree.read(`libs/${directory}/shared/ui/ui-kit/src/index.ts`, 'utf-8');
 
     expect(indexContent).not.toContain('form-text-input');
+
+    expect(tree.exists('.agents/skills/import-figma-ui/SKILL.md')).toBe(true);
+    expect(tree.exists('.agents/skills/import-figma-assets/SKILL.md')).toBe(true);
+    expect(tree.exists('.agents/skills/configure-mantine-theme/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/import-figma-ui/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/import-figma-assets/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/configure-mantine-theme/SKILL.md')).toBe(true);
   });
 
   it('should not generate ui-kit-form files when withFormComponents is false', async () => {
@@ -260,7 +268,7 @@ export default function RootLayout({ children }: { children: ReactNode }): React
 
     await runMantineGenerator(tree, { directory, withFormComponents: false });
 
-    expect(generateFilesMock).toHaveBeenCalledTimes(3);
+    expect(generateFilesMock).toHaveBeenCalledTimes(4);
   });
 
   it('should generate ui-kit-form files and append their exports to index.ts when withFormComponents is true', async () => {
@@ -269,7 +277,7 @@ export default function RootLayout({ children }: { children: ReactNode }): React
 
     await runMantineGenerator(tree, { directory, withFormComponents: true });
 
-    expect(generateFilesMock).toHaveBeenCalledTimes(4);
+    expect(generateFilesMock).toHaveBeenCalledTimes(5);
 
     // index.ts.template is checked separately below: its content gets merged into the base ui-kit index.ts
     assertFirstLine(path.join(__dirname, 'files/ui-kit-form'), `libs/${directory}/shared/ui/ui-kit/src`, tree, {

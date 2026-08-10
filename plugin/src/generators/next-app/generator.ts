@@ -41,6 +41,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
     (isBoolean(options.withAuth) ? options.withAuth : await confirm('Do you want to create auth lib?'));
 
   const appRoot = `apps/${options.directory}`;
+  const repoRoot = '.';
   const i18nRoot = `i18n/${options.directory}`;
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
   const tags = [`app:${options.directory}`, 'type:app'];
@@ -127,6 +128,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   }
 
   addNxAppTag(tree, options.directory);
+  generateFiles(tree, path.join(__dirname, 'agent-skills'), repoRoot, {});
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {
     ...options,
     formatName,

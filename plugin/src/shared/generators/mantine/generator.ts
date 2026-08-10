@@ -61,6 +61,7 @@ export async function runMantineGenerator(tree: Tree, options: MantineGeneratorS
   tree.write(layoutPath, configureMantine(layoutContent, `${stylesLibPath}/global`));
 
   generateFiles(tree, path.join(__dirname, 'files/root'), repoRoot, {});
+  generateFiles(tree, path.join(__dirname, 'files/agent-skills'), repoRoot, {});
   generateFiles(tree, path.join(__dirname, 'files/styles'), `libs/${options.directory}/shared/ui/styles`, {});
 
   execSync(

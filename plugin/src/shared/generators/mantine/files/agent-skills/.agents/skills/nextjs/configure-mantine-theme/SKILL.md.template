@@ -1,8 +1,8 @@
 ---
 name: configure-mantine-theme
 description: >
-  Sync this app's Mantine theme (`libs/<app>/shared/ui/ui-kit/src/lib/theme.tsx`) with the design
-  tokens already defined in `libs/<app>/shared/ui/styles/_variables.scss` — colors into
+  Sync this app's Mantine theme (`libs/{app}/shared/ui/ui-kit/src/lib/theme.tsx`) with the design
+  tokens already defined in `libs/{app}/shared/ui/styles/_variables.scss` — colors into
   `themeColors`, font sizes and line heights into `theme.headings.sizes`, extending the `declare
   module '@mantine/core'` overrides when a token doesn't fit Mantine's default color/size shape.
   Only applies to apps that actually use Mantine (`theme.tsx` exists). This app was scaffolded
@@ -22,6 +22,21 @@ Claude-Code-specific pointer to this file lives at
 `.claude/skills/nextjs/configure-mantine-theme/SKILL.md`.
 
 [agent-skills]: https://agentskills.io/specification
+
+## Figma tooling preflight (required)
+
+Run this preflight before scope detection or any other step in this skill.
+
+1. Inspect the tools and MCP connections available to the agent actually executing this skill.
+   Any connected Figma-capable integration that can read structured Figma data satisfies this
+   check; don't require a specific server or tool name.
+2. If no such tool is available, invoke `add-figma-developer-mcp` from
+   `.agents/skills/add-figma-developer-mcp/SKILL.md` first and follow it in full. Don't merely
+   recommend it or substitute generic web fetching.
+3. Resume this skill only after that hand-off finishes and the Figma tool is available to the
+   executing agent. If it is waiting for consent, an API key, or a restart/reload, keep this skill
+   paused. If it fails or the user declines, report that outcome and don't attempt to read Figma;
+   continue only if the user explicitly switches to inputs that don't require Figma access.
 
 ## Scope and detection
 

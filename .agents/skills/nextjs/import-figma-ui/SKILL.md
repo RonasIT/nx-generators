@@ -24,6 +24,21 @@ this file tells you to, don't skip ahead or paraphrase from memory.
 
 [agent-skills]: https://agentskills.io/specification
 
+## Figma tooling preflight (required)
+
+Run this preflight before progress reporting, input gathering, or any other step in this skill.
+
+1. Inspect the tools and MCP connections available to the agent actually executing this skill.
+   Any connected Figma-capable integration that can read structured Figma data (and export assets
+   when needed) satisfies this check; don't require a specific server or tool name.
+2. If no such tool is available, invoke `add-figma-developer-mcp` from
+   `.agents/skills/add-figma-developer-mcp/SKILL.md` first and follow it in full. Don't merely
+   recommend it or substitute generic web fetching.
+3. Resume this skill only after that hand-off finishes and the Figma tool is available to the
+   executing agent. If it is waiting for consent, an API key, or a restart/reload, keep this skill
+   paused. If it fails or the user declines, report that outcome and don't attempt to read Figma;
+   continue only if the user explicitly switches to inputs that don't require Figma access.
+
 ## Honor the user's own wishes for this run
 
 Check whether the user gave specific instructions before following the default flow — e.g. "only
@@ -37,7 +52,7 @@ order.
 The user needs to see, at all times, which phase is active and what you're doing right now — this
 is a long-running, multi-step task and silence reads as "stuck."
 
-1. Before doing anything else, post the full phase list so the user can see the whole plan:
+1. After the Figma tooling preflight, post the full phase list so the user can see the whole plan:
    **Variables → Web assets → Mantine theme → Fonts**. If your environment has a todo/task list
    tool (e.g. Claude Code's `TodoWrite`), create one entry per phase and keep its status
    (`pending` / `in_progress` / `completed`) current as you move through them — including while a

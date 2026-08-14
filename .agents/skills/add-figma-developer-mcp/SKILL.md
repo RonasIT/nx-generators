@@ -29,6 +29,7 @@ skill itself as approval.
   variable.
 - Never echo, quote, summarize, partially reveal, or include the key in progress messages, command
   previews, diffs, logs, or the final report.
+- Write every user-facing message produced by this skill in English.
 - Treat a missing value, `null`, `""`, `''`, or a whitespace-only value as an empty API key.
 - Stop immediately after any failure and use the required failure message below.
 
@@ -57,8 +58,7 @@ preserve every unrelated setting.
 
 ## 2. Explain the plan and request confirmation
 
-Before any write or package launch, send a concise message in the user's language containing all
-of the following:
+Before any write or package launch, send a concise English message containing all of the following:
 
 - the detected agent/client;
 - the private configuration target and scope;
@@ -71,21 +71,18 @@ of the following:
 
 For example:
 
-> Планирую добавить MCP-сервер `figma-developer-mcp` для <agent> в приватную конфигурацию
-> <target> (<scope>). Сервер будет запускаться через
-> `npx -y figma-developer-mcp --figma-api-key=<FIGMA_API_KEY> --stdio`. Figma API key будет
-> сохранён в этой конфигурации как аргумент командной строки и может быть виден локальным
-> процессам, имеющим доступ к списку процессов. Продолжить? (да/нет)
+> I plan to add the `figma-developer-mcp` MCP server for <agent> to the private configuration
+> <target> (<scope>). The server will run via
+> `npx -y figma-developer-mcp --figma-api-key=<FIGMA_API_KEY> --stdio`. The Figma API key will
+> be stored in this configuration as a command-line argument and may be visible to local
+> processes that can inspect the process list. Continue? (yes/no)
 
 Wait for the reply. Only an unambiguous affirmative response given after this message counts as
 confirmation. A refusal, cancellation, unrelated answer, ambiguous answer, missing reply, or
 denied permission does not count. In any of those cases, make no changes and report:
 
-> Ошибка добавления MCP `figma-developer-mcp`: подтверждение пользователя не получено.
-> Подключение к Figma невозможно.
-
-Translate the template when the conversation is not in Russian, but preserve both the reason and
-the statement that connecting to Figma is impossible.
+> Error adding MCP `figma-developer-mcp`: user confirmation was not received. Figma cannot be
+> connected.
 
 ## 3. Request and validate the API key
 
@@ -99,12 +96,12 @@ prefix or length rule that could reject a valid Figma token.
 
 If the user does not provide a value, report:
 
-> Ошибка добавления MCP `figma-developer-mcp`: Figma API key не введён. Подключение к Figma
-> невозможно.
+> Error adding MCP `figma-developer-mcp`: the Figma API key was not provided. Figma cannot be
+> connected.
 
 If the supplied value is empty after normalization, report:
 
-> Ошибка добавления MCP `figma-developer-mcp`: Figma API key пуст. Подключение к Figma невозможно.
+> Error adding MCP `figma-developer-mcp`: the Figma API key is empty. Figma cannot be connected.
 
 Do not configure or launch anything after either failure.
 
@@ -180,13 +177,13 @@ If the client requires a restart or MCP reload, do not call that a failure. Stat
 needed. If registration, parsing, startup, or verification fails, restore the previous config
 when possible and report the concrete, redacted reason using this shape:
 
-> Ошибка добавления MCP `figma-developer-mcp`: <причина>. Подключение к Figma невозможно.
+> Error adding MCP `figma-developer-mcp`: <reason>. Figma cannot be connected.
 
 On success, report what changed without exposing the key. Include the agent/client, config target
 and scope, whether the entry was added or updated, the redacted launch command, the verification
 performed, and any restart/reload step. For example:
 
-> MCP `figma-developer-mcp` успешно добавлен для <agent>. Обновлена приватная конфигурация
-> <target> (<scope>); настроен запуск через
-> `npx -y figma-developer-mcp --figma-api-key=<redacted> --stdio`; регистрация MCP проверена.
-> Figma API key сохранён, но не выведен. <restart/reload status>
+> MCP `figma-developer-mcp` was successfully added for <agent>. The private configuration
+> <target> (<scope>) was updated; launch was configured via
+> `npx -y figma-developer-mcp --figma-api-key=<redacted> --stdio`; MCP registration was verified.
+> The Figma API key was saved but not displayed. <restart/reload status>

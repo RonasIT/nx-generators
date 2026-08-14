@@ -182,8 +182,8 @@ describe('nextAppGenerator with file content checks', () => {
 
     await nextAppGenerator(tree, { ...optionsBase, withMantine: false });
 
-    expect(tree.exists('.agents/skills/add-fonts/SKILL.md')).toBe(true);
-    expect(tree.exists('.claude/skills/add-fonts/SKILL.md')).toBe(true);
+    expect(tree.exists('.agents/skills/nextjs/add-fonts/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/nextjs/add-fonts/SKILL.md')).toBe(true);
   });
 
   it('should run post install tasks correctly', async () => {

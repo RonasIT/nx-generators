@@ -13,4 +13,4 @@ This is a pointer skill. The full instructions live at
 — read that file and follow it in full before doing any Figma variables import work.
 
 Do not duplicate or paraphrase its steps here; edits to the process belong in the source file
-under `.agents/skills/`, not in this one.
+under `.agents/skills/nextjs/`, not in this one.

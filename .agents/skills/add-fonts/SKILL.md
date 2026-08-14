@@ -5,9 +5,9 @@ description: >
   Mantine theme's `fontFamily`/`headings.fontFamily` if this app uses Mantine. Font names can come
   from a Figma UI-kit page's Typekit table (if given a Figma link) or directly from the user. Use
   whenever asked to "add a font", "install a Google font", "wire up next/font", "import figma
-  fonts", or similar. This app was scaffolded with `@ronas-it/nx-generators` (`next-app
-  --withMantine`); can run standalone or as a follow-up step after the `import-figma-ui` skill,
-  which hands off here for its "Fonts" phase.
+  fonts", or similar. This app was scaffolded with `@ronas-it/nx-generators` (`next-app`, with or
+  without `--withMantine`); can run standalone or as a follow-up step after the `import-figma-ui`
+  skill, which hands off here for its "Fonts" phase.
 ---
 
 # Add fonts

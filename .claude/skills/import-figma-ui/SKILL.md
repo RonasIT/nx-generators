@@ -1,10 +1,9 @@
 ---
 name: import-figma-ui
 description: >
-  Import design tokens from a Figma UI-kit page's "Variables" block into this app's shared styles
-  library, then hand off to sibling skills for assets/theme/fonts. Use whenever asked to "import
-  Figma UI", "sync design tokens from Figma", "import figma variables/colors/fonts/assets", or
-  similar.
+  Coordinate a full Figma UI import for this app across four phases by handing off entirely to
+  sibling skills for variables/assets/theme/fonts. Use whenever asked to "import Figma UI", "sync
+  design tokens from Figma", "import figma variables/colors/fonts/assets", or similar.
 ---
 
 # Import Figma UI

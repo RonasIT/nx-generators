@@ -255,9 +255,11 @@ export default function RootLayout({ children }: { children: ReactNode }): React
     expect(indexContent).not.toContain('form-text-input');
 
     expect(tree.exists('.agents/skills/import-figma-ui/SKILL.md')).toBe(true);
+    expect(tree.exists('.agents/skills/import-figma-vars/SKILL.md')).toBe(true);
     expect(tree.exists('.agents/skills/import-figma-assets/SKILL.md')).toBe(true);
     expect(tree.exists('.agents/skills/configure-mantine-theme/SKILL.md')).toBe(true);
     expect(tree.exists('.claude/skills/import-figma-ui/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/import-figma-vars/SKILL.md')).toBe(true);
     expect(tree.exists('.claude/skills/import-figma-assets/SKILL.md')).toBe(true);
     expect(tree.exists('.claude/skills/configure-mantine-theme/SKILL.md')).toBe(true);
   });

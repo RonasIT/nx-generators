@@ -76,7 +76,7 @@ export const theme = createTheme({
 });
 ```
 
-`_variables.scss` (see the `import-figma-ui` skill for the full shape) is the source of truth this
+`_variables.scss` (see the `import-figma-vars` skill for the full shape) is the source of truth this
 theme reads from via `var(--...)` — this skill never hardcodes a color/size literal into
 `theme.tsx`, it only ever references the CSS custom property by name.
 

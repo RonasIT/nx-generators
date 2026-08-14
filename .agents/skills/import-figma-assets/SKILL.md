@@ -132,9 +132,13 @@ whichever of these gets you there:
    - Read the ordered list of icon instances inside it — name and each one's width/height. Most
      will share one fixed size, but don't assume they all do; some sprites mix sizes.
    - Simulate a CSS `flex-wrap: wrap` row with that padding/gap: place icons left to right in
-     document order, top-aligned (`align-items: flex-start`, Figma's own auto-layout default), and
-     wrap to a new row whenever the next icon would overflow the frame's inner width. This is
-     exact, not approximate — Figma's wrap auto-layout is modeled on CSS flexbox.
+     document order, using the **frame's own `align-items` value** for cross-axis alignment — read
+     it from the layout data, don't assume `flex-start`/top-aligned as "the" default (a real frame
+     can and does override it — one real sprite's own icon-grid frame had `align-items: center`
+     explicitly set; a 22.86px-tall icon in a 24px row sitting at a `0.57px` top offset only
+     matches `center`'s `(24-22.86)/2` math, not `flex-start`'s `0px`) — and wrap to a new row
+     whenever the next icon would overflow the frame's inner width. This is exact, not
+     approximate — Figma's wrap auto-layout is modeled on CSS flexbox.
    - **Verify before trusting it.** Check that your computed total sprite height matches the
      exported asset's actual height, and spot-check 2–3 icons by confirming the visible shapes in
      the exported SVG's raw path coordinates fall inside their computed box. Don't skip this — a
@@ -152,13 +156,41 @@ whichever of these gets you there:
      (e.g. a "chevron-left" from one icon library and a differently-drawn "chevron-left" from
      another, both included in the same sprite) are genuinely different icons — keep both, and
      append a short disambiguator (e.g. the library name) to each so neither name gets dropped.
-4. Write the `&_<name> { --bg-position: -<x>px -<y>px; }` block for each icon into
-   `component.module.scss`, and list every name in the `IconName` union in `component.tsx`,
-   replacing the placeholder `'your_icon_name'`.
-5. **Visually confirm the result before finishing.** Render every `IconName` through the `Icon`
+4. **Check whether an icon should keep its own color instead of following the app's theme.** This
+   component's `mask` technique only works for icons meant to be recolored — it paints the whole
+   shape one flat color (whatever `IconColor` resolves to), discarding any original artwork
+   underneath. Before writing an icon's SCSS rule, check its `fill`/`stroke` values in the exported
+   SVG: **more than one distinct color** (a flag, a payment-brand logo, a social icon) **or a
+   single color that differs from the sprite's shared default monochrome fill** (most line-style
+   icons in the same sprite share one common neutral fill — a single-color icon using some other,
+   different color instead, like a social-network mark in its own signature blue or a brand logo in
+   its own signature purple sitting among otherwise-neutral icons, is still a fixed brand color, not
+   a coincidence) means it needs to keep its real colors — write
+   ```scss
+   &_<name > {
+     --bg-position: -<x>px -<y>px;
+     background: url(../assets/icons.svg) no-repeat var(--bg-position);
+     mask: none;
+   }
+   ```
+   instead of the plain `--bg-position`-only rule, and place it _after_ the `IconColor` modifier
+   blocks (`&_text_primary`, `&_brand_primary`, etc.) in the file so it wins the cascade — both
+   rules have equal specificity, so source order decides which `background` sticks. These icons
+   ignore the `color` prop by design; note that in the finishing summary so it isn't mistaken for a
+   bug later.
+5. Write the `&_<name> { --bg-position: -<x>px -<y>px; }` block for each remaining (recolorable)
+   icon into `component.module.scss`, and list every name — recolorable and fixed-color alike — in
+   the `IconName` union in `component.tsx`, replacing the placeholder `'your_icon_name'`.
+6. **Visually confirm the result before finishing.** Render every `IconName` through the `Icon`
    component on a throwaway page/route, screenshot it, and check that each one shows a distinct,
-   correctly-cropped glyph — not a sliver of its neighbor, not another icon's shape, not blank.
-   Delete the throwaway page afterward; it's a verification step, not a deliverable.
+   correctly-cropped glyph — not a sliver of its neighbor, not another icon's shape, not blank, and
+   that the fixed-color icons from step 4 keep their real colors regardless of which `color` prop
+   value is passed. **Delete the throwaway page afterward, and confirm it's actually gone** (e.g.
+   `git status` shows nothing left under the route you added) **before reporting this phase done** —
+   don't just state the intent to delete it in the finishing summary. A page added to a real app
+   route is easy to leave behind if something interrupts the run between creating it and cleaning
+   it up, and unlike this file's other steps there's no later check that would catch a stray
+   preview route before it ships.
 
 If none of this is tractable for a given sprite (e.g. it isn't a wrap/auto-layout frame at all, or
 the layout is too irregular to simulate confidently), fall back to leaving the mapping as a manual
@@ -169,5 +201,5 @@ step — say so explicitly in the finishing summary so the user knows it's still
 Post a short summary: whether the favicon and icon sprite were added (and which favicon variant
 was chosen, if there was more than one), whether the `Icon` component's sprite path was uncommented,
 and how the icon-name-to-position mapping went — a ready-made mapping used as-is, computed and
-verified (how many icons), or left as a manual step (and why). Then ask the user to visually verify
-the favicon and a sample of icons in the running app.
+verified (how many icons, how many kept their own fixed color), or left as a manual step (and why).
+Then ask the user to visually verify the favicon and a sample of icons in the running app.

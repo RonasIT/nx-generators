@@ -86,17 +86,28 @@ is a long-running, multi-step task and silence reads as "stuck."
      more columns (e.g. a "Mobile" column) than the tokens tool returned distinct values for, fall
      back to a screenshot of that specific table and read it visually rather than assuming the
      missing column is identical to the one you got.
-   - If no Figma tool is connected: tell the user plainly that you need either a Figma MCP server
-     connected (e.g. Figma's Dev Mode MCP server, enabled from the Figma desktop app or
-     `https://mcp.figma.com`) or the raw values pasted in manually, and ask which they'd prefer.
-     Don't attempt to scrape the Figma web app via a generic web-fetch tool — it won't render
-     without a logged-in session.
+   - If no Figma tool is connected: tell the user plainly that you need a Figma MCP server
+     connected — either the official Figma Dev Mode MCP server (OAuth login, enabled from the
+     Figma desktop app or `https://mcp.figma.com`) or a community token-based server (e.g.
+     Framelink's `figma-developer-mcp`, which authenticates with a Figma personal access token
+     instead of OAuth and works well in non-interactive sessions) — or the raw values pasted in
+     manually. Ask which they'd prefer. Don't attempt to scrape the Figma web app via a generic
+     web-fetch tool — it won't render without a logged-in session.
 4. Once you can read the file, locate the top-level section named **"Variables"** on the page
    behind the link (search by name via whichever metadata/outline tool your Figma access
    provides). Note its node ID now; you'll need it in Phase 1. While you're at it, also note the
    node IDs for the **"Web assets"** block and the Typekit typeface rows inside "Variables" — the
    sibling skills you hand off to in Phases 2–4 need the same Figma access and will ask you to
    re-locate them otherwise, so passing the IDs along saves duplicate work.
+   - **Fetch large containers shallow, then drill down — don't dump a whole page in one call.** If
+     the node behind the given link is a big container rather than "Variables" itself (e.g. the
+     link points at a page-level frame like "UI Kit" that wraps the entire page's content), a
+     full-depth fetch of it can be megabytes of data and fail outright (e.g. Framelink's
+     `get_figma_data` erroring that the result exceeds the maximum token count). Fetch it with a
+     shallow depth first (e.g. `depth: 1`) to see its immediate children's names, then re-fetch by
+     the specific child node ID you actually need — repeating one level at a time if that child is
+     itself another large container — instead of guessing a depth deep enough to reach "Variables"
+     in a single call.
 
 ## Phase 1 — Variables → `_variables.scss`
 
@@ -114,15 +125,15 @@ $small-desktop: 1199px;
   --background-primary: #f7f6f2;
   --text-primary: #241b17;
 
-  --font-size-h1: 3rem;
-  --font-size-default: 1rem;
+  --font-size-h1: 48px;
+  --font-size-default: 16px;
 
   --max-content-width: 1200px;
   --screen-padding: 16px;
 
   @media (max-width: $mobile) {
-    --font-size-h1: 1.75rem;
-    --font-size-default: 0.875rem;
+    --font-size-h1: 28px;
+    --font-size-default: 14px;
   }
 }
 ```
@@ -131,6 +142,14 @@ Note the naming convention actually in use: every design token is a **CSS custom
 (`--kebab-case-name`) declared inside `:root`, not a Sass `$variable` — the only real `$variables`
 in this file are the three breakpoints at the top. Follow whatever this file already does; if it
 has genuinely diverged from the shape above, match its current convention instead.
+
+**If a value looks suspicious, render it and look before writing it down.** Structured Figma data
+can contain copy-paste leftovers same as any design file — e.g. a row's mobile value happening to
+exactly match an unrelated row (a breakpoint value reappearing as a spacing value), or a column
+that's visibly blank/dash for every other row but populated for one. Don't silently trust the
+dump in that case; render the specific table/row as an image with your Figma tool and read it
+visually to confirm before writing the value, the same way Phase 0 already tells you to do when a
+tokens tool's color-mode coverage looks incomplete.
 
 1. **Colors.** In the "Variables" block, find the color table. It typically has a "Palette" column
    (raw primitive colors) and a "Light" column (the semantic value the app actually consumes,
@@ -141,16 +160,28 @@ has genuinely diverged from the shape above, match its current convention instea
    `--brand-primary`, `Background / Secondary` → `--background-secondary`. Skip adding a
    standalone token for a raw palette primitive unless the user specifically asks for the
    primitives too — the app only consumes the semantic layer.
+   - **Write every color as hex, not `rgb()`/`rgba()`, so the file stays visually consistent.** A
+     solid color becomes 6-digit hex (`rgb(191, 75, 75)` → `#bf4b4b`); a color with alpha becomes
+     8-digit hex — append the alpha as a two-digit hex byte (`round(alpha × 255)` in hex, e.g. 40%
+     → `0.4 × 255 ≈ 102 = 0x66`) to the 6-digit color, e.g. `rgba(191, 75, 75, 0.4)` →
+     `#bf4b4b66`. Do this even though `npm run lint:css`'s `--fix` will normalize plain
+     `rgb()`/`rgba()` calls to the modern space-separated syntax rather than hex — Stylelint does
+     not rewrite hex either direction, so writing hex yourself is the only way to get a
+     consistently hex file. If the design tool gives you a color as a named CSS keyword (e.g.
+     `transparent`) instead of a numeric value, leave it as-is rather than forcing a hex
+     equivalent.
 2. **Font sizes.** Find the typekit/typography table's font-size rows (desktop and mobile columns,
    possibly named "Typekit", "Desktop", "Mobile", or similar headers — read what's actually there).
    For each size (headings and any named text sizes like large/default/small): the desktop value
-   becomes a top-level token inside `:root` (e.g. `--font-size-h1: 3rem;`); the mobile value for
+   becomes a top-level token inside `:root` (e.g. `--font-size-h1: 48px;`); the mobile value for
    the _same_ token name goes inside the `@media (max-width: $mobile) { ... }` block nested inside
-   `:root` — create that block if it's missing, matching the existing indentation style. Don't
-   duplicate a token at both levels with the same value; only add the mobile override if the
+   `:root` — create that block if it's missing, matching the existing indentation style. **Write
+   the raw pixel value from the table as `px`, not `rem`** — don't divide by the root font size.
+   Don't duplicate a token at both levels with the same value; only add the mobile override if the
    mobile value actually differs from desktop. A token already in the file that has no
    corresponding row in this table (e.g. a "Large" size the table doesn't list) is out of scope —
-   leave it exactly as-is rather than guessing a Figma-derived value for it.
+   leave it exactly as-is rather than guessing a Figma-derived value for it (including its unit —
+   don't convert an existing `rem` token to `px` just because new tokens use `px`).
 3. **Everything else (responsive/spacing values).** Any other rows in the Variables block (e.g.
    max content width, screen padding, grid gaps) become flat top-level tokens the same way,
    following the same naming transform. If a value differs between desktop and mobile, it follows

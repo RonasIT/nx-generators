@@ -61,13 +61,27 @@ Skip this whole phase if you were handed a Figma link/access and a "Web assets" 
 ## Phase 1 — Favicon
 
 1. Look inside the "Web assets" block for the favicon. **There may be more than one favicon
-   variant** (e.g. different marks or color treatments shown side by side for comparison) — if so,
-   don't guess which one is "the" favicon; screenshot the containing frame and ask the user which
-   variant to use before exporting anything.
-2. Export the chosen node as SVG (ask your Figma tool for an SVG export/render of that specific
+   variant** (e.g. different marks or color treatments shown side by side for comparison, often
+   each wrapped in its own comparison container such as a "favicon frame") — if so, don't guess
+   which one is "the" favicon; screenshot the containing area and ask the user which variant to
+   use before exporting anything.
+2. **Export the actual favicon node, not its comparison wrapper.** A container that exists only to
+   lay favicon variants out side by side for review (e.g. named "favicon frame") often adds its own
+   background/padding around the real asset — exporting it verbatim bakes that padding/background
+   into `icon.svg` instead of just the icon. Inside the chosen variant, look for a nested node
+   named `favicon` (this is what the "Web assets" block's "Don't change layer names, they are used
+   for auto-export" note is about) and export that node, not its containing frame. **Match it even
+   with a trailing disambiguator** like `favicon 2`/`favicon 3` — when a favicon layer is
+   duplicated to show a second variant next to the first for comparison, Figma itself renames the
+   copy this way (not the designer), so `favicon 2` still means "the favicon," just for the other
+   variant. If no node matching `favicon` (optionally followed by a number) exists inside the
+   chosen variant, fall back to exporting the frame the user picked, but say so explicitly in the
+   finishing summary so it can be corrected by hand if the result looks off (e.g. has an unwanted
+   background).
+3. Export the chosen node as SVG (ask your Figma tool for an SVG export/render of that specific
    node — if the connected tool only supports raster/PNG export, tell the user and ask them to
    export it manually from Figma instead of silently substituting a PNG).
-3. Save it as `apps/<app>/app/icon.svg` — Next.js's file-based [metadata
+4. Save it as `apps/<app>/app/icon.svg` — Next.js's file-based [metadata
    conventions](https://nextjs.org/docs/app/api-reference/file-conventions/icon) pick up an
    `icon.svg` directly under the app directory automatically; no code changes needed beyond adding
    the file. If a favicon file already exists there under a different name/extension (e.g.
@@ -101,16 +115,59 @@ Uncomment those lines now that the asset exists at `../assets/icons.svg` relativ
 assuming it's unchanged, especially if the icon component has moved.
 
 Mapping every individual icon name to its `background-position` in the sprite (and updating the
-`IconName` union in `component.tsx`) is a reasonable stretch goal if the sprite's structure makes
-individual icon positions easy to determine — e.g. some Figma files ship a text layer next to the
-sprite frame with ready-made SCSS (a `.icon { &_<name> { --bg-position: ...; } }` block per icon);
-if you find one, use it directly instead of computing positions by hand. This isn't required by
-this phase — if you skip it, say so explicitly in the finishing summary so the user knows it's
-still a manual step.
+`IconName` union in `component.tsx`) makes the sprite immediately usable instead of leaving it as
+inert artwork — attempt it as part of this phase rather than treating it as optional, using
+whichever of these gets you there:
+
+1. **Ready-made mapping.** Some Figma files ship a text layer next to the sprite frame with
+   ready-made SCSS (a `.icon { &_<name> { --bg-position: ...; } }` block per icon) — if you find
+   one, use it directly instead of computing positions by hand.
+2. **Compute it from the sprite's auto-layout, then verify against the exported asset.** Figma MCP
+   tools generally don't report absolute pixel positions for children of a wrap/auto-layout frame
+   — position there is implicit in the flex flow, not stored per child — but you can derive them
+   yourself the same way a browser would lay the row out:
+   - Read the sprite frame's own layout: padding, gap, and its resolved pixel width. This should
+     match the width of the SVG/PNG you already exported in Phase 2 — if it doesn't, you're
+     looking at the wrong frame.
+   - Read the ordered list of icon instances inside it — name and each one's width/height. Most
+     will share one fixed size, but don't assume they all do; some sprites mix sizes.
+   - Simulate a CSS `flex-wrap: wrap` row with that padding/gap: place icons left to right in
+     document order, top-aligned (`align-items: flex-start`, Figma's own auto-layout default), and
+     wrap to a new row whenever the next icon would overflow the frame's inner width. This is
+     exact, not approximate — Figma's wrap auto-layout is modeled on CSS flexbox.
+   - **Verify before trusting it.** Check that your computed total sprite height matches the
+     exported asset's actual height, and spot-check 2–3 icons by confirming the visible shapes in
+     the exported SVG's raw path coordinates fall inside their computed box. Don't skip this — a
+     wrong padding/gap assumption produces confidently-wrong positions for every icon after the
+     first mismatch, and there's no visual feedback to catch it otherwise.
+3. **Name each icon**, in `snake_case` per this repo's `selector-class-pattern` convention, with
+   two adjustments to the raw Figma layer name:
+   - **Prefer the underlying component name over a generic instance/layer name.** A layer literally
+     named "leading icon" or "trailing icon" describes its role in some other composition, not what
+     the icon actually is — use the component it's an instance of instead (e.g. a "leading icon"
+     instance of a component named "usa" is a flag icon → `usa`).
+   - **Dedupe true duplicates; disambiguate real collisions.** Two instances of the exact same
+     component (same component ID) are the same icon appearing twice in the sprite — map only one
+     of them. Two instances that normalize to the same name but come from *different* components
+     (e.g. a "chevron-left" from one icon library and a differently-drawn "chevron-left" from
+     another, both included in the same sprite) are genuinely different icons — keep both, and
+     append a short disambiguator (e.g. the library name) to each so neither name gets dropped.
+4. Write the `&_<name> { --bg-position: -<x>px -<y>px; }` block for each icon into
+   `component.module.scss`, and list every name in the `IconName` union in `component.tsx`,
+   replacing the placeholder `'your_icon_name'`.
+5. **Visually confirm the result before finishing.** Render every `IconName` through the `Icon`
+   component on a throwaway page/route, screenshot it, and check that each one shows a distinct,
+   correctly-cropped glyph — not a sliver of its neighbor, not another icon's shape, not blank.
+   Delete the throwaway page afterward; it's a verification step, not a deliverable.
+
+If none of this is tractable for a given sprite (e.g. it isn't a wrap/auto-layout frame at all, or
+the layout is too irregular to simulate confidently), fall back to leaving the mapping as a manual
+step — say so explicitly in the finishing summary so the user knows it's still outstanding.
 
 ## Finishing up
 
 Post a short summary: whether the favicon and icon sprite were added (and which favicon variant
 was chosen, if there was more than one), whether the `Icon` component's sprite path was uncommented,
-and whether the icon-name-to-position mapping stretch goal ran or was left as a manual step. Then
-ask the user to visually verify the favicon and a sample of icons in the running app.
+and how the icon-name-to-position mapping went — a ready-made mapping used as-is, computed and
+verified (how many icons), or left as a manual step (and why). Then ask the user to visually verify
+the favicon and a sample of icons in the running app.

@@ -177,12 +177,18 @@ describe('nextAppGenerator with file content checks', () => {
     expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 
-  it('should generate the add-fonts agent skill regardless of withMantine', async () => {
+  it('should generate the Next.js agent skills regardless of withMantine', async () => {
     existsSyncMock.mockReturnValue(true);
 
     await nextAppGenerator(tree, { ...optionsBase, withMantine: false });
 
+    expect(tree.exists('.agents/skills/nextjs/import-figma-ui/SKILL.md')).toBe(true);
+    expect(tree.exists('.agents/skills/nextjs/import-figma-vars/SKILL.md')).toBe(true);
+    expect(tree.exists('.agents/skills/nextjs/import-figma-assets/SKILL.md')).toBe(true);
     expect(tree.exists('.agents/skills/nextjs/add-fonts/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/nextjs/import-figma-ui/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/nextjs/import-figma-vars/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/nextjs/import-figma-assets/SKILL.md')).toBe(true);
     expect(tree.exists('.claude/skills/nextjs/add-fonts/SKILL.md')).toBe(true);
   });
 

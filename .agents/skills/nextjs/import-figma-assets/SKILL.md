@@ -173,13 +173,27 @@ whichever of these gets you there:
 4. **Check whether an icon should keep its own color instead of following the app's theme.** This
    component's `mask` technique only works for icons meant to be recolored — it paints the whole
    shape one flat color (whatever `IconColor` resolves to), discarding any original artwork
-   underneath. Before writing an icon's SCSS rule, check its `fill`/`stroke` values in the exported
-   SVG: **more than one distinct color** (a flag, a payment-brand logo, a social icon) **or a
-   single color that differs from the sprite's shared default monochrome fill** (most line-style
+   underneath. Before writing an icon's SCSS rule, check its `fill`/`stroke` values — **do this
+   from the one combined SVG you already exported in Phase 2, not by re-exporting each icon
+   individually**: parse that file's raw `fill`/`stroke` attributes and assign each shape to
+   whichever icon's bounding box (the same `x`/`y`/width/height you used to compute
+   `--bg-position`) contains it. This stays a handful of tool calls regardless of sprite size —
+   for a sprite with dozens or hundreds of icons, exporting each one separately to inspect its
+   colors is the kind of detour that burns a session's budget on a large real sprite. When
+   approximating a path's bounding box from its `d` attribute, don't naively pair every number as
+   an x/y coordinate — curve and arc commands (`C`, `A`) carry extra non-coordinate parameters
+   (control points, radii, rotation, flags) that will skew the box and misassign shapes to the
+   wrong icon. If the bounding-box match can't be made reliable this way for a given icon, fall
+   back to exporting just that one icon individually rather than guessing its color.
+
+   Then apply these criteria: **more than one distinct color** (a flag, a payment-brand logo, a
+   social icon) **or a single color that differs from the sprite's shared default monochrome fill**
+   (most line-style
    icons in the same sprite share one common neutral fill — a single-color icon using some other,
    different color instead, like a social-network mark in its own signature blue or a brand logo in
    its own signature purple sitting among otherwise-neutral icons, is still a fixed brand color, not
    a coincidence) means it needs to keep its real colors — write
+
    ```scss
    &_<name > {
      --bg-position: -<x>px -<y>px;
@@ -187,11 +201,13 @@ whichever of these gets you there:
      mask: none;
    }
    ```
+
    instead of the plain `--bg-position`-only rule, and place it _after_ the `IconColor` modifier
    blocks (`&_text_primary`, `&_brand_primary`, etc.) in the file so it wins the cascade — both
    rules have equal specificity, so source order decides which `background` sticks. These icons
    ignore the `color` prop by design; note that in the finishing summary so it isn't mistaken for a
    bug later.
+
 5. Write the `&_<name> { --bg-position: -<x>px -<y>px; }` block for each remaining (recolorable)
    icon into `component.module.scss`, and list every name — recolorable and fixed-color alike — in
    the `IconName` union in `component.tsx`, replacing the placeholder `'your_icon_name'`.

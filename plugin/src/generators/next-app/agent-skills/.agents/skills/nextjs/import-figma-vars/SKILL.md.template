@@ -5,9 +5,9 @@ description: >
   library (`_variables.scss`) — colors, font sizes, and other responsive values. Requires a link to
   a Figma page and, ideally, a connected Figma MCP server. Use whenever asked to "import Figma
   variables", "sync design tokens from Figma", "import figma colors/tokens", or similar. This app
-  was scaffolded with `@ronas-it/nx-generators` (`next-app`);
-  can run standalone or as the first phase of the `import-figma-ui` skill, which hands off here and reuses the Figma
-  access and node IDs this skill locates for its own remaining phases (assets, theme, fonts).
+  was scaffolded with `@ronas-it/nx-generators` (`next-app`). Can run standalone or as the first
+  phase of the `import-figma-ui` skill, which hands off here and reuses the Figma access and node
+  IDs this skill locates for its own remaining phases (assets, theme, fonts).
 ---
 
 # Import Figma variables
@@ -78,7 +78,9 @@ you're running as part of `import-figma-ui`) — go straight to Phase 1.
      may resolve only one Figma variable _mode_ (e.g. the desktop column) — if a table visibly has
      more columns (e.g. a "Mobile" column) than the tokens tool returned distinct values for, fall
      back to a screenshot of that specific table and read it visually rather than assuming the
-     missing column is identical to the one you got.
+     missing column is identical to the one you got. If the missing values are colors, use the SVG
+     export technique from [references/colors.md](references/colors.md) instead of a screenshot —
+     see there for why.
    - The required preflight above should already have provided a compatible tool. If that tool is
      no longer available, pause this phase and run the preflight again; don't attempt to scrape
      the Figma web app via a generic web-fetch tool.
@@ -138,7 +140,21 @@ exactly match an unrelated row (a breakpoint value reappearing as a spacing valu
 that's visibly blank/dash for every other row but populated for one. Don't silently trust the
 dump in that case; render the specific table/row as an image with your Figma tool and read it
 visually to confirm before writing the value, the same way Phase 0 already tells you to do when a
-tokens tool's color-mode coverage looks incomplete.
+tokens tool's color-mode coverage looks incomplete. If the suspicious value is itself a color, use
+the SVG export technique from [references/colors.md](references/colors.md) rather than a plain
+screenshot.
+
+**Completeness checklist (required, do this before writing anything).** List every row name in
+each table you're about to process (colors, font sizes, responsive/spacing) in a scratch list, in
+document order. Every single row must end up in exactly one of two buckets before you move on:
+"imported as token `--x`" or "deliberately skipped, because _______". A row you haven't
+consciously placed in one of these buckets is a row that will silently go missing — that has
+already happened once (an entire family of hover/pressed/transparent state rows got dropped
+because they were pattern-matched against the "skip primitives" rule in
+[references/colors.md](references/colors.md), which was never meant to apply to them). When in
+doubt about which bucket a row belongs in, default to importing it —
+an unwanted extra CSS custom property is far cheaper to notice and remove than a missing one is to
+notice is missing.
 
 1. **Colors.** In the "Variables" block, find the color table. It typically has a "Palette" column
    (raw primitive colors) and a "Light" column (the semantic value the app actually consumes,
@@ -146,19 +162,13 @@ tokens tool's color-mode coverage looks incomplete.
    names and layout can vary per project. For each semantic row, take the resolved color from the
    theme column actually used by the app (usually "Light"), and derive the token name from the
    row's grouping path by lowercasing and joining with hyphens, e.g. `Brand / Primary` →
-   `--brand-primary`, `Background / Secondary` → `--background-secondary`. Skip adding a
-   standalone token for a raw palette primitive unless the user specifically asks for the
-   primitives too — the app only consumes the semantic layer.
-   - **Write every color as hex, not `rgb()`/`rgba()`, so the file stays visually consistent.** A
-     solid color becomes 6-digit hex (`rgb(191, 75, 75)` → `#bf4b4b`); a color with alpha becomes
-     8-digit hex — append the alpha as a two-digit hex byte (`round(alpha × 255)` in hex, e.g. 40%
-     → `0.4 × 255 ≈ 102 = 0x66`) to the 6-digit color, e.g. `rgba(191, 75, 75, 0.4)` →
-     `#bf4b4b66`. Do this even though `npm run lint:css`'s `--fix` will normalize plain
-     `rgb()`/`rgba()` calls to the modern space-separated syntax rather than hex — Stylelint does
-     not rewrite hex either direction, so writing hex yourself is the only way to get a
-     consistently hex file. If the design tool gives you a color as a named CSS keyword (e.g.
-     `transparent`) instead of a numeric value, leave it as-is rather than forcing a hex
-     equivalent.
+   `--brand-primary`, `Background / Secondary` → `--background-secondary`.
+
+   Before extracting or writing any value, read [references/colors.md](references/colors.md) in
+   full — it covers how to read the real color (an SVG-export technique and a confirmed PNG
+   pixel-sampling pitfall), which rows count as a skippable primitive vs. a semantic state variant
+   you must import, and how to write the value as hex. Skipping it has caused prior imports to
+   silently write missing or wrong colors.
 2. **Font sizes.** Find the typekit/typography table's font-size rows (desktop and mobile columns,
    possibly named "Typekit", "Desktop", "Mobile", or similar headers — read what's actually there).
    For each size (headings and any named text sizes like large/default/small): the desktop value
@@ -182,9 +192,21 @@ tokens tool's color-mode coverage looks incomplete.
 
 ## Finishing up
 
-Post a short summary: the token/color/font-size counts written to `_variables.scss`. If you're
-running as part of `import-figma-ui`, say this is its "Variables" phase and hand back the Figma
-link/access, `<app>`, and any "Web assets"/Typekit node IDs you noted in Phase 0 so the remaining
-phases don't have to re-locate them. If you ran standalone, ask the user to visually verify the
-app — colors and type sizes at both desktop and mobile widths — since this skill can't render the
-app to check that itself.
+Post a short summary: the token/color/font-size counts written to `_variables.scss`, and the count
+of rows found in each source table vs. tokens written. These won't always match one-to-one — a row
+can be an exact duplicate, or a genuine primitive per the narrow definition in
+[references/colors.md](references/colors.md) — but report the comparison even when they do match,
+since a gap is exactly the signal that catches a row falling
+through silently. Name any deliberately-skipped row and say why in one clause each; don't just
+report the rows that made it in.
+
+State how the colors were obtained. SVG-read literal fill values need no caveat, but if you had to
+fall back to PNG pixel sampling for any of them (e.g. SVG export failed for a node, or only a
+rendering tool without SVG support was available), say so explicitly and ask the user to spot-check
+those specific values — that path has a confirmed history of silently-wrong colors.
+
+If you're running as part of `import-figma-ui`, say this is its "Variables" phase and hand back the
+Figma link/access, `<app>`, and any "Web assets"/Typekit node IDs you noted in Phase 0 so the
+remaining phases don't have to re-locate them. If you ran standalone, ask the user to visually
+verify the app — colors and type sizes at both desktop and mobile widths — since this skill can't
+render the app to check that itself.

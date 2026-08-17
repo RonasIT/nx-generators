@@ -128,7 +128,6 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   }
 
   addNxAppTag(tree, options.directory);
-  generateFiles(tree, path.join(__dirname, 'agent-skills'), repoRoot, {});
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {
     ...options,
     formatName,

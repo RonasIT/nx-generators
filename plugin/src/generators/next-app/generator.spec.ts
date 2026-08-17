@@ -186,10 +186,10 @@ describe('nextAppGenerator with file content checks', () => {
     expect(tree.exists('.agents/skills/nextjs/import-figma-vars/SKILL.md')).toBe(true);
     expect(tree.exists('.agents/skills/nextjs/import-figma-assets/SKILL.md')).toBe(true);
     expect(tree.exists('.agents/skills/nextjs/add-fonts/SKILL.md')).toBe(true);
-    expect(tree.exists('.claude/skills/nextjs/import-figma-ui/SKILL.md')).toBe(true);
-    expect(tree.exists('.claude/skills/nextjs/import-figma-vars/SKILL.md')).toBe(true);
-    expect(tree.exists('.claude/skills/nextjs/import-figma-assets/SKILL.md')).toBe(true);
-    expect(tree.exists('.claude/skills/nextjs/add-fonts/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/import-figma-ui/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/import-figma-vars/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/import-figma-assets/SKILL.md')).toBe(true);
+    expect(tree.exists('.claude/skills/add-fonts/SKILL.md')).toBe(true);
   });
 
   it('should run post install tasks correctly', async () => {

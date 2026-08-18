@@ -2,12 +2,14 @@
 name: import-figma-vars
 description: >
   Import design tokens from a Figma UI-kit page's "Variables" block into this app's shared styles
-  library (`_variables.scss`) — colors, font sizes, and other responsive values. Requires a link to
-  a Figma page and, ideally, a connected Figma MCP server. Use whenever asked to "import Figma
-  variables", "sync design tokens from Figma", "import figma colors/tokens", or similar. This app
-  was scaffolded with `@ronas-it/nx-generators` (`next-app`). Can run standalone or as the first
-  phase of the `import-figma-ui` skill, which hands off here and reuses the Figma access and node
-  IDs this skill locates for its own remaining phases (assets, theme, fonts).
+  library (`_variables.scss`) — colors, font sizes, line heights, and other responsive values.
+  Requires a link to a Figma page and, ideally, a connected Figma MCP server. Use whenever asked to
+  "import Figma variables", "sync design tokens from Figma", "import figma colors/tokens", or
+  similar. This app was scaffolded with `@ronas-it/nx-generators` (`next-app`). Can run standalone
+  or as the first phase of the `import-figma-ui` skill, which hands off here and reuses the Figma
+  access and node IDs this skill locates for its own remaining phases (assets, theme, fonts). The
+  line-height tokens this skill writes are consumed downstream by `configure-mantine-theme` for
+  `theme.headings.sizes.h<N>.lineHeight`.
 ---
 
 # Import Figma variables
@@ -119,6 +121,9 @@ $small-desktop: 1199px;
   --font-size-h1: 48px;
   --font-size-default: 16px;
 
+  --line-height-tight: 1.15;
+  --line-height-normal: 1.25;
+
   --max-content-width: 1200px;
   --screen-padding: 16px;
 
@@ -145,8 +150,9 @@ the SVG export technique from [references/colors.md](references/colors.md) rathe
 screenshot.
 
 **Completeness checklist (required, do this before writing anything).** List every row name in
-each table you're about to process (colors, font sizes, responsive/spacing) in a scratch list, in
-document order. Every single row must end up in exactly one of two buckets before you move on:
+each table you're about to process (colors, font sizes, line heights, responsive/spacing) in a
+scratch list, in document order. Every single row must end up in exactly one of two buckets before
+you move on:
 "imported as token `--x`" or "deliberately skipped, because _______". A row you haven't
 consciously placed in one of these buckets is a row that will silently go missing — that has
 already happened once (an entire family of hover/pressed/transparent state rows got dropped
@@ -182,24 +188,36 @@ notice is missing.
    corresponding row in this table (e.g. a "Large" size the table doesn't list) is out of scope —
    leave it exactly as-is rather than guessing a Figma-derived value for it (including its unit —
    don't convert an existing `rem` token to `px` just because new tokens use `px`).
-3. **Everything else (responsive/spacing values).** Any other rows in the Variables block (e.g.
+3. **Line heights.** Find the typekit/typography table's named line-height rows (e.g. "Tight",
+   "Snug", "Normal", "Relaxed", "Loose" — read whatever names are actually there) and import each as
+   a flat top-level token, e.g. `Line Height / Tight` → `--line-height-tight`. **Write the value as
+   a unitless decimal, not a percentage string** — Figma typically displays these as a percentage
+   (e.g. "115%"); convert to the CSS `line-height` convention by dividing by 100 (`115%` → `1.15`).
+   These rows can have separate desktop/mobile columns same as font sizes — don't assume they're
+   always identical across breakpoints just because they're a "smaller" category of token; check
+   both columns and apply the same media-query placement rule as font sizes above whenever they
+   differ. Don't try to work out which heading level (`h1`, `h2`, …) consumes which named
+   line-height here — that mapping is `configure-mantine-theme`'s job (via any composite text-style
+   variables it can find, e.g. `title/H1`), not this skill's; just import the named tokens
+   themselves so that skill has `var(--line-height-*)` to reference instead of hardcoding numbers.
+4. **Everything else (responsive/spacing values).** Any other rows in the Variables block (e.g.
    max content width, screen padding, grid gaps) become flat top-level tokens the same way,
    following the same naming transform. If a value differs between desktop and mobile, it follows
    the same media-query placement rule as font sizes above.
-4. **Merge, don't clobber.** If `_variables.scss` already has tokens not present in the Figma page,
+5. **Merge, don't clobber.** If `_variables.scss` already has tokens not present in the Figma page,
    leave them — this phase adds/updates tokens sourced from Figma, it doesn't prune the file.
-5. After writing, run `npm run lint:css` from the repo root (or the equivalent Stylelint script if
+6. After writing, run `npm run lint:css` from the repo root (or the equivalent Stylelint script if
    this repo doesn't have exactly that name — check `package.json`) and fix anything it flags.
 
 ## Finishing up
 
-Post a short summary: the token/color/font-size counts written to `_variables.scss`, and the count
-of rows found in each source table vs. tokens written. These won't always match one-to-one — a row
-can be an exact duplicate, or a genuine primitive per the narrow definition in
+Post a short summary: the token/color/font-size/line-height counts written to `_variables.scss`,
+and the count of rows found in each source table vs. tokens written. These won't always match
+one-to-one — a row can be an exact duplicate, or a genuine primitive per the narrow definition in
 [references/colors.md](references/colors.md) — but report the comparison even when they do match,
-since a gap is exactly the signal that catches a row falling
-through silently. Name any deliberately-skipped row and say why in one clause each; don't just
-report the rows that made it in.
+since a gap is exactly the signal that catches a row falling through silently. Name any
+deliberately-skipped row and say why in one clause each; don't just report the rows that made it
+in.
 
 State how the colors were obtained. SVG-read literal fill values need no caveat, but if you had to
 fall back to PNG pixel sampling for any of them (e.g. SVG export failed for a node, or only a

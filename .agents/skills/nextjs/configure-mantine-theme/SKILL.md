@@ -116,12 +116,44 @@ theme reads from via `var(--...)` — this skill never hardcodes a color/size li
      block the same way the file already does for `MantineThemeColorsOverride`, e.g. adding a
      `MantineFontSizesOverride` interface for a custom `fontSizes` key. Only do this when a token
      genuinely doesn't fit an existing slot; don't add overrides speculatively.
-3. **Line heights.** If this run has access to the same Figma page used by `import-figma-ui`
-   (either because you're continuing that skill's Phase 3, or the user gave you a Figma link
-   directly for this), find the Typekit table's line-height column/rows for each heading level and
-   set `theme.headings.sizes.h<N>.lineHeight` to that value (Mantine accepts a unitless number or
-   string here, e.g. `'1.15'`). If there's no Figma access in this run, skip this step and say so
-   in the finishing summary — don't invent line-height values.
+3. **Line heights → `theme.headings.sizes.h<N>.lineHeight`.** `import-figma-vars` already imports
+   every named line-height row from the Typekit table into `_variables.scss` as a flat token (e.g.
+   `--line-height-tight`, `--line-height-snug`) — it does not decide which heading level consumes
+   which one, so that mapping is this step's job. Read `_variables.scss` for whichever
+   `--line-height-*` tokens exist (same file you already read in Scope detection above) before
+   doing anything else; if none exist yet, this step has nothing to reference — skip it and say so
+   in the finishing summary rather than hardcoding a number.
+   - **With Figma access in this run** (continuing `import-figma-ui`'s Phase 3, or given a Figma
+     link directly): for each heading level, look for a composite text-style variable named like
+     `title/H<N>` (via `get_variable_defs` on the Variables node) and read its resolved
+     `lineHeight`. Match that numeric value against the `--line-height-*` tokens already in
+     `_variables.scss` (e.g. a composite resolving to `1.15` matches `--line-height-tight`) and set
+     `lineHeight: 'var(--line-height-tight)'` — reference the token, never the bare number, so this
+     stays in sync with `_variables.scss` the same way `fontSize` already does. Not every heading
+     level will have its own composite (in practice only `H1` reliably does) — for a level with no
+     composite, leave its `lineHeight` unchanged rather than guessing which named token it should
+     use, and list that level explicitly in the finishing summary as still needing a manual
+     decision.
+     - **`get_variable_defs` queried against a frame with multiple composite text-style instances
+       (e.g. a "Text Styles" frame containing one instance per `title/H<N>`/`body/*` row) can
+       misreport a given instance's own `fontFamily`/`lineHeight` the same way it can misreport a
+       color swatch instance's fill** — this has already happened once (a title-styles frame
+       resolved every `title/H<N>` row to values that didn't match what the frame's own rendered
+       text actually showed once screenshotted, both the typeface — reporting a secondary display
+       face for headings that all visibly render in the primary body face — and every line-height
+       percentage). **Before writing any per-heading `fontFamily`/`lineHeight` value, screenshot the
+       actual "Title / H<N>" row** (`get_screenshot` on that row's node, not just its resolved
+       variable) **and read the family name and `Desktop`/`Mobile` line-height percentage directly
+       off the rendered text** — treat the `get_variable_defs` dump as a hint to double-check, never
+       as the value to write. This mirrors the SVG-vs-PNG caution in
+       [colors.md](../import-figma-vars/references/colors.md) for the same underlying failure mode
+       (component-instance data collapsing to a shared/stale value) just hitting typography
+       properties instead of fills.
+   - **Without Figma access in this run:** you can't resolve the per-heading mapping (that requires
+     reading the composite variables), but the named tokens themselves are still sitting in
+     `_variables.scss` unused — say so explicitly in the finishing summary (which tokens exist, and
+     that assigning them to specific heading levels is a manual follow-up) rather than silently
+     doing nothing. Don't invent a mapping and don't hardcode a literal number either way.
 4. **Verify.** `theme.tsx` is TypeScript, so a typo in the `declare module` augmentation or a
    missing import fails loudly. Run `npm run lint` (or the repo's equivalent `tsc`/`eslint` script,
    check `package.json` if the name differs) from the repo root and fix anything it flags before
@@ -130,6 +162,9 @@ theme reads from via `var(--...)` — this skill never hardcodes a color/size li
 ## Finishing up
 
 Summarize what changed: how many color entries were added/updated in `themeColors`, which heading
-levels got new/updated `fontSize`/`lineHeight`, and whether a `declare module '@mantine/core'`
-override was added (and why, if so). If line heights were skipped for lack of Figma access, say
-that explicitly rather than leaving it implicit.
+levels got new/updated `fontSize`, and whether a `declare module '@mantine/core'` override was
+added (and why, if so). For line heights, be explicit about the three possible outcomes per
+heading level: resolved to a `var(--line-height-*)` reference (say which token), left unchanged for
+lack of a composite mapping (say which `--line-height-*` tokens exist in `_variables.scss` that
+still need manual assignment), or skipped entirely because `_variables.scss` had no line-height
+tokens at all yet.

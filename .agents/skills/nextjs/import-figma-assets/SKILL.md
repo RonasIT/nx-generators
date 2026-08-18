@@ -94,7 +94,17 @@ Skip this whole phase if you were handed a Figma link/access and a "Web assets" 
    background).
 3. Export the chosen node as SVG (ask your Figma tool for an SVG export/render of that specific
    node — if the connected tool only supports raster/PNG export, tell the user and ask them to
-   export it manually from Figma instead of silently substituting a PNG).
+   export it manually from Figma instead of silently substituting a PNG). **Check what actually
+   came back before saving it** — exporting by node ID doesn't guarantee the result is limited to
+   that node's own content; a tool can still render the full ancestor chain into the SVG (e.g. the
+   comparison wrapper's own background rect, or even the whole page's background), baked in as
+   extra `<rect>`/`<g>` elements wrapping the real artwork. If that happens, open the markup and
+   keep only the favicon node's own direct children (its intended background plus its artwork
+   path(s)) — strip the ancestor-owned elements around them. Don't reach for an alternate
+   "isolated vector-only" export mode as a shortcut here if your tool offers one, instead of doing
+   this by hand: that mode typically strips backgrounds indiscriminately, including the favicon's
+   own intentional background fill and not just the comparison wrapper's — trading one wrong result
+   (extra padding) for another (a missing background).
 4. Save it as `apps/<app>/app/icon.svg` — Next.js's file-based [metadata
    conventions](https://nextjs.org/docs/app/api-reference/file-conventions/icon) pick up an
    `icon.svg` directly under the app directory automatically; no code changes needed beyond adding
@@ -130,84 +140,26 @@ assuming it's unchanged, especially if the icon component has moved.
 
 Mapping every individual icon name to its `background-position` in the sprite (and updating the
 `IconName` union in `component.tsx`) makes the sprite immediately usable instead of leaving it as
-inert artwork — attempt it as part of this phase rather than treating it as optional, using
-whichever of these gets you there:
+inert artwork — attempt it as part of this phase rather than treating it as optional. Read
+[references/sprite-mapping.md](references/sprite-mapping.md) in full before doing steps 2–4 below —
+it covers computing positions, naming/deduplicating icons, and detecting which icons need to keep
+their own colors, in the detail those steps actually require. Skipping it has produced
+confidently-wrong `--bg-position` values and dropped brand-color icons before.
 
 1. **Ready-made mapping.** Some Figma files ship a text layer next to the sprite frame with
    ready-made SCSS (a `.icon { &_<name> { --bg-position: ...; } }` block per icon) — if you find
-   one, use it directly instead of computing positions by hand.
-2. **Compute it from the sprite's auto-layout, then verify against the exported asset.** Figma MCP
-   tools generally don't report absolute pixel positions for children of a wrap/auto-layout frame
-   — position there is implicit in the flex flow, not stored per child — but you can derive them
-   yourself the same way a browser would lay the row out:
-   - Read the sprite frame's own layout: padding, gap, and its resolved pixel width. This should
-     match the width of the SVG/PNG you already exported in Phase 2 — if it doesn't, you're
-     looking at the wrong frame.
-   - Read the ordered list of icon instances inside it — name and each one's width/height. Most
-     will share one fixed size, but don't assume they all do; some sprites mix sizes.
-   - Simulate a CSS `flex-wrap: wrap` row with that padding/gap: place icons left to right in
-     document order, using the **frame's own `align-items` value** for cross-axis alignment — read
-     it from the layout data, don't assume `flex-start`/top-aligned as "the" default (a real frame
-     can and does override it — one real sprite's own icon-grid frame had `align-items: center`
-     explicitly set; a 22.86px-tall icon in a 24px row sitting at a `0.57px` top offset only
-     matches `center`'s `(24-22.86)/2` math, not `flex-start`'s `0px`) — and wrap to a new row
-     whenever the next icon would overflow the frame's inner width. This is exact, not
-     approximate — Figma's wrap auto-layout is modeled on CSS flexbox.
-   - **Verify before trusting it.** Check that your computed total sprite height matches the
-     exported asset's actual height, and spot-check 2–3 icons by confirming the visible shapes in
-     the exported SVG's raw path coordinates fall inside their computed box. Don't skip this — a
-     wrong padding/gap assumption produces confidently-wrong positions for every icon after the
-     first mismatch, and there's no visual feedback to catch it otherwise.
-3. **Name each icon**, in `snake_case` per this repo's `selector-class-pattern` convention, with
-   two adjustments to the raw Figma layer name:
-   - **Prefer the underlying component name over a generic instance/layer name.** A layer literally
-     named "leading icon" or "trailing icon" describes its role in some other composition, not what
-     the icon actually is — use the component it's an instance of instead (e.g. a "leading icon"
-     instance of a component named "usa" is a flag icon → `usa`).
-   - **Dedupe true duplicates; disambiguate real collisions.** Two instances of the exact same
-     component (same component ID) are the same icon appearing twice in the sprite — map only one
-     of them. Two instances that normalize to the same name but come from _different_ components
-     (e.g. a "chevron-left" from one icon library and a differently-drawn "chevron-left" from
-     another, both included in the same sprite) are genuinely different icons — keep both, and
-     append a short disambiguator (e.g. the library name) to each so neither name gets dropped.
-4. **Check whether an icon should keep its own color instead of following the app's theme.** This
-   component's `mask` technique only works for icons meant to be recolored — it paints the whole
-   shape one flat color (whatever `IconColor` resolves to), discarding any original artwork
-   underneath. Before writing an icon's SCSS rule, check its `fill`/`stroke` values — **do this
-   from the one combined SVG you already exported in Phase 2, not by re-exporting each icon
-   individually**: parse that file's raw `fill`/`stroke` attributes and assign each shape to
-   whichever icon's bounding box (the same `x`/`y`/width/height you used to compute
-   `--bg-position`) contains it. This stays a handful of tool calls regardless of sprite size —
-   for a sprite with dozens or hundreds of icons, exporting each one separately to inspect its
-   colors is the kind of detour that burns a session's budget on a large real sprite. When
-   approximating a path's bounding box from its `d` attribute, don't naively pair every number as
-   an x/y coordinate — curve and arc commands (`C`, `A`) carry extra non-coordinate parameters
-   (control points, radii, rotation, flags) that will skew the box and misassign shapes to the
-   wrong icon. If the bounding-box match can't be made reliable this way for a given icon, fall
-   back to exporting just that one icon individually rather than guessing its color.
-
-   Then apply these criteria: **more than one distinct color** (a flag, a payment-brand logo, a
-   social icon) **or a single color that differs from the sprite's shared default monochrome fill**
-   (most line-style
-   icons in the same sprite share one common neutral fill — a single-color icon using some other,
-   different color instead, like a social-network mark in its own signature blue or a brand logo in
-   its own signature purple sitting among otherwise-neutral icons, is still a fixed brand color, not
-   a coincidence) means it needs to keep its real colors — write
-
-   ```scss
-   &_<name > {
-     --bg-position: -<x>px -<y>px;
-     background: url(../assets/icons.svg) no-repeat var(--bg-position);
-     mask: none;
-   }
-   ```
-
-   instead of the plain `--bg-position`-only rule, and place it _after_ the `IconColor` modifier
-   blocks (`&_text_primary`, `&_brand_primary`, etc.) in the file so it wins the cascade — both
-   rules have equal specificity, so source order decides which `background` sticks. These icons
-   ignore the `color` prop by design; note that in the finishing summary so it isn't mistaken for a
-   bug later.
-
+   one, verify it actually matches the current sprite (same icon count, names line up with what's
+   really there) before using it; a mapping left over from an earlier sprite revision fails
+   silently instead of being obviously absent, which is worse than having no mapping at all.
+2. **Compute positions** if there's no usable ready-made mapping — check whether the sprite's
+   children already report exact coordinates directly before simulating anything by hand. See
+   "Computing positions" in the reference file.
+3. **Name each icon**, in `snake_case` per this repo's `selector-class-pattern` convention,
+   preferring the underlying component name over a generic instance/layer name, and deduping true
+   duplicates while disambiguating real collisions. See "Naming each icon" in the reference file.
+4. **Check whether an icon should keep its own color** instead of following the app's theme (a
+   flag, a payment-brand logo, a social icon in its own brand color) rather than being recolored via
+   the `mask` technique. See "Fixed-color vs. recolorable icons" in the reference file.
 5. Write the `&_<name> { --bg-position: -<x>px -<y>px; }` block for each remaining (recolorable)
    icon into `component.module.scss`, and list every name — recolorable and fixed-color alike — in
    the `IconName` union in `component.tsx`, replacing the placeholder `'your_icon_name'`.
@@ -221,10 +173,6 @@ whichever of these gets you there:
    route is easy to leave behind if something interrupts the run between creating it and cleaning
    it up, and unlike this file's other steps there's no later check that would catch a stray
    preview route before it ships.
-
-If none of this is tractable for a given sprite (e.g. it isn't a wrap/auto-layout frame at all, or
-the layout is too irregular to simulate confidently), fall back to leaving the mapping as a manual
-step — say so explicitly in the finishing summary so the user knows it's still outstanding.
 
 ## Finishing up
 

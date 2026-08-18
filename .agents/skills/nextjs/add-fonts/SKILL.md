@@ -111,12 +111,20 @@ If it exists:
    Typekit table's heading composites (if you have Figma access — look for rows like `title/H1`
    through `title/H5` or similar) actually reference it. Mantine's `headings.fontFamily` is a
    single override for all heading levels, not per-level:
+   - **Don't trust a `get_variable_defs` dump of the composite alone — screenshot each actual
+     "Title / H<N>" row and read the family name off the rendered text before concluding anything.**
+     A frame with one instance per heading level can misreport a given instance's own resolved
+     `fontFamily` the same way a repeated color-swatch instance can misreport its fill (see
+     [colors.md](../import-figma-vars/references/colors.md)) — this has already produced a
+     confidently-wrong "mixed primary/secondary" read for a Typekit table whose rows, once
+     screenshotted, all visibly rendered in the same primary typeface.
    - If the heading composites consistently use the secondary typeface, set
      `theme.headings.fontFamily` to `var(--font-secondary)` (or whatever variable you used).
    - If they're mixed (some heading levels use the primary typeface, others the secondary — this
-     happens, don't assume it won't), setting one override for all of them would be wrong. Leave
-     `theme.headings.fontFamily` unset and say so explicitly in the finishing summary as a manual
-     follow-up, rather than guessing.
+     happens, don't assume it won't, but confirm it visually per the bullet above before acting on
+     it), setting one override for all of them would be wrong. Leave `theme.headings.fontFamily`
+     unset and say so explicitly in the finishing summary as a manual follow-up, rather than
+     guessing.
    - If you don't have Figma access in this run (fonts were given directly by the user), skip this
      step and say so in the finishing summary — don't invent which typeface headings should use.
 3. Verify: `theme.tsx` is TypeScript, so a typo fails loudly. Run `npm run lint` (or the repo's

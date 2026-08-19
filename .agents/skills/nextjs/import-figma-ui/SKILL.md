@@ -1,14 +1,15 @@
 ---
 name: import-figma-ui
 description: >
-  Coordinate a full Figma UI import for this app across four phases — Variables, Web assets,
-  Mantine theme, Fonts — by handing off entirely to four sibling skills that also run standalone:
-  `import-figma-vars`, `import-figma-assets`, `configure-mantine-theme`, and `add-fonts`. This
-  skill does no Figma work itself; it only sequences the phases, honors the user's own scoping of
-  the run, and threads shared context (Figma link/access, target app, node IDs) between the
-  hand-offs so no sub-skill has to re-ask for it. This app was scaffolded with
-  `@ronas-it/nx-generators` (`next-app`, with or without `--withMantine`). Use whenever asked to "import Figma UI",
-  "sync design tokens from Figma", "import figma variables/colors/fonts/assets", or similar.
+  Coordinate a full Figma UI import for this app across five phases — Variables, Web assets,
+  Mantine theme, Fonts, Components — by handing off entirely to five sibling skills that also run
+  standalone: `import-figma-vars`, `import-figma-assets`, `configure-mantine-theme`, `add-fonts`,
+  and `import-figma-components`. This skill does no Figma work itself; it only sequences the
+  phases, honors the user's own scoping of the run, and threads shared context (Figma link/access,
+  target app, node IDs) between the hand-offs so no sub-skill has to re-ask for it. This app was
+  scaffolded with `@ronas-it/nx-generators` (`next-app`, with or without `--withMantine`). Use
+  whenever asked to "import Figma UI", "sync design tokens from Figma", "import figma
+  variables/colors/fonts/assets/components", or similar.
 ---
 
 # Import Figma UI
@@ -44,7 +45,7 @@ Run this preflight before progress reporting, input gathering, or any other step
 Check whether the user gave specific instructions before following the default flow — e.g. "only
 update colors", "skip the fonts step", "don't touch the favicon", "I already exported the SVGs,
 they're at `<path>`". A narrower request means skip the corresponding phase(s) below entirely
-rather than doing a partial version of them. If nothing is specified, run all four phases in
+rather than doing a partial version of them. If nothing is specified, run all five phases in
 order.
 
 ## Progress reporting (required)
@@ -53,7 +54,7 @@ The user needs to see, at all times, which phase is active and what you're doing
 is a long-running, multi-step task and silence reads as "stuck."
 
 1. After the Figma tooling preflight, post the full phase list so the user can see the whole plan:
-   **Variables → Web assets → Mantine theme → Fonts**. If your environment has a todo/task list
+   **Variables → Web assets → Mantine theme → Fonts → Components**. If your environment has a todo/task list
    tool (e.g. Claude Code's `TodoWrite`), create one entry per phase and keep its status
    (`pending` / `in_progress` / `completed`) current as you move through them — including while a
    sub-skill is running, since it's still one phase of this overall plan. If your environment
@@ -100,9 +101,19 @@ Phase 1) rather than asking the user for font names directly. Treat it as the ne
 same run — keep using the same progress reporting (it's the "Fonts" phase in the overall plan you
 posted at the start).
 
+## Phase 5 — Components (hand off)
+
+Read `.agents/skills/nextjs/import-figma-components/SKILL.md` and follow it now, using the Figma
+link/access, `<app>`, and `_variables.scss` tokens carried over from earlier phases. Treat it as
+the final phase of this same run — keep using the same progress reporting (it's the "Components"
+phase in the overall plan you posted at the start). This phase builds on the base theme Phase 3
+already set up (colors, font sizes) and the icons Phase 2 imported, so it should always run after
+both.
+
 ## Finishing up
 
 Post a short summary: which phases ran vs. were skipped and why. For each phase, defer to that
 sub-skill's own finishing summary rather than re-summarizing it yourself — just confirm it ran.
 Then ask the user to visually verify the app — colors, type sizes at both desktop and mobile
-widths, the favicon, and any icons — since this skill can't render the app to check that itself.
+widths, the favicon, any icons, and the Button/Input/Checkbox components — since this skill can't
+render the app to check that itself.

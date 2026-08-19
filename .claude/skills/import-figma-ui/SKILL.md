@@ -1,9 +1,10 @@
 ---
 name: import-figma-ui
 description: >
-  Coordinate a full Figma UI import for this app across four phases by handing off entirely to
-  sibling skills for variables/assets/theme/fonts. Use whenever asked to "import Figma UI", "sync
-  design tokens from Figma", "import figma variables/colors/fonts/assets", or similar.
+  Coordinate a full Figma UI import for this app across five phases by handing off entirely to
+  sibling skills for variables/assets/theme/fonts/components. Use whenever asked to "import Figma
+  UI", "sync design tokens from Figma", "import figma variables/colors/fonts/assets/components", or
+  similar.
 ---
 
 # Import Figma UI

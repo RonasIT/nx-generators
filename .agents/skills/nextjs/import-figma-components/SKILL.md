@@ -167,10 +167,19 @@ phase(s) below. If nothing is specified, run all three.
 1. `theme.tsx` is TypeScript — run `npm run lint` (or the repo's equivalent `tsc`/`eslint` script,
    check `package.json` if the name differs) from the repo root and fix anything it flags.
 2. **Visually confirm before finishing.** Render each implemented component's variants/states on a
-   throwaway page/route, screenshot it, and compare side-by-side against the Figma block
-   screenshots from Phases 2–4. **Delete the throwaway page afterward, and confirm it's actually
-   gone** (e.g. `git status` shows nothing left under the route you added) **before reporting this
-   phase done** — don't just state the intent to delete it in the finishing summary.
+   throwaway page/route and compare side-by-side against the Figma block screenshots from
+   Phases 2–4. If you (the agent) have an actual screenshot/browser tool available, use it to do
+   this comparison yourself. **If you don't** (common — many environments have no browser tool at
+   all), say that explicitly rather than presenting your own automated CSS/HTML checks (step 3) as a
+   substitute — they confirm wiring, not correctness — and keep the throwaway page and dev server
+   running so the user can look themselves; don't delete the page the moment your own checks pass.
+   Only delete the throwaway page once the user has confirmed they're done looking at it (they
+   either say so explicitly, or the conversation clearly moves on) — deleting it earlier and then
+   having to recreate it after the user reports a mismatch is a real, observed failure mode of this
+   skill, not a hypothetical one. Once the user is done: delete the page, stop the dev server you
+   started, and confirm the page is actually gone (e.g. `git status` shows nothing left under the
+   route you added) before reporting this phase done — don't just state the intent to delete it in
+   the finishing summary.
 3. **A screenshot can't show `:hover`/`:active`/`:focus-visible`.** For any state that needs a live
    cursor, confirm the CSS is wired correctly by fetching the running dev server's compiled CSS
    bundle and grepping it for the expected rule, and fetching the rendered HTML to confirm the DOM

@@ -130,22 +130,73 @@ CSS rules and which pseudo-classes/attributes they key off) and
   the full `Button.css` — no `:active` selector exists at all. A distinct pressed state (common in
   Figma component sets, shown as a third state after Default/Hover) always needs a hand-written
   `&:active { ... }` rule; there is nothing to "discover" or configure your way into here.
-- **Disabled preserves each variant's own shape, which may not match Figma.** Mantine's stock
-  disabled CSS forces a uniform muted background/color but does **not** reset `border` to fully
-  transparent in a way that reads as "the same box regardless of variant" — outline still reads as
-  outlined-but-grey, subtle stays plain grey text. If Figma's disabled row looks identical across
-  Type/Color (common — screenshot the actual disabled row to confirm rather than assuming), add one
-  rule on the _base_ class (not nested per-variant) forcing background/border-color/color uniformly:
+- **Don't assume disabled is uniform across variants — verify each variant's disabled cell
+  individually before writing the CSS.** It's tempting to eyeball the disabled row in an
+  overview screenshot and conclude "it looks like one grey box for every variant," but a low-zoom
+  screenshot easily hides that outline/transparent variants actually keep their own shape. Confirmed
+  in practice (QuickShift-Web): filled-disabled was a solid muted box (no border), outline-disabled
+  was a muted **border only** (no fill), and the text-only/transparent variant's disabled state was
+  just muted **text** (no box at all) — three genuinely different shapes, not one. Call
+  `get_variable_defs` on the disabled instance of **each** variant separately (filled, outline,
+  transparent/subtle) and compare what each one actually binds — if filled's disabled cell binds a
+  background variable but outline's disabled cell binds none, that's your proof they're different,
+  even if a screenshot glance suggested otherwise. Only collapse to a single uniform base-class rule
+  once the per-variant data genuinely agrees; otherwise scope disabled **per `data-variant`**, e.g.:
+
   ```scss
   .button {
     &:disabled,
     &[data-disabled] {
-      background: var(--background-disabled);
-      border-color: transparent;
-      color: var(--text-tertiary);
+      color: var(--text-tertiary); // shared across variants in this case — confirm this part too
+    }
+
+    &[data-variant='filled'] {
+      &:disabled,
+      &[data-disabled] {
+        background: var(--background-disabled);
+        border-color: transparent;
+      }
+    }
+
+    &[data-variant='outline'] {
+      &:disabled,
+      &[data-disabled] {
+        background: transparent;
+        border-color: var(--text-tertiary);
+      }
+    }
+
+    &[data-variant='transparent'] {
+      &:disabled,
+      &[data-disabled] {
+        background: transparent;
+        border-color: transparent;
+      }
     }
   }
   ```
+
+  Gathering the correct per-variant data and then writing a uniform rule anyway (out of habit, or to
+  save a few lines) is its own failure mode — the data-gathering step doesn't help if the
+  implementation step ignores it.
+
+- **A disabled button must actually stop reacting to the cursor — verify this explicitly, it's easy
+  to silently miss.** Two independent things can leave a disabled button still looking interactive:
+  1. This repo's (and likely any consuming app's) global reset often has an unconditional
+     `button { cursor: pointer; }` in its own `@layer` (e.g. `@layer base`). If that layer is
+     established **after** `@layer mantine` in import order (check the app's root layout for the
+     order `@mantine/core/styles.layer.css` vs. the app's own global stylesheet import), it wins
+     over Mantine's stock `:disabled { cursor: not-allowed }` — layer order beats specificity
+     entirely, regardless of which rule looks more specific. Fix: set `cursor: not-allowed;`
+     explicitly inside your own `:disabled`/`[data-disabled]` rule in `theme.module.scss` (unlayered,
+     so it wins over both).
+  2. Browsers still match `:hover` and `:active` on a `:disabled` button (a classic, easy-to-forget
+     CSS gotcha — `disabled` blocks clicks and focus, not pseudo-class matching). Any custom
+     `&:hover`/`&:active` rule you add for a color/variant (see above) will otherwise still fire
+     visually when the cursor sits over or presses a disabled button. Guard every custom hover/active
+     rule: `&:hover:not(:disabled, [data-disabled])` / `&:active:not(:disabled, [data-disabled])`.
+     Confirm both by rendering a disabled button of every color/variant and moving/clicking the mouse
+     over it — a static screenshot comparison won't catch either of these.
 
 ## The `vars`/`styles` trap: inline style always wins, which can silently disable pseudo-classes
 
@@ -207,12 +258,23 @@ override surface.
 
 ## Per-size CSS hooks
 
-Mantine sets `data-size="..."` on the rendered element for whatever `size` prop resolved. Use
-`[data-size='sm']`/`[data-size='md']` etc. in `theme.module.scss` for size-driven height/font-weight/
-padding, rather than trying to override the component's internal `--component-height-{size}` scale
-constants via `vars` — those aren't part of the typed `vars` API surface (see above) and live inside
-`@layer mantine` themselves, so a plain CSS override on the real property (e.g. `height`) is both
-simpler and guaranteed to win per the layering rule above.
+Mantine sets `data-size="..."` on the rendered element for whatever `size` prop resolved — **for
+Button, that's the root element itself**, so `&[data-size='sm']` inside your `classNames.root` class
+works directly. Use `[data-size='sm']`/`[data-size='md']` etc. in `theme.module.scss` for size-driven
+height/font-weight/padding, rather than trying to override the component's internal
+`--component-height-{size}` scale constants via `vars` — those aren't part of the typed `vars` API
+surface (see above) and live inside `@layer mantine` themselves, so a plain CSS override on the real
+property (e.g. `height`) is both simpler and guaranteed to win per the layering rule above.
+
+**This does not generalize to every component — check where `data-size` actually lands before
+copying the Button pattern.** For `TextInput` (and Input-based components generally), `data-size`
+lands on the **wrapper** element (`Input.Wrapper`, one level up), not on the actual `<input>` you're
+probably styling via the `input` classNames key. Writing `&[data-size='md']` inside your `input`
+class silently never matches — no error, the override just quietly does nothing. Confirm by fetching
+the rendered HTML and checking which element actually carries the attribute (see the verification
+section below) before assuming it lives where Button taught you to expect it. If you do need a
+size-scoped override on the `<input>` itself, add a `wrapper` classNames key too and scope from
+there: `.input_wrapper[data-size='md'] .input { height: ...; }`.
 
 ## Wrong default height/font-size is usually a wrong default `size` prop, not a missing override
 
@@ -222,7 +284,52 @@ defaults to `size: 'sm'` internally regardless of what `theme.fontSizes` defines
 default input/button is taller than what's rendering, the fix is usually just
 `defaultProps: { size: 'md' }` (paired with `theme.fontSizes.md` already mapping to the right token)
 — smaller and more correct than fighting individual CSS variables, since it also fixes anything else
-keyed off `size` for free (font-size, padding, etc.).
+keyed off `size` for free (font-size, padding, etc.). **But check the label too**: `InputWrapper`'s
+own `vars` resolver sets `--input-label-size` from an inline style keyed off that same `size` prop
+(`getFontSize(size)` — see `InputWrapper.mjs`), so bumping `size` to fix the input's own height/font
+also silently bumps the label to match. If Figma keeps the label at a fixed smaller size regardless
+of the field's own size (common — label and value text are frequently different type scales), pin
+the label's `font-size` explicitly in your `label` classNames class rather than assuming the size
+fix was label-neutral; a plain `font-size: var(--font-size-small);` on that class wins over the
+inline-set custom property because it targets the actual CSS property, not the `--input-label-size`
+variable the inline style set (see the vars/styles trap above for why targeting the real property
+sidesteps this cleanly).
+
+**Check the label's font-weight too, not just its size.** `InputWrapper`'s stock CSS sets
+`font-weight: var(--mantine-font-weight-medium)` on the label unconditionally — there's no prop or
+`size` interaction involved, so this one is easy to miss even after you've already fixed the label's
+`font-size`. Figma label text styles are commonly Regular (400), not Medium, so the rendered label
+comes out visibly bolder than the design even when every color and size value is correct. Confirm the
+label's actual font weight from Figma (`get_variable_defs`/the text style name, e.g. "body/small" vs
+a "…medium"/"…bold" variant) and set `font-weight` explicitly in the `label` classNames class — a
+plain `font-weight: 400;` (or whichever weight Figma specifies) on that class, same reasoning as the
+font-size override above.
+
+## TextInput text/placeholder color needs its own explicit token — Mantine's default isn't wired to it
+
+`Input`'s stock `--input-color`/`--input-placeholder-color` default to Mantine's own
+`--mantine-color-text` / `--mantine-color-placeholder`, not to any of this design system's semantic
+text tokens — so even after wiring border/background per state, the actual value and placeholder
+text can render in Mantine's default color rather than Figma's `Text/Secondary` (typed value) or
+`Text/Tertiary` (placeholder) tokens. Set both explicitly on the base `input` class:
+
+```scss
+.input {
+  color: var(--text-secondary);
+
+  &::placeholder {
+    color: var(--text-tertiary);
+  }
+}
+```
+
+Separately, Mantine's stock `[data-error]` rule **also** reddens the value/placeholder text itself
+(`--input-color`/`--input-placeholder-color` both switch to `--mantine-color-error`), not just the
+border — but Figma's error state commonly wants only the border (and the error message below) red,
+with the typed/placeholder text staying its normal color. If that's what the design shows, the fix
+above already covers it for free: since `.input`'s `color`/`::placeholder` rules set the literal
+property (not a custom-property fallback), they win over Mantine's `[data-error]` rule regardless of
+state — no separate `[data-error]` text-color override is needed, only a border-color one.
 
 ## Verifying hover/active/focus without manual clicking
 
@@ -236,12 +343,28 @@ the running dev server:
    expected form.
 3. Fetch the rendered page HTML and confirm the relevant DOM elements actually carry your
    discriminator class(es) alongside Mantine's own classes/attributes (`data-variant`, `data-size`,
-   `mantine-{Component}-{selector}`).
+   `mantine-{Component}-{selector}`) — and confirm which specific element carries each attribute
+   (e.g. `data-size` on `TextInput`'s wrapper, not its `<input>` — see "Per-size CSS hooks" above)
+   rather than assuming it matches whichever component you last worked on.
 
 This catches wiring mistakes (wrong class name, `classNames` resolver not actually invoked, CSS
-Modules scoping mismatch) that a screenshot alone can't distinguish from "not hovering right now."
-Still ask the user to spot-check the live interactive behavior in a real browser before finishing —
-this technique confirms the mechanism is connected, not that it looks right.
+Modules scoping mismatch, a selector targeting an attribute that lives on the wrong element) that a
+screenshot alone can't distinguish from "not hovering right now." **It does not catch wrong values**
+— a rule that is perfectly wired but simply asserts the wrong color, size, or uniformity assumption
+passes this check just as cleanly as a correct one. In one real pass over this exact workflow, six
+distinct bugs each had fully-wired, bundle-confirmed CSS and still looked wrong once actually
+rendered: disabled treated as visually uniform across variants when Figma varied it per variant, a
+disabled button still showing `cursor: pointer` and reacting to hover, an error-state input reddening
+its own text instead of just its border, a label silently inheriting the input's own bumped font
+size, the input's value/placeholder text rendering in Mantine's default color instead of the
+design's token, and a label rendering in Mantine's default Medium font-weight instead of Figma's
+Regular. Treat this step as necessary but not sufficient. Always still ask the user to
+spot-check the live interactive behavior and every state/variant cell in a real browser before
+finishing — and if you (the agent) have no screenshot/browser tool available in this environment,
+say so explicitly rather than reporting the page as visually verified, and **leave the throwaway
+verify page and dev server up** until the user has actually had a chance to look — deleting it
+immediately after your own automated checks pass (per "Verify" step 2) removes the user's only way to
+do the visual check that step is meant to stand in for you not having.
 
 ## If a sibling production app already uses this same ui-kit lineage, check it first
 

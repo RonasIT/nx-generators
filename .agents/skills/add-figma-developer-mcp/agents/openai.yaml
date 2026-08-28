@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Add Figma Developer MCP'
+  short_description: 'Configure Framelink MCP with consent'
+  default_prompt: 'Use $add-figma-developer-mcp to add Framelink Figma access to this agent.'

@@ -10,19 +10,19 @@ const tseslint = require('typescript-eslint');
 const globals = require('globals');
 const tsParser = require('@typescript-eslint/parser');
 const eslint = require('@eslint/js');
+const stylistic = require('@stylistic/eslint-plugin');
 
-module.exports = (async () => {
-  const stylistic = await import('@stylistic/eslint-plugin');
-
-  return [
+module.exports = [
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
     react.configs.flat.recommended,
     react.configs.flat['jsx-runtime'],
     {
+      files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+
       plugins: {
         '@typescript-eslint': typescriptEslint,
-        '@stylistic': stylistic.default,
+        '@stylistic': stylistic,
         'unused-imports': unusedImports,
         react,
         'react-hooks': reactHooks,
@@ -375,4 +375,3 @@ module.exports = (async () => {
       },
     },
   ];
-})();

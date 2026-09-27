@@ -90,3 +90,16 @@ export function assertNxProjects(workspace, expectedProjects) {
     }
   }
 }
+
+export function assertLintTargets(workspace, expectedProjects) {
+  console.log('==> Verifying lint targets of generated libraries...');
+
+  for (const project of expectedProjects) {
+    const output = execSync(`npx nx show project ${project} --json`, { cwd: workspace, encoding: 'utf8' });
+    const { targets } = JSON.parse(output);
+
+    if (!targets?.lint) {
+      throw new Error(`Expected nx project "${project}" to have a lint target`);
+    }
+  }
+}

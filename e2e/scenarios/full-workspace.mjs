@@ -4,6 +4,7 @@ import {
   assertDockerfile,
   assertEntityApi,
   assertFullWorkspaceStructure,
+  assertLintTargets,
   assertNxProjects,
 } from '../lib/assertions.mjs';
 
@@ -45,17 +46,19 @@ export function runFullWorkspaceScenario({ repoRoot, workDir, e2eWorkspace, run 
 
   assertFullWorkspaceStructure(e2eWorkspace);
 
-  assertNxProjects(e2eWorkspace, [
-    'mobile',
-    'web',
+  const generatedLibraries = [
     'mobile/shared/data-access/store',
     'mobile/shared/data-access/api-client',
     'mobile/shared/data-access/auth',
     'web/shared/data-access/store',
     'web/shared/data-access/api-client',
     'web/shared/data-access/auth',
-  ]);
+  ];
+
+  assertNxProjects(e2eWorkspace, ['mobile', 'web', ...generatedLibraries]);
+  assertLintTargets(e2eWorkspace, generatedLibraries);
 
   run('npm run lint', { cwd: e2eWorkspace });
+  run('npx nx run-many -t lint', { cwd: e2eWorkspace });
   run('npm audit --audit-level=critical', { cwd: e2eWorkspace });
 }

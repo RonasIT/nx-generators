@@ -4,8 +4,3 @@
 /.nx/cache
 /.nx/workspace-data
 /e2e/.workspace
-
-# Files with custom rules
-**/actions.ts
-**/epics.ts
-**/selectors.ts

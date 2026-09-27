@@ -326,7 +326,7 @@ module.exports = [
         'import-x/no-duplicates': 'warn',
         'react-hooks/exhaustive-deps': 'off',
 
-        'unistyles/no-unused-styles': 'error',  
+        'unistyles/no-unused-styles': 'error',
 
         'react-native/no-single-element-style-arrays': 'warn',
         'react-native/no-color-literals': 'warn',
@@ -355,16 +355,6 @@ module.exports = [
             minItems: 1,
           },
         ],
-      },
-    },
-    {
-      files: ['**/*selectors.ts'],
-
-      rules: {
-        '@typescript-eslint/explicit-module-boundary-types': 'off',
-        '@typescript-eslint/explicit-function-return-type': 'off',
-        '@stylistic/function-call-argument-newline': ['warn', 'always'],
-        '@stylistic/function-paren-newline': ['warn', 'multiline-arguments'],
       },
     },
     {

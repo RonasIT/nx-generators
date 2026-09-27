@@ -100,6 +100,7 @@ export const devDependencies = {
     'eslint-plugin-react-native-unistyles': '^3.0.7',
     'eslint-plugin-unused-imports': '^4.2.0',
     husky: '^9.1.7',
+    'lint-staged': '^16.2.4',
     '@stylistic/eslint-plugin': '^4.4.1',
     '@typescript-eslint/eslint-plugin': '^8.46.0',
     '@typescript-eslint/parser': '^8.46.0',

@@ -32,12 +32,17 @@ export async function codeChecksGenerator(tree: Tree, options: CodeChecksGenerat
     execSync('git init', { stdio: 'inherit' });
   }
 
-  execSync('npx --yes mrm@2 lint-staged', { stdio: 'inherit' });
-
   const packageJson = readJson(tree, 'package.json');
   packageJson['lint-staged'] = config['lint-staged'];
   packageJson.scripts = { ...scripts, ...packageJson.scripts };
+
+  if (packageJson.scripts.prepare?.includes('husky install')) {
+    packageJson.scripts.prepare = scripts.prepare;
+  }
+
   writeJson(tree, 'package.json', packageJson);
+
+  tree.write('.husky/pre-commit', 'npx lint-staged\n');
 
   // Update tsconfig.base.json
   const tsconfigJson = readJson(tree, 'tsconfig.base.json');

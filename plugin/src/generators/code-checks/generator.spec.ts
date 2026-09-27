@@ -44,7 +44,11 @@ describe('codeChecksGenerator (integration)', () => {
     // Updated package.json
     const pkg = readJson(tree, 'package.json');
     expect(pkg.scripts.lint).toContain('eslint');
+    expect(pkg.scripts.prepare).toBe('husky');
     expect(pkg['lint-staged']).toEqual(expect.objectContaining(config['lint-staged']));
+
+    // Husky pre-commit hook
+    expect(tree.read('.husky/pre-commit', 'utf-8')).toBe('npx lint-staged\n');
 
     // Updated tsconfig.base.json
     const tsconfig = readJson(tree, 'tsconfig.base.json');

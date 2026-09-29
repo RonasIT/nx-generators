@@ -1,11 +1,10 @@
 import * as path from 'path';
 import { addDependenciesToPackageJson, generateFiles, Tree } from '@nx/devkit';
 import { tsquery } from '@phenomnomnominal/tsquery';
-import { createPrinter, factory, ObjectLiteralExpression } from 'typescript';
+import { BinaryExpression } from 'typescript';
 import { dependencies } from '../../../shared/dependencies';
 import { updateFileContent } from '../../../shared/utils';
 import { SentryGeneratorSchema } from '../schema';
-import { createObjectLiteralExpression } from './create-object-literal-expression';
 
 const addRequiredImports = (content: string): string =>
   tsquery.replace(
@@ -16,68 +15,31 @@ const addRequiredImports = (content: string): string =>
 ${node.getText()}`,
   );
 
-const modifyNextConfig = (content: string): string =>
-  createPrinter().printFile(
-    tsquery.map(tsquery.ast(content), 'Identifier[name="nextConfig"] ~ ObjectLiteralExpression', (node) => {
-      return createObjectLiteralExpression(
-        [
-          {
-            key: 'widenClientFileUpload',
-            initializer: factory.createTrue(),
-            comment: 'Upload a larger set of source maps for prettier stack traces (increases build time)',
-          },
-          {
-            key: 'transpileClientSDK',
-            initializer: factory.createTrue(),
-            comment: 'Transpiles SDK to be compatible with IE11 (increases bundle size)',
-          },
-          {
-            key: 'tunnelRoute',
-            initializer: factory.createStringLiteral('/monitoring'),
-            comment:
-              'Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)',
-          },
-          {
-            key: 'hideSourceMaps',
-            initializer: factory.createTrue(),
-            comment: 'Hides source maps from generated client bundles',
-          },
-          {
-            key: 'disableLogger',
-            initializer: factory.createTrue(),
-            comment: 'Automatically tree-shake Sentry logger statements to reduce bundle size',
-          },
-        ],
-        (node as ObjectLiteralExpression).properties,
-      );
-    }),
-  );
-
 const moduleExportsAssignmentSelector =
   'ExpressionStatement:has(PropertyAccessExpression:has(Identifier[name="module"]):has(Identifier[name="exports"]))';
 
 const wrapIntoSentryConfig = (content: string): string => {
-  const withSentryWebpackPluginOptions = tsquery.replace(content, moduleExportsAssignmentSelector, (node) => {
+  const withSentryOptions = tsquery.replace(content, moduleExportsAssignmentSelector, (node) => {
     return `
       /**
-      * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
+      * @type {import('@sentry/nextjs').SentryBuildOptions}
       **/
-
-      const sentryWebpackPluginOptions = {
-        silent: true,
+      const sentryOptions = {
+        silent: !process.env.CI,
         org: '',
-        project: 'web-next-js-client',
+        project: '',
         authToken: process.env.SENTRY_AUTH_TOKEN,
+        widenClientFileUpload: true,
       };
 
       ${node.getText()}`;
   });
 
-  return tsquery.replace(
-    withSentryWebpackPluginOptions,
-    `${moduleExportsAssignmentSelector} BinaryExpression > *:last-child`,
-    (node) => `withSentryConfig(${node.getText()}, sentryWebpackPluginOptions)`,
-  );
+  return tsquery.replace(withSentryOptions, `${moduleExportsAssignmentSelector} > BinaryExpression`, (node) => {
+    const { left, operatorToken, right } = node as BinaryExpression;
+
+    return `${left.getText()} ${operatorToken.getText()} withSentryConfig(${right.getText()}, sentryOptions)`;
+  });
 };
 
 export function generateSentryNext(tree: Tree, options: SentryGeneratorSchema, projectRoot: string): void {
@@ -85,7 +47,7 @@ export function generateSentryNext(tree: Tree, options: SentryGeneratorSchema, p
 
   updateFileContent(
     `${projectRoot}/next.config.js`,
-    (fileContent) => wrapIntoSentryConfig(modifyNextConfig(addRequiredImports(fileContent))),
+    (fileContent) => wrapIntoSentryConfig(addRequiredImports(fileContent)),
     tree,
   );
 

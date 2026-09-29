@@ -196,7 +196,9 @@ describe('generateSentryNext', () => {
 
     expect(nextConfigContent).toContain('withSentryConfig');
     expect(nextConfigContent).toContain('@sentry/nextjs');
-    expect(nextConfigContent).toContain('sentryWebpackPluginOptions');
+    expect(nextConfigContent).toContain('withSentryConfig(withNextIntl(nextConfig), sentryOptions)');
+    expect(nextConfigContent).toContain('widenClientFileUpload: true');
+    expect(nextConfigContent).not.toContain('transpileClientSDK');
 
     const instrumentationClient = tree.read(`${projectRoot}/instrumentation-client.ts`, 'utf-8');
 

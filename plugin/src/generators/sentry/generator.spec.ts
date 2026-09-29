@@ -195,7 +195,7 @@ describe('generateSentryNext', () => {
     const nextConfigContent = tree.read(`${projectRoot}/next.config.js`, 'utf-8');
 
     expect(nextConfigContent).toContain('withSentryConfig');
-    expect(nextConfigContent?.startsWith("const { withSentryConfig } = require('@sentry/nextjs');")).toBe(true);
+    expect(nextConfigContent?.startsWith("const { withSentryConfig } = require('@sentry/nextjs/config');")).toBe(true);
     expect(nextConfigContent).toContain('withSentryConfig(withNextIntl(nextConfig), sentryOptions)');
     expect(nextConfigContent).toContain('widenClientFileUpload: true');
     expect(nextConfigContent).not.toContain('transpileClientSDK');

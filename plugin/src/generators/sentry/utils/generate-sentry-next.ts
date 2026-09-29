@@ -7,13 +7,13 @@ import { updateFileContent } from '../../../shared/utils';
 import { SentryGeneratorSchema } from '../schema';
 
 const addRequiredImports = (content: string): string =>
-  `const { withSentryConfig } = require('@sentry/nextjs');\n${content}`;
+  `const { withSentryConfig } = require('@sentry/nextjs/config');\n${content}`;
 
 const moduleExportsAssignmentSelector =
   'ExpressionStatement:has(PropertyAccessExpression:has(Identifier[name="module"]):has(Identifier[name="exports"]))';
 
 const sentryOptionsDeclaration = `/**
- * @type {import('@sentry/nextjs').SentryBuildOptions}
+ * @type {import('@sentry/nextjs/config').SentryBuildOptions}
  **/
 const sentryOptions = {
   silent: !process.env.CI,

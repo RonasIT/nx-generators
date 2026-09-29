@@ -75,6 +75,7 @@ describe('codeChecksGenerator (integration)', () => {
     expect(eslintRonasit).toContain('eslint-plugin-react-native-unistyles');
     expect(eslintRonasit).toContain('react-native/no-raw-text');
     expect(eslintRonasit).toContain('apps/web/**/*.{ts,tsx}');
+    expect(eslintRonasit).toContain('libs/web/**/*.{ts,tsx}');
 
     const prettierrc = tree.read('.prettierrc.js', 'utf-8');
     expect(prettierrc).toContain('module.exports');

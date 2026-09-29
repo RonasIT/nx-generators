@@ -375,7 +375,7 @@ module.exports = [
     },
   },
   {
-    files: ['apps/web/**/*.{ts,tsx}'],
+    files: ['apps/web/**/*.{ts,tsx}', 'libs/web/**/*.{ts,tsx}'],
 
     rules: {
       'react-native/no-raw-text': 'off',

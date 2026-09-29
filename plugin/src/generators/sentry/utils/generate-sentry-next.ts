@@ -7,39 +7,40 @@ import { updateFileContent } from '../../../shared/utils';
 import { SentryGeneratorSchema } from '../schema';
 
 const addRequiredImports = (content: string): string =>
-  tsquery.replace(
-    content,
-    'VariableStatement:has(Identifier[name="nextConfig"])',
-    (node) => `const { withSentryConfig } = require('@sentry/nextjs');
-
-${node.getText()}`,
-  );
+  `const { withSentryConfig } = require('@sentry/nextjs');\n${content}`;
 
 const moduleExportsAssignmentSelector =
   'ExpressionStatement:has(PropertyAccessExpression:has(Identifier[name="module"]):has(Identifier[name="exports"]))';
 
+const sentryOptionsDeclaration = `/**
+ * @type {import('@sentry/nextjs').SentryBuildOptions}
+ **/
+const sentryOptions = {
+  silent: !process.env.CI,
+  org: '',
+  project: '',
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  widenClientFileUpload: true,
+};`;
+
 const wrapIntoSentryConfig = (content: string): string => {
-  const withSentryOptions = tsquery.replace(content, moduleExportsAssignmentSelector, (node) => {
-    return `
-      /**
-      * @type {import('@sentry/nextjs').SentryBuildOptions}
-      **/
-      const sentryOptions = {
-        silent: !process.env.CI,
-        org: '',
-        project: '',
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        widenClientFileUpload: true,
-      };
+  const [moduleExportsAssignment] = tsquery.query<BinaryExpression>(
+    content,
+    `${moduleExportsAssignmentSelector} > BinaryExpression`,
+  );
 
-      ${node.getText()}`;
-  });
+  if (!moduleExportsAssignment) {
+    return content;
+  }
 
-  return tsquery.replace(withSentryOptions, `${moduleExportsAssignmentSelector} > BinaryExpression`, (node) => {
-    const { left, operatorToken, right } = node as BinaryExpression;
+  const { left, operatorToken, right } = moduleExportsAssignment;
+  const wrappedAssignment = `${left.getText()} ${operatorToken.getText()} withSentryConfig(${right.getText()}, sentryOptions)`;
 
-    return `${left.getText()} ${operatorToken.getText()} withSentryConfig(${right.getText()}, sentryOptions)`;
-  });
+  return [
+    content.slice(0, moduleExportsAssignment.getStart()),
+    `${sentryOptionsDeclaration}\n\n${wrappedAssignment}`,
+    content.slice(moduleExportsAssignment.getEnd()),
+  ].join('');
 };
 
 export function generateSentryNext(tree: Tree, options: SentryGeneratorSchema, projectRoot: string): void {

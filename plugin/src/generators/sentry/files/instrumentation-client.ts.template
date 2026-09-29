@@ -7,11 +7,7 @@ Sentry.init({
   tracesSampleRate: 1,
   enableLogs: true,
   debug: false,
-  // You can remove this option if you're not planning to use the Sentry Session Replay feature:
-  integrations: [
-    Sentry.replayIntegration(),
-    Sentry.eventFiltersIntegration(),
-  ],
+  integrations: [Sentry.replayIntegration(), Sentry.eventFiltersIntegration()],
   denyUrls: ['localhost'],
 });
 

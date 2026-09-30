@@ -155,6 +155,9 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
       }
 
       execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
+      // Note: Some rules, like `import-x/order`, are inconvenient to follow when writing generators,
+      // so it's simpler to run ESLint after successful generation
+      execSync('npx eslint ./ --fix', { stdio: 'inherit' });
     });
   };
 }

@@ -34,7 +34,8 @@ export const StaticTextInput = ({
 }: StaticTextInputProps): ReactElement => {
   appTextStyles.useVariants({ variant: 'bodyDefault' });
   const isIos = Platform.OS === 'ios';
-  const inputRef = ref || useRef<TextInput>(null);
+  const fallbackInputRef = useRef<TextInput>(null);
+  const inputRef = ref ?? fallbackInputRef;
 
   const [isFocused, setIsFocused] = useState(false);
   const [isSecured, setIsSecured] = useState(true);

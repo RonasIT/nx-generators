@@ -23,7 +23,7 @@ export function AppSwitch({ checked, onValueChange, disabled, style, ...props }:
       return;
     }
 
-    thumbOffset.value = withTiming(!checked ? 2.75 * rem - spacings.xxl - 4 : 0, { duration: 180 });
+    thumbOffset.set(withTiming(!checked ? 2.75 * rem - spacings.xxl - 4 : 0, { duration: 180 }));
     onValueChange(!checked);
   };
 

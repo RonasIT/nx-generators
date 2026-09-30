@@ -1,18 +1,18 @@
-const typescriptEslint = require('@typescript-eslint/eslint-plugin');
-const unusedImports = require('eslint-plugin-unused-imports');
-const react = require('eslint-plugin-react');
-const reactHooks = require('eslint-plugin-react-hooks');
-const importX = require('eslint-plugin-import-x');
-const reactNative = require('eslint-plugin-react-native');
-const unistyles = require('eslint-plugin-react-native-unistyles');
-const tseslint = require('typescript-eslint');
+import typescriptEslint from '@typescript-eslint/eslint-plugin';
+import unusedImports from 'eslint-plugin-unused-imports';
+import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
+import importX from 'eslint-plugin-import-x';
+import reactNative from 'eslint-plugin-react-native';
+import unistyles from 'eslint-plugin-react-native-unistyles';
+import tseslint from 'typescript-eslint';
 
-const globals = require('globals');
-const tsParser = require('@typescript-eslint/parser');
-const eslint = require('@eslint/js');
-const stylistic = require('@stylistic/eslint-plugin');
+import globals from 'globals';
+import tsParser from '@typescript-eslint/parser';
+import eslint from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin';
 
-module.exports = [
+export default [
   {
     ignores: ['**/node_modules', 'e2e/.workspace/**', '**/*.js', 'apps/*/app.config.ts', 'src/lib/nx-generators.ts'],
   },

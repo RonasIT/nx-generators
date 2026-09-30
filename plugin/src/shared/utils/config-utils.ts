@@ -77,11 +77,11 @@ export const verifyESLintConstraintsConfig = (tree: Tree): void => {
     output.note({
       title: 'Configure Nx boundaries',
       bodyLines: [
-        'To complete setup add the following changes in your ESLint config (eslint.config.cjs):',
+        'To complete setup add the following changes in your ESLint config (eslint.config.mjs):',
         '```',
-        output.bold(`const constraints = require('./eslint.constraints.json');`),
+        output.bold(`import constraints from './eslint.constraints.json' with { type: 'json' };`),
         '```',
-        'module.exports = [',
+        'export default [',
         '```',
         `  {
           files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],

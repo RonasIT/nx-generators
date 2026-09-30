@@ -1,29 +1,23 @@
-const nx = require('@nx/eslint-plugin');
-const eslintConfigPrettier = require('eslint-config-prettier');
-const constraints = require('./eslint.constraints.json');
-const ronasitConfig = require('./.eslint.ronasit.cjs');
+import eslintConfigPrettier from 'eslint-config-prettier';
+import ronasitConfig from './.eslint.ronasit.mjs';
+import baseConfig from './eslint.base.mjs';
+import constraints from './eslint.constraints.json' with { type: 'json' };
 
-module.exports = [
+export default [
   {
     ignores: [
       '**/node_modules',
-      '**/.yalc',
+      'e2e/.workspace/**',
       '**/dist',
-      '**/output',
-      '**/.next',
       '**/*.js',
       '**/*.cjs',
       '**/*.mjs',
       'apps/*/app.config.ts',
-      'apps/*/next-env.d.ts',
+      'src/lib/nx-generators.ts',
     ],
   },
+  ...baseConfig,
   ...ronasitConfig,
-  {
-    plugins: {
-      '@nx': nx,
-    },
-  },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
@@ -39,7 +33,6 @@ module.exports = [
   },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-
     rules: {
       '@stylistic/array-bracket-newline': 'off',
       '@stylistic/implicit-arrow-linebreak': 'off',

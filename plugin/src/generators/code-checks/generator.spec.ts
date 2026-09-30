@@ -24,7 +24,7 @@ describe('codeChecksGenerator (integration)', () => {
 
     // Files to be deleted
     tree.write('.prettierrc', '{}');
-    tree.write('eslint.config.cjs', '');
+    tree.write('eslint.config.mjs', '');
   });
 
   it('should modify and generate files as expected', async () => {
@@ -35,11 +35,11 @@ describe('codeChecksGenerator (integration)', () => {
     expect(tree.exists('.prettierrc')).toBe(false);
 
     // Re-created file
-    expect(tree.exists('eslint.config.cjs')).toBe(true);
+    expect(tree.exists('eslint.config.mjs')).toBe(true);
 
-    // Verify contents of eslint.config.cjs
-    const eslintConfig = tree.read('eslint.config.cjs', 'utf-8');
-    expect(eslintConfig).toContain('module.exports'); // or match actual known content
+    // Verify contents of eslint.config.mjs
+    const eslintConfig = tree.read('eslint.config.mjs', 'utf-8');
+    expect(eslintConfig).toContain('export default');
 
     // Updated package.json
     const pkg = readJson(tree, 'package.json');
@@ -69,8 +69,8 @@ describe('codeChecksGenerator (integration)', () => {
     expect(prettierignore).toContain('.yalc');
 
     // Assert contents of other new files
-    const eslintRonasit = tree.read('.eslint.ronasit.cjs', 'utf-8');
-    expect(eslintRonasit).toContain('module.exports');
+    const eslintRonasit = tree.read('.eslint.ronasit.mjs', 'utf-8');
+    expect(eslintRonasit).toContain('export default');
     expect(eslintRonasit).toContain('eslint-plugin-react-native');
     expect(eslintRonasit).toContain('eslint-plugin-react-native-unistyles');
     expect(eslintRonasit).toContain('react-native/no-raw-text');

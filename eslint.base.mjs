@@ -1,15 +1,14 @@
-const nx = require('@nx/eslint-plugin');
-const js = require('@eslint/js');
-
-const { FlatCompat } = require('@eslint/eslintrc');
+import nx from '@nx/eslint-plugin';
+import js from '@eslint/js';
+import { FlatCompat } from '@eslint/eslintrc';
 
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
+  baseDirectory: import.meta.dirname,
   recommendedConfig: js.configs.recommended,
   allConfig: js.configs.all,
 });
 
-module.exports = [
+export default [
   {
     ignores: ['**/node_modules', 'e2e/.workspace/**', '**/*.js', 'apps/*/app.config.ts', 'src/lib/nx-generators.ts'],
   },

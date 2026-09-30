@@ -45,7 +45,7 @@ export function assertFullWorkspaceStructure(workspace) {
   assertPathExists(workspace, 'eslint.constraints.json', 'file');
 
   assertPathExists(workspace, '.prettierrc.js', 'file');
-  assertPathExists(workspace, 'eslint.config.cjs', 'file');
+  assertPathExists(workspace, 'eslint.config.mjs', 'file');
 
   const packageJson = JSON.parse(readFileSync(path.join(workspace, 'package.json'), 'utf8'));
 
@@ -62,11 +62,7 @@ export function assertEntityApi(workspace, appDirectory, entityName) {
 
   console.log(`==> Verifying entity-api output for ${entityName}...`);
 
-  assertPathExists(
-    workspace,
-    `libs/${appDirectory}/shared/data-access/api/src/lib/${entityPath}/api.ts`,
-    'file',
-  );
+  assertPathExists(workspace, `libs/${appDirectory}/shared/data-access/api/src/lib/${entityPath}/api.ts`, 'file');
   assertPathExists(
     workspace,
     `libs/${appDirectory}/shared/data-access/api/src/lib/${entityPath}/models/${entityPath}.ts`,

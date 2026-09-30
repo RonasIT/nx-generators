@@ -46,7 +46,7 @@ export const AnimatedTextInput = ({
 
   const { labelAnimatedStyle } = useAnimatedLabel(isLabelFloated, labelWidth);
 
-  const handleOnFocus = (e: FocusEvent) => {
+  const handleOnFocus = (e: FocusEvent): void => {
     setIsFocused(true);
     onFocus?.(e);
   };

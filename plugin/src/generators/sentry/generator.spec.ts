@@ -206,4 +206,27 @@ describe('generateSentryNext', () => {
 
     expect(tree.read(`${projectRoot}/.env`, 'utf-8')).toContain('SENTRY_AUTH_TOKEN=');
   });
+
+  it('should wrap every module.exports assignment in conditional next.config.js', () => {
+    tree.write(
+      `${projectRoot}/next.config.js`,
+      `const nextConfig = {};
+if (process.env.NODE_ENV === 'production') {
+  module.exports = nextConfig;
+} else {
+  module.exports = { ...nextConfig, reactStrictMode: true };
+}
+`,
+    );
+
+    generateSentryNext(tree, { directory: projectRoot }, projectRoot);
+
+    const nextConfigContent = tree.read(`${projectRoot}/next.config.js`, 'utf-8') as string;
+
+    expect(nextConfigContent.match(/withSentryConfig\(/g)).toHaveLength(2);
+    expect(nextConfigContent.match(/const sentryOptions =/g)).toHaveLength(1);
+    expect(nextConfigContent).toContain('module.exports = withSentryConfig(nextConfig, sentryOptions)');
+    expect(nextConfigContent).toContain('withSentryConfig({ ...nextConfig, reactStrictMode: true }, sentryOptions)');
+    expect(nextConfigContent.indexOf('const sentryOptions')).toBeLessThan(nextConfigContent.indexOf('if (process.env'));
+  });
 });

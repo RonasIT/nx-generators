@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { addDependenciesToPackageJson, generateFiles, Tree } from '@nx/devkit';
 import { tsquery } from '@phenomnomnominal/tsquery';
-import { BinaryExpression } from 'typescript';
+import { BinaryExpression, isSourceFile, Node } from 'typescript';
 import { dependencies } from '../../../shared/dependencies';
 import { updateFileContent } from '../../../shared/utils';
 import { SentryGeneratorSchema } from '../schema';
@@ -24,22 +24,36 @@ const sentryOptions = {
 };`;
 
 const wrapIntoSentryConfig = (content: string): string => {
-  const [moduleExportsAssignment] = tsquery.query<BinaryExpression>(
+  const moduleExportsAssignments = tsquery.query<BinaryExpression>(
     content,
     `${moduleExportsAssignmentSelector} > BinaryExpression`,
   );
 
-  if (!moduleExportsAssignment) {
+  if (!moduleExportsAssignments.length) {
     return content;
   }
 
-  const { left, operatorToken, right } = moduleExportsAssignment;
-  const wrappedAssignment = `${left.getText()} ${operatorToken.getText()} withSentryConfig(${right.getText()}, sentryOptions)`;
+  const [firstAssignment] = moduleExportsAssignments;
+  let firstTopLevelStatement: Node = firstAssignment;
+
+  while (firstTopLevelStatement.parent && !isSourceFile(firstTopLevelStatement.parent)) {
+    firstTopLevelStatement = firstTopLevelStatement.parent;
+  }
+  const declarationPosition = firstTopLevelStatement.getStart();
+
+  const wrappedContent = [...moduleExportsAssignments]
+    .sort((a, b) => b.getStart() - a.getStart())
+    .reduce((result, assignment) => {
+      const { left, operatorToken, right } = assignment;
+      const wrappedAssignment = `${left.getText()} ${operatorToken.getText()} withSentryConfig(${right.getText()}, sentryOptions)`;
+
+      return result.slice(0, assignment.getStart()) + wrappedAssignment + result.slice(assignment.getEnd());
+    }, content);
 
   return [
-    content.slice(0, moduleExportsAssignment.getStart()),
-    `${sentryOptionsDeclaration}\n\n${wrappedAssignment}`,
-    content.slice(moduleExportsAssignment.getEnd()),
+    wrappedContent.slice(0, declarationPosition),
+    `${sentryOptionsDeclaration}\n\n`,
+    wrappedContent.slice(declarationPosition),
   ].join('');
 };
 

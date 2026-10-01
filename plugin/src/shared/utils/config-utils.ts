@@ -1,6 +1,7 @@
 import { Tree, output, readJson, writeJson } from '@nx/devkit';
 
 const constraintsConfigPath = 'eslint.constraints.json';
+const eslintRonasitConfigPath = '.eslint.ronasit.cjs';
 
 export interface Constraint {
   sourceTag: string;
@@ -121,4 +122,25 @@ export const verifyESLintConstraintsConfig = (tree: Tree): void => {
 
     output.warn({ title: output.bold('ESLint constraints config is incorrect. Restoring default rules...') });
   }
+};
+
+export const addNoRawTextException = (tree: Tree, appDirectory: string): void => {
+  const content = tree.read(eslintRonasitConfigPath, 'utf-8');
+  const appGlob = `apps/${appDirectory}/**/*.{ts,tsx}`;
+
+  if (!content || content.includes(appGlob)) {
+    return;
+  }
+
+  const exception = `  {
+    files: ['${appGlob}', 'libs/${appDirectory}/**/*.{ts,tsx}'],
+
+    rules: {
+      'react-native/no-raw-text': 'off',
+    },
+  },
+`;
+  const closingIndex = content.lastIndexOf('];');
+
+  tree.write(eslintRonasitConfigPath, content.slice(0, closingIndex) + exception + content.slice(closingIndex));
 };

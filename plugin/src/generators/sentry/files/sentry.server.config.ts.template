@@ -2,10 +2,10 @@ import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
   dsn: '<%= dsn %>',
-
-  // Adjust this value in production, or use tracesSampler for greater control
+  environment: process.env.NEXT_PUBLIC_APP_ENV,
+  dataCollection: {},
   tracesSampleRate: 1,
-
+  enableLogs: true,
   debug: false,
   integrations: [Sentry.eventFiltersIntegration()],
   denyUrls: ['localhost'],

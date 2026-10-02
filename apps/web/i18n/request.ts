@@ -1,12 +1,14 @@
+import * as rootParams from 'next/root-params';
 import { getRequestConfig } from 'next-intl/server';
 import { constants } from '../constants';
 import type { Locale } from '@ronas-it/web/shared/utils/i18n';
 
-export default getRequestConfig(async ({ requestLocale }) => {
-  let locale = await requestLocale;
-
-  if (!locale || !constants.locales.includes(locale as Locale)) {
-    locale = constants.defaultLocale;
+export default getRequestConfig(async ({ locale }) => {
+  if (!locale) {
+    const paramValue = await rootParams.locale();
+    locale = (
+      paramValue && constants.locales.includes(paramValue as Locale) ? paramValue : constants.defaultLocale
+    ) as Locale;
   }
 
   return {

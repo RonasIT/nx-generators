@@ -1,6 +1,8 @@
 import { Tree, output, readJson, writeJson } from '@nx/devkit';
+import { IndentationText, Project, QuoteKind, SyntaxKind } from 'ts-morph';
 
 const constraintsConfigPath = 'eslint.constraints.json';
+const eslintRonasitConfigPath = '.eslint.ronasit.cjs';
 
 export interface Constraint {
   sourceTag: string;
@@ -121,4 +123,40 @@ export const verifyESLintConstraintsConfig = (tree: Tree): void => {
 
     output.warn({ title: output.bold('ESLint constraints config is incorrect. Restoring default rules...') });
   }
+};
+
+export const addEslintRulesOverride = (tree: Tree, appDirectory: string, rules: Record<string, unknown>): void => {
+  const content = tree.read(eslintRonasitConfigPath, 'utf-8');
+
+  if (!content) {
+    return;
+  }
+
+  const ruleLines = Object.entries(rules).map(
+    ([name, value]) => `'${name}': ${JSON.stringify(value).replace(/"/g, "'")}`,
+  );
+  const override = `{
+    files: ['apps/${appDirectory}/**/*.{ts,tsx}', 'libs/${appDirectory}/**/*.{ts,tsx}'],
+    rules: { ${ruleLines.join(', ')} },
+  }`;
+  const normalize = (text: string): string => text.replace(/[\s,]/g, '');
+
+  if (normalize(content).includes(normalize(override))) {
+    return;
+  }
+
+  const project = new Project({
+    useInMemoryFileSystem: true,
+    manipulationSettings: { indentationText: IndentationText.TwoSpaces, quoteKind: QuoteKind.Single },
+  });
+  const file = project.createSourceFile('eslint.config.js', content);
+  const configs = file
+    .getDescendantsOfKind(SyntaxKind.BinaryExpression)
+    .find((expression) => expression.getLeft().getText() === 'module.exports')
+    ?.getRight()
+    .asKind(SyntaxKind.ArrayLiteralExpression);
+
+  configs?.addElement(override);
+
+  tree.write(eslintRonasitConfigPath, file.getFullText());
 };

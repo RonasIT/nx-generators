@@ -53,10 +53,20 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
 
   execSync(commandWithOptions, { stdio: 'inherit' });
 
+  if (options.dryRun) {
+    return;
+  }
+
+  const substitutions = {
+    ...options,
+    libName,
+    name: formatName(options.name, true),
+  };
+
+  generateFiles(tree, path.join(__dirname, 'files/base'), libPath, substitutions);
+
   if (options.withComponent) {
-    const srcPath = `${libPath}/src`;
-    generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, name: formatName(options.name, true) });
-    tree.write(`${srcPath}/index.ts`, `export * from './lib';`);
+    generateFiles(tree, path.join(__dirname, 'files/component'), libPath, substitutions);
   }
 
   addNxScopeTag(tree, scopeTag);

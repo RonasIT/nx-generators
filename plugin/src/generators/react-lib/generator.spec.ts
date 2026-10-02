@@ -5,6 +5,7 @@ import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { assertFirstLine, mockGenerateFiles } from '../../shared/tests-utils';
 import { addNxScopeTag, selectProject, confirm, askQuestion } from '../../shared/utils';
+import { reactLibConstants } from './constants';
 import { reactLibGenerator } from './generator';
 
 jest.mock('child_process', () => ({
@@ -107,8 +108,13 @@ describe('reactLibGenerator', () => {
     expect(askQuestion).toHaveBeenCalledWith("Enter the scope (e.g: profile) or 'shared': ");
     expect(AutoCompleteMock).toHaveBeenCalled();
     expect(execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g @nx/react:library'), { stdio: 'inherit' });
-    expect(devkit.generateFiles).not.toHaveBeenCalled();
-    expect(tree.write).not.toHaveBeenCalled();
+    expect(devkit.generateFiles).toHaveBeenCalledTimes(1);
+    expect(devkit.generateFiles).toHaveBeenCalledWith(
+      tree,
+      path.join(__dirname, 'readme-files'),
+      'libs/myapp/myscope/ui/mylib',
+      { libName: 'myapp/myscope/ui/mylib', readmeText: reactLibConstants.readmeText },
+    );
     expect(addNxScopeTag).toHaveBeenCalledWith(tree, 'myscope');
     expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
   });
@@ -146,6 +152,11 @@ describe('reactLibGenerator', () => {
       expect.stringContaining(`${featureRoot}/index.ts`),
       "export * from './lib';",
     );
+
+    const libPath = 'libs/myapp/shared/features/mylib';
+    const readme = tree.read(`${libPath}/README.md`)?.toString().replace(/\r\n/g, '\n');
+
+    expect(readme).toBe(`# myapp/shared/features/mylib\n\n${reactLibConstants.readmeText}\n`);
 
     expect(addNxScopeTag).toHaveBeenCalledWith(tree, 'shared');
     expect(devkit.formatFiles).toHaveBeenCalledWith(tree);

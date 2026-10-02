@@ -13,6 +13,7 @@ import {
   selectProject,
   validateLibraryType,
 } from '../../shared/utils';
+import { reactLibConstants } from './constants';
 import { ReactLibGeneratorSchema } from './schema';
 
 export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema): Promise<void> {
@@ -53,9 +54,17 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
 
   execSync(commandWithOptions, { stdio: 'inherit' });
 
+  generateFiles(tree, path.join(__dirname, 'readme-files'), libPath, {
+    libName,
+    readmeText: reactLibConstants.readmeText,
+  });
+
   if (options.withComponent) {
     const srcPath = `${libPath}/src`;
-    generateFiles(tree, path.join(__dirname, 'files'), srcPath, { ...options, name: formatName(options.name, true) });
+    generateFiles(tree, path.join(__dirname, 'files'), srcPath, {
+      ...options,
+      name: formatName(options.name, true),
+    });
     tree.write(`${srcPath}/index.ts`, `export * from './lib';`);
   }
 

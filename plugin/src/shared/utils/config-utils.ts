@@ -124,23 +124,31 @@ export const verifyESLintConstraintsConfig = (tree: Tree): void => {
   }
 };
 
-export const addNoRawTextException = (tree: Tree, appDirectory: string): void => {
+export const addEslintRulesOverride = (tree: Tree, appDirectory: string, rules: Record<string, unknown>): void => {
   const content = tree.read(eslintRonasitConfigPath, 'utf-8');
-  const appGlob = `apps/${appDirectory}/**/*.{ts,tsx}`;
 
-  if (!content || content.includes(appGlob)) {
+  if (!content) {
     return;
   }
 
-  const exception = `  {
-    files: ['${appGlob}', 'libs/${appDirectory}/**/*.{ts,tsx}'],
+  const ruleLines = Object.entries(rules).map(
+    ([name, value]) => `      '${name}': ${JSON.stringify(value).replace(/"/g, "'")},`,
+  );
+  const override = `  {
+    files: ['apps/${appDirectory}/**/*.{ts,tsx}', 'libs/${appDirectory}/**/*.{ts,tsx}'],
 
     rules: {
-      'react-native/no-raw-text': 'off',
+${ruleLines.join('\n')}
     },
   },
 `;
+  const normalize = (text: string): string => text.replace(/[\s,]/g, '');
+
+  if (normalize(content).includes(normalize(override))) {
+    return;
+  }
+
   const closingIndex = content.lastIndexOf('];');
 
-  tree.write(eslintRonasitConfigPath, content.slice(0, closingIndex) + exception + content.slice(closingIndex));
+  tree.write(eslintRonasitConfigPath, content.slice(0, closingIndex) + override + content.slice(closingIndex));
 };

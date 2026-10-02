@@ -22,7 +22,7 @@ import {
   runStoreGenerator,
 } from '../../shared/generators';
 import {
-  addNoRawTextException,
+  addEslintRulesOverride,
   addNxAppTag,
   confirm,
   formatName,
@@ -128,7 +128,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   }
 
   addNxAppTag(tree, options.directory);
-  addNoRawTextException(tree, options.directory);
+  addEslintRulesOverride(tree, options.directory, { 'react-native/no-raw-text': 'off' });
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {
     ...options,
     formatName,

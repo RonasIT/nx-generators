@@ -54,6 +54,10 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
 
   execSync(commandWithOptions, { stdio: 'inherit' });
 
+  if (options.dryRun) {
+    return;
+  }
+
   generateFiles(tree, path.join(__dirname, 'readme-files'), libPath, {
     libName,
     readmeText: reactLibConstants.readmeText,

@@ -369,11 +369,4 @@ module.exports = [
         '@stylistic/function-paren-newline': ['warn', 'multiline-arguments'],
       },
     },
-    {
-      files: ['apps/web/**/*.{ts,tsx}'],
-
-      rules: {
-        'react-native/no-raw-text': 'off',
-      },
-    },
   ];

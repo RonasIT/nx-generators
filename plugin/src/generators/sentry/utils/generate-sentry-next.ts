@@ -1,83 +1,60 @@
 import * as path from 'path';
 import { addDependenciesToPackageJson, generateFiles, Tree } from '@nx/devkit';
 import { tsquery } from '@phenomnomnominal/tsquery';
-import { createPrinter, factory, ObjectLiteralExpression } from 'typescript';
+import { BinaryExpression, isSourceFile, Node } from 'typescript';
 import { dependencies } from '../../../shared/dependencies';
 import { updateFileContent } from '../../../shared/utils';
 import { SentryGeneratorSchema } from '../schema';
-import { createObjectLiteralExpression } from './create-object-literal-expression';
 
 const addRequiredImports = (content: string): string =>
-  tsquery.replace(
-    content,
-    'VariableStatement:has(Identifier[name="nextConfig"])',
-    (node) => `const { withSentryConfig } = require('@sentry/nextjs');
-
-${node.getText()}`,
-  );
-
-const modifyNextConfig = (content: string): string =>
-  createPrinter().printFile(
-    tsquery.map(tsquery.ast(content), 'Identifier[name="nextConfig"] ~ ObjectLiteralExpression', (node) => {
-      return createObjectLiteralExpression(
-        [
-          {
-            key: 'widenClientFileUpload',
-            initializer: factory.createTrue(),
-            comment: 'Upload a larger set of source maps for prettier stack traces (increases build time)',
-          },
-          {
-            key: 'transpileClientSDK',
-            initializer: factory.createTrue(),
-            comment: 'Transpiles SDK to be compatible with IE11 (increases bundle size)',
-          },
-          {
-            key: 'tunnelRoute',
-            initializer: factory.createStringLiteral('/monitoring'),
-            comment:
-              'Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)',
-          },
-          {
-            key: 'hideSourceMaps',
-            initializer: factory.createTrue(),
-            comment: 'Hides source maps from generated client bundles',
-          },
-          {
-            key: 'disableLogger',
-            initializer: factory.createTrue(),
-            comment: 'Automatically tree-shake Sentry logger statements to reduce bundle size',
-          },
-        ],
-        (node as ObjectLiteralExpression).properties,
-      );
-    }),
-  );
+  `const { withSentryConfig } = require('@sentry/nextjs/config');\n${content}`;
 
 const moduleExportsAssignmentSelector =
   'ExpressionStatement:has(PropertyAccessExpression:has(Identifier[name="module"]):has(Identifier[name="exports"]))';
 
+const sentryOptionsDeclaration = `/**
+ * @type {import('@sentry/nextjs/config').SentryBuildOptions}
+ **/
+const sentryOptions = {
+  silent: !process.env.CI,
+  org: '',
+  project: '',
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  widenClientFileUpload: true,
+};`;
+
 const wrapIntoSentryConfig = (content: string): string => {
-  const withSentryWebpackPluginOptions = tsquery.replace(content, moduleExportsAssignmentSelector, (node) => {
-    return `
-      /**
-      * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
-      **/
-
-      const sentryWebpackPluginOptions = {
-        silent: true,
-        org: '',
-        project: 'web-next-js-client',
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-      };
-
-      ${node.getText()}`;
-  });
-
-  return tsquery.replace(
-    withSentryWebpackPluginOptions,
-    `${moduleExportsAssignmentSelector} BinaryExpression > *:last-child`,
-    (node) => `withSentryConfig(${node.getText()}, sentryWebpackPluginOptions)`,
+  const moduleExportsAssignments = tsquery.query<BinaryExpression>(
+    content,
+    `${moduleExportsAssignmentSelector} > BinaryExpression`,
   );
+
+  if (!moduleExportsAssignments.length) {
+    return content;
+  }
+
+  const [firstAssignment] = moduleExportsAssignments;
+  let firstTopLevelStatement: Node = firstAssignment;
+
+  while (firstTopLevelStatement.parent && !isSourceFile(firstTopLevelStatement.parent)) {
+    firstTopLevelStatement = firstTopLevelStatement.parent;
+  }
+  const declarationPosition = firstTopLevelStatement.getStart();
+
+  const wrappedContent = [...moduleExportsAssignments]
+    .sort((a, b) => b.getStart() - a.getStart())
+    .reduce((result, assignment) => {
+      const { left, operatorToken, right } = assignment;
+      const wrappedAssignment = `${left.getText()} ${operatorToken.getText()} withSentryConfig(${right.getText()}, sentryOptions)`;
+
+      return result.slice(0, assignment.getStart()) + wrappedAssignment + result.slice(assignment.getEnd());
+    }, content);
+
+  return [
+    wrappedContent.slice(0, declarationPosition),
+    `${sentryOptionsDeclaration}\n\n`,
+    wrappedContent.slice(declarationPosition),
+  ].join('');
 };
 
 export function generateSentryNext(tree: Tree, options: SentryGeneratorSchema, projectRoot: string): void {
@@ -85,7 +62,7 @@ export function generateSentryNext(tree: Tree, options: SentryGeneratorSchema, p
 
   updateFileContent(
     `${projectRoot}/next.config.js`,
-    (fileContent) => wrapIntoSentryConfig(modifyNextConfig(addRequiredImports(fileContent))),
+    (fileContent) => wrapIntoSentryConfig(addRequiredImports(fileContent)),
     tree,
   );
 

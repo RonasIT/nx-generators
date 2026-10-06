@@ -23,8 +23,8 @@ export function useAnimatedLabel(isLabelFloated: boolean, labelWidth: SharedValu
   });
 
   useEffect(() => {
-    labelTop.value = withTiming(isLabelFloated ? -2 : 8, { duration: 180 });
-    labelScale.value = withTiming(isLabelFloated ? 0.8 : 1, { duration: 180 });
+    labelTop.set(withTiming(isLabelFloated ? -2 : 8, { duration: 180 }));
+    labelScale.set(withTiming(isLabelFloated ? 0.8 : 1, { duration: 180 }));
   }, [isLabelFloated]);
 
   return {

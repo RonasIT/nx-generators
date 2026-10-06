@@ -351,21 +351,7 @@ module.exports = [
     },
   },
   {
-    files: ['**/*actions.ts'],
-
-    rules: {
-      '@stylistic/function-call-argument-newline': ['warn', 'always'],
-
-      '@stylistic/function-paren-newline': [
-        'warn',
-        {
-          minItems: 1,
-        },
-      ],
-    },
-  },
-  {
-    files: ['apps/web/**/*.{ts,tsx}'],
+    files: ['apps/web/**/*.{ts,tsx}', 'libs/web/**/*.{ts,tsx}'],
 
     rules: {
       'react-native/no-raw-text': 'off',

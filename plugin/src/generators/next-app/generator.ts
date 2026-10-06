@@ -22,6 +22,7 @@ import {
   runStoreGenerator,
 } from '../../shared/generators';
 import {
+  addEslintRulesOverride,
   addNxAppTag,
   confirm,
   formatName,
@@ -127,6 +128,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   }
 
   addNxAppTag(tree, options.directory);
+  addEslintRulesOverride(tree, options.directory, { 'react-native/no-raw-text': 'off' });
   generateFiles(tree, path.join(__dirname, 'i18n'), i18nRoot, {
     ...options,
     formatName,
@@ -155,6 +157,9 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
       }
 
       execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
+      // Note: Some rules, like `import-x/order`, are inconvenient to follow when writing generators,
+      // so it's simpler to run ESLint after successful generation
+      execSync('npx eslint ./ --fix', { stdio: 'inherit' });
     });
   };
 }

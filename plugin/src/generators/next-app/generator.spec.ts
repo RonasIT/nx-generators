@@ -286,4 +286,19 @@ describe('nextAppGenerator with file content checks', () => {
 
     expect(sharedGenerators.runMantineGenerator).not.toHaveBeenCalled();
   });
+
+  it('should disable no-raw-text rule for the generated app and its libs', async () => {
+    existsSyncMock.mockReturnValue(true);
+    tree.write('.eslint.ronasit.cjs', 'module.exports = [{}];\n');
+
+    await nextAppGenerator(tree, { ...optionsBase, directory: 'admin' });
+    await nextAppGenerator(tree, { ...optionsBase, directory: 'admin' });
+
+    const eslintConfig = tree.read('.eslint.ronasit.cjs', 'utf-8') as string;
+
+    expect(eslintConfig).toContain("'apps/admin/**/*.{ts,tsx}'");
+    expect(eslintConfig).toContain("'libs/admin/**/*.{ts,tsx}'");
+    expect(eslintConfig).toContain("'react-native/no-raw-text': 'off'");
+    expect(eslintConfig.match(/apps\/admin/g)).toHaveLength(1);
+  });
 });

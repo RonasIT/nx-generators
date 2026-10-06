@@ -80,9 +80,6 @@ describe('reactLibGenerator', () => {
 
       return {};
     });
-    // Reset write spy here so test only sees writes after setup
-    (tree.write as jest.Mock).mockClear();
-
     jest.spyOn(require('../../shared/utils'), 'addNxScopeTag');
   });
 
@@ -107,14 +104,20 @@ describe('reactLibGenerator', () => {
     expect(askQuestion).toHaveBeenCalledWith("Enter the scope (e.g: profile) or 'shared': ");
     expect(AutoCompleteMock).toHaveBeenCalled();
     expect(execSync).toHaveBeenCalledWith(expect.stringContaining('npx nx g @nx/react:library'), { stdio: 'inherit' });
-    expect(devkit.generateFiles).not.toHaveBeenCalled();
-    expect(tree.write).not.toHaveBeenCalled();
+    expect(devkit.generateFiles).toHaveBeenCalledTimes(1);
+    expect(devkit.generateFiles).toHaveBeenCalledWith(
+      tree,
+      path.join(__dirname, 'files/base'),
+      'libs/myapp/myscope/ui/mylib',
+      expect.objectContaining({ libName: 'myapp/myscope/ui/mylib' }),
+    );
+
     expect(addNxScopeTag).toHaveBeenCalledWith(tree, 'myscope');
     expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
   });
 
   it('should generate library with component', async () => {
-    const featureRoot = 'libs/myapp/shared/features/mylib/src';
+    const libPath = 'libs/myapp/shared/features/mylib';
     (selectProject as jest.Mock).mockResolvedValue({ name: 'myapp' });
     (askQuestion as jest.Mock).mockImplementation((question) => {
       if (question.includes('scope')) return Promise.resolve('shared');
@@ -134,28 +137,23 @@ describe('reactLibGenerator', () => {
       scope: 'shared',
     });
 
+    expect(devkit.generateFiles).toHaveBeenCalledTimes(2);
     expect(devkit.generateFiles).toHaveBeenCalledWith(
       tree,
-      expect.stringMatching(/files$/),
-      expect.stringContaining(featureRoot),
-      expect.objectContaining({ name: 'Mylib' }),
-    );
-
-    // Assert that component index file is written
-    expect(tree.write).toHaveBeenCalledWith(
-      expect.stringContaining(`${featureRoot}/index.ts`),
-      "export * from './lib';",
+      path.join(__dirname, 'files/base'),
+      libPath,
+      expect.objectContaining({ libName: 'myapp/shared/features/mylib' }),
     );
 
     expect(addNxScopeTag).toHaveBeenCalledWith(tree, 'shared');
     expect(devkit.formatFiles).toHaveBeenCalledWith(tree);
 
     // Verify generated files first line against templates
-    const templatesDir = path.join(__dirname, 'files');
-    assertFirstLine(templatesDir, featureRoot, tree, {
-      placeholders: {
-        name: 'Mylib',
-      },
+    assertFirstLine(path.join(__dirname, 'files/base'), libPath, tree, {
+      placeholders: { libName: 'myapp/shared/features/mylib' },
+    });
+    assertFirstLine(path.join(__dirname, 'files/component'), libPath, tree, {
+      placeholders: { name: 'Mylib' },
     });
   });
 });

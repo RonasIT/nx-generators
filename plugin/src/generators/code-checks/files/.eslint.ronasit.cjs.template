@@ -11,6 +11,7 @@ const globals = require('globals');
 const tsParser = require('@typescript-eslint/parser');
 const eslint = require('@eslint/js');
 const stylistic = require('@stylistic/eslint-plugin');
+const path = require('node:path');
 
 module.exports = [
     eslint.configs.recommended,
@@ -65,6 +66,7 @@ module.exports = [
         'import-x/resolver': {
           typescript: {
             alwaysTryTypes: true,
+            project: path.join(__dirname, 'tsconfig.base.json'),
           },
 
           node: {
@@ -341,27 +343,6 @@ module.exports = [
       rules: {
         '@typescript-eslint/explicit-member-accessibility': 'off',
         '@typescript-eslint/explicit-function-return-type': 'off',
-      },
-    },
-    {
-      files: ['**/*actions.ts'],
-
-      rules: {
-        '@stylistic/function-call-argument-newline': ['warn', 'always'],
-
-        '@stylistic/function-paren-newline': [
-          'warn',
-          {
-            minItems: 1,
-          },
-        ],
-      },
-    },
-    {
-      files: ['apps/web/**/*.{ts,tsx}'],
-
-      rules: {
-        'react-native/no-raw-text': 'off',
       },
     },
   ];

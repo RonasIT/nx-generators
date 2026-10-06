@@ -70,7 +70,7 @@ export const dependencies = {
       '@sentry/react-native': '~8.17.1',
     },
     next: {
-      '@sentry/nextjs': '^10.63.0',
+      '@sentry/nextjs': '^10.73.0',
     },
   },
   nuqs: {

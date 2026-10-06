@@ -2,7 +2,7 @@ import { mantineHtmlProps, ColorSchemeScript } from '@mantine/core';
 import { pick } from 'lodash-es';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, setRequestLocale } from 'next-intl/server';
+import { getMessages } from 'next-intl/server';
 import { ReactElement, ReactNode } from 'react';
 import { constants } from '../../constants';
 import { Providers } from './providers';
@@ -30,8 +30,6 @@ export default async function RootLayout({ children, params }: RootLayoutProps):
   if (!locales.includes(locale as Locale)) {
     notFound();
   }
-
-  setRequestLocale(locale);
 
   const messages = await getMessages();
 

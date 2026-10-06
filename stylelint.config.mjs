@@ -6,19 +6,14 @@ export default {
     'selector-class-pattern': [
       '^([a-z][a-z0-9]*)(_[a-z0-9]+)*$',
       {
-        message: (selector) =>
-          `Expected class selector "${selector}" to be snake-case`,
+        message: (selector) => `Expected class selector "${selector}" to be snake-case`,
       },
     ],
     'custom-property-empty-line-before': [
       'always',
       {
         except: ['first-nested'],
-        ignore: [
-          'after-custom-property',
-          'after-comment',
-          'inside-single-line-block',
-        ],
+        ignore: ['after-custom-property', 'after-comment', 'inside-single-line-block'],
       },
     ],
   },

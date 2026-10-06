@@ -4,3 +4,7 @@
 /.nx/cache
 /.nx/workspace-data
 /e2e/.workspace
+
+**/android
+**/ios
+**/node_modules

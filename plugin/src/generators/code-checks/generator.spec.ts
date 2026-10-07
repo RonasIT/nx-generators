@@ -60,12 +60,11 @@ describe('codeChecksGenerator (integration)', () => {
     expect(gitignore).toContain('.eslintcache');
     expect(gitignore).toContain('.yalc');
 
-    // .prettierignore should include comment and ignored files
+    // .prettierignore should include ignored paths
     const prettierignore = tree.read('.prettierignore', 'utf-8');
-    expect(prettierignore).toContain('# Files with custom rules');
-    expect(prettierignore).toContain('**/actions.ts');
-    expect(prettierignore).toContain('**/epics.ts');
-    expect(prettierignore).toContain('**/selectors.ts');
+    expect(prettierignore).toContain('**/android');
+    expect(prettierignore).toContain('**/ios');
+    expect(prettierignore).toContain('**/node_modules');
     expect(prettierignore).toContain('.yalc');
 
     // Assert contents of other new files

@@ -5,7 +5,6 @@
 /.nx/workspace-data
 /e2e/.workspace
 
-# Files with custom rules
-**/actions.ts
-**/epics.ts
-**/selectors.ts
+**/android
+**/ios
+**/node_modules

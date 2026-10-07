@@ -25,7 +25,7 @@ export async function getFormUtilsDirectory(tree: Tree, appName: string): Promis
       await selectProject(
         tree,
         'application',
-        'It\'s necessary to generate form utilities. What application should they be in?',
+        "It's necessary to generate form utilities. What application should they be in?",
       )
     ).name;
     await runFormUtilsGenerator(tree, { directory: formUtilsAppDirectory });
@@ -40,14 +40,16 @@ export async function getFormUtilsDirectory(tree: Tree, appName: string): Promis
       return searchAliasPath(path) as string;
     }
 
-    const availableLibsPaths = formUtilsLibsPaths.filter((path) => [appName, constants.sharedValue].includes(getAppName(path)));
+    const availableLibsPaths = formUtilsLibsPaths.filter((path) =>
+      [appName, constants.sharedValue].includes(getAppName(path)),
+    );
 
     formUtilsLibsPaths[0] = await new AutoComplete({
       name: 'library path',
       message: 'Select the path of the library with the form utilities:',
       limit: 10,
       choices: availableLibsPaths,
-    })
+    });
   }
 
   return searchAliasPath(formUtilsLibsPaths[0]) as string;

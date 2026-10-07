@@ -351,30 +351,6 @@ module.exports = [
     },
   },
   {
-    files: ['**/*actions.ts'],
-
-    rules: {
-      '@stylistic/function-call-argument-newline': ['warn', 'always'],
-
-      '@stylistic/function-paren-newline': [
-        'warn',
-        {
-          minItems: 1,
-        },
-      ],
-    },
-  },
-  {
-    files: ['**/*selectors.ts'],
-
-    rules: {
-      '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/explicit-function-return-type': 'off',
-      '@stylistic/function-call-argument-newline': ['warn', 'always'],
-      '@stylistic/function-paren-newline': ['warn', 'multiline-arguments'],
-    },
-  },
-  {
     files: ['apps/web/**/*.{ts,tsx}', 'libs/web/**/*.{ts,tsx}'],
 
     rules: {

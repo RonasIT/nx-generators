@@ -62,11 +62,7 @@ export function assertEntityApi(workspace, appDirectory, entityName) {
 
   console.log(`==> Verifying entity-api output for ${entityName}...`);
 
-  assertPathExists(
-    workspace,
-    `libs/${appDirectory}/shared/data-access/api/src/lib/${entityPath}/api.ts`,
-    'file',
-  );
+  assertPathExists(workspace, `libs/${appDirectory}/shared/data-access/api/src/lib/${entityPath}/api.ts`, 'file');
   assertPathExists(
     workspace,
     `libs/${appDirectory}/shared/data-access/api/src/lib/${entityPath}/models/${entityPath}.ts`,

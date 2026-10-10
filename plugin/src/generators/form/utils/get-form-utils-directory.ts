@@ -49,7 +49,7 @@ export async function getFormUtilsDirectory(tree: Tree, appName: string): Promis
       message: 'Select the path of the library with the form utilities:',
       limit: 10,
       choices: availableLibsPaths,
-    });
+    }).run();
   }
 
   return searchAliasPath(formUtilsLibsPaths[0]) as string;

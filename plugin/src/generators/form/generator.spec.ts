@@ -82,6 +82,17 @@ describe('formGenerator', () => {
     expect(formatFilesMock).toHaveBeenCalled();
   });
 
+  it('should write the resolved form utils path into the generated import', async () => {
+    const formUtilsImportPath = '@ronas-it/shared/utils/form';
+
+    (formUtils.getFormUtilsDirectory as jest.Mock).mockResolvedValue(formUtilsImportPath);
+    await formGenerator(tree, { name: 'user', placeOfUse: '' });
+
+    const generatedForm = tree.read(`${targetPath}/user.ts`)?.toString();
+
+    expect(generatedForm).toContain(`import { BaseFormSchema, FormValues } from '${formUtilsImportPath}';`);
+  });
+
   it('should throw if form name is missing', async () => {
     await expect(formGenerator(tree, { name: '', placeOfUse: '' })).rejects.toThrow('Form name is required');
   });

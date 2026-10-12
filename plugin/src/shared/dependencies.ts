@@ -29,7 +29,7 @@ export const dependencies = {
     'next-intl': '~4.13.1',
     'lodash-es': '^4.18.1',
     'class-transformer': '~0.5.1',
-    next: '~16.3.5',
+    next: '~16.3.8',
     react: '~19.2.7',
     'react-dom': '~19.2.7',
   },
@@ -121,7 +121,7 @@ export const devDependencies = {
     'metro-config': '~0.84.2',
   },
   'next-app': {
-    'eslint-config-next': '~16.3.5',
+    'eslint-config-next': '~16.3.8',
     '@types/lodash-es': '^4.17.12',
     '@types/react': '~19.2.0',
     '@types/react-dom': '~19.2.0',

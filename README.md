@@ -27,6 +27,7 @@ This package provides a set of [Nx](https://nx.dev/getting-started/intro) genera
 - **Library management**: Tools for creating, moving, renaming, and managing libraries with pre-defined boundaries
 - **Component generation**: Automated creation of components, form interaction, and other utility tools
 - **Data access setup**: State management and API interaction setup using [Redux Toolkit](https://redux-toolkit.js.org/) and [RTKQ Entity API](https://github.com/RonasIT/rtkq-entity-api)
+- **Authentication**: Auth libraries and Redux store integration for both Next.js and RN Expo applications
 - **Internationalization**: Built-in support for i18n in both Next.js and RN Expo applications
 
 See full list of generators [below](#generators-overview).
@@ -94,7 +95,7 @@ npx nx dev web
 5. Continue developing your app by generating libraries and components:
 
 ```sh
-npx nx g react-lib mobile/account/features/profile-settings --withComponent
+npx nx g react-lib --app=mobile --scope=account --type=features --name=profile-settings --withComponent
 npx nx g react-component
 ```
 
@@ -127,6 +128,18 @@ Also generates [navigation utilities](#navigation-utilities) and `.easignore` fi
 
 2. `directory` (optional) - name of the directory in the `apps/` folder (e.g: `mobile`)
 
+3. `withStore` (optional) - generates the Redux store library and adds it to the app
+
+4. `withUiKit` (optional) - generates a UI-kit library with pre-built components
+
+5. `withFormUtils` (optional) - generates a form utils library
+
+6. `withSentry` (optional) - adds [Sentry](https://sentry.io/) integration (see [`sentry`](#13-sentry))
+
+7. `withApiClient` (optional) - generates an API client library (requires `withStore`)
+
+8. `withAuth` (optional) - generates auth libraries and configures the store (requires `withApiClient`)
+
 #### Example
 
 ```sh
@@ -150,7 +163,19 @@ Also generates [navigation utilities](#navigation-utilities).
 
 2. `directory` (optional) - name of the directory in the `apps/` folder (e.g: `web`)
 
-3. `withNuqs` (optional) - installs and configures nuqs for the app
+3. `withStore` (optional) - generates the Redux store library and adds it to the app
+
+4. `withFormUtils` (optional) - generates a form utils library
+
+5. `withSentry` (optional) - adds [Sentry](https://sentry.io/) integration (see [`sentry`](#13-sentry))
+
+6. `withNuqs` (optional) - installs and configures nuqs for the app (see [`nuqs`](#16-nuqs))
+
+7. `withApiClient` (optional) - generates an API client library (requires `withStore`)
+
+8. `withAuth` (optional) - generates auth libraries and configures the store (requires `withApiClient`)
+
+9. `withMantine` (optional) - generates a UI-kit library based on the [Mantine](https://mantine.dev/) theme and components
 
 #### Example
 
@@ -259,7 +284,7 @@ Checks and configures [Nx library tags](https://nx.dev/features/enforce-module-b
 
 #### Options
 
-1. `silent` (optional) - disables all logs
+1. `silent` (optional) - disables detailed log messages
 
 2. `skipRepoCheck` (optional) - disables check repository status
 
@@ -321,6 +346,7 @@ npx nx g form profile-settings ProfileSettings
 ### 12. `entity-api`
 
 Creates an API with related entities in API library. It also updates redux store middlewares, reducers.
+Requires the Redux store, API client, and API libraries to exist in the app.
 
 #### Options
 
@@ -356,7 +382,10 @@ Generates a deployment-ready Dockerfile for Next.js applications in the monorepo
 
 ### 15. `auth`
 
-Generates authentication setup module for Expo/Next application.
+Creates authentication data-access libraries (API and auth libs; for Next.js applications, also
+a cookie lib and proxy middleware) and configures the Redux store.
+Requires the Redux store and API client libraries to exist in the app (they are created by the app
+generators when the `withStore` and `withApiClient` options are enabled).
 
 #### Options
 
@@ -391,10 +420,45 @@ parameters prompt.
 npx nx g nuqs --directory=web
 ```
 
+### 17. `store`
+
+Installs and configures the Redux store library. Used by [`expo-app`](#3-expo-app) and
+[`next-app`](#4-next-app) when the `withStore` option is enabled, and can also be run standalone
+on an existing app.
+
+#### Options
+
+1. `directory` - name of the directory in the `apps/` folder (e.g: `mobile`)
+
+2. `baseGeneratorType` - type of the base application generator, can be `expo-app` or `next-app`
+
+#### Example
+
+```sh
+npx nx g store --directory=mobile --baseGeneratorType=expo-app
+```
+
+### 18. `navigationUtils`
+
+Creates the navigation utilities library. Used by [`expo-app`](#3-expo-app) and
+[`next-app`](#4-next-app), and can also be run standalone on an existing app
+(see [navigation utilities](#navigation-utilities)).
+
+#### Options
+
+1. `appDirectory` - name of the directory in the `apps/` folder (e.g: `mobile`)
+
+#### Example
+
+```sh
+npx nx g navigationUtils --appDirectory=mobile
+```
+
 ## Navigation utilities
 
 The generators `next-app` and `expo-app` also create customizable utilities for navigation
-and empty `navigationConfig` - an object, where routes should be stored.
+and a basic `navigationConfig` object, where routes should be stored.
+You can also add these utilities to an existing app with the [`navigationUtils`](#18-navigationutils) generator.
 There are utilities, which may help to create routes
 
 ### getLinkBuilder

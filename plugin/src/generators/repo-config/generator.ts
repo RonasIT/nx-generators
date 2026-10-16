@@ -9,6 +9,7 @@ import {
   writeJson,
 } from '@nx/devkit';
 import { devDependencies } from '../../shared/dependencies';
+import { getRootPackageName, getWorkspaceScope } from '../../shared/utils/config-utils';
 import { formatName, getProjectName } from '../../shared/utils/format-utils';
 import engines from './engines';
 import scripts from './scripts';
@@ -16,6 +17,7 @@ import scripts from './scripts';
 export async function repoConfigGenerator(tree: Tree) {
   const projectRoot = '.';
   const projectPackagePath = 'package.json';
+  const packageName = getRootPackageName(getWorkspaceScope(tree));
 
   // Remove unnecessary files and files that will be replaced
   tree.delete('README.md');
@@ -24,6 +26,7 @@ export async function repoConfigGenerator(tree: Tree) {
 
   // Update project package.json
   const projectPackageJson = readJson(tree, projectPackagePath);
+  projectPackageJson.name = packageName;
   projectPackageJson.workspaces = ['apps/*'];
   projectPackageJson.scripts = scripts;
   projectPackageJson.engines = engines;
@@ -31,7 +34,7 @@ export async function repoConfigGenerator(tree: Tree) {
 
   // Add project files
   generateFiles(tree, path.join(__dirname, 'files'), projectRoot, {
-    name: getProjectName(projectPackageJson.name),
+    name: getProjectName(packageName),
     formatName,
   });
 

@@ -25,10 +25,8 @@ describe('repoConfigGenerator', () => {
   });
 
   it('should update package.json, generate files, add dependencies, format files and return install callback', async () => {
-    const mockPackageJson = {
-      name: '@myorg/my-project',
-    };
-    readJsonMock.mockReturnValue(mockPackageJson);
+    tree.root = '/myorg';
+    readJsonMock.mockReturnValue({ name: '@myorg/source' });
 
     const callback = await repoConfigGenerator(tree);
 
@@ -38,6 +36,7 @@ describe('repoConfigGenerator', () => {
       tree,
       'package.json',
       expect.objectContaining({
+        name: '@myorg/source',
         workspaces: ['apps/*'],
         scripts,
         engines,
@@ -64,5 +63,25 @@ describe('repoConfigGenerator', () => {
 
     callback();
     expect(installPackagesTaskMock).toHaveBeenCalledWith(tree);
+  });
+
+  it('should set package name from workspace directory name', async () => {
+    tree.root = '/my-project';
+    readJsonMock.mockReturnValue({ name: '@org/source' });
+
+    await repoConfigGenerator(tree);
+
+    expect(writeJsonMock).toHaveBeenCalledWith(
+      tree,
+      'package.json',
+      expect.objectContaining({ name: '@my-project/source' }),
+    );
+
+    expect(generateFilesMock).toHaveBeenCalledWith(
+      tree,
+      expect.stringContaining('files'),
+      '.',
+      expect.objectContaining({ name: 'my-project' }),
+    );
   });
 });

@@ -35,6 +35,7 @@ jest.mock('@nx/devkit', () => ({
   readProjectConfiguration: jest.fn(),
   updateProjectConfiguration: jest.fn(),
   getProjects: jest.fn(),
+  names: require(require.resolve('@nx/devkit/package.json').replace(/package\.json$/, 'dist/src/utils/names.js')).names,
   output: {
     log: jest.fn(),
     warn: jest.fn(),

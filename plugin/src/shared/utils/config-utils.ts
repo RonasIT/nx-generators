@@ -1,4 +1,5 @@
-import { Tree, output, readJson, writeJson } from '@nx/devkit';
+import * as path from 'path';
+import { names, Tree, output, readJson, writeJson } from '@nx/devkit';
 import { IndentationText, Project, QuoteKind, SyntaxKind } from 'ts-morph';
 
 const constraintsConfigPath = 'eslint.constraints.json';
@@ -63,6 +64,15 @@ export const getImportPathPrefix = (tree: Tree): string => {
 
   return npmScope ? `${npmScope === '@' ? '' : '@'}${npmScope}` : '';
 };
+
+export const getWorkspaceScope = (tree: Tree): string => {
+  const root = tree.root || process.cwd();
+  const base = path.basename(root) || path.basename(process.cwd());
+
+  return names(base).fileName;
+};
+
+export const getRootPackageName = (scope: string): string => `@${scope}/source`;
 
 export const verifyESLintConstraintsConfig = (tree: Tree): void => {
   let constraints: Array<Constraint> = [];

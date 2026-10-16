@@ -35,6 +35,13 @@ jest.mock('@nx/devkit', () => ({
   readProjectConfiguration: jest.fn(),
   updateProjectConfiguration: jest.fn(),
   getProjects: jest.fn(),
+  names: jest.fn((name: string) => ({
+    name,
+    className: name,
+    propertyName: name,
+    constantName: name,
+    fileName: name.toLowerCase().replace(/[ _]/g, '-'),
+  })),
   output: {
     log: jest.fn(),
     warn: jest.fn(),

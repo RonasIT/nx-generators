@@ -6,6 +6,7 @@ import {
   assertFullWorkspaceStructure,
   assertLintTargets,
   assertNxProjects,
+  assertRootPackage,
 } from '../lib/assertions.mjs';
 
 export function runFullWorkspaceScenario({ repoRoot, workDir, e2eWorkspace, run }) {
@@ -26,6 +27,7 @@ export function runFullWorkspaceScenario({ repoRoot, workDir, e2eWorkspace, run 
   run('npm install', { cwd: e2eWorkspace });
 
   run('npx nx g repo-config --no-interactive', { cwd: e2eWorkspace });
+  assertRootPackage(e2eWorkspace, path.basename(e2eWorkspace));
   run('npx nx g code-checks --no-interactive', { cwd: e2eWorkspace });
 
   run(

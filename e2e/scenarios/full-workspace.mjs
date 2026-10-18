@@ -3,6 +3,7 @@ import path from 'node:path';
 import {
   assertDockerfile,
   assertEntityApi,
+  assertExpoAppDependenciesAligned,
   assertFullWorkspaceStructure,
   assertLintTargets,
   assertNxProjects,
@@ -32,6 +33,13 @@ export function runFullWorkspaceScenario({ repoRoot, workDir, e2eWorkspace, run 
     'npx nx g expo-app my-app mobile --no-interactive --withStore --withUiKit --withFormUtils --withApiClient --withAuth',
     { cwd: e2eWorkspace },
   );
+
+  assertExpoAppDependenciesAligned(e2eWorkspace, 'mobile', [
+    'react',
+    'react-dom',
+    'react-native-screens',
+    'react-native-worklets',
+  ]);
 
   run('npx nx g entity-api User --baseEndpoint=/users --no-interactive', { cwd: e2eWorkspace });
   assertEntityApi(e2eWorkspace, 'mobile', 'user');

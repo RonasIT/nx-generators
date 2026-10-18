@@ -119,6 +119,31 @@ describe('expoAppGenerator integration with file content checks', () => {
     expect(callback).toBeInstanceOf(Function);
   });
 
+  it('should align the app dependencies with the root after generation', async () => {
+    existsSyncMock.mockReturnValue(false);
+
+    const callback = await expoAppGenerator(tree, {
+      name: appName,
+      directory: directory,
+      withStore: false,
+      withUiKit: false,
+      withFormUtils: false,
+      withSentry: false,
+    });
+
+    callback();
+
+    const alignmentCalls = execSyncMock.mock.calls
+      .map(([command, options]) => [command, options])
+      .filter(([command]) => command === 'npx expo install --fix' || command === 'npm dedupe');
+
+    expect(alignmentCalls).toEqual([
+      ['npx expo install --fix', { stdio: 'inherit' }],
+      ['npx expo install --fix', { stdio: 'inherit', cwd: `apps/${directory}` }],
+      ['npm dedupe', { stdio: 'inherit' }],
+    ]);
+  });
+
   it('should merge app-specific entries into existing .easignore for second app', async () => {
     existsSyncMock.mockImplementation((filePath: string) => filePath.includes(`apps/${directory}`));
 

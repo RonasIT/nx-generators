@@ -165,6 +165,10 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
 
       execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
       execSync('npx expo install --fix', { stdio: 'inherit' });
+      // Note: The second run is needed to align the app's package.json too
+      execSync('npx expo install --fix', { stdio: 'inherit', cwd: appRoot });
+      // Note: Removes the nested copies npm installed for the app
+      execSync('npm dedupe', { stdio: 'inherit' });
       // Note: Some rules, like `import-x/order`, are inconvenient to follow when writing generators,
       // so it's simpler to run ESLint after successful generation
       execSync('npx eslint ./ --fix', { stdio: 'inherit' });

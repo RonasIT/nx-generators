@@ -20,7 +20,24 @@ export async function repoConfigGenerator(tree: Tree) {
   // Remove unnecessary files and files that will be replaced
   tree.delete('README.md');
   tree.delete('AGENTS.md');
+  tree.delete('CLAUDE.md');
   tree.delete('packages');
+
+  // TODO: Remove when https://github.com/nrwl/nx/issues/37437 is fixed
+  const templateArtifacts = [
+    '.agents',
+    '.claude',
+    '.codex',
+    '.cursor',
+    '.gemini',
+    '.opencode',
+    'opencode.json',
+    '.github/agents',
+    '.github/prompts',
+    '.github/skills',
+    '.github/workflows/ci.yml',
+  ];
+  templateArtifacts.forEach((artifact) => tree.delete(artifact));
 
   // Update project package.json
   const projectPackageJson = readJson(tree, projectPackagePath);

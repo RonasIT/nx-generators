@@ -57,6 +57,63 @@ export function assertFullWorkspaceStructure(workspace) {
   assertFileContains(workspace, 'apps/web/app/[locale]/providers.tsx', '@mantine/core');
 }
 
+export function assertExpoAppDependenciesAligned(workspace, appDirectory, packageNames) {
+  console.log('==> Verifying expo app dependencies alignment...');
+
+  const appRoot = path.join(workspace, 'apps', appDirectory);
+  const rootPackageJson = JSON.parse(readFileSync(path.join(workspace, 'package.json'), 'utf8'));
+  const appPackageJson = JSON.parse(readFileSync(path.join(appRoot, 'package.json'), 'utf8'));
+  const getDeclaredVersion = (packageJson, packageName) =>
+    ({ ...packageJson.dependencies, ...packageJson.devDependencies })[packageName];
+
+  for (const packageName of packageNames) {
+    const rootVersion = getDeclaredVersion(rootPackageJson, packageName);
+    const appVersion = getDeclaredVersion(appPackageJson, packageName);
+
+    if (!rootVersion || !appVersion) {
+      throw new Error(`Expected "${packageName}" to be declared in both root and ${appDirectory} package.json`);
+    }
+
+    if (rootVersion !== appVersion) {
+      throw new Error(`Expected "${packageName}" versions to match: root has "${rootVersion}", app has "${appVersion}"`);
+    }
+  }
+
+  const output = execSync(`npm ls ${packageNames.join(' ')} --all --json`, { cwd: workspace, encoding: 'utf8' });
+  const installedVersions = new Map();
+
+  const collectInstalledVersions = (node) => {
+    for (const [packageName, dependency] of Object.entries(node.dependencies ?? {})) {
+      if (packageNames.includes(packageName)) {
+        const versions = installedVersions.get(packageName) ?? new Set();
+
+        versions.add(dependency.version);
+        installedVersions.set(packageName, versions);
+      }
+
+      collectInstalledVersions(dependency);
+    }
+  };
+
+  collectInstalledVersions(JSON.parse(output));
+
+  for (const packageName of packageNames) {
+    const versions = [...(installedVersions.get(packageName) ?? [])];
+
+    if (versions.length !== 1) {
+      throw new Error(`Expected a single installed version of "${packageName}", got: ${versions.join(', ') || 'none'}`);
+    }
+
+    if (existsSync(path.join(appRoot, 'node_modules', packageName))) {
+      throw new Error(
+        `Expected "${packageName}" to be hoisted to the workspace root, but found a duplicate in apps/${appDirectory}/node_modules`,
+      );
+    }
+  }
+
+  execSync('npx expo install --check', { cwd: appRoot, stdio: 'inherit' });
+}
+
 export function assertEntityApi(workspace, appDirectory, entityName) {
   const entityPath = entityName.toLowerCase();
 

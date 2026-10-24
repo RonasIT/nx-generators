@@ -177,6 +177,16 @@ describe('nextAppGenerator with file content checks', () => {
     expect(formatFilesMock).toHaveBeenCalledWith(tree);
   });
 
+  it('should disable Next.js managed agent files in generated next.config.js', async () => {
+    existsSyncMock.mockReturnValue(true);
+
+    await nextAppGenerator(tree, optionsBase);
+
+    const nextConfig = tree.read(`apps/${optionsBase.directory}/next.config.js`)?.toString();
+
+    expect(nextConfig).toContain('agentRules: false');
+  });
+
   it('should run post install tasks correctly', async () => {
     existsSyncMock.mockReturnValue(true);
 

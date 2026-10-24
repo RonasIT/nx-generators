@@ -1,0 +1,58 @@
+# Colors — extracting values from the Variables table
+
+Read this in full before writing any color token in Phase 1 of `import-figma-vars` — it documents
+specific failure modes that have already caused prior imports to silently write missing or wrong
+colors.
+
+## Read the actual color value from an SVG export, never from a PNG
+
+`get_figma_data` can collapse repeated component instances (e.g. every row of a palette table)
+into one shared template and return the _same_ placeholder fill for all of them regardless of
+each instance's real override — position/size data doesn't have this bug, only fill/stroke color
+resolution does. Rendering the specific instance alone works around that, but rendering to
+**PNG** introduces a worse problem: confirmed cases of a correctly-isolated pixel sample coming
+back with a real but _wrong_ color on partial-opacity fills (e.g. `#25C05C` at a real 10% opacity
+rendered as solid-sampled `#27BA58`; `#F09047` at 70% rendered as `#F19148`) — reproduced
+consistently across many high-resolution sample points, so not anti-aliasing, and not
+predictable enough to "just distrust low alpha" either (some partial-opacity fills sampled
+correctly, others didn't). Looks like a color-space/gamut quirk in Figma's raster export
+pipeline specifically.
+
+**Export as SVG instead** and read the literal `fill`/`fill-opacity` attributes straight from the
+markup — no rasterization step, so this class of error doesn't occur. Export the _whole_ color
+table in one call rather than one request per row, then parse every `<rect>`/`<path>` for
+`fill="#RRGGBB"` (and `fill-opacity="…"` when present) and match each swatch to its row by
+y-coordinate — rows are evenly spaced top-to-bottom in document order, so sorted y-values line up
+directly with the row order you already read from `get_figma_data`. One caveat: Figma's SVG
+export typically outlines text into vector paths rather than emitting literal `<text>` elements,
+so keep using `get_figma_data`'s text values for row _names_ — this technique is for colors only.
+If a `get_variable_defs`-shaped tool is connected, skip all of this and read the bound variable
+directly instead.
+
+## "Skip primitives" means something narrow — don't over-apply it
+
+Skip a standalone token only for a genuine raw-hue-ramp entry that exists purely to document the
+value behind a semantic row (e.g. a `Green / 500` row in a palette-scale reference that only ever
+gets consumed indirectly through `Brand / Primary`'s own value) — and only when the user hasn't
+asked for primitives too.
+
+## A state/variant suffix on an otherwise-semantic name is NOT a primitive — import it
+
+Rows like `Brand / Primary hover`, `Brand / Primary Pressed`, `Brand / Primary Transparent`, or
+`Background / Primary Transparent` are semantic interaction-state tokens the app may need for
+hover/active/overlay styling, not raw palette scale entries. Import each one the same way as its
+base row, deriving the token name from its full grouping path, e.g. `Brand / Primary hover` →
+`--brand-primary-hover`, `Brand / Primary Transparent` → `--brand-primary-transparent`. If a
+row's own bucket (primitive vs. semantic-state) is genuinely unclear from its name alone, import
+it — see the completeness checklist in [SKILL.md](../SKILL.md).
+
+## Write every color as hex, not `rgb()`/`rgba()`, so the file stays visually consistent
+
+A solid color becomes 6-digit hex (`rgb(191, 75, 75)` → `#bf4b4b`); a color with alpha becomes
+8-digit hex — append the alpha as a two-digit hex byte (`round(alpha × 255)` in hex, e.g. 40% →
+`0.4 × 255 ≈ 102 = 0x66`) to the 6-digit color, e.g. `rgba(191, 75, 75, 0.4)` → `#bf4b4b66`. Do
+this even though `npm run lint:css`'s `--fix` will normalize plain `rgb()`/`rgba()` calls to the
+modern space-separated syntax rather than hex — Stylelint does not rewrite hex either direction,
+so writing hex yourself is the only way to get a consistently hex file. If the design tool gives
+you a color as a named CSS keyword (e.g. `transparent`) instead of a numeric value, leave it
+as-is rather than forcing a hex equivalent.

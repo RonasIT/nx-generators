@@ -2,7 +2,7 @@
   // TODO: uncomment when icons are added
   // background: url(../assets/icons.svg) no-repeat var(--bg-position);
   // mask: url(../assets/icons.svg) no-repeat center; mask-position: var(--bg-position);
-  width: 24px; height: 24px; background-size: contain; display: inline-block;
+  width: 24px; height: 24px; background-size: auto; display: inline-block;
 
   &_background_primary {background: var(--background-primary);}
   &_text_primary {background: var(--text-primary);}

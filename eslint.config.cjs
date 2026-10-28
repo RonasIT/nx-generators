@@ -9,6 +9,8 @@ module.exports = [
       '**/node_modules',
       'e2e/.workspace/**',
       '**/dist',
+      '**/.next/**',
+      '**/.nx/**',
       '**/*.js',
       '**/*.cjs',
       '**/*.mjs',

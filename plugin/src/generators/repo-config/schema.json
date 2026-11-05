@@ -3,6 +3,15 @@
   "$id": "RepoConfig",
   "title": "",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the workspace package (defaults to the workspace directory name)",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      }
+    }
+  },
   "required": []
 }

@@ -27,6 +27,23 @@ export function assertFileContains(workspace, relativePath, substring) {
   }
 }
 
+export function assertRootPackage(workspace, expectedName) {
+  console.log('==> Verifying root package name...');
+
+  const expectedPackageName = `@${expectedName}/source`;
+  const packageJson = JSON.parse(readFileSync(path.join(workspace, 'package.json'), 'utf8'));
+
+  if (packageJson.name !== expectedPackageName) {
+    throw new Error(`Expected root package name "${expectedPackageName}", got "${packageJson.name}"`);
+  }
+
+  const tsconfig = JSON.parse(readFileSync(path.join(workspace, 'tsconfig.base.json'), 'utf8'));
+
+  if (!tsconfig.compilerOptions?.customConditions?.includes(expectedPackageName)) {
+    throw new Error(`Expected "customConditions" in tsconfig.base.json to include "${expectedPackageName}"`);
+  }
+}
+
 export function assertFullWorkspaceStructure(workspace) {
   console.log('==> Verifying generated workspace structure...');
 

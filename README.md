@@ -297,7 +297,7 @@ Checks and configures [Nx library tags](https://nx.dev/features/enforce-module-b
 
 1. `silent` (optional) - disables detailed log messages
 
-2. `skipRepoCheck` (optional) - disables the unstaged changes check
+2. `skipRepoCheck` (optional) - skips the repository status check for staged changes, unstaged changes, and untracked files
 
 #### Example
 
@@ -402,7 +402,7 @@ generators when the `withStore` and `withApiClient` options are enabled).
 
 1. `directory` - the application directory
 
-2. `type` (optional) - application type, can be `next-app` or `expo-app`. Defaults to `expo-app`
+2. `type` - required application type, can be `next-app` or `expo-app`.
 
 #### Example
 
@@ -433,7 +433,7 @@ npx nx g nuqs --directory=web
 
 ### 17. `store`
 
-Installs and configures the Redux store library. Used by [`expo-app`](#3-expo-app) and
+Creates and configures the Redux store library. Used by [`expo-app`](#3-expo-app) and
 [`next-app`](#4-next-app) when the `withStore` option is enabled, and can also be run standalone
 on an existing app.
 

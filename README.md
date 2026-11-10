@@ -313,7 +313,7 @@ Creates a React component in particular library.
 
 #### Options
 
-1. `name` - name of the component (e.g. AppButton)
+1. `name` - name of the component (e.g. `AppButton`)
 
 2. `subcomponent` (optional) - generate a folder for components
 
@@ -361,9 +361,9 @@ Requires the Redux store, API client, and API libraries to exist in the app.
 
 #### Options
 
-1. `name` - name of the entity (e.g. User)
+1. `name` - name of the entity (e.g. `User`)
 
-2. `baseEndpoint` - name of used endpoint in your API (e.g. /users)
+2. `baseEndpoint` - name of used endpoint in your API (e.g. `/users`)
 
 #### Example
 

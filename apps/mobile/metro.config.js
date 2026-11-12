@@ -1,5 +1,5 @@
 const { getDefaultConfig } = require('expo/metro-config');
-const { mergeConfig } = require('metro-config');
+const { mergeConfig } = require('@expo/metro/metro-config');
 const path = require('path');
 
 const appRoot = __dirname;
@@ -15,7 +15,7 @@ const defaultResolveRequest = defaultConfig.resolver?.resolveRequest;
  * Metro configuration
  * https://facebook.github.io/metro/docs/configuration
  *
- * @type {import('metro-config').MetroConfig}
+ * @type {import('@expo/metro/metro-config').MetroConfig}
  */
 const customConfig = {
   transformer: {

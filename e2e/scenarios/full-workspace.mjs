@@ -1,4 +1,4 @@
-import { mkdirSync, rmSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import {
   assertDockerfile,
@@ -11,6 +11,8 @@ import {
 } from '../lib/assertions.mjs';
 
 export function runFullWorkspaceScenario({ repoRoot, workDir, e2eWorkspace, run }) {
+  const { devDependencies } = JSON.parse(readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
   console.log(`==> Preparing E2E workspace at ${workDir}...`);
   rmSync(workDir, { recursive: true, force: true });
   mkdirSync(workDir, { recursive: true });
@@ -20,7 +22,7 @@ export function runFullWorkspaceScenario({ repoRoot, workDir, e2eWorkspace, run 
   run('npx yalc publish', { cwd: path.join(repoRoot, 'dist', 'nx-generators') });
 
   run(
-    'npx create-nx-workspace e2e-workspace --preset=ts --formatter=prettier --ci=skip --interactive=false --packageManager=npm',
+    `npx create-nx-workspace@${devDependencies.nx} e2e-workspace --preset=ts --formatter=prettier --ci=skip --interactive=false --packageManager=npm --skipGit --aiAgents=none`,
     { cwd: workDir },
   );
 

@@ -1,6 +1,6 @@
 export const dependencies = {
   'expo-app': {
-    '@expo/metro-config': '~57.0.3',
+    '@expo/metro': '~56.0.0',
     '@expo/metro-runtime': '~57.0.3',
     '@ronas-it/react-native-common-modules': '~2.0.1',
     'react-native-mmkv': '^4.3.2',
@@ -117,8 +117,6 @@ export const devDependencies = {
     'babel-preset-expo': '~57.0.1',
     'reactotron-react-native': '^5.1.18',
     'reactotron-redux': '^3.2.1',
-    metro: '^0.84.2',
-    'metro-config': '~0.84.2',
   },
   'next-app': {
     'eslint-config-next': '~16.4.3',

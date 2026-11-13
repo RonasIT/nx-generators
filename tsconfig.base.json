@@ -50,7 +50,10 @@
       "@ronas-it/web/shared/ui/ui-kit": ["./libs/web/shared/ui/ui-kit/src/index.ts"],
       "@ronas-it/web/shared/ui/styles/variables": ["libs/web/shared/ui/styles/_variables.scss"],
       "@ronas-it/web/shared/ui/styles/global": ["libs/web/shared/ui/styles/global.scss"]
-    }
+    },
+    "noUncheckedSideEffectImports": false,
+    "types": ["*"],
+    "esModuleInterop": false
   },
   "references": [
     {

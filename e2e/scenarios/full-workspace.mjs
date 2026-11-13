@@ -22,7 +22,7 @@ export function runFullWorkspaceScenario({ repoRoot, workDir, e2eWorkspace, run 
   run('npx yalc publish', { cwd: path.join(repoRoot, 'dist', 'nx-generators') });
 
   run(
-    `npx create-nx-workspace@${devDependencies.nx} e2e-workspace --preset=ts --formatter=prettier --ci=skip --interactive=false --packageManager=npm --skipGit --aiAgents=none`,
+    `npx create-nx-workspace@${devDependencies.nx} e2e-workspace --preset=empty --formatter=prettier --ci=skip --interactive=false --packageManager=npm --skipGit --aiAgents=none`,
     { cwd: workDir },
   );
 

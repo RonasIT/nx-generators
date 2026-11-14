@@ -1,5 +1,10 @@
 {
   "generators": {
+    "oxlint": {
+      "factory": "./src/generators/oxlint/generator",
+      "schema": "./src/generators/oxlint/schema.json",
+      "description": "Opts a workspace into oxlint and oxfmt instead of ESLint and Prettier"
+    },
     "code-checks": {
       "factory": "./src/generators/code-checks/generator",
       "schema": "./src/generators/code-checks/schema.json",

@@ -1,6 +1,6 @@
 /// <reference types="jest" />
 import { execSyncMock, formatFilesMock, getProjectsMock } from '../../shared/tests-utils';
-import { confirm, verifyESLintConstraintsConfig } from '../../shared/utils';
+import { confirm, verifyConstraintsConfig } from '../../shared/utils';
 import { libTagsGenerator } from './generator';
 import * as utils from './utils';
 
@@ -10,7 +10,7 @@ jest.mock('../../shared/utils', () => {
   return {
     ...actual,
     confirm: jest.fn(),
-    verifyESLintConstraintsConfig: jest.fn(),
+    verifyConstraintsConfig: jest.fn(),
   };
 });
 
@@ -32,7 +32,7 @@ describe('libTagsGenerator', () => {
   const libName = 'lib1';
 
   beforeEach(() => {
-    tree = {} as any;
+    tree = { exists: jest.fn().mockReturnValue(false) };
     jest.clearAllMocks();
   });
 
@@ -43,7 +43,7 @@ describe('libTagsGenerator', () => {
     await libTagsGenerator(tree, { skipRepoCheck: false });
 
     expect(confirm).toHaveBeenCalledWith('You have unstaged changes. Are you sure you want to continue?');
-    expect(verifyESLintConstraintsConfig).not.toHaveBeenCalled();
+    expect(verifyConstraintsConfig).not.toHaveBeenCalled();
   });
 
   it('should proceed if there are no unstaged changes', async () => {
@@ -60,7 +60,7 @@ describe('libTagsGenerator', () => {
 
     await libTagsGenerator(tree, { skipRepoCheck: false, silent: false });
 
-    expect(verifyESLintConstraintsConfig).toHaveBeenCalledWith(tree);
+    expect(verifyConstraintsConfig).toHaveBeenCalledWith(tree);
     expect(utils.checkApplicationTags).toHaveBeenCalledTimes(1);
     expect(utils.checkLibraryTags).toHaveBeenCalledTimes(1);
     expect(formatFilesMock).toHaveBeenCalledWith(tree);
@@ -72,7 +72,7 @@ describe('libTagsGenerator', () => {
 
     await libTagsGenerator(tree, { skipRepoCheck: true, silent: true });
 
-    expect(verifyESLintConstraintsConfig).toHaveBeenCalled();
+    expect(verifyConstraintsConfig).toHaveBeenCalled();
     expect(formatFilesMock).toHaveBeenCalled();
   });
 });

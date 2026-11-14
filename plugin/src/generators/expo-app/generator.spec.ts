@@ -142,6 +142,27 @@ describe('expoAppGenerator integration with file content checks', () => {
     ]);
   });
 
+  it('should lint and format in Oxlint workspaces', async () => {
+    existsSyncMock.mockReturnValue(false);
+    tree.write('oxlint.config.mts', 'export default {};');
+
+    const callback = await expoAppGenerator(tree, {
+      name: appName,
+      directory,
+      withStore: false,
+      withUiKit: false,
+      withFormUtils: false,
+      withSentry: false,
+    });
+
+    callback();
+
+    expect(execSyncMock).toHaveBeenLastCalledWith(
+      'npx nx graph --file=.nx/project-graph.json && npx oxlint --fix . && npx oxfmt --write .',
+      { stdio: 'inherit' },
+    );
+  });
+
   it('should merge app-specific entries into existing .easignore for second app', async () => {
     existsSyncMock.mockImplementation((filePath: string) => filePath.includes(`apps/${directory}`));
 

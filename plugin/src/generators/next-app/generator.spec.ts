@@ -195,6 +195,7 @@ describe('nextAppGenerator with file content checks', () => {
 
     expect(installPackagesTaskMock).toHaveBeenCalledWith(tree);
     expect(execSyncMock).toHaveBeenCalledWith('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
+    expect(execSyncMock).toHaveBeenLastCalledWith('npx eslint ./ --fix', { stdio: 'inherit' });
 
     const optionsWithSentry = { ...optionsBase, withSentry: true };
     const postWithSentry = await nextAppGenerator(tree, optionsWithSentry);
@@ -203,6 +204,19 @@ describe('nextAppGenerator with file content checks', () => {
     expect(execSyncMock).toHaveBeenCalledWith(expect.stringContaining('npx nx g sentry'), {
       stdio: 'inherit',
     });
+  });
+
+  it('should lint and format in Oxlint workspaces', async () => {
+    existsSyncMock.mockReturnValue(true);
+    tree.write('oxlint.config.mts', 'export default {};');
+
+    const post = await nextAppGenerator(tree, optionsBase);
+    post();
+
+    expect(execSyncMock).toHaveBeenLastCalledWith(
+      'npx nx graph --file=.nx/project-graph.json && npx oxlint --fix . && npx oxfmt --write .',
+      { stdio: 'inherit' },
+    );
   });
 
   it('should generate files and validate their first line against templates', async () => {

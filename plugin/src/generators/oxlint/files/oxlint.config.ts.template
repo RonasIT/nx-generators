@@ -1,0 +1,29 @@
+import { defineConfig } from 'oxlint';
+import constraints from './eslint.constraints.json' with { type: 'json' };
+
+const boundariesOptions = {
+  enforceBuildableLibDependency: true,
+  allow: [],
+  depConstraints: constraints,
+};
+
+export default defineConfig({
+  plugins: ['typescript', 'unicorn', 'oxc', 'import'],
+  jsPlugins: [{ name: '@nx', specifier: '@nx/oxlint/boundaries-plugin' }],
+  rules: {
+    '@nx/enforce-module-boundaries': ['error', boundariesOptions],
+    'import/no-cycle': 'error',
+  },
+  overrides: [
+    {
+      files: ['apps/*/metro.config.js'],
+      rules: {
+        '@nx/enforce-module-boundaries': [
+          'error',
+          { ...boundariesOptions, allow: ['^\\.\\./\\.\\./tsconfig\\.base\\.json$'] },
+        ],
+      },
+    },
+  ],
+  ignorePatterns: ['**/node_modules/**', '**/.yalc/**', '**/dist/**', '**/output/**', '**/.next/**', '**/.nx/**', '**/android/**', '**/ios/**'],
+});

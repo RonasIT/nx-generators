@@ -1,8 +1,9 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getLastCommand, run, setupEnv } from './lib/run-command.mjs';
+import { getLastCommand, run, runCapture, setupEnv } from './lib/run-command.mjs';
 import { runFullWorkspaceScenario } from './scenarios/full-workspace.mjs';
+import { runOxlintScenario } from './scenarios/oxlint.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
@@ -13,6 +14,7 @@ setupEnv();
 
 try {
   runFullWorkspaceScenario({ repoRoot, workDir, e2eWorkspace, run });
+  runOxlintScenario({ e2eWorkspace, run, runCapture });
   console.log('==> E2E passed.');
 } catch (error) {
   console.error(`==> E2E failed.`);

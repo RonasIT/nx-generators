@@ -29,6 +29,7 @@ import {
   formatAppIdentifier,
   formatName,
   getImportPathPrefix,
+  isOxlintWorkspace,
   runNxAddCommand,
   runWithMinReleaseAgeDisabled,
 } from '../../shared/utils';
@@ -49,6 +50,7 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
   const appTestFolder = `apps/${options.directory}-e2e`;
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
   const tags = [`app:${options.directory}`, 'type:app'];
+  const isOxlint = isOxlintWorkspace(tree);
 
   // Install @nx/expo plugin
   runNxAddCommand('@nx/expo');
@@ -167,9 +169,9 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
       execSync('npx expo install --fix', { stdio: 'inherit', cwd: appRoot });
       // Note: Removes the nested copies npm installed for the app
       execSync('npm dedupe', { stdio: 'inherit' });
-      // Note: Some rules, like `import-x/order`, are inconvenient to follow when writing generators,
-      // so it's simpler to run ESLint after successful generation
-      execSync('npx eslint ./ --fix', { stdio: 'inherit' });
+      execSync(isOxlint ? 'npx nx graph --file=.nx/project-graph.json && npx oxlint --fix .' : 'npx eslint ./ --fix', {
+        stdio: 'inherit',
+      });
     });
   };
 }

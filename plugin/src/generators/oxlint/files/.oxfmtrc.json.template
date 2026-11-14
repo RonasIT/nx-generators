@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 120,
+  "arrowParens": "always",
+  "tabWidth": 2,
+  "semi": true,
+  "bracketSameLine": true,
+  "jsxSingleQuote": true,
+  "singleQuote": true,
+  "useTabs": false,
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/.yalc/**",
+    "**/dist/**",
+    "**/coverage/**",
+    "e2e/.workspace/**",
+    "**/output/**",
+    "**/.next/**",
+    "**/.nx/**",
+    "**/android/**",
+    "**/ios/**"
+  ]
+}

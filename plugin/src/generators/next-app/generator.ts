@@ -27,6 +27,7 @@ import {
   confirm,
   formatName,
   getImportPathPrefix,
+  isOxlintWorkspace,
   runNxAddCommand,
   runWithMinReleaseAgeDisabled,
 } from '../../shared/utils';
@@ -46,6 +47,7 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   const libPath = `${getImportPathPrefix(tree)}/${options.directory}`;
   const tags = [`app:${options.directory}`, 'type:app'];
   const sharedTranslationsKey = `${options.directory}-shared`;
+  const isOxlint = isOxlintWorkspace(tree);
 
   // Install @nx/next plugin
   runNxAddCommand('@nx/next');
@@ -136,7 +138,13 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   });
 
   // Add dependencies
-  addDependenciesToPackageJson(tree, dependencies['next-app'], devDependencies['next-app']);
+  const appDevDependencies: Record<string, string> = { ...devDependencies['next-app'] };
+
+  if (isOxlint) {
+    delete appDevDependencies['eslint-config-next'];
+  }
+
+  addDependenciesToPackageJson(tree, dependencies['next-app'], appDevDependencies);
 
   await formatFiles(tree);
 
@@ -157,9 +165,9 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
       }
 
       execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
-      // Note: Some rules, like `import-x/order`, are inconvenient to follow when writing generators,
-      // so it's simpler to run ESLint after successful generation
-      execSync('npx eslint ./ --fix', { stdio: 'inherit' });
+      execSync(isOxlint ? 'npx nx graph --file=.nx/project-graph.json && npx oxlint --fix .' : 'npx eslint ./ --fix', {
+        stdio: 'inherit',
+      });
     });
   };
 }

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Oxlint",
+  "title": "Configure oxlint and oxfmt",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}

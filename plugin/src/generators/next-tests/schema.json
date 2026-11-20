@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "NextTests",
+  "title": "Add tests to a Next.js app",
+  "type": "object",
+  "properties": {
+    "directory": {
+      "type": "string",
+      "description": "Directory of an existing Next.js app relative to apps/ (for example, web)."
+    }
+  },
+  "required": ["directory"],
+  "additionalProperties": false
+}

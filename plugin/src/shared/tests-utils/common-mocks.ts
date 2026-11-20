@@ -30,6 +30,7 @@ jest.mock('@nx/devkit', () => ({
   }),
   formatFiles: jest.fn(),
   addDependenciesToPackageJson: jest.fn(),
+  addProjectConfiguration: jest.fn(),
   removeDependenciesFromPackageJson: jest.fn(),
   installPackagesTask: jest.fn(),
   readProjectConfiguration: jest.fn(),
@@ -77,6 +78,7 @@ jest.mock('../utils/config-utils', () => {
 });
 
 jest.mock('../utils/get-app-framework-name', () => ({
+  ...jest.requireActual('../utils/get-app-framework-name'),
   getAppFrameworkName: jest.fn(),
 }));
 

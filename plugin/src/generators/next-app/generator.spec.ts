@@ -15,6 +15,7 @@ import {
   readJsonMock,
   writeJsonMock,
 } from '../../shared/tests-utils';
+import { nextTestsGenerator } from '../next-tests/generator';
 import * as nuqsGenerator from '../nuqs';
 import { nextAppGenerator } from './generator';
 
@@ -40,6 +41,8 @@ jest.mock('../nuqs', () => {
     runNuqsGenerator: jest.fn(),
   };
 });
+
+jest.mock('../next-tests/generator', () => ({ nextTestsGenerator: jest.fn() }));
 
 describe('nextAppGenerator with file content checks', () => {
   let tree: any;
@@ -156,7 +159,6 @@ describe('nextAppGenerator with file content checks', () => {
     expect(tree.delete).toHaveBeenCalledWith(`${appRoot}/public/.gitkeep`);
     expect(tree.delete).toHaveBeenCalledWith(`${appRoot}/app/api`);
     expect(tree.delete).toHaveBeenCalledWith(`${appRoot}/app/page.tsx`);
-    expect(tree.delete).toHaveBeenCalledWith(`${appRoot}/specs`);
 
     expect(writeJsonMock).toHaveBeenCalledWith(
       expect.anything(),
@@ -279,6 +281,10 @@ describe('nextAppGenerator with file content checks', () => {
       directory: options.directory,
       withFormComponents: true,
     });
+    expect(nextTestsGenerator).toHaveBeenCalledWith(tree, { directory: options.directory });
+    expect(jest.mocked(nextTestsGenerator).mock.invocationCallOrder[0]).toBeGreaterThan(
+      jest.mocked(sharedGenerators.runMantineGenerator).mock.invocationCallOrder[0],
+    );
   });
 
   it('should not run nuqs generator when withNuqs is false', async () => {

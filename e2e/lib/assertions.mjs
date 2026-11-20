@@ -92,7 +92,9 @@ export function assertExpoAppDependenciesAligned(workspace, appDirectory, packag
     }
 
     if (rootVersion !== appVersion) {
-      throw new Error(`Expected "${packageName}" versions to match: root has "${rootVersion}", app has "${appVersion}"`);
+      throw new Error(
+        `Expected "${packageName}" versions to match: root has "${rootVersion}", app has "${appVersion}"`,
+      );
     }
   }
 
@@ -171,5 +173,14 @@ export function assertLintTargets(workspace, expectedProjects) {
     if (!targets?.lint) {
       throw new Error(`Expected nx project "${project}" to have a lint target`);
     }
+  }
+}
+
+export function assertProjectTarget(workspace, project, target, cache) {
+  const output = execSync(`npx nx show project ${project} --json`, { cwd: workspace, encoding: 'utf8' });
+  const configuration = JSON.parse(output).targets?.[target];
+
+  if (!configuration || (cache !== undefined && configuration.cache !== cache)) {
+    throw new Error(`Expected ${project}:${target}${cache === undefined ? '' : ` with cache: ${cache}`}`);
   }
 }

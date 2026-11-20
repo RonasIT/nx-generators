@@ -1,0 +1,15 @@
+// <%= ownership %> (unit)
+import { render, screen } from '@testing-library/react';
+import { usePathname } from 'next/navigation';
+import { expect, it } from 'vitest';
+import type { ReactElement } from 'react';
+
+function LocationLabel(): ReactElement {
+  return <output aria-label='Current path'>{usePathname()}</output>;
+}
+
+it('renders the current path', () => {
+  render(<LocationLabel />);
+
+  expect(screen.getByLabelText('Current path').textContent).toBe('/');
+});

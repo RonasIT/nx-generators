@@ -72,7 +72,9 @@ describe('codeChecksGenerator (integration)', () => {
     expect(eslintRonasit).toContain('module.exports');
     expect(eslintRonasit).toContain('eslint-plugin-react-native');
     expect(eslintRonasit).toContain('eslint-plugin-react-native-unistyles');
-    expect(eslintRonasit).toContain('react-native/no-raw-text');
+    expect(eslintRonasit).toContain("'react-native/no-raw-text': ['error'");
+    expect(eslintRonasit).toContain("'**/tests/**/*.{ts,tsx,js,jsx}'");
+    expect(eslintRonasit).toContain("'react-native/no-raw-text': 'off'");
 
     const prettierrc = tree.read('.prettierrc.js', 'utf-8');
     expect(prettierrc).toContain('module.exports');

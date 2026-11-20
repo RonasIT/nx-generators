@@ -125,6 +125,17 @@ export const devDependencies = {
     '@types/react-dom': '~19.2.0',
     'babel-plugin-react-compiler': '^1.0.0',
   },
+  'next-tests': {
+    vite: '8.1.2',
+    vitest: '4.1.12',
+    '@vitejs/plugin-react': '5.2.0',
+    jsdom: '27.4.0',
+    '@testing-library/react': '16.3.2',
+    '@testing-library/dom': '10.4.1',
+    playwright: '1.65.1',
+    'vitest-browser-react': '2.1.0',
+    sass: '1.97.2',
+  },
   'repo-config': {
     syncpack: '^15.3.2',
     'cross-env': '^10.1.0',

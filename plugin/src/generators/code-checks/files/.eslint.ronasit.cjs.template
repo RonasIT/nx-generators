@@ -338,6 +338,12 @@ module.exports = [
       },
     },
     {
+      files: ['**/tests/**/*.{ts,tsx,js,jsx}'],
+      rules: {
+        'react-native/no-raw-text': 'off',
+      },
+    },
+    {
       files: ['**/*.js'],
 
       rules: {

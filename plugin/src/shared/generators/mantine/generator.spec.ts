@@ -1,10 +1,10 @@
 /// <reference types="jest" />
 import * as path from 'path';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { generateMantineUiKit } from '../../../generators/react-lib/generator';
 import {
   addDependenciesMock,
   assertFirstLine,
-  execSyncMock,
   formatFilesMock,
   generateFilesMock,
   installPackagesTaskMock,
@@ -18,6 +18,8 @@ import { runMantineGenerator } from './generator';
 jest.mock('../../utils/get-app-framework-name', () => ({
   getAppFrameworkName: jest.fn(),
 }));
+
+jest.mock('../../../generators/react-lib/generator', () => ({ generateMantineUiKit: jest.fn() }));
 
 describe('runMantineGenerator', () => {
   let tree: ReturnType<typeof createTreeWithEmptyWorkspace>;
@@ -292,10 +294,7 @@ export default function RootLayout({ children }: { children: ReactNode }): React
 
     await runMantineGenerator(tree, { directory });
 
-    expect(execSyncMock).toHaveBeenCalledWith(
-      `npx nx g react-lib --app=${directory} --scope=shared --type=ui --name=ui-kit --withComponent=false`,
-      { stdio: 'inherit' },
-    );
+    expect(generateMantineUiKit).toHaveBeenCalledWith(tree, directory);
 
     expect(writeJsonMock).toHaveBeenCalledWith(
       expect.anything(),

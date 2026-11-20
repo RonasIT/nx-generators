@@ -1,0 +1,18 @@
+// <%= ownership %> (e2e)
+import { expect, test } from '@playwright/test';
+
+test('serves the home page and a production asset', async ({ page, request }) => {
+  const response = await page.goto('/');
+
+  expect(response?.ok()).toBe(true);
+  await expect(page.locator('body')).not.toBeEmpty();
+
+  const script = await page.locator('script[src*="/_next/static/"]').first().getAttribute('src');
+
+  expect(script).toBeTruthy();
+
+  const asset = await request.get(new URL(script ?? '', page.url()).href);
+
+  expect(asset.ok()).toBe(true);
+  await expect(page).toHaveScreenshot('home.png');
+});

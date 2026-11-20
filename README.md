@@ -29,6 +29,8 @@ This package provides a set of [Nx](https://nx.dev/getting-started/intro) genera
 - **Data access setup**: State management and API interaction setup using [Redux Toolkit](https://redux-toolkit.js.org/) and [RTKQ Entity API](https://github.com/RonasIT/rtkq-entity-api)
 - **Authentication**: Auth libraries and Redux store integration for both Next.js and RN Expo applications
 - **Internationalization**: Built-in support for i18n in both Next.js and RN Expo applications
+- **Testing**: Unit (Vitest/jsdom), component screenshot, and E2E (Playwright) setups for Next.js apps,
+  with a passing example test for each
 
 See full list of generators [below](#generators-overview).
 
@@ -166,7 +168,8 @@ npx nx g expo-app my-app mobile
 ### 4. `next-app`
 
 Generates and configures a Next.js app.
-Also generates [navigation utilities](#navigation-utilities).
+Also generates [navigation utilities](#navigation-utilities) and sets up tests (see
+[`next-tests`](#19-next-tests)).
 
 #### Options
 
@@ -463,6 +466,24 @@ Creates the navigation utilities library. Used by [`expo-app`](#3-expo-app) and
 
 ```sh
 npx nx g navigationUtils --appDirectory=mobile
+```
+
+### 19. `next-tests`
+
+Adds unit ([Vitest](https://vitest.dev/)), component screenshot (Vitest browser mode, requires the Mantine
+UI kit, see [`withMantine`](#4-next-app)), and E2E ([Playwright](https://playwright.dev/)) tests to a
+Next.js app, with a passing example for each; E2E lives in a separate `apps/<directory>-e2e` project.
+[`next-app`](#4-next-app) runs this generator automatically; on an existing app it only adds the missing
+setup and never overwrites existing tests.
+
+#### Options
+
+1. `directory` - directory of an existing Next.js app relative to `apps/` (e.g: `web`)
+
+#### Example
+
+```sh
+npx nx g next-tests --directory=web
 ```
 
 ## Navigation utilities

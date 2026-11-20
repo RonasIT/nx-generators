@@ -1,21 +1,30 @@
 import { execSync } from 'child_process';
+import { createRequire } from 'node:module';
 import * as path from 'path';
-import { formatFiles, generateFiles, Tree } from '@nx/devkit';
+import { formatFiles, generateFiles, GeneratorCallback, getProjects, Tree } from '@nx/devkit';
 import { isBoolean } from 'lodash';
+import { scaffoldTestSuite } from '../../shared/generators/next-tests/suites';
+import { createTestWorkspace } from '../../shared/generators/next-tests/workspace';
 import {
   addNxScopeTag,
   askQuestion,
   confirm,
   constants,
   formatName,
+  isNextApp,
   LibraryType,
   normalizeLibPath,
+  runWithMinReleaseAgeDisabled,
   selectProject,
   validateLibraryType,
 } from '../../shared/utils';
 import { ReactLibGeneratorSchema } from './schema';
 
-export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSchema): Promise<void> {
+async function generateReactLib(
+  tree: Tree,
+  options: ReactLibGeneratorSchema,
+  forMantine: boolean,
+): Promise<GeneratorCallback | undefined> {
   const { AutoComplete } = require('enquirer');
 
   options.app = options.app || (await selectProject(tree, 'application', 'Select the application: ')).name;
@@ -48,10 +57,30 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
 
   const libName = normalizeLibPath(`${options.app}/${options.scope}/${options.type}/${options.name}`);
   const libPath = `libs/${libName}`;
-  const command = `npx nx g @nx/react:library --skipPackageJson --unitTestRunner=none --tags="${tags.join(', ')}" --name=${libName} ${libPath} --linter=eslint --component=false --bundler=none --style=scss`;
-  const commandWithOptions = options.dryRun ? command + ' --dry-run' : command;
 
-  execSync(commandWithOptions, { stdio: 'inherit' });
+  if (forMantine) {
+    const requireFromWorkspace = createRequire(path.join(tree.root, 'package.json'));
+    const requireFromNext = createRequire(requireFromWorkspace.resolve('@nx/next/package.json'));
+    const { libraryGenerator } = requireFromNext('@nx/react');
+
+    await libraryGenerator(tree, {
+      directory: libPath,
+      name: libName,
+      tags: tags.join(', '),
+      skipPackageJson: true,
+      unitTestRunner: 'none',
+      component: false,
+      linter: 'eslint',
+      bundler: 'none',
+      style: 'scss',
+      addPlugin: true,
+      skipFormat: true,
+    });
+  } else {
+    const command = `npx nx g @nx/react:library --skipPackageJson --unitTestRunner=none --tags="${tags.join(', ')}" --name=${libName} ${libPath} --linter=eslint --component=false --bundler=none --style=scss`;
+
+    execSync(options.dryRun ? `${command} --dry-run` : command, { stdio: 'inherit' });
+  }
 
   if (options.dryRun) {
     return;
@@ -71,7 +100,34 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
 
   addNxScopeTag(tree, scopeTag);
 
+  let install: GeneratorCallback | undefined;
+
+  if (!forMantine && !isSharedLib && isNextApp(tree, `apps/${options.app}`)) {
+    const project = getProjects(tree).get(libName);
+    const workspace = createTestWorkspace(tree);
+
+    scaffoldTestSuite(tree, workspace, { suite: 'unit', root: libPath, projectName: libName, project });
+    install = workspace.apply();
+  }
+
   await formatFiles(tree);
+
+  return install && (() => runWithMinReleaseAgeDisabled(install));
+}
+
+export function reactLibGenerator(
+  tree: Tree,
+  options: ReactLibGeneratorSchema,
+): Promise<GeneratorCallback | undefined> {
+  return generateReactLib(tree, options, false);
+}
+
+export async function generateMantineUiKit(tree: Tree, directory: string): Promise<void> {
+  await generateReactLib(
+    tree,
+    { app: directory, scope: 'shared', type: 'ui', name: 'ui-kit', withComponent: false },
+    true,
+  );
 }
 
 export default reactLibGenerator;

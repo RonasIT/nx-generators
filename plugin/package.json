@@ -28,6 +28,7 @@
     "@phenomnomnominal/tsquery": "~6.2.0",
     "enquirer": "2.3.6",
     "lodash": "^4.18.1",
+    "semver": "^7.7.4",
     "tslib": "^2.6.1",
     "ts-morph": "^28.0.0"
   },
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.17.24",
+    "@types/semver": "^7.7.1",
     "typescript": "~6.0.3"
   },
   "type": "commonjs",

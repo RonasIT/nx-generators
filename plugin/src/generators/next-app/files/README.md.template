@@ -34,3 +34,32 @@ npm install
 # 2. Start the local development server
 npx nx dev <%= directory %>
 ```
+
+## Tests
+
+```sh
+npx playwright install chromium
+npx nx test <%= directory %>
+<% if (withMantine) { -%>
+npx nx test <%= directory %>/shared/ui/ui-kit
+<% } -%>
+npx nx e2e <%= directory.replace(/\//g, '-') %>-e2e
+
+# Update baselines locally, then review the changed PNGs
+<% if (withMantine) { -%>
+npx nx test <%= directory %>/shared/ui/ui-kit --skip-nx-cache -- --update
+<% } -%>
+npx nx e2e <%= directory.replace(/\//g, '-') %>-e2e --skip-nx-cache -- --update-snapshots
+```
+
+<% if (withMantine) { -%>
+Vitest stores UI-kit baselines in `tests/__screenshots__/` in the UI-kit project.
+Use the generated `expectScreenshot` helper when adding UI-kit screenshot tests.
+<% } else { -%>
+There is no UI-kit screenshot suite because this app was generated without the Mantine UI kit.
+<% } -%>
+Playwright stores page baselines beside their tests in `<spec>-snapshots/`.
+The first local run creates missing baselines; later runs compare them without rewriting them.
+Make baselines only on your local machine — never in Docker and never in CI: rendering depends on the OS, fonts, and Chromium version, and CI fails on a missing baseline instead of creating it.
+
+E2E builds and runs the production app locally. Set `BASE_URL` in the environment to test a deployed app instead and skip both the local build and server.

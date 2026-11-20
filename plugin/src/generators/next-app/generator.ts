@@ -2,6 +2,7 @@ import { execSync } from 'child_process';
 import { existsSync } from 'fs';
 import * as path from 'path';
 import {
+  GeneratorCallback,
   addDependenciesToPackageJson,
   formatFiles,
   generateFiles,
@@ -30,10 +31,11 @@ import {
   runNxAddCommand,
   runWithMinReleaseAgeDisabled,
 } from '../../shared/utils';
+import { nextTestsGenerator } from '../next-tests/generator';
 import { runNuqsGenerator } from '../nuqs';
 import { NextAppGeneratorSchema } from './schema';
 
-export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSchema) {
+export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSchema): Promise<GeneratorCallback> {
   const shouldGenerateApiClientLib =
     options.withStore &&
     (isBoolean(options.withApiClient) ? options.withApiClient : await confirm('Do you want to create api client lib?'));
@@ -88,7 +90,6 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   tree.delete(`${appRoot}/app/page.module.scss`);
   tree.delete(`${appRoot}/app/global.css`);
   tree.delete(`${appRoot}/app/layout.tsx`);
-  tree.delete(`${appRoot}/specs`);
   tree.delete(`${appRoot}/eslint.config.cjs`);
   tree.delete(`${appRoot}/eslint.config.mjs`);
 
@@ -138,7 +139,17 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
   // Add dependencies
   addDependenciesToPackageJson(tree, dependencies['next-app'], devDependencies['next-app']);
 
+  await nextTestsGenerator(tree, { directory: options.directory });
+
   await formatFiles(tree);
+
+  const lintFiles = tree
+    .listChanges()
+    .filter(({ path, type }) => type !== 'DELETE' && /\.(ts|tsx)$/.test(path))
+    .map(({ path }) => `"${path}"`);
+  const hasEslint = ['eslint.config.cjs', 'eslint.config.mjs', 'eslint.config.js'].some((config) =>
+    tree.exists(config),
+  );
 
   return (): void => {
     runWithMinReleaseAgeDisabled(() => {
@@ -157,9 +168,10 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
       }
 
       execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
-      // Note: Some rules, like `import-x/order`, are inconvenient to follow when writing generators,
-      // so it's simpler to run ESLint after successful generation
-      execSync('npx eslint ./ --fix', { stdio: 'inherit' });
+
+      if (hasEslint && lintFiles.length) {
+        execSync(`npx eslint --fix ${lintFiles.join(' ')}`, { stdio: 'inherit' });
+      }
     });
   };
 }

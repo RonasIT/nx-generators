@@ -3,6 +3,8 @@ import { execSync } from 'child_process';
 import * as path from 'path';
 import * as devkit from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { scaffoldTestSuite } from '../../shared/generators/next-tests/suites';
+import { createTestWorkspace } from '../../shared/generators/next-tests/workspace';
 import { assertFirstLine, mockGenerateFiles } from '../../shared/tests-utils';
 import { addNxScopeTag, selectProject, confirm, askQuestion } from '../../shared/utils';
 import { reactLibGenerator } from './generator';
@@ -16,6 +18,9 @@ jest.mock('enquirer', () => ({
     run: jest.fn(),
   })),
 }));
+
+jest.mock('../../shared/generators/next-tests/workspace', () => ({ createTestWorkspace: jest.fn() }));
+jest.mock('../../shared/generators/next-tests/suites', () => ({ scaffoldTestSuite: jest.fn() }));
 
 jest.mock('../../shared/utils', () => {
   const actualUtils = jest.requireActual('../../shared/utils');
@@ -155,5 +160,31 @@ describe('reactLibGenerator', () => {
     assertFirstLine(path.join(__dirname, 'files/component'), libPath, tree, {
       placeholders: { name: 'Mylib' },
     });
+  });
+
+  it.each(['web', 'mobile'])('configures jsdom only for the Next.js library (%s)', async (app) => {
+    tree.write('apps/web/next.config.mjs', 'export default {};');
+    tree.write('apps/mobile/metro.config.js', 'module.exports = {};');
+    const lib = `${app}/shared/utils/test-example`;
+    const project = { root: `libs/${lib}` };
+    const workspace = { prepare: jest.fn(), apply: jest.fn() };
+
+    jest.mocked(devkit.getProjects).mockReturnValue(new Map([[lib, project]]));
+    jest.mocked(createTestWorkspace).mockReturnValue(workspace);
+
+    await reactLibGenerator(tree, { app, scope: 'shared', type: 'utils', name: 'test-example' });
+
+    if (app === 'web') {
+      expect(scaffoldTestSuite).toHaveBeenCalledWith(tree, workspace, {
+        suite: 'unit',
+        root: project.root,
+        projectName: lib,
+        project,
+      });
+      expect(workspace.apply).toHaveBeenCalled();
+    } else {
+      expect(scaffoldTestSuite).not.toHaveBeenCalled();
+      expect(workspace.apply).not.toHaveBeenCalled();
+    }
   });
 });

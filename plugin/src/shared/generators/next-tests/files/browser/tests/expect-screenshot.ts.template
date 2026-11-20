@@ -1,0 +1,13 @@
+import { expect } from 'vitest';
+import type { Locator } from 'vitest/browser';
+
+export async function expectScreenshot(element: Locator, name: string): Promise<void> {
+  try {
+    await expect(element).toMatchScreenshot(name);
+  } catch (error) {
+    // Vitest 4 writes a missing baseline in local mode but still reports an assertion failure.
+    if (!(error instanceof Error) || !error.message.includes('No existing reference screenshot found; a new one was created.')) {
+      throw error;
+    }
+  }
+}

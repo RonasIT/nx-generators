@@ -1,0 +1,54 @@
+import { spawn, spawnSync } from 'node:child_process';
+import { cpSync, existsSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { join, resolve } from 'node:path';
+
+const workspaceRoot = resolve(import.meta.dirname, '<%= workspacePath %>');
+const appRoot = 'apps/<%= directory %>';
+const appDirectory = join(workspaceRoot, appRoot);
+const appName = <%- appName %>;
+const require = createRequire(join(appDirectory, 'package.json'));
+const next = require.resolve('next/dist/bin/next');
+
+process.env.NODE_ENV = 'production';
+
+const build = spawnSync(process.execPath, [next, 'build'], {
+  cwd: appDirectory,
+  stdio: 'inherit',
+});
+
+if (build.error || build.status !== 0) {
+  throw build.error ?? new Error(`Production build of ${appName} failed (exit ${build.status}).`);
+}
+
+const standalone = join(appDirectory, '.next', 'standalone');
+const nested = join(standalone, appRoot);
+const serverRoot = existsSync(join(nested, 'server.js')) ? nested : standalone;
+const server = join(serverRoot, 'server.js');
+const isStandalone = existsSync(server);
+const host = 'localhost';
+const port = process.env.E2E_PORT || '3100';
+
+if (isStandalone) {
+  for (const folder of ['.next/static', 'public']) {
+    const source = join(appDirectory, folder);
+
+    if (existsSync(source)) {
+      cpSync(source, join(serverRoot, folder), { recursive: true });
+    }
+  }
+}
+
+const args = isStandalone ? [server] : [next, 'start', '--hostname', host, '--port', port];
+const child = spawn(process.execPath, args, {
+  cwd: isStandalone ? serverRoot : appDirectory,
+  env: { ...process.env, HOSTNAME: host, PORT: port },
+  stdio: 'inherit',
+});
+
+child.on('error', (error) => {
+  throw error;
+});
+child.on('exit', (code) => {
+  process.exitCode = code ?? 1;
+});

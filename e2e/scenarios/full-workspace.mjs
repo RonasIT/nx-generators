@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import {
   assertDockerfile,
@@ -7,6 +7,8 @@ import {
   assertFullWorkspaceStructure,
   assertLintTargets,
   assertNxProjects,
+  assertPathExists,
+  assertProjectTarget,
   assertRootPackage,
 } from '../lib/assertions.mjs';
 
@@ -52,6 +54,26 @@ export function runFullWorkspaceScenario({ repoRoot, workDir, e2eWorkspace, run 
     'npx nx g next-app my-app web --no-interactive --withStore --withFormUtils --withApiClient --withAuth --withNuqs --withMantine',
     { cwd: e2eWorkspace },
   );
+
+  run('npx nx g next-app plain-web plain --no-interactive', { cwd: e2eWorkspace });
+  run('npx nx g react-lib --app=web --scope=shared --type=utils --name=test-example', { cwd: e2eWorkspace });
+  run('npx nx g react-lib --app=mobile --scope=shared --type=utils --name=test-example', { cwd: e2eWorkspace });
+
+  for (const app of ['web', 'plain']) {
+    assertProjectTarget(e2eWorkspace, app, 'test');
+    assertProjectTarget(e2eWorkspace, `${app}-e2e`, 'e2e', false);
+    run(`npx nx test ${app}`, { cwd: e2eWorkspace });
+  }
+
+  assertProjectTarget(e2eWorkspace, 'web/shared/ui/ui-kit', 'test', false);
+  assertPathExists(e2eWorkspace, 'libs/web/shared/utils/test-example/tests/setup.ts', 'file');
+
+  if (existsSync(path.join(e2eWorkspace, 'libs/mobile/shared/utils/test-example/vite.config.mts'))) {
+    throw new Error('Expo libraries should not get the Next.js unit test setup');
+  }
+
+  assertProjectTarget(e2eWorkspace, 'web/shared/utils/test-example', 'test');
+  run('npx nx test web/shared/utils/test-example', { cwd: e2eWorkspace });
 
   run('npx nx g dockerfile --no-interactive', { cwd: e2eWorkspace });
   assertDockerfile(e2eWorkspace);

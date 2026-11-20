@@ -1,0 +1,42 @@
+// <%= ownership %> (unit)
+import { cleanup } from '@testing-library/react';
+import { afterEach, vi } from 'vitest';
+
+vi.stubGlobal(
+  'matchMedia',
+  vi.fn((query: string): MediaQueryList => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+);
+
+class Observer {
+  public observe = vi.fn();
+  public unobserve = vi.fn();
+  public disconnect = vi.fn();
+  public takeRecords = vi.fn((): Array<IntersectionObserverEntry> => []);
+}
+
+vi.stubGlobal('ResizeObserver', Observer);
+vi.stubGlobal('IntersectionObserver', Observer);
+
+vi.mock('next/navigation', () => ({
+  usePathname: vi.fn((): string => '/'),
+  useSearchParams: vi.fn((): URLSearchParams => new URLSearchParams()),
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    prefetch: vi.fn(),
+  })),
+}));
+
+afterEach(cleanup);

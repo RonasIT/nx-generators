@@ -5,7 +5,7 @@
 
 <!-- stack badges: update with plugin/src/shared/dependencies.ts -->
 
-![Nx](https://img.shields.io/badge/Nx-23-143055?logo=nx)
+![Nx](https://img.shields.io/badge/Nx-23.3.1-143055?logo=nx)
 ![Expo SDK](https://img.shields.io/badge/Expo%20SDK-57-000020?logo=expo)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js)
 ![React Native](https://img.shields.io/badge/React%20Native-0.86-61DAFB?logo=react)
@@ -47,7 +47,7 @@ The generators enforce several best practices according to [Nx concepts](https:/
 1. Create a monorepo using [Nx Typescript preset](https://nx.dev/docs/technologies/typescript):
 
 ```sh
-npx create-nx-workspace my-project --preset=ts --formatter=prettier --linter=eslint --ci=skip
+npx create-nx-workspace@23.3.1 my-project --preset=empty --formatter=prettier --linter=eslint --ci=skip
 ```
 
 2. Install this package:

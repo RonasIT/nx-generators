@@ -21,6 +21,14 @@ module.exports = [
   ...baseConfig,
   ...ronasitConfig,
   {
+    files: ['vite.config.ts'],
+    languageOptions: {
+      parserOptions: {
+        project: './tsconfig.spec.json',
+      },
+    },
+  },
+  {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
       '@nx/enforce-module-boundaries': [

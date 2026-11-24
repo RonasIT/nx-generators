@@ -7,6 +7,7 @@
   "bracketSameLine": true,
   "jsxSingleQuote": true,
   "singleQuote": true,
+  "singleAttributePerLine": true,
   "useTabs": false,
   "ignorePatterns": [
     "**/node_modules/**",

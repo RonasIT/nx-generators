@@ -1,4 +1,5 @@
-import { defineConfig } from 'oxlint';
+import { existsSync, readdirSync } from 'node:fs';
+import { defineConfig, type OxlintOverride } from 'oxlint';
 import constraints from './eslint.constraints.json' with { type: 'json' };
 
 const boundariesOptions = {
@@ -7,14 +8,108 @@ const boundariesOptions = {
   depConstraints: constraints,
 };
 
+const appsDirectory = new URL('./apps/', import.meta.url);
+const expoFiles = existsSync(appsDirectory)
+  ? readdirSync(appsDirectory, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory() && existsSync(new URL(`${entry.name}/eas.json`, appsDirectory)))
+      .flatMap(({ name }) => [`apps/${name}/**/*.{jsx,tsx}`, `libs/${name}/**/*.{jsx,tsx}`])
+  : [];
+
+const expoOverrides: OxlintOverride[] = expoFiles.length
+  ? [
+      {
+        files: expoFiles,
+        rules: {
+          'react/jsx-no-literals': [
+            'error',
+            {
+              noStrings: true,
+              ignoreProps: true,
+              elementOverrides: {
+                Text: { allowElement: true },
+                AppText: { allowElement: true },
+              },
+            },
+          ],
+        },
+      },
+    ]
+  : [];
+
 export default defineConfig({
-  plugins: ['typescript', 'unicorn', 'oxc', 'import'],
+  plugins: ['typescript', 'unicorn', 'oxc', 'import', 'react'],
+  categories: { correctness: 'error' },
+  env: { node: true },
   jsPlugins: [{ name: '@nx', specifier: '@nx/oxlint/boundaries-plugin' }],
   rules: {
-    '@nx/enforce-module-boundaries': ['error', boundariesOptions],
-    'import/no-cycle': 'error',
+    'no-array-constructor': 'error',
+    'no-case-declarations': 'error',
+    'no-fallthrough': 'error',
+    'no-prototype-builtins': 'error',
+    'no-redeclare': 'error',
+    'no-regex-spaces': 'error',
+    'typescript/ban-ts-comment': 'error',
+    'typescript/no-empty-object-type': 'error',
+    'typescript/no-namespace': 'error',
+    'typescript/no-unnecessary-type-constraint': 'error',
+    'typescript/no-unsafe-function-type': 'error',
+    'react/exhaustive-deps': 'off',
+    'react/jsx-no-comment-textnodes': 'error',
+    'react/jsx-no-target-blank': 'error',
+    'react/no-unknown-property': 'error',
+    'react/rules-of-hooks': 'off',
   },
   overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
+      rules: {
+        'no-redeclare': 'off',
+        'prefer-const': 'error',
+        'prefer-rest-params': 'error',
+        'prefer-spread': 'error',
+      },
+    },
+    {
+      files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+      rules: {
+        '@nx/enforce-module-boundaries': ['error', boundariesOptions],
+        'import/newline-after-import': 'warn',
+        'no-var': 'warn',
+        'react/jsx-fragments': ['warn', 'element'],
+        'react/self-closing-comp': ['warn', { component: true, html: true }],
+        'typescript/explicit-member-accessibility': [
+          'warn',
+          { accessibility: 'explicit', overrides: { constructors: 'no-public' } },
+        ],
+        'typescript/explicit-function-return-type': [
+          'warn',
+          { allowExpressions: true, allowDirectConstAssertionInArrowFunctions: true },
+        ],
+        'typescript/no-inferrable-types': ['warn', { ignoreParameters: true }],
+        'no-unused-vars': [
+          'warn',
+          {
+            vars: 'all',
+            args: 'after-used',
+            caughtErrors: 'all',
+            varsIgnorePattern: '^_',
+            argsIgnorePattern: '^_',
+            ignoreRestSiblings: true,
+            reportVarsOnlyUsedAsTypes: true,
+            fix: { imports: 'safe-fix', variables: 'off' },
+          },
+        ],
+        'import/no-cycle': ['error', { ignoreExternal: true }],
+        'import/no-duplicates': 'warn',
+      },
+    },
+    {
+      files: ['**/*.js'],
+      rules: {
+        'typescript/explicit-member-accessibility': 'off',
+        'typescript/explicit-function-return-type': 'off',
+      },
+    },
     {
       files: ['apps/*/metro.config.js'],
       rules: {
@@ -24,6 +119,7 @@ export default defineConfig({
         ],
       },
     },
+    ...expoOverrides,
   ],
   ignorePatterns: [
     '**/node_modules/**',
@@ -34,5 +130,7 @@ export default defineConfig({
     '**/.nx/**',
     '**/android/**',
     '**/ios/**',
+    'apps/*/app.config.ts',
+    'apps/*/next-env.d.ts',
   ],
 });

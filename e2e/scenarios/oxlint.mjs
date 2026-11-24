@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmdirSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 export function runOxlintScenario({ e2eWorkspace, run, runCapture }) {
@@ -35,6 +35,18 @@ export function runOxlintScenario({ e2eWorkspace, run, runCapture }) {
   const uiSource = 'export const ui = 1;\n';
   const cycleA = path.join(featureRoot, 'a.ts');
   const cycleB = path.join(featureRoot, 'b.ts');
+  const customAppRoot = 'apps/oxlint-native-check';
+  const customLibRoot = 'libs/oxlint-native-check';
+  const customEasConfig = `${customAppRoot}/eas.json`;
+  const customAppFile = `${customAppRoot}/oxlint-check.tsx`;
+  const customLibFile = `${customLibRoot}/oxlint-check.tsx`;
+  const webAppFile = 'apps/web/app/oxlint-check.tsx';
+  const webLibFile = 'libs/web/shared/ui/oxlint-check/src/oxlint-check.tsx';
+  const unreachableFile = 'libs/web/shared/features/oxlint-check/src/unreachable.ts';
+  const nativeFiles = [customAppFile, customLibFile];
+  const webFiles = [webAppFile, webLibFile];
+  const fixtureFiles = [...nativeFiles, ...webFiles, customEasConfig, unreachableFile];
+  const fixtureDirectories = [];
 
   writeFileSync(path.join(featureRoot, 'index.ts'), 'export const feature = 1;\n');
   writeFileSync(uiFile, uiSource);
@@ -43,9 +55,9 @@ export function runOxlintScenario({ e2eWorkspace, run, runCapture }) {
   run('npm run format', options);
   run('npx nx run-many -t lint', options);
 
-  const assertLintError = (rule, message) => {
+  const assertLintError = (rule, message, command = 'npm run lint') => {
     assert.throws(
-      () => runCapture('npm run lint', options),
+      () => runCapture(command, options),
       (error) => {
         assert.equal(error.status, 1);
         const output = `${error.stdout ?? ''}\n${error.stderr ?? ''}`;
@@ -55,6 +67,50 @@ export function runOxlintScenario({ e2eWorkspace, run, runCapture }) {
       },
     );
   };
+
+  try {
+    const writeFixture = (file, source) => writeFileSync(path.join(e2eWorkspace, file), source);
+    const mobileImport = "import { Text, View } from 'react-native';\n\nconst AppText = Text;\n";
+
+    for (const root of [customAppRoot, customLibRoot]) {
+      const directory = path.join(e2eWorkspace, root);
+      mkdirSync(directory);
+      fixtureDirectories.push(directory);
+    }
+
+    writeFixture(customEasConfig, '{}\n');
+
+    for (const file of nativeFiles) {
+      writeFixture(
+        file,
+        `${mobileImport}export const example = <View testID="example"><Text>Native text</Text><AppText>{'App text'}</AppText></View>;\n`,
+      );
+    }
+
+    for (const file of webFiles) {
+      writeFixture(file, 'export const example = <div>Web text</div>;\n');
+    }
+
+    run(`npx oxlint ${[...nativeFiles, ...webFiles].join(' ')}`, options);
+
+    for (const [file, rawText] of [
+      [customAppFile, 'Raw text'],
+      [customLibFile, "{'Raw text'}"],
+    ]) {
+      writeFixture(file, `import { View } from 'react-native';\n\nexport const example = <View>${rawText}</View>;\n`);
+      assertLintError(/react[(/]jsx-no-literals/, /Disallow literal text as JSX children/, `npx oxlint ${file}`);
+    }
+
+    writeFixture(unreachableFile, 'export function example(): number { return 1; return 2; }\n');
+    assertLintError(/eslint[(/]no-unreachable/, /Unreachable code/, `npx oxlint ${unreachableFile}`);
+  } finally {
+    for (const file of fixtureFiles) {
+      rmSync(path.join(e2eWorkspace, file), { force: true });
+    }
+    for (const directory of fixtureDirectories) {
+      rmdirSync(directory);
+    }
+  }
 
   try {
     writeFileSync(

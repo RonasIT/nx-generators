@@ -120,10 +120,20 @@ export function oxlintGenerator(tree: Tree): () => void {
 
   const formatterDefaults = JSON.parse(readFileSync(path.join(__dirname, 'files/.oxfmtrc.json.template'), 'utf-8'));
   const formatterConfig = tree.exists('.oxfmtrc.json') ? readJson(tree, '.oxfmtrc.json') : {};
+  const prettierIgnorePatterns = (tree.read('.prettierignore', 'utf-8') ?? '')
+    .split(/\r?\n/)
+    .map((pattern) => pattern.trim())
+    .filter((pattern) => pattern && !pattern.startsWith('#'));
   writeJson(tree, '.oxfmtrc.json', {
     ...formatterDefaults,
     ...formatterConfig,
-    ignorePatterns: [...new Set([...(formatterConfig.ignorePatterns ?? []), ...formatterDefaults.ignorePatterns])],
+    ignorePatterns: [
+      ...new Set([
+        ...formatterDefaults.ignorePatterns,
+        ...prettierIgnorePatterns,
+        ...(formatterConfig.ignorePatterns ?? []),
+      ]),
+    ],
   });
   tree.delete('.prettierignore');
 

@@ -1,4 +1,5 @@
-import { defineConfig } from 'oxlint';
+import { existsSync, readdirSync } from 'node:fs';
+import { defineConfig, type OxlintOverride } from 'oxlint';
 import constraints from './eslint.constraints.json' with { type: 'json' };
 
 const boundariesOptions = {
@@ -6,6 +7,34 @@ const boundariesOptions = {
   allow: [],
   depConstraints: constraints,
 };
+
+const appsDirectory = new URL('./apps/', import.meta.url);
+const expoFiles = existsSync(appsDirectory)
+  ? readdirSync(appsDirectory, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory() && existsSync(new URL(`${entry.name}/eas.json`, appsDirectory)))
+      .flatMap(({ name }) => [`apps/${name}/**/*.{jsx,tsx}`, `libs/${name}/**/*.{jsx,tsx}`])
+  : [];
+
+const expoOverrides: OxlintOverride[] = expoFiles.length
+  ? [
+      {
+        files: expoFiles,
+        rules: {
+          'react/jsx-no-literals': [
+            'error',
+            {
+              noStrings: true,
+              ignoreProps: true,
+              elementOverrides: {
+                Text: { allowElement: true },
+                AppText: { allowElement: true },
+              },
+            },
+          ],
+        },
+      },
+    ]
+  : [];
 
 export default defineConfig({
   plugins: ['typescript', 'unicorn', 'oxc', 'import', 'react'],
@@ -19,20 +48,14 @@ export default defineConfig({
     'no-prototype-builtins': 'error',
     'no-redeclare': 'error',
     'no-regex-spaces': 'error',
-    'no-undef': 'error',
     'typescript/ban-ts-comment': 'error',
     'typescript/no-empty-object-type': 'error',
     'typescript/no-namespace': 'error',
     'typescript/no-unnecessary-type-constraint': 'error',
     'typescript/no-unsafe-function-type': 'error',
     'react/exhaustive-deps': 'off',
-    'react/jsx-key': 'error',
     'react/jsx-no-comment-textnodes': 'error',
-    'react/jsx-no-duplicate-props': 'error',
     'react/jsx-no-target-blank': 'error',
-    'react/no-children-prop': 'error',
-    'react/no-danger-with-children': 'error',
-    'react/no-direct-mutation-state': 'error',
     'react/no-unknown-property': 'error',
     'react/rules-of-hooks': 'off',
   },
@@ -40,23 +63,7 @@ export default defineConfig({
     {
       files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
       rules: {
-        'constructor-super': 'off',
-        'getter-return': 'off',
-        'no-class-assign': 'off',
-        'no-const-assign': 'off',
-        'no-dupe-class-members': 'off',
-        'no-dupe-keys': 'off',
-        'no-func-assign': 'off',
-        'no-import-assign': 'off',
-        'no-new-native-nonconstructor': 'off',
-        'no-obj-calls': 'off',
         'no-redeclare': 'off',
-        'no-setter-return': 'off',
-        'no-this-before-super': 'off',
-        'no-undef': 'off',
-        'no-unreachable': 'off',
-        'no-unsafe-negation': 'off',
-        'no-with': 'off',
         'prefer-const': 'error',
         'prefer-rest-params': 'error',
         'prefer-spread': 'error',
@@ -67,7 +74,6 @@ export default defineConfig({
       rules: {
         '@nx/enforce-module-boundaries': ['error', boundariesOptions],
         'import/newline-after-import': 'warn',
-        'no-dupe-class-members': 'off',
         'no-var': 'warn',
         'react/jsx-fragments': ['warn', 'element'],
         'react/self-closing-comp': ['warn', { component: true, html: true }],
@@ -113,6 +119,7 @@ export default defineConfig({
         ],
       },
     },
+    ...expoOverrides,
   ],
   ignorePatterns: [
     '**/node_modules/**',

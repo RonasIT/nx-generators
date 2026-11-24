@@ -10,12 +10,13 @@ import {
   writeJson,
 } from '@nx/devkit';
 import { devDependencies, eslintDependencies } from '../../shared/dependencies';
-import { runNxAddCommand } from '../../shared/utils';
+import { oxlintConfigPath, runNxAddCommand } from '../../shared/utils';
 import config from './config';
 
 const graphCommand = 'npx nx graph --file=.nx/project-graph.json';
 const obsoleteConfig =
   /^(?:eslint\.config\.[cm]?[jt]s|\.eslintrc(?:\.[cm]?js|\.json|\.ya?ml)?|\.eslint\.ronasit\.cjs|\.prettierrc(?:\.[cm]?[jt]s|\.json|\.ya?ml|\.toml)?|prettier\.config\.[cm]?[jt]s)$/;
+const obsoleteExtensions = new Set(['dbaeumer.vscode-eslint', 'esbenp.prettier-vscode']);
 
 function removeEslintTargets(targets: Record<string, any> = {}): void {
   for (const [name, target] of Object.entries(targets)) {
@@ -99,8 +100,22 @@ export function oxlintGenerator(tree: Tree): () => void {
 
   writeJson(tree, 'nx.json', nxJson);
 
-  if (!tree.exists('oxlint.config.ts')) {
-    tree.write('oxlint.config.ts', readFileSync(path.join(__dirname, 'files/oxlint.config.ts.template'), 'utf-8'));
+  if (!tree.exists(oxlintConfigPath)) {
+    const template = readFileSync(path.join(__dirname, `files/${oxlintConfigPath}.template`), 'utf-8');
+    tree.write(oxlintConfigPath, template.replace(/\r\n/g, '\n'));
+  }
+
+  const extensionsPath = '.vscode/extensions.json';
+
+  if (tree.exists(extensionsPath)) {
+    const extensions = readJson(tree, extensionsPath);
+    const recommendations = extensions.recommendations?.filter(
+      (extension: string) => !obsoleteExtensions.has(extension.toLowerCase()),
+    );
+
+    if (recommendations && recommendations.length !== extensions.recommendations.length) {
+      writeJson(tree, extensionsPath, { ...extensions, recommendations });
+    }
   }
 
   const formatterDefaults = JSON.parse(readFileSync(path.join(__dirname, 'files/.oxfmtrc.json.template'), 'utf-8'));

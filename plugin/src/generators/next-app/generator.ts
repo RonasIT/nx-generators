@@ -165,9 +165,12 @@ export async function nextAppGenerator(tree: Tree, options: NextAppGeneratorSche
       }
 
       execSync('npx nx g lib-tags --skipRepoCheck', { stdio: 'inherit' });
-      execSync(isOxlint ? 'npx nx graph --file=.nx/project-graph.json && npx oxlint --fix .' : 'npx eslint ./ --fix', {
-        stdio: 'inherit',
-      });
+      execSync(
+        isOxlint
+          ? 'npx nx graph --file=.nx/project-graph.json && npx oxlint --fix . && npx oxfmt --write .'
+          : 'npx eslint ./ --fix',
+        { stdio: 'inherit' },
+      );
     });
   };
 }

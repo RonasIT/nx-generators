@@ -5,7 +5,9 @@ import { IndentationText, Project, QuoteKind, SyntaxKind } from 'ts-morph';
 const constraintsConfigPath = 'eslint.constraints.json';
 const eslintRonasitConfigPath = '.eslint.ronasit.cjs';
 
-export const isOxlintWorkspace = (tree: Tree): boolean => tree.exists('oxlint.config.ts');
+export const oxlintConfigPath = 'oxlint.config.mts';
+
+export const isOxlintWorkspace = (tree: Tree): boolean => tree.exists(oxlintConfigPath);
 
 export interface Constraint {
   sourceTag: string;

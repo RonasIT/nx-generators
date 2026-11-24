@@ -76,9 +76,30 @@ describe('oxlintGenerator', () => {
       expect(tree.exists(file)).toBe(false);
     }
 
-    expect(tree.exists('oxlint.config.ts')).toBe(true);
+    expect(tree.exists('oxlint.config.mts')).toBe(true);
+    expect(tree.read('oxlint.config.mts', 'utf-8')).not.toContain('\r\n');
+    expect(tree.exists('oxlint.config.ts')).toBe(false);
     expect(tree.exists('.oxlintrc.json')).toBe(false);
     expect(readJson(tree, '.oxfmtrc.json').$schema).toBe('./node_modules/oxfmt/configuration_schema.json');
+    expect(tree.exists('.vscode/extensions.json')).toBe(false);
+  });
+
+  it('removes ESLint and Prettier recommendations while preserving other extension settings', () => {
+    tree.write(
+      '.vscode/extensions.json',
+      `{
+        // Workspace recommendations
+        "recommendations": ["nrwl.angular-console", "dbaeumer.vscode-eslint", "esbenp.prettier-vscode",],
+        "unwantedRecommendations": ["some.extension"],
+      }`,
+    );
+
+    oxlintGenerator(tree);
+
+    expect(readJson(tree, '.vscode/extensions.json')).toEqual({
+      recommendations: ['nrwl.angular-console'],
+      unwantedRecommendations: ['some.extension'],
+    });
   });
 
   it('also removes ESLint and Prettier packages from runtime dependencies without removing unrelated packages', () => {
@@ -115,14 +136,15 @@ describe('oxlintGenerator', () => {
   });
 
   it('preserves existing Ox configs on repeated runs', () => {
-    tree.write('oxlint.config.ts', 'export default { rules: { "no-debugger": "error" } };\n');
+    const customConfig = 'export default { rules: { "no-debugger": "error" } };\n';
+    tree.write('oxlint.config.mts', customConfig);
     writeJson(tree, '.oxfmtrc.json', { singleQuote: true, ignorePatterns: ['custom-output'] });
 
     oxlintGenerator(tree);
     const changes = tree.listChanges();
     oxlintGenerator(tree);
     expect(tree.listChanges()).toEqual(changes);
-    expect(tree.read('oxlint.config.ts', 'utf-8')).toContain('no-debugger');
+    expect(tree.read('oxlint.config.mts', 'utf-8')).toBe(customConfig);
     expect(readJson(tree, '.oxfmtrc.json')).toEqual(
       expect.objectContaining({
         singleQuote: true,

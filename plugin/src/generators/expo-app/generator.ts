@@ -169,9 +169,12 @@ export async function expoAppGenerator(tree: Tree, options: ExpoAppGeneratorSche
       execSync('npx expo install --fix', { stdio: 'inherit', cwd: appRoot });
       // Note: Removes the nested copies npm installed for the app
       execSync('npm dedupe', { stdio: 'inherit' });
-      execSync(isOxlint ? 'npx nx graph --file=.nx/project-graph.json && npx oxlint --fix .' : 'npx eslint ./ --fix', {
-        stdio: 'inherit',
-      });
+      execSync(
+        isOxlint
+          ? 'npx nx graph --file=.nx/project-graph.json && npx oxlint --fix . && npx oxfmt --write .'
+          : 'npx eslint ./ --fix',
+        { stdio: 'inherit' },
+      );
     });
   };
 }

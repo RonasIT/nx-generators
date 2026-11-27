@@ -1,7 +1,7 @@
-import { execSync } from 'child_process';
 import * as path from 'path';
 import {
   addDependenciesToPackageJson,
+  addProjectConfiguration,
   formatFiles,
   installPackagesTask,
   Tree,
@@ -10,6 +10,7 @@ import {
   readJson,
   writeJson,
 } from '@nx/devkit';
+import { generateMantineUiKit } from '../../../generators/react-lib/generator';
 import { dependencies, devDependencies } from '../../dependencies';
 import { appendFileContent, getAppFrameworkName, getImportPathPrefix } from '../../utils';
 import { MantineGeneratorSchema } from './schema';
@@ -19,6 +20,7 @@ import { configureMantine } from './utils/configure-mantine';
 export async function runMantineGenerator(tree: Tree, options: MantineGeneratorSchema): Promise<() => void> {
   const appRoot = `apps/${options.directory}`;
   const repoRoot = '.';
+  const stylesRoot = `libs/${options.directory}/shared/ui/styles`;
 
   if (getAppFrameworkName(tree, appRoot) !== 'next') {
     throw new Error(
@@ -61,14 +63,18 @@ export async function runMantineGenerator(tree: Tree, options: MantineGeneratorS
   tree.write(layoutPath, configureMantine(layoutContent, `${stylesLibPath}/global`));
 
   generateFiles(tree, path.join(__dirname, 'files/root'), repoRoot, {});
-  generateFiles(tree, path.join(__dirname, 'files/styles'), `libs/${options.directory}/shared/ui/styles`, {});
+  generateFiles(tree, path.join(__dirname, 'files/styles'), stylesRoot, {});
 
-  execSync(
-    `npx nx g react-lib --app=${options.directory} --scope=shared --type=ui --name=ui-kit --withComponent=false`,
-    {
-      stdio: 'inherit',
-    },
-  );
+  if (!tree.exists(`${stylesRoot}/project.json`) && !tree.exists(`${stylesRoot}/package.json`)) {
+    addProjectConfiguration(tree, `${options.directory}/shared/ui/styles`, {
+      root: stylesRoot,
+      sourceRoot: stylesRoot,
+      projectType: 'library',
+      tags: [`app:${options.directory}`, 'scope:shared', 'type:ui'],
+    });
+  }
+
+  await generateMantineUiKit(tree, options.directory);
   const uiKitRoot = `libs/${options.directory}/shared/ui/ui-kit/src`;
   const uiKitIndexPath = `${uiKitRoot}/index.ts`;
 
@@ -85,8 +91,6 @@ export async function runMantineGenerator(tree: Tree, options: MantineGeneratorS
     appendFileContent(uiKitIndexPath, formUiKitIndexContent, tree);
   }
 
-  // Read tsconfig.base.json only after react-lib's execSync has finished writing its own
-  // path entry to disk, so this write doesn't stage a stale snapshot that clobbers it on flush.
   const tsConfig = readJson(tree, 'tsconfig.base.json');
   const paths = tsConfig.compilerOptions.paths;
 

@@ -1,0 +1,17 @@
+// <%= ownership %> (browser)
+import { MantineProvider } from '@mantine/core';
+import { it } from 'vitest';
+import { render } from 'vitest-browser-react';
+import { AppButton } from '../src/lib/button/component';
+import { theme } from '../src/lib/theme';
+import { expectScreenshot } from './expect-screenshot';
+
+it('renders the Mantine UI-kit button', async () => {
+  const view = await render(
+    <MantineProvider theme={theme}>
+      <AppButton>Submit</AppButton>
+    </MantineProvider>,
+  );
+
+  await expectScreenshot(view.getByRole('button', { name: 'Submit' }), 'default');
+});

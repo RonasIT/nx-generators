@@ -15,6 +15,11 @@
       "schema": "./src/generators/next-app/schema.json",
       "description": "Generates and configures a Next.js app"
     },
+    "next-tests": {
+      "factory": "./src/generators/next-tests/generator",
+      "schema": "./src/generators/next-tests/schema.json",
+      "description": "Adds unit, browser screenshot, and end-to-end tests for a Next.js app"
+    },
     "repo-config": {
       "factory": "./src/generators/repo-config/generator",
       "schema": "./src/generators/repo-config/schema.json",

@@ -3,7 +3,7 @@ import { Tree } from '@nx/devkit';
 export type AppFramework = 'expo' | 'next';
 
 export const isNextApp = (tree: Tree, projectRoot: string): boolean => {
-  return tree.exists(`${projectRoot}/next.config.js`);
+  return ['js', 'mjs', 'ts'].some((extension) => tree.exists(`${projectRoot}/next.config.${extension}`));
 };
 
 export const isExpoApp = (tree: Tree, projectRoot: string): boolean => {

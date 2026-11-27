@@ -1,0 +1,3 @@
+// <%= ownership %> (browser)
+import '@mantine/core/styles.layer.css';
+import './global.scss';

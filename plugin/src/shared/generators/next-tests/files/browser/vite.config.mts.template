@@ -1,0 +1,31 @@
+// <%= ownership %> (browser)
+import react from '@vitejs/plugin-react';
+import { playwright } from '@vitest/browser-playwright';
+import { defineConfig } from 'vitest/config';
+
+const viewport = { width: 1920, height: 1080 };
+
+export default defineConfig({
+  root: import.meta.dirname,
+  plugins: [react()],
+  resolve: { tsconfigPaths: true },
+  test: {
+    name: <%- projectName %>,
+    watch: false,
+    include: ['tests/**/*.{test,spec}.{ts,tsx}'],
+    setupFiles: ['./tests/setup.ts'],
+    browser: {
+      enabled: true,
+      headless: true,
+      provider: playwright({ contextOptions: { viewport } }),
+      instances: [{ browser: 'chromium', viewport }],
+      expect: {
+        toMatchScreenshot: {
+          comparatorName: 'pixelmatch',
+          comparatorOptions: { threshold: 0, allowedMismatchedPixels: 0, includeAA: true },
+          screenshotOptions: { animations: 'disabled' },
+        },
+      },
+    },
+  },
+});

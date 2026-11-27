@@ -1,75 +1,41 @@
-import assert from 'node:assert/strict';
-import { readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import {
+  assertEslintAndPrettierRemoved,
+  assertImportCycleError,
+  assertLintAndFormatPass,
+  assertModuleBoundariesError,
+  assertOxlintAndOxfmtInstalled,
+} from '../lib/assertions.mjs';
+import {
+  generateLibs,
+  introduceImportCycle,
+  introduceModuleBoundariesViolation,
+  removeImportCycle,
+  restoreUiSource,
+} from '../lib/utils.mjs';
 
 export function runOxlintScenario({ e2eWorkspace, run, runCapture }) {
-  const options = { cwd: e2eWorkspace };
-
-  run('npx nx g oxlint --no-interactive', options);
+  run('npx nx g oxlint --no-interactive', { cwd: e2eWorkspace });
 
   const packageJson = JSON.parse(readFileSync(path.join(e2eWorkspace, 'package.json'), 'utf8'));
   const scope = packageJson.name.split('/')[0];
 
-  for (const name of ['oxlint', 'oxfmt']) {
-    assert.ok(packageJson.devDependencies[name], `Expected ${name} to be installed`);
-  }
+  assertOxlintAndOxfmtInstalled(packageJson);
+  assertEslintAndPrettierRemoved(packageJson);
 
-  for (const name of ['eslint', 'prettier']) {
-    assert.ok(
-      !packageJson.dependencies?.[name] && !packageJson.devDependencies?.[name],
-      `Expected ${name} to be removed`,
-    );
-  }
-
-  for (const type of ['features', 'ui']) {
-    run(
-      `npx nx g react-lib --app=web --scope=shared --type=${type} --name=oxlint-check --withComponent=false --no-interactive`,
-      options,
-    );
-  }
-
-  run('npx nx g lib-tags --skipRepoCheck --silent --no-interactive', options);
-
-  const featureRoot = path.join(e2eWorkspace, 'libs/web/shared/features/oxlint-check/src');
-  const uiFile = path.join(e2eWorkspace, 'libs/web/shared/ui/oxlint-check/src/index.ts');
-  const uiSource = 'export const ui = 1;\n';
-  const cycleA = path.join(featureRoot, 'a.ts');
-  const cycleB = path.join(featureRoot, 'b.ts');
-
-  writeFileSync(path.join(featureRoot, 'index.ts'), 'export const feature = 1;\n');
-  writeFileSync(uiFile, uiSource);
-
-  run('npm run lint', options);
-  run('npm run format', options);
-  run('npx nx run-many -t lint', options);
-
-  const assertLintError = (rule, message) => {
-    assert.throws(
-      () => runCapture('npm run lint', options),
-      (error) => {
-        assert.equal(error.status, 1);
-        const output = `${error.stdout ?? ''}\n${error.stderr ?? ''}`;
-        assert.match(output, rule);
-        assert.match(output, message);
-        return true;
-      },
-    );
-  };
+  generateLibs(e2eWorkspace, run);
+  assertLintAndFormatPass(e2eWorkspace, run);
 
   try {
-    writeFileSync(
-      uiFile,
-      `import { feature } from '${scope}/web/shared/features/oxlint-check';\nexport const ui = feature;\n`,
-    );
-    assertLintError(/enforce-module-boundaries/, /A project tagged with "type:ui"/);
-    writeFileSync(uiFile, uiSource);
+    introduceModuleBoundariesViolation({ e2eWorkspace, scope });
+    assertModuleBoundariesError({ e2eWorkspace, runCapture });
+    restoreUiSource(e2eWorkspace);
 
-    writeFileSync(cycleA, "import { b } from './b';\nexport function a(): number { return b(); }\n");
-    writeFileSync(cycleB, "import { a } from './a';\nexport function b(): number { return a(); }\n");
-    assertLintError(/import[(/]no-cycle/, /Dependency cycle detected/);
+    introduceImportCycle(e2eWorkspace);
+    assertImportCycleError({ e2eWorkspace, runCapture });
   } finally {
-    writeFileSync(uiFile, uiSource);
-    rmSync(cycleA, { force: true });
-    rmSync(cycleB, { force: true });
+    restoreUiSource(e2eWorkspace);
+    removeImportCycle(e2eWorkspace);
   }
 }

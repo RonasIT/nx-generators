@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import { Tree, getProjects, ProjectConfiguration, formatFiles, output } from '@nx/devkit';
 import { noop } from 'lodash';
-import { confirm, isOxlintWorkspace, verifyConstraintsConfig } from '../../shared/utils';
+import { confirm, verifyConstraintsConfig } from '../../shared/utils';
 import { LibTagsContext } from './interfaces';
 import { LibTagsGeneratorSchema } from './schema';
 import { checkApplicationTags, checkLibraryTags } from './utils';
@@ -25,9 +25,7 @@ export async function libTagsGenerator(tree: Tree, options: LibTagsGeneratorSche
     context.log = noop;
   }
 
-  const linterName = isOxlintWorkspace(tree) ? 'Oxlint' : 'ESLint';
-
-  output.log({ title: output.bold(`1. Checking ${linterName} boundary constraints...`) });
+  output.log({ title: output.bold('Checking Nx module boundaries constraints...') });
   verifyConstraintsConfig(tree);
 
   // #2 Check project tags

@@ -16,7 +16,7 @@ export interface Constraint {
 
 export const readConstraints = (tree: Tree): Array<Constraint> => {
   if (!tree.exists(constraintsConfigPath)) {
-    throw new Error(`ESLint constraints config not found: ${constraintsConfigPath}`);
+    throw new Error(`Nx module boundaries constraints config not found: ${constraintsConfigPath}`);
   }
 
   const config = readJson(tree, constraintsConfigPath);
@@ -82,13 +82,14 @@ export const defaultRootPackageName = getRootPackageName('org');
 
 export const verifyConstraintsConfig = (tree: Tree): void => {
   const isOxlint = isOxlintWorkspace(tree);
-  const linterName = isOxlint ? 'Oxlint' : 'ESLint';
   let constraints: Array<Constraint> = [];
 
   try {
     constraints = readConstraints(tree);
   } catch {
-    output.warn({ title: output.bold(`${linterName} constraints config not found. Generating default rules...`) });
+    output.warn({
+      title: output.bold('Nx module boundaries constraints config not found. Generating default rules...'),
+    });
 
     constraints = require('../templates/config-template.json') as Array<Constraint>;
 
@@ -150,7 +151,9 @@ export const verifyConstraintsConfig = (tree: Tree): void => {
 
     writeConstraints(tree, defaultConstraints);
 
-    output.warn({ title: output.bold(`${linterName} constraints config is incorrect. Restoring default rules...`) });
+    output.warn({
+      title: output.bold('Nx module boundaries constraints config is incorrect. Restoring default rules...'),
+    });
   }
 };
 

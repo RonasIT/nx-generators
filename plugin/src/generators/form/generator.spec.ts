@@ -93,13 +93,37 @@ describe('formGenerator', () => {
     expect(generatedForm).toContain(`import { BaseFormSchema, FormValues } from '${formUtilsImportPath}';`);
   });
 
+  it('should use kebab-case for the filename and barrel export while preserving the schema class name', async () => {
+    tree.write(`${targetPath}/index.ts`, `export * from './existing-form';\n`);
+
+    await formGenerator(tree, { name: 'XMLSettings', placeOfUse: 'MyComponent' });
+
+    const generatedForm = tree.read(`${targetPath}/xml-settings.ts`)?.toString();
+    const index = tree.read(`${targetPath}/index.ts`)?.toString();
+
+    expect(generatedForm).toContain('export class XMLSettingsFormSchema');
+    expect(index).toContain(`export * from './xml-settings';`);
+    expect(index).toContain(`export * from './existing-form';`);
+    expect(formUtils.addFormUsage).toHaveBeenCalledWith(
+      utilsLibFormsRoot,
+      targetPath,
+      'MyComponent',
+      'XMLSettingsFormSchema',
+    );
+  });
+
   it('should throw if form name is missing', async () => {
     await expect(formGenerator(tree, { name: '', placeOfUse: '' })).rejects.toThrow('Form name is required');
   });
 
-  it('should throw if form already exists', async () => {
-    tree.write(`${targetPath}/user.ts`, 'dummy content');
+  it('should reject an equivalent spelling of an existing canonical form without overwriting it', async () => {
+    tree.write(`${targetPath}/profile-settings.ts`, 'dummy content');
 
-    await expect(formGenerator(tree, { name: 'user', placeOfUse: '' })).rejects.toThrow('The form already exists');
+    await expect(formGenerator(tree, { name: 'ProfileSettings', placeOfUse: '' })).rejects.toThrow(
+      'The form already exists',
+    );
+
+    expect(tree.read(`${targetPath}/profile-settings.ts`)?.toString()).toBe('dummy content');
+    expect(tree.read(`${targetPath}/index.ts`)).toBeNull();
   });
 });

@@ -1,3 +1,4 @@
+import * as path from 'path';
 import {
   ArrowFunction,
   FunctionDeclaration,
@@ -9,6 +10,16 @@ import {
   SyntaxKind,
 } from 'ts-morph';
 import { addNamedImport } from '../../../shared/utils';
+
+function getFormsModuleSpecifier(filePath: string, formsPath: string): string {
+  const relativePath = path.relative(path.dirname(filePath), path.resolve(formsPath)).split(path.sep).join('/');
+
+  if (!relativePath) {
+    return './';
+  }
+
+  return relativePath.startsWith('../') ? relativePath : `./${relativePath}`;
+}
 
 function getFormUsageCode(formClassName: string): string {
   return `const formSchema = new ${formClassName}();
@@ -45,7 +56,12 @@ function getPlaceOfUse(
   return initializer;
 }
 
-export async function addFormUsage(libPath: string, placeOfUseName: string, formClassName: string): Promise<void> {
+export async function addFormUsage(
+  libPath: string,
+  formsPath: string,
+  placeOfUseName: string,
+  formClassName: string,
+): Promise<void> {
   const project = new Project({
     manipulationSettings: {
       indentationText: IndentationText.TwoSpaces,
@@ -59,11 +75,8 @@ export async function addFormUsage(libPath: string, placeOfUseName: string, form
     throw new Error('Could not find the place where the form should be used.');
   }
 
-  const pathToForm = file.getFilePath().includes('components')
-    ? '../../forms'
-    : file.getFilePath().includes('hooks')
-      ? '../forms'
-      : './forms';
+  const pathToForm = getFormsModuleSpecifier(file.getFilePath(), formsPath);
+
   addNamedImport(formClassName, pathToForm, file);
   addNamedImport('useForm', 'react-hook-form', file);
   addNamedImport('yupResolver', '@hookform/resolvers/yup', file);

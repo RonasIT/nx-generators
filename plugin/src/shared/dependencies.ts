@@ -83,13 +83,12 @@ export const dependencies = {
   },
 };
 
-export const devDependencies = {
+export const eslintDependencies = {
   'code-checks': {
     '@eslint/compat': '^1.4.0',
     '@eslint/eslintrc': '^3.3.1',
     '@eslint/js': '^9.37.0',
     eslint: '^9.37.0',
-    prettier: '^3.6.2',
     'eslint-config-prettier': '^10.1.8',
     'eslint-import-resolver-typescript': '^4.4.4',
     'eslint-plugin-import-x': '^4.17.1',
@@ -99,13 +98,27 @@ export const devDependencies = {
     'eslint-plugin-react-native': '^5.0.0',
     'eslint-plugin-react-native-unistyles': '^3.0.7',
     'eslint-plugin-unused-imports': '^4.2.0',
-    husky: '^9.1.7',
-    'lint-staged': '^16.2.4',
     '@stylistic/eslint-plugin': '^4.4.1',
     '@typescript-eslint/eslint-plugin': '^8.46.0',
     '@typescript-eslint/parser': '^8.46.0',
-    'tsc-files': '^1.1.4',
     'typescript-eslint': '^8.46.0',
+  },
+  'next-app': {
+    'eslint-config-next': '~16.4.3',
+  },
+};
+
+export const devDependencies = {
+  oxlint: {
+    oxlint: '1.93.0',
+    oxfmt: '0.78.0',
+  },
+  'code-checks': {
+    ...eslintDependencies['code-checks'],
+    prettier: '^3.6.2',
+    husky: '^9.1.7',
+    'lint-staged': '^16.2.4',
+    'tsc-files': '^1.1.4',
     stylelint: '^17.12.0',
     'stylelint-config-standard-scss': '^17.0.0',
   },
@@ -119,7 +132,7 @@ export const devDependencies = {
     'reactotron-redux': '^3.2.1',
   },
   'next-app': {
-    'eslint-config-next': '~16.4.3',
+    ...eslintDependencies['next-app'],
     '@types/lodash-es': '^4.17.12',
     '@types/react': '~19.2.0',
     '@types/react-dom': '~19.2.0',

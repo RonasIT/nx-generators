@@ -126,9 +126,19 @@ npx nx g repo-config --name=my-project
 
 Configures code checks and formatting with pre-commit hook.
 
+### 3. `oxlint`
+
+Optionally replaces ESLint and Prettier with oxlint and oxfmt. Run after `code-checks`. Updates the lint/format scripts, lint-staged, and the existing pre-commit hook. Removes ESLint/Prettier configuration files.
+
+#### Example
+
+```sh
+npx nx g oxlint
+```
+
 ### Apps
 
-### 3. `expo-app`
+### 4. `expo-app`
 
 Generates and configures an Expo React Native app.
 Also generates [navigation utilities](#navigation-utilities) and `.easignore` file for optimized [EAS Build](https://docs.expo.dev/build-reference/easignore/) uploads.
@@ -145,7 +155,7 @@ Also generates [navigation utilities](#navigation-utilities) and `.easignore` fi
 
 5. `withFormUtils` (optional) - generates a form utils library
 
-6. `withSentry` (optional) - adds [Sentry](https://sentry.io/) integration (see [`sentry`](#13-sentry))
+6. `withSentry` (optional) - adds [Sentry](https://sentry.io/) integration (see [`sentry`](#14-sentry))
 
 7. `withApiClient` (optional) - generates an API client library (requires `withStore`)
 
@@ -163,7 +173,7 @@ or
 npx nx g expo-app my-app mobile
 ```
 
-### 4. `next-app`
+### 5. `next-app`
 
 Generates and configures a Next.js app.
 Also generates [navigation utilities](#navigation-utilities).
@@ -178,9 +188,9 @@ Also generates [navigation utilities](#navigation-utilities).
 
 4. `withFormUtils` (optional) - generates a form utils library
 
-5. `withSentry` (optional) - adds [Sentry](https://sentry.io/) integration (see [`sentry`](#13-sentry))
+5. `withSentry` (optional) - adds [Sentry](https://sentry.io/) integration (see [`sentry`](#14-sentry))
 
-6. `withNuqs` (optional) - installs and configures nuqs for the app (see [`nuqs`](#16-nuqs))
+6. `withNuqs` (optional) - installs and configures nuqs for the app (see [`nuqs`](#17-nuqs))
 
 7. `withApiClient` (optional) - generates an API client library (requires `withStore`)
 
@@ -202,7 +212,7 @@ npx nx g next-app my-app web
 
 ### Libraries
 
-### 5. `react-lib`
+### 6. `react-lib`
 
 Generates a library according to [Nx notation](https://nx.dev/concepts/decisions/project-dependency-rules).
 
@@ -235,7 +245,7 @@ or
 npx nx g react-lib --dryRun
 ```
 
-### 6. `lib-rename`
+### 7. `lib-rename`
 
 Renames an existing library and updates imports
 
@@ -251,7 +261,7 @@ Renames an existing library and updates imports
 npx nx g lib-rename --currentLibName="mobile-account-features-profile-settings" --newLibName="user-settings"
 ```
 
-### 7. `lib-move`
+### 8. `lib-move`
 
 Moves the library to a new destination. This utility also calls `lib-tags` generator.
 
@@ -275,7 +285,7 @@ Moves the library to a new destination. This utility also calls `lib-tags` gener
 npx nx g lib-move --srcLibName="mobile-account-features-profile-settings" --app=mobile --scope=settings --type=features --name="user-settings"
 ```
 
-### 8. `lib-remove`
+### 9. `lib-remove`
 
 Removes the library. Before deleting a library you must remove all references to it.
 
@@ -289,7 +299,7 @@ Removes the library. Before deleting a library you must remove all references to
 npx nx g lib-remove --libName="mobile-account-features-profile-settings"
 ```
 
-### 9. `lib-tags`
+### 10. `lib-tags`
 
 Checks and configures [Nx library tags](https://nx.dev/features/enforce-module-boundaries). If your project does not already use library tags, you can add them using this generator.
 
@@ -307,7 +317,7 @@ npx nx g lib-tags
 
 ### Components
 
-### 10. `react-component`
+### 11. `react-component`
 
 Creates a React component in particular library.
 
@@ -329,7 +339,7 @@ or
 npx nx g react-component AppButton --subcomponent
 ```
 
-### 11. `form`
+### 12. `form`
 
 Generates a form schema class and adds its usage to a component or a hook.
 
@@ -354,7 +364,7 @@ npx nx g form profile-settings ProfileSettings
 
 ### Services
 
-### 12. `entity-api`
+### 13. `entity-api`
 
 Creates an API with related entities in API library. It also updates redux store middlewares, reducers.
 Requires the Redux store, API client, and API libraries to exist in the app.
@@ -371,7 +381,7 @@ Requires the Redux store, API client, and API libraries to exist in the app.
 npx nx g entity-api --name=User --baseEndpoint=users
 ```
 
-### 13. `sentry`
+### 14. `sentry`
 
 Creates [Sentry](https://sentry.io/) integration for Expo/Next application.
 
@@ -387,11 +397,11 @@ Creates [Sentry](https://sentry.io/) integration for Expo/Next application.
 npx nx g sentry --directory=apps/mobile --dsn=http://your-dsn.ingest.sentry.io/112233
 ```
 
-### 14. `dockerfile`
+### 15. `dockerfile`
 
 Generates a deployment-ready Dockerfile for Next.js applications in the monorepo.
 
-### 15. `auth`
+### 16. `auth`
 
 Creates authentication data-access libraries (API and auth libs; for Next.js applications, also
 a cookie lib and proxy middleware) and configures the Redux store.
@@ -410,7 +420,7 @@ generators when the `withStore` and `withApiClient` options are enabled).
 npx nx g auth --directory=mobile --type=expo-app
 ```
 
-### 16. `nuqs`
+### 17. `nuqs`
 
 Installs [nuqs](https://nuqs.dev/) and adds the `NuqsAdapter` to a
 Next.js application.
@@ -418,7 +428,7 @@ Next.js application.
 If a `providers.tsx` file already exists, the adapter is added there.
 If it doesn't exist yet, the `NuqsAdapter` is added directly to `layout.tsx`.
 
-Can be run standalone, or as part of [`next-app`](#4-next-app) by answering "yes" to the query
+Can be run standalone, or as part of [`next-app`](#5-next-app) by answering "yes" to the query
 parameters prompt.
 
 #### Options
@@ -431,10 +441,10 @@ parameters prompt.
 npx nx g nuqs --directory=web
 ```
 
-### 17. `store`
+### 18. `store`
 
-Creates and configures the Redux store library. Used by [`expo-app`](#3-expo-app) and
-[`next-app`](#4-next-app) when the `withStore` option is enabled, and can also be run standalone
+Creates and configures the Redux store library. Used by [`expo-app`](#4-expo-app) and
+[`next-app`](#5-next-app) when the `withStore` option is enabled, and can also be run standalone
 on an existing app.
 
 #### Options
@@ -449,10 +459,10 @@ on an existing app.
 npx nx g store --directory=mobile --baseGeneratorType=expo-app
 ```
 
-### 18. `navigationUtils`
+### 19. `navigationUtils`
 
-Creates the navigation utilities library. Used by [`expo-app`](#3-expo-app) and
-[`next-app`](#4-next-app), and can also be run standalone on an existing app
+Creates the navigation utilities library. Used by [`expo-app`](#4-expo-app) and
+[`next-app`](#5-next-app), and can also be run standalone on an existing app
 (see [navigation utilities](#navigation-utilities)).
 
 #### Options
@@ -469,7 +479,7 @@ npx nx g navigationUtils --appDirectory=mobile
 
 The generators `next-app` and `expo-app` also create customizable utilities for navigation
 and a basic `navigationConfig` object, where routes should be stored.
-You can also add these utilities to an existing app with the [`navigationUtils`](#18-navigationutils) generator.
+You can also add these utilities to an existing app with the [`navigationUtils`](#19-navigationutils) generator.
 There are utilities, which may help to create routes
 
 ### getLinkBuilder

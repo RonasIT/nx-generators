@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
@@ -92,7 +93,9 @@ export function assertExpoAppDependenciesAligned(workspace, appDirectory, packag
     }
 
     if (rootVersion !== appVersion) {
-      throw new Error(`Expected "${packageName}" versions to match: root has "${rootVersion}", app has "${appVersion}"`);
+      throw new Error(
+        `Expected "${packageName}" versions to match: root has "${rootVersion}", app has "${appVersion}"`,
+      );
     }
   }
 
@@ -172,4 +175,48 @@ export function assertLintTargets(workspace, expectedProjects) {
       throw new Error(`Expected nx project "${project}" to have a lint target`);
     }
   }
+}
+
+export function assertOxlintAndOxfmtInstalled(packageJson) {
+  for (const name of ['oxlint', 'oxfmt']) {
+    assert.ok(packageJson.devDependencies[name], `Expected ${name} to be installed`);
+  }
+}
+
+export function assertEslintAndPrettierRemoved(packageJson) {
+  for (const name of ['eslint', 'prettier']) {
+    assert.ok(
+      !packageJson.dependencies?.[name] && !packageJson.devDependencies?.[name],
+      `Expected ${name} to be removed`,
+    );
+  }
+}
+
+export function assertLintAndFormatPass(e2eWorkspace, run) {
+  const options = { cwd: e2eWorkspace };
+
+  run('npm run lint', options);
+  run('npm run format', options);
+  run('npx nx run-many -t lint', options);
+}
+
+export function assertModuleBoundariesError({ e2eWorkspace, runCapture }) {
+  assertLintError({ e2eWorkspace, runCapture }, /enforce-module-boundaries/, /A project tagged with "type:ui"/);
+}
+
+export function assertImportCycleError({ e2eWorkspace, runCapture }) {
+  assertLintError({ e2eWorkspace, runCapture }, /import[(/]no-cycle/, /Dependency cycle detected/);
+}
+
+function assertLintError({ e2eWorkspace, runCapture }, rule, message) {
+  assert.throws(
+    () => runCapture('npm run lint', { cwd: e2eWorkspace }),
+    (error) => {
+      assert.equal(error.status, 1);
+      const output = `${error.stdout ?? ''}\n${error.stderr ?? ''}`;
+      assert.match(output, rule);
+      assert.match(output, message);
+      return true;
+    },
+  );
 }

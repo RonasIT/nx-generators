@@ -5,6 +5,10 @@ import { IndentationText, Project, QuoteKind, SyntaxKind } from 'ts-morph';
 const constraintsConfigPath = 'eslint.constraints.json';
 const eslintRonasitConfigPath = '.eslint.ronasit.cjs';
 
+export const oxlintConfigPath = 'oxlint.config.mts';
+
+export const isOxlintWorkspace = (tree: Tree): boolean => tree.exists(oxlintConfigPath);
+
 export interface Constraint {
   sourceTag: string;
   onlyDependOnLibsWithTags: Array<string>;
@@ -12,7 +16,7 @@ export interface Constraint {
 
 export const readConstraints = (tree: Tree): Array<Constraint> => {
   if (!tree.exists(constraintsConfigPath)) {
-    throw new Error(`ESLint constraints config not found: ${constraintsConfigPath}`);
+    throw new Error(`Nx module boundaries constraints config not found: ${constraintsConfigPath}`);
   }
 
   const config = readJson(tree, constraintsConfigPath);
@@ -76,28 +80,41 @@ export const getRootPackageName = (scope: string): string => `@${scope}/source`;
 
 export const defaultRootPackageName = getRootPackageName('org');
 
-export const verifyESLintConstraintsConfig = (tree: Tree): void => {
+export const verifyConstraintsConfig = (tree: Tree): void => {
+  const isOxlint = isOxlintWorkspace(tree);
   let constraints: Array<Constraint> = [];
 
   try {
     constraints = readConstraints(tree);
   } catch {
-    output.warn({ title: output.bold('ESLint constraints config not found. Generating default rules...') });
+    output.warn({
+      title: output.bold('Nx module boundaries constraints config not found. Generating default rules...'),
+    });
 
-    const defaultConstraints = require('../templates/config-template.json') as Array<Constraint>;
+    constraints = require('../templates/config-template.json') as Array<Constraint>;
 
-    writeConstraints(tree, defaultConstraints);
+    writeConstraints(tree, constraints);
 
-    output.note({
-      title: 'Configure Nx boundaries',
-      bodyLines: [
-        'To complete setup add the following changes in your ESLint config (eslint.config.cjs):',
-        '```',
-        output.bold(`const constraints = require('./eslint.constraints.json');`),
-        '```',
-        'module.exports = [',
-        '```',
-        `  {
+    if (isOxlint) {
+      output.note({
+        title: 'Configure Nx boundaries',
+        bodyLines: [
+          'In your Oxlint config, register @nx/oxlint/boundaries-plugin as a JavaScript plugin named @nx.',
+          'Enable @nx/enforce-module-boundaries with depConstraints loaded from ./eslint.constraints.json.',
+          'Refresh the project graph before linting: npx nx graph --file=.nx/project-graph.json',
+        ],
+      });
+    } else {
+      output.note({
+        title: 'Configure Nx boundaries',
+        bodyLines: [
+          'To complete setup add the following changes in your ESLint config (eslint.config.cjs):',
+          '```',
+          output.bold(`const constraints = require('./eslint.constraints.json');`),
+          '```',
+          'module.exports = [',
+          '```',
+          `  {
           files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
           rules: {
             '@nx/enforce-module-boundaries': [
@@ -110,9 +127,10 @@ export const verifyESLintConstraintsConfig = (tree: Tree): void => {
             ],
           },
         },`,
-        '```',
-      ],
-    });
+          '```',
+        ],
+      });
+    }
   }
 
   const importantTags = [
@@ -133,11 +151,17 @@ export const verifyESLintConstraintsConfig = (tree: Tree): void => {
 
     writeConstraints(tree, defaultConstraints);
 
-    output.warn({ title: output.bold('ESLint constraints config is incorrect. Restoring default rules...') });
+    output.warn({
+      title: output.bold('Nx module boundaries constraints config is incorrect. Restoring default rules...'),
+    });
   }
 };
 
 export const addEslintRulesOverride = (tree: Tree, appDirectory: string, rules: Record<string, unknown>): void => {
+  if (isOxlintWorkspace(tree)) {
+    return;
+  }
+
   const content = tree.read(eslintRonasitConfigPath, 'utf-8');
 
   if (!content) {

@@ -8,6 +8,7 @@ import {
   confirm,
   constants,
   formatName,
+  isOxlintWorkspace,
   LibraryType,
   normalizeLibPath,
   selectProject,
@@ -48,7 +49,8 @@ export async function reactLibGenerator(tree: Tree, options: ReactLibGeneratorSc
 
   const libName = normalizeLibPath(`${options.app}/${options.scope}/${options.type}/${options.name}`);
   const libPath = `libs/${libName}`;
-  const command = `npx nx g @nx/react:library --skipPackageJson --unitTestRunner=none --tags="${tags.join(', ')}" --name=${libName} ${libPath} --linter=eslint --component=false --bundler=none --style=scss`;
+  const linter = isOxlintWorkspace(tree) ? 'none' : 'eslint';
+  const command = `npx nx g @nx/react:library --skipPackageJson --unitTestRunner=none --tags="${tags.join(', ')}" --name=${libName} ${libPath} --linter=${linter} --component=false --bundler=none --style=scss`;
   const commandWithOptions = options.dryRun ? command + ' --dry-run' : command;
 
   execSync(commandWithOptions, { stdio: 'inherit' });

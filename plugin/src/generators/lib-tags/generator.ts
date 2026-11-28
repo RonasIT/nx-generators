@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import { Tree, getProjects, ProjectConfiguration, formatFiles, output } from '@nx/devkit';
 import { noop } from 'lodash';
-import { confirm, verifyESLintConstraintsConfig } from '../../shared/utils';
+import { confirm, verifyConstraintsConfig } from '../../shared/utils';
 import { LibTagsContext } from './interfaces';
 import { LibTagsGeneratorSchema } from './schema';
 import { checkApplicationTags, checkLibraryTags } from './utils';
@@ -25,9 +25,8 @@ export async function libTagsGenerator(tree: Tree, options: LibTagsGeneratorSche
     context.log = noop;
   }
 
-  // #1 Check eslint config nx-boundaries rule
-  output.log({ title: output.bold('1. Checking eslint config nx-boundaries rule...') });
-  verifyESLintConstraintsConfig(tree);
+  output.log({ title: output.bold('Checking Nx module boundaries constraints...') });
+  verifyConstraintsConfig(tree);
 
   // #2 Check project tags
   output.log({ title: output.bold('Checking projects tags...') });

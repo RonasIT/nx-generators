@@ -18,7 +18,9 @@ const getTagFromLibPath = (libPath: string, type: TagType): string => {
 
 const verifyLibraryTag = ({ project, tree, tag, tagType, context, ruleNotFoundCallback }: VerifyTagConfig): void => {
   const defaultRuleNotFoundCallback = (): void => {
-    throw new Error(`Missing ${tagType} tag rule for ${tag}. Please add it to the ESLint config file.`);
+    throw new Error(
+      `Missing ${tagType} tag rule for ${tag}. Please add it to the Nx module boundaries constraints config.`,
+    );
   };
 
   if (tag) {
@@ -67,7 +69,9 @@ const verifyLibraryTag = ({ project, tree, tag, tagType, context, ruleNotFoundCa
       const typeTagRule = readConstraints(tree).find((rule) => rule.sourceTag === `type:${tag}`);
 
       if (!typeTagRule) {
-        throw new Error(`Missing type tag rule for ${tag}. Please add it to the ESLint constraints config file.`);
+        throw new Error(
+          `Missing type tag rule for ${tag}. Please add it to the Nx module boundaries constraints config.`,
+        );
       }
     }
 
